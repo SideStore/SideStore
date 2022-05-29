@@ -42,10 +42,21 @@ extension ServerManager
     {
         guard !self.isDiscovering else { return }
         self.isDiscovering = true
-        
+
         self.serviceBrowser.searchForServices(ofType: ALTServerServiceType, inDomain: "")
-        
+
         self.startListeningForWiredConnections()
+        
+        // Print log mentioning that we are manually adding this
+        NSLog("Manually adding server")
+        let ianTestService = NetService(domain: "69.69.0.1", type: "_altserver._tcp", name: "AltStore", port: 43311)
+
+        if let server = Server(service: ianTestService)
+        {
+            self.addDiscoveredServer(server)
+        } else {
+            NSLog("Check for manual server failed!!")
+        }
     }
     
     func stopDiscovering()
@@ -78,7 +89,8 @@ extension ServerManager
             {
             case .local: self.connectToLocalServer(server, completion: finish(_:))
             case .wired:
-                guard let incomingConnectionsSemaphore = self.incomingConnectionsSemaphore else { return finish(.failure(ALTServerError(.connectionFailed))) }
+                guard let incomingConnectionsSemaphore = self.incomingConnectionsSemaphore else { return 
+finish(.failure(ALTServerError(.connectionFailed))) }
                 
                 print("Waiting for incoming connection...")
                 
@@ -87,7 +99,7 @@ extension ServerManager
                 switch server.connectionType
                 {
                 case .wired: CFNotificationCenterPostNotification(notificationCenter, .wiredServerConnectionStartRequest, nil, nil, true)
-                case .local, .wireless: break
+                case .local, .wireless, .manual: break
                 }
                 
                 _ = incomingConnectionsSemaphore.wait(timeout: .now() + 10.0)
@@ -101,12 +113,20 @@ extension ServerManager
                     finish(.failure(ALTServerError(.connectionFailed)))
                 }
                 
-            case .wireless:
+            case .wireless: 
                 guard let service = server.service else { return finish(.failure(ALTServerError(.connectionFailed))) }
                 
-                print("Connecting to service:", service)
+                print("Connecting to mDNS service:", service)
                 
                 let connection = NWConnection(to: .service(name: service.name, type: service.type, domain: service.domain, interface: nil), using: .tcp)
+                self.connectToRemoteServer(server, connection: connection, completion: finish(_:))
+            case .manual:
+                guard let service = server.service else { return finish(.failure(ALTServerError(.connectionFailed))) }
+                
+                print("Connecting to manual service:", service.domain)
+                print("Port: ", String(service.port.description))
+
+                let connection = NWConnection(host: NWEndpoint.Host(service.domain), port: NWEndpoint.Port(String(service.port))!, using: .tcp)
                 self.connectToRemoteServer(server, connection: connection, completion: finish(_:))
             }
         }
@@ -186,7 +206,7 @@ private extension ServerManager
             @unknown default: break
             }
         }
-        
+        print("Connected to server!")
         connection.start(queue: self.dispatchQueue)
     }
     
@@ -272,3 +292,4 @@ extension ServerManager: NetServiceDelegate
         print("Service \(sender) updated TXT Record:", txtDict)
     }
 }
+
