@@ -28,7 +28,7 @@ SideStore is a alternative to AltStore and is a sandboxed iOS application like A
 Netmuxd is a program that replaces Usbmuxd to be able to connect over a VPN reliably.  It is programmed in the Rust programming language and it is open source. You can set Netmuxd to be a hyper link like Netmuxd: [Netmuxd](https://github.com/jkcoxson/netmuxd)
 
 ### Roxas
-Roxas is Riley Testuts internal framework from AltStore used across many of their iOS projects, developed to simplify a variety of common tasks used in iOS development. For more info, check the [Roxas repo](https://github.com/rileytestut/roxas).
+Roxas is Riley Testut's internal framework from AltStore used across many of their iOS projects, developed to simplify a variety of common tasks used in iOS development. For more info, check the [Roxas repo](https://github.com/rileytestut/roxas).
 
 ## Compilation Instructions
 AltStore and AltServer are both fairly straightforward to compile and run if you're already an iOS or macOS developer. To compile AltStore and/or AltServer:
@@ -44,7 +44,7 @@ AltStore and AltServer are both fairly straightforward to compile and run if you
 	```
 3. Open `AltStore.xcworkspace` and select the AltStore project in the project navigator. On the `Signing & Capabilities` tab, change the team from `Yvette Testut` to your own account.
 
-5. **(SideStore app only)** Change the value for `ALTDeviceID` in the Info.plist to your device's UDID. Normally, SideStore embeds the device's UDID in AltStore's Info.plist during installation. When running through Visual Studio you'll need to set the value yourself or else Sidetore won't resign (or even install) apps for the proper device. You can achieve this by changing a few things to be able to build and use SideStore.
+5. **(SideStore app only)** Change the value for `ALTDeviceID` in the Info.plist to your device's UDID. Normally, SideStore embeds the device's UDID in AltStore's Info.plist during installation. When running through Visual Studio you'll need to set the value yourself or else SideStore won't resign (or even install) apps for the proper device. You can achieve this by changing a few things to be able to build and use SideStore.
 
 **Steps for making SideStore run with your own build**
 This is all in vscode because Xcode UI is tricky
