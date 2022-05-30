@@ -6,9 +6,9 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-SideStore is an iOS application that allows you to sideload other apps (.ipa files) onto your iOS device with just your Apple ID. SideStore resigns apps with your personal development certificate and sends them to a desktop app called AltServer or use the SideStore VPN, which installs the resigned apps back to your device using iTunes WiFi sync or using the SideStore VPN where you can sideload at any place over wifi that supports zerotier that has internet. To prevent apps from expiring, SideStore just like Altstore will also periodically refresh your apps in the background when on the same WiFi as AltServer or using SideStore VPN over wifi on any network that includes a internet connection.
+SideStore is an iOS application that allows you to sideload other apps (.ipa files) onto your iOS device with just your Apple ID. SideStore resigns apps with your personal development certificate and sends them to a desktop app called AltServer or use the SideStore VPN, which installs the resigned apps back to your device using iTunes WiFi sync or using the SideStore VPN where you can sideload at any place over wifi that supports zerotier that has internet. To prevent apps from expiring, SideStore just like AltStore will also periodically refresh your apps in the background when on the same WiFi as AltServer or using SideStore VPN over wifi on any network that includes a internet connection.
 
-The goal of this project is to allow easy and a mostly computerless experience to sideload apps on iOS based devices. This project is meant as a alternative of Altstore where you can do anything altstore can (maybe even more) but over a vpn. You will be able to use SideStore just like if you were using Altstore with benifits.
+The goal of this project is to allow easy and a mostly computerless experience to sideload apps on iOS based devices. This project is meant as a alternative of AltStore where you can do anything AltStore can (maybe even more) but over a vpn. You will be able to use SideStore just like if you were using AltStore with benifits.
  (contributions welcome! 🙂).
 
 
@@ -22,13 +22,13 @@ The goal of this project is to allow easy and a mostly computerless experience t
 ## Project Overview
 
 ### SideStore
-SideStore is a alternative to Altstore and is a sandboxed iOS application like Altstore. The SideStore app target contains the vast majority of AltStore's functionality, including all the logic for downloading and updating apps through SideStore.
+SideStore is a alternative to AltStore and is a sandboxed iOS application like AltStore. The SideStore app target contains the vast majority of AltStore's functionality, including all the logic for downloading and updating apps through SideStore.
 
 ### Netmuxd
 Netmuxd is a program that replaces Usbmuxd to be able to connect over a VPN reliably.  It is programmed in the Rust programming language and it is open source. You can set Netmuxd to be a hyper link like Netmuxd: [Netmuxd](https://github.com/jkcoxson/netmuxd)
 
 ### Roxas
-Roxas is Riley Testuts internal framework from Altstore used across many of their iOS projects, developed to simplify a variety of common tasks used in iOS development. For more info, check the [Roxas repo](https://github.com/rileytestut/roxas).
+Roxas is Riley Testuts internal framework from AltStore used across many of their iOS projects, developed to simplify a variety of common tasks used in iOS development. For more info, check the [Roxas repo](https://github.com/rileytestut/roxas).
 
 ## Compilation Instructions
 AltStore and AltServer are both fairly straightforward to compile and run if you're already an iOS or macOS developer. To compile AltStore and/or AltServer:
