@@ -63,10 +63,8 @@ Change ALTAppGroups to your group
 
 AltStore/Info.plist
 Change ALTAppGroups to your app group name group.com.[Rick].SideStore
-Change ALTDeviceID to your device's UDID. You can fetch it with libimobiledevice if needed.
 
 AltStore/project.pbxproj
-Change all the DEVELOPMENT_TEAMs to your dev team ID. It's what AltStore appends to your bundle IDs.
 Change all the PRODUCT_BUNDLE_IDENTIFIERs to something you can sign like com.[Rick].SideStore...
 
 Shared/Extensions/Bundle+AltStore.swift
@@ -76,4 +74,4 @@ Build + run app! 🎉
 
 ## Licensing
 
-Due to the licensing of some dependencies used by SideStore, I have no choice but to distribute SideStore under the **AGPLv3 license** because this is a fork of Altstore. That being said, our goal for SideStore is for it to be an open source project *anyone* can use without restrictions, so we explicitly give permission for anyone to use, modify, and distribute all *our* original code for this project in any form, with or without attribution, without fear of legal consequences (dependencies remain under their original licenses, however).
+This project is licensed under the **AGPLv3 license**.
