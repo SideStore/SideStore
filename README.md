@@ -35,16 +35,11 @@ AltStore and AltServer are both fairly straightforward to compile and run if you
 
 1. Clone the repository 
 	``` 
-	git clone https://github.com/SideStore/SideStore.git
+	git clone https://github.com/SideStore/SideStore.git --recurse-submodules
 	```
-2. Update submodules: 
-	```
-	cd AltStore 
-	git submodule update --init --recursive
-	```
-3. Open `AltStore.xcworkspace` and select the AltStore project in the project navigator. On the `Signing & Capabilities` tab, change the team from `Yvette Testut` to your own account.
+2. Open `AltStore.xcworkspace` and select the AltStore project in the project navigator. On the `Signing & Capabilities` tab, change the team from `Yvette Testut` to your own account.
 
-5. **(SideStore app only)** Change the value for `ALTDeviceID` in the Info.plist to your device's UDID. Normally, SideStore embeds the device's UDID in AltStore's Info.plist during installation. When running through Visual Studio you'll need to set the value yourself or else SideStore won't resign (or even install) apps for the proper device. You can achieve this by changing a few things to be able to build and use SideStore.
+3. **(SideStore app only)** Change the value for `ALTDeviceID` in the Info.plist to your device's UDID. Normally, SideStore embeds the device's UDID in AltStore's Info.plist during installation. When running through Visual Studio you'll need to set the value yourself or else SideStore won't resign (or even install) apps for the proper device. You can achieve this by changing a few things to be able to build and use SideStore.
 
 **Steps for making SideStore run with your own build**
 This is all in vscode because Xcode UI is tricky
