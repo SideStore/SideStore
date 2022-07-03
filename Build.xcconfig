@@ -5,8 +5,8 @@ MARKETING_VERSION = 1.5.1b
 CURRENT_PROJECT_VERSION = 2780
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
-DEVELOPMENT_TEAM = S32Z3HMYVQ
-ORG_IDENTIFIER = com.joemattiello
+DEVELOPMENT_TEAM = 123ABC
+ORG_IDENTIFIER = com.SideStore
 
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
