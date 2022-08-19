@@ -33,9 +33,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
+<<<<<<< HEAD
     private lazy var intentHandler = IntentHandler()    
     private lazy var viewAppIntentHandler = ViewAppIntentHandler()
 
+=======
+    @available(iOS 14, *)
+    private var intentHandler: IntentHandler {
+        get { _intentHandler as! IntentHandler }
+        set { _intentHandler = newValue }
+    }
+    
+    @available(iOS 14, *)
+    private var viewAppIntentHandler: ViewAppIntentHandler {
+        get { _viewAppIntentHandler as! ViewAppIntentHandler }
+        set { _viewAppIntentHandler = newValue }
+    }
+    
+    private lazy var _intentHandler: Any = {
+        guard #available(iOS 14, *) else { fatalError() }
+        return IntentHandler()
+    }()
+    
+    private lazy var _viewAppIntentHandler: Any = {
+        guard #available(iOS 14, *) else { fatalError() }
+        return ViewAppIntentHandler()
+    }()
+    
+>>>>>>> c9d522fad505bb30fe42d6ed5dba4cb4d45e3010
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         // Register default settings before doing anything else.
