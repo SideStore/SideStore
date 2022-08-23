@@ -4,6 +4,7 @@ jobs:
   build:
     name: Build and upload SideStore
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: 'macos-12'
