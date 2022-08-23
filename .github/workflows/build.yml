@@ -1,5 +1,11 @@
 name: Build and Upload SideStore
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  
 jobs:
   build:
     name: Build and upload SideStore
