@@ -11,9 +11,9 @@ import Foundation
 private extension URL
 {
     #if STAGING
-    static let trustedSources = URL(string: "https://raw.githubusercontent.com/Spidy123222/SideStore/change-source/apps.json")!
+    static let trustedSources = URL(string: "https://raw.githubusercontent.com/Spidy123222/SideStore/change-source/trustedapps.json")!
     #else
-    static let trustedSources = URL(string: "https://raw.githubusercontent.com/Spidy123222/SideStore/change-source/apps.json")!
+    static let trustedSources = URL(string: "https://raw.githubusercontent.com/Spidy123222/SideStore/change-source/trustedapps.json")!
     #endif
 }
 
