@@ -1,19 +1,19 @@
 {
-  "name": "AltStore",
-  "identifier": "com.rileytestut.AltStore",
+  "name": "SideStore",
+  "identifier": "com.SideStore.SideStore",
   "sourceURL": "https://cdn.altstore.io/file/altstore/apps.json",
   "apps": [
     {
-      "name": "AltStore",
-      "bundleIdentifier": "com.rileytestut.AltStore",
-      "developerName": "Riley Testut",
-      "version": "1.5.1",
-      "versionDate": "2022-07-14T12:00:00-05:00",
-      "versionDescription": "This update fixes the following issues:\n\n• Using Apple IDs that contain capital letters\n• Using Apple IDs with 2FA enabled without any trusted devices\n• Repeatedly asking some users to sign in every refresh\n• \"Incorrect Apple ID or password\" error after changing Apple ID email address\n• “Application is missing application-identifier” error when sideloading or (de-)activating certain apps\n• Potential crash when receiving unknown error codes from AltServer",
+      "name": "SideStore",
+      "bundleIdentifier": "com.SideStore.SideStore",
+      "developerName": "SideStore Team",
+      "version": "1.5.1b",
+      "versionDate": "2022-08-31T4:00:00-05:00",
+      "versionDescription": "Development Stages of SideStore",
       "downloadURL": "https://cdn.altstore.io/file/altstore/apps/altstore/1_5_1.ipa",
-      "localizedDescription": "AltStore is an alternative app store for non-jailbroken devices. \n\nThis version of AltStore allows you to install Delta, an all-in-one emulator for iOS, as well as sideload other .ipa files from the Files app.",
-      "iconURL": "https://user-images.githubusercontent.com/705880/65270980-1eb96f80-dad1-11e9-9367-78ccd25ceb02.png",
-      "tintColor": "018084",
+      "localizedDescription": "SideStore is an alternative app store for non-jailbroken devices. \n\nThis SideStore allows you to install Delta, an all-in-one emulator for iOS, as well as sideload other .ipa files from the Files app.",
+      "iconURL": "https://avatars.githubusercontent.com/u/105070799?s=200&v=4",
+      "tintColor": "7846F5",
       "size": 5465976,
       "screenshotURLs": [
         "https://user-images.githubusercontent.com/705880/78942028-acf54300-7a6d-11ea-821c-5bb7a9b3e73a.PNG",
@@ -23,41 +23,11 @@
       "permissions": [
         {
           "type": "background-fetch",
-          "usageDescription": "AltStore periodically refreshes apps in the background to prevent them from expiring."
+          "usageDescription": "SideStore periodically refreshes apps in the background to prevent them from expiring."
         },
         {
           "type": "background-audio",
-          "usageDescription": "Allows AltStore to run longer than 30 seconds when refreshing apps in background."
-        }
-      ]
-    },
-    {
-      "name": "AltStore",
-      "bundleIdentifier": "com.rileytestut.AltStore.Beta",
-      "developerName": "Riley Testut",
-      "subtitle": "An alternative App Store for iOS.",
-      "version": "1.5.1b",
-      "versionDate": "2022-05-27T12:00:00-07:00",
-      "versionDescription": "This beta fixes the following issues:\n\n• Using Apple IDs that contain capital letters\n• Using Apple IDs with 2FA enabled without any trusted devices\n• Repeatedly asking some users to sign in every refresh\n• \"Incorrect Apple ID or password\" error after changing Apple ID email address\n• “Application is missing application-identifier” error when sideloading or (de-)activating certain apps",
-      "downloadURL": "https://cdn.altstore.io/file/altstore/apps/altstore/1_5_1_b.ipa",
-      "localizedDescription": "AltStore is an alternative app store for non-jailbroken devices. \n\nThis beta release of AltStore adds support for 3rd party sources, allowing you to download apps from other developers directly through AltStore.",
-      "iconURL": "https://user-images.githubusercontent.com/705880/65270980-1eb96f80-dad1-11e9-9367-78ccd25ceb02.png",
-      "tintColor": "018084",
-      "size": 5464776,
-      "beta": true,
-      "screenshotURLs": [
-        "https://user-images.githubusercontent.com/705880/78942028-acf54300-7a6d-11ea-821c-5bb7a9b3e73a.PNG",
-        "https://user-images.githubusercontent.com/705880/78942222-0fe6da00-7a6e-11ea-9f2a-dda16157583c.PNG",
-        "https://user-images.githubusercontent.com/705880/65605577-332cba80-df5e-11e9-9f00-b369ce974f71.PNG"
-      ],
-      "permissions": [
-        {
-          "type": "background-fetch",
-          "usageDescription": "AltStore periodically refreshes apps in the background to prevent them from expiring."
-        },
-        {
-          "type": "background-audio",
-          "usageDescription": "Allows AltStore to run longer than 30 seconds when refreshing apps in background."
+          "usageDescription": "Allows SideStore to run longer than 30 seconds when refreshing apps in background."
         }
       ]
     },
