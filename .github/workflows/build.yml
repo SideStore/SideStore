@@ -26,7 +26,7 @@ jobs:
       - name: Install and build dependencies
         run: | 
           brew install ldid
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
           rustup target add aarch64-apple-ios
           cd Dependencies/Secret-Tunnel && cargo build --release --target aarch64-apple-ios
       - name: Setup Xcode
