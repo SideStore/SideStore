@@ -330,6 +330,8 @@
 		BFF0B69A2322D7D0007A79E1 /* UIScreen+CompactHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0B6992322D7D0007A79E1 /* UIScreen+CompactHeight.swift */; };
 		BFF435D8255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF435D7255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift */; };
 		BFF615A82510042B00484D3B /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
+		BFF7C9342578492100E55F36 /* ALTAnisetteData.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB49AA823834CF900D542D9 /* ALTAnisetteData.m */; };
+		D504F42628AD72C50014BB5D /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504F42528AD72C50014BB5D /* ProgressRing.swift */; };
 		D52C08EE28AEC37A006C4AE5 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52C08ED28AEC37A006C4AE5 /* AppVersion.swift */; };
 		D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D533E8B62727841800A9B5DD /* libAppleArchive.tbd */; settings = {ATTRIBUTES = (Weak, ); }; };
 		D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D533E8BD2727BBF800A9B5DD /* libcurl.a */; };
@@ -845,6 +847,8 @@
 		BFFCFA45248835530077BFCE /* AltDaemon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AltDaemon.entitlements; sourceTree = "<group>"; };
 		D52C08ED28AEC37A006C4AE5 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		D52E988928D002D30032BE6B /* AltStore 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 11.xcdatamodel"; sourceTree = "<group>"; };
+		C9EEAA842DA87A88A870053B /* Pods_AltStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D504F42528AD72C50014BB5D /* ProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRing.swift; sourceTree = "<group>"; };
 		D533E8B62727841800A9B5DD /* libAppleArchive.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAppleArchive.tbd; path = usr/lib/libAppleArchive.tbd; sourceTree = SDKROOT; };
 		D533E8B82727B61400A9B5DD /* fragmentzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fragmentzip.h; sourceTree = "<group>"; };
 		D533E8BB2727BBEE00A9B5DD /* libfragmentzip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfragmentzip.a; path = Dependencies/fragmentzip/libfragmentzip.a; sourceTree = SOURCE_ROOT; };
@@ -2575,7 +2579,6 @@
 				BF08858322DE795100DE9F1E /* MyAppsViewController.swift in Sources */,
 				BFC84A4D2421A19100853474 /* SourcesViewController.swift in Sources */,
 				BFF0B696232242D3007A79E1 /* LicensesViewController.swift in Sources */,
-				BFD52BD422A0800A000B7ED1 /* ServerManager.swift in Sources */,
 				D57FE84428C7DB7100216002 /* ErrorLogViewController.swift in Sources */,
 				BFBE0007250AD0E70080826E /* ViewAppIntentHandler.swift in Sources */,
 				BFDB6A0822AAED73007EA6D6 /* ResignAppOperation.swift in Sources */,
