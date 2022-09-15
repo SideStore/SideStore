@@ -24,10 +24,7 @@ jobs:
           submodules: recursive
 
       - name: Install and build dependencies
-        run: | 
-          brew install ldid
-          rustup target add aarch64-apple-ios
-          cd Dependencies/Secret-Tunnel && cargo build --release --target aarch64-apple-ios
+        run: brew install ldid
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
         with:
