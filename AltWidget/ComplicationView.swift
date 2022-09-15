@@ -78,8 +78,6 @@ struct ComplicationView: View
                         .blendMode(.destinationOut) // Clip text out of image.
                     }
                 }
-                .fixedSize()
-                .offset(y: -1)
             }
         }
         .gaugeStyle(.accessoryCircularCapacity)
