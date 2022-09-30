@@ -27,7 +27,7 @@ SideStore is a just regular, sandboxed iOS application. The AltStore app target 
 [Secret Tunnel](https://github.com/jkcoxson/Secret-Tunnel) powers the defining feature of SideStore: untethered app installation. By levaraging an App Store app with additional entitlements (WireGuard) to create the VPN tunnel for us, it allows SideStore to take advantage of [Jitterbug](https://github.com/osy/Jitterbug)'s loopback method.
 
 ### Minimuxer
-[Minimuxer](https://github.com/jkcoxson/minimuxer) is a lockdown muxer built to run on an iOS device to replace netmuxd to interface with wireguard.
+[Minimuxer](https://github.com/jkcoxson/minimuxer) is a lockdown muxer that can run inside iOS’s sandbox. It replicates Apple’s usbmuxd protocol on MacOS to “discover” devices to interface with wireguard On-Device.
 
 ### Roxas
 [Roxas](https://github.com/rileytestut/roxas) is Riley Testut's internal framework from AltStore used across many of their iOS projects, developed to simplify a variety of common tasks used in iOS development.
