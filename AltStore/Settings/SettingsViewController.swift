@@ -483,7 +483,7 @@ extension SettingsViewController
                 {
                     let mailViewController = MFMailComposeViewController()
                     mailViewController.mailComposeDelegate = self
-                    mailViewController.setToRecipients(["support@ sidestore.io"])
+                    mailViewController.setToRecipients(["support@sidestore.io"])
                     
                     if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
                     {
