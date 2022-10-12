@@ -8,7 +8,7 @@
 
 import CoreData
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier
+let appbundleIdentifier =  Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
 
 public extension Source
 {
