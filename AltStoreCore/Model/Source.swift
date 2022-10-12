@@ -8,14 +8,12 @@
 
 import CoreData
 
-let appbundleIdentifier =  Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
-
 public extension Source
 {
     #if ALPHA
-    static let altStoreIdentifier = appbundleIdentifier
+    static let altStoreIdentifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
     #else
-    static let altStoreIdentifier = appbundleIdentifier
+    static let altStoreIdentifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
     #endif
     
     #if STAGING
