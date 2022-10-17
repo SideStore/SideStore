@@ -8,6 +8,8 @@
 
 import Foundation
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 public extension Bundle
 {
     struct Info
@@ -53,7 +55,7 @@ public extension Bundle
 
 public extension Bundle
 {
-    static var baseAltStoreAppGroupID = "group.com.rileytestut.AltStore"
+    static var baseAltStoreAppGroupID = "group." + appbundleIdentifier
     
     var appGroups: [String] {
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []

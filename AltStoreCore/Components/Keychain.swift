@@ -11,6 +11,8 @@ import KeychainAccess
 
 import AltSign
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 @propertyWrapper
 public struct KeychainItem<Value>
 {
@@ -45,7 +47,7 @@ public class Keychain
 {
     public static let shared = Keychain()
     
-    fileprivate let keychain = KeychainAccess.Keychain(service: "com.rileytestut.AltStore").accessibility(.afterFirstUnlock).synchronizable(true)
+    fileprivate let keychain = KeychainAccess.Keychain(service: appbundleIdentifier).accessibility(.afterFirstUnlock).synchronizable(true)
     
     @KeychainItem(key: "appleIDEmailAddress")
     public var appleIDEmailAddress: String?

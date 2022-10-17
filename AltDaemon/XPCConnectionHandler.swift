@@ -9,6 +9,8 @@
 import Foundation
 import Security
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 class XPCConnectionHandler: NSObject, ConnectionHandler
 {
     var connectionHandler: ((Connection) -> Void)?
@@ -77,7 +79,7 @@ extension XPCConnectionHandler: NSXPCListenerDelegate
         guard
             let codeSigningInfo = signingInfo as? [String: Any],
             let bundleIdentifier = codeSigningInfo["identifier"] as? String,
-            bundleIdentifier.contains("com.rileytestut.AltStore")
+            bundleIdentifier.contains(appbundleIdentifier)
         else { return false }
         
         let connection = XPCConnection(newConnection)

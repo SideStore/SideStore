@@ -15,13 +15,15 @@ import AltStoreCore
 import AltSign
 import Roxas
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 extension AppDelegate
 {
-    static let openPatreonSettingsDeepLinkNotification = Notification.Name("com.rileytestut.AltStore.OpenPatreonSettingsDeepLinkNotification")
-    static let importAppDeepLinkNotification = Notification.Name("com.rileytestut.AltStore.ImportAppDeepLinkNotification")
-    static let addSourceDeepLinkNotification = Notification.Name("com.rileytestut.AltStore.AddSourceDeepLinkNotification")
+    static let openPatreonSettingsDeepLinkNotification = Notification.Name(appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
+    static let importAppDeepLinkNotification = Notification.Name(appbundleIdentifier + ".ImportAppDeepLinkNotification")
+    static let addSourceDeepLinkNotification = Notification.Name(appbundleIdentifier + ".AddSourceDeepLinkNotification")
 
-    static let appBackupDidFinish = Notification.Name("com.rileytestut.AltStore.AppBackupDidFinish")
+    static let appBackupDidFinish = Notification.Name(appbundleIdentifier + ".AppBackupDidFinish")
 
     static let importAppDeepLinkURLKey = "fileURL"
     static let appBackupResultKey = "result"

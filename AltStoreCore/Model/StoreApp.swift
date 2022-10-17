@@ -12,14 +12,16 @@ import CoreData
 import Roxas
 import AltSign
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 public extension StoreApp
 {
     #if ALPHA
-    static let altstoreAppID = "com.rileytestut.AltStore.Alpha"
+    static let altstoreAppID = appbundleIdentifier + ".Alpha"
     #elseif BETA
-    static let altstoreAppID = "com.rileytestut.AltStore.Beta"
+    static let altstoreAppID = appbundleIdentifier + ".Beta"
     #else
-    static let altstoreAppID = "com.rileytestut.AltStore"
+    static let altstoreAppID = appbundleIdentifier
     #endif
     
     static let dolphinAppID = "me.oatmealdome.dolphinios-njb"

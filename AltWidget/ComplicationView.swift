@@ -9,6 +9,8 @@
 import SwiftUI
 import WidgetKit
 
+let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
 @available(iOS 16, *)
 struct ComplicationView: View
 {
@@ -59,14 +61,14 @@ struct ComplicationView_Previews: PreviewProvider {
         let expiredDate = shortExpirationDate.addingTimeInterval(1 * 60 * 60 * 24)
         
         let weekAltstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: "com.rileytestut.AltStore",
+                              bundleIdentifier: appbundleIdentifier,
                               expirationDate: shortExpirationDate,
                               refreshedDate: shortRefreshedDate,
                               tintColor: .altPrimary,
                               icon: UIImage(named: "AltStore"))
         
         let yearAltstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: "com.rileytestut.AltStore",
+                              bundleIdentifier: appbundleIdentifier,
                               expirationDate: longExpirationDate,
                               refreshedDate: longRefreshedDate,
                               tintColor: .altPrimary,
