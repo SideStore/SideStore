@@ -476,7 +476,7 @@ extension AppManager
     func update(_ app: InstalledApp, presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> Progress
     {
         guard let storeApp = app.storeApp else {
-            completionHandler(.failure(OperationError.appNotFound))
+            completionHandler(.failure(OperationError.appNotFound(name: app.name)))
             return Progress.discreteProgress(totalUnitCount: 1)
         }
         
@@ -1257,7 +1257,7 @@ private extension AppManager
             case .success(let installedApp):
                 completionHandler(.success(installedApp))
                 
-            case .failure(ALTServerError.unknownRequest), .failure(OperationError.appNotFound):
+            case .failure(ALTServerError.unknownRequest), .failure(~OperationError.Code.appNotFound):
                 // Fall back to installation if AltServer doesn't support newer provisioning profile requests,
                 // OR if the cached app could not be found and we may need to redownload it.
                 app.managedObjectContext?.performAndWait { // Must performAndWait to ensure we add operations before we return.
@@ -1531,7 +1531,7 @@ private extension AppManager
         }
         
         guard let application = ALTApplication(fileURL: app.fileURL) else {
-            completionHandler(.failure(OperationError.appNotFound))
+            completionHandler(.failure(OperationError.appNotFound(name: app.name)))
             return progress
         }
         
@@ -1543,7 +1543,7 @@ private extension AppManager
                     let temporaryDirectoryURL = context.temporaryDirectory.appendingPathComponent("AltBackup-" + UUID().uuidString)
                     try FileManager.default.createDirectory(at: temporaryDirectoryURL, withIntermediateDirectories: true, attributes: nil)
                     
-                    guard let altbackupFileURL = Bundle.main.url(forResource: "AltBackup", withExtension: "ipa") else { throw OperationError.appNotFound }
+                    guard let altbackupFileURL = Bundle.main.url(forResource: "AltBackup", withExtension: "ipa") else { throw OperationError.appNotFound(name: "AltBackup") }
                     
                     let unzippedAppBundleURL = try FileManager.default.unzipAppBundle(at: altbackupFileURL, toDirectory: temporaryDirectoryURL)
                     guard let unzippedAppBundle = Bundle(url: unzippedAppBundleURL) else { throw OperationError.invalidApp }
@@ -1636,6 +1636,27 @@ private extension AppManager
     
     func finish(_ operation: AppOperation, result: Result<InstalledApp, Error>, group: RefreshGroup, progress: Progress?)
     {
+        let result = result.mapError { (resultError) -> Error in
+            guard let error = resultError as? ALTServerError else { return resultError }
+            
+            switch error.code
+            {
+            case .deviceNotFound, .lostConnection:
+                if let server = group.context.server, server.isPreferred || server.connectionType != .wireless
+                {
+                    // Preferred server (or not random wireless connection), so report errors normally.
+                    return error
+                }
+                else
+                {
+                    // Not preferred server, so ignore these specific errors and throw serverNotFound instead.
+                    return ConnectionError(.serverNotFound)
+                }
+                
+            default: return error
+            }
+        }
+        
         // Must remove before saving installedApp.
         if let currentProgress = self.progress(for: operation), currentProgress == progress
         {
