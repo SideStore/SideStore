@@ -250,7 +250,7 @@ public extension StoreApp
         let app = StoreApp(context: context)
         app.name = "AltStore"
         app.bundleIdentifier = StoreApp.altstoreAppID
-        app.developerName = "Riley Testut"
+        app.developerName = "Side Team"
         app.localizedDescription = "AltStore is an alternative App Store."
         app.iconURL = URL(string: "https://user-images.githubusercontent.com/705880/63392210-540c5980-c37b-11e9-968c-8742fc68ab2e.png")!
         app.screenshotURLs = []
