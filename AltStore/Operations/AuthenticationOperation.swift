@@ -431,7 +431,7 @@ private extension AuthenticationOperation
                     }
                     else
                     {
-                        completionHandler(.failure(error ?? OperationError.unknown))
+                        completionHandler(.failure(error ?? OperationError.unknown()))
                     }
                 }
             }
