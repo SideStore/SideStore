@@ -17,6 +17,7 @@ extension OperationError
     {
         typealias Error = OperationError
         
+        /* General */
         case unknown
         case unknownResult
         case cancelled
@@ -30,6 +31,11 @@ extension OperationError
         case noSources
         case openAppFailed
         case missingAppGroup
+        
+        /* Connection */
+        case serverNotFound
+        case connectionFailed
+        case connectionDropped
     }
     
     static let unknown: OperationError = .init(code: .unknown)
@@ -42,6 +48,10 @@ extension OperationError
     static let invalidParameters: OperationError = .init(code: .invalidParameters)
     static let noSources: OperationError = .init(code: .noSources)
     static let missingAppGroup: OperationError = .init(code: .missingAppGroup)
+    
+    static let serverNotFound: OperationError = .init(code: .serverNotFound)
+    static let connectionFailed: OperationError = .init(code: .connectionFailed)
+    static let connectionDropped: OperationError = .init(code: .connectionDropped)
     
     static func appNotFound(name: String?) -> OperationError { OperationError(code: .appNotFound, appName: name) }
     static func openAppFailed(name: String) -> OperationError { OperationError(code: .openAppFailed, appName: name) }

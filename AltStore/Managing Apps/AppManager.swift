@@ -1650,7 +1650,7 @@ private extension AppManager
                 else
                 {
                     // Not preferred server, so ignore these specific errors and throw serverNotFound instead.
-                    return ConnectionError(.serverNotFound)
+                    return OperationError(.serverNotFound)
                 }
                 
             default: return error
