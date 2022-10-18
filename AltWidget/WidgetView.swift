@@ -156,7 +156,7 @@ struct WidgetView_Previews: PreviewProvider {
         let longExpirationDate = Calendar.current.date(byAdding: .day, value: 365, to: longRefreshedDate) ?? Date()
         
         let altstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: Bundle.appbundleIdentifier,
+                              bundleIdentifier: Bundle.Info.appbundleIdentifier,
                               expirationDate: shortExpirationDate,
                               refreshedDate: shortRefreshedDate,
                               tintColor: .altPrimary,

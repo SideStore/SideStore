@@ -18,11 +18,11 @@ import Roxas
 
 extension AppDelegate
 {
-    static let openPatreonSettingsDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
-    static let importAppDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".ImportAppDeepLinkNotification")
-    static let addSourceDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".AddSourceDeepLinkNotification")
+    static let openPatreonSettingsDeepLinkNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
+    static let importAppDeepLinkNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".ImportAppDeepLinkNotification")
+    static let addSourceDeepLinkNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".AddSourceDeepLinkNotification")
 
-    static let appBackupDidFinish = Notification.Name(Bundle.appbundleIdentifier + ".AppBackupDidFinish")
+    static let appBackupDidFinish = Notification.Name(Bundle.Info.appbundleIdentifier + ".AppBackupDidFinish")
 
     static let importAppDeepLinkURLKey = "fileURL"
     static let appBackupResultKey = "result"

@@ -29,6 +29,7 @@ public extension Bundle
     }
 }
 
+
 public extension Bundle
 {
     var infoPlistURL: URL {
@@ -54,7 +55,7 @@ public extension Bundle
 
 public extension Bundle
 {
-    static var baseAltStoreAppGroupID = "group." + Bundle.appbundleIdentifier
+    static var baseAltStoreAppGroupID = "group." + Bundle.Info.appbundleIdentifier
     
     var appGroups: [String] {
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []

@@ -60,14 +60,14 @@ struct ComplicationView_Previews: PreviewProvider {
         let expiredDate = shortExpirationDate.addingTimeInterval(1 * 60 * 60 * 24)
         
         let weekAltstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: Bundle.appbundleIdentifier,
+                              bundleIdentifier: Bundle.Info.appbundleIdentifier,
                               expirationDate: shortExpirationDate,
                               refreshedDate: shortRefreshedDate,
                               tintColor: .altPrimary,
                               icon: UIImage(named: "AltStore"))
         
         let yearAltstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: Bundle.appbundleIdentifier,
+                              bundleIdentifier: Bundle.Info.appbundleIdentifier,
                               expirationDate: longExpirationDate,
                               refreshedDate: longRefreshedDate,
                               tintColor: .altPrimary,

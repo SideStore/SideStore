@@ -46,7 +46,7 @@ public class Keychain
 {
     public static let shared = Keychain()
     
-    fileprivate let keychain = KeychainAccess.Keychain(service: Bundle.appbundleIdentifier).accessibility(.afterFirstUnlock).synchronizable(true)
+    fileprivate let keychain = KeychainAccess.Keychain(service: Bundle.Info.appbundleIdentifier).accessibility(.afterFirstUnlock).synchronizable(true)
     
     @KeychainItem(key: "appleIDEmailAddress")
     public var appleIDEmailAddress: String?

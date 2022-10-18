@@ -12,9 +12,9 @@ import CoreData
 public extension Source
 {
     #if ALPHA
-    static let altStoreIdentifier = Bundle.appbundleIdentifier
+    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
     #else
-    static let altStoreIdentifier = Bundle.appbundleIdentifier
+    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
     #endif
     
     #if STAGING
