@@ -4,18 +4,17 @@
 //
 //  Created by Riley Testut on 7/30/19.
 //  Copyright © 2019 Riley Testut. All rights reserved.
-//
+// a
 
 import CoreData
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier!
 
 public extension Source
 {
     #if ALPHA
-    static let altStoreIdentifier = appbundleIdentifier
+    static let altStoreIdentifier = Bundle.appbundleIdentifier
     #else
-    static let altStoreIdentifier = appbundleIdentifier
+    static let altStoreIdentifier = Bundle.appbundleIdentifier
     #endif
     
     #if STAGING

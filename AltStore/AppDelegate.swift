@@ -15,15 +15,14 @@ import AltStoreCore
 import AltSign
 import Roxas
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier!
 
 extension AppDelegate
 {
-    static let openPatreonSettingsDeepLinkNotification = Notification.Name(appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
-    static let importAppDeepLinkNotification = Notification.Name(appbundleIdentifier + ".ImportAppDeepLinkNotification")
-    static let addSourceDeepLinkNotification = Notification.Name(appbundleIdentifier + ".AddSourceDeepLinkNotification")
+    static let openPatreonSettingsDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
+    static let importAppDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".ImportAppDeepLinkNotification")
+    static let addSourceDeepLinkNotification = Notification.Name(Bundle.appbundleIdentifier + ".AddSourceDeepLinkNotification")
 
-    static let appBackupDidFinish = Notification.Name(appbundleIdentifier + ".AppBackupDidFinish")
+    static let appBackupDidFinish = Notification.Name(Bundle.appbundleIdentifier + ".AppBackupDidFinish")
 
     static let importAppDeepLinkURLKey = "fileURL"
     static let appBackupResultKey = "result"

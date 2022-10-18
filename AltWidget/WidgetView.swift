@@ -13,7 +13,6 @@ import AltStoreCore
 import AltSign
 import CoreData
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier!
 
 struct WidgetView : View
 {
@@ -157,7 +156,7 @@ struct WidgetView_Previews: PreviewProvider {
         let longExpirationDate = Calendar.current.date(byAdding: .day, value: 365, to: longRefreshedDate) ?? Date()
         
         let altstore = AppSnapshot(name: "AltStore",
-                              bundleIdentifier: appbundleIdentifier,
+                              bundleIdentifier: Bundle.appbundleIdentifier,
                               expirationDate: shortExpirationDate,
                               refreshedDate: shortRefreshedDate,
                               tintColor: .altPrimary,

@@ -9,7 +9,6 @@
 import Foundation
 import Security
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier!
 
 class XPCConnectionHandler: NSObject, ConnectionHandler
 {
@@ -79,7 +78,7 @@ extension XPCConnectionHandler: NSXPCListenerDelegate
         guard
             let codeSigningInfo = signingInfo as? [String: Any],
             let bundleIdentifier = codeSigningInfo["identifier"] as? String,
-            bundleIdentifier.contains(appbundleIdentifier)
+            bundleIdentifier.contains(Bundle.appbundleIdentifier)
         else { return false }
         
         let connection = XPCConnection(newConnection)

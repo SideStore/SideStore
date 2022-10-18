@@ -8,8 +8,6 @@
 
 import Foundation
 
-let appbundleIdentifier =  Bundle.main.bundleIdentifier!
-
 public extension Bundle
 {
     struct Info
@@ -19,7 +17,8 @@ public extension Bundle
         public static let certificateID = "ALTCertificateID"
         public static let appGroups = "ALTAppGroups"
         public static let altBundleID = "ALTBundleIdentifier"
-        
+        public static let appbundleIdentifier =  Bundle.main.bundleIdentifier!
+
         public static let urlTypes = "CFBundleURLTypes"
         public static let exportedUTIs = "UTExportedTypeDeclarations"
         
@@ -55,7 +54,7 @@ public extension Bundle
 
 public extension Bundle
 {
-    static var baseAltStoreAppGroupID = "group." + appbundleIdentifier
+    static var baseAltStoreAppGroupID = "group." + Bundle.appbundleIdentifier
     
     var appGroups: [String] {
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []
