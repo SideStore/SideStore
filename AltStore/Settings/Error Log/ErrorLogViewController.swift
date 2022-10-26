@@ -27,7 +27,6 @@ final class ErrorLogViewController: UITableViewController
             self.updateButtonInteractivity()
         }
     }
-
     private lazy var timeFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .none
@@ -355,18 +354,15 @@ extension ErrorLogViewController
     {
         self.isScrolling = true
     }
-
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView)
     {
         self.isScrolling = false
     }
-
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool)
     {
         guard !decelerate else { return }
         self.isScrolling = false
     }
-
     private func updateButtonInteractivity()
     {
         guard #available(iOS 14, *) else { return }
