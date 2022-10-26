@@ -441,7 +441,7 @@ private extension SettingsViewController
         guard self.presentedViewController == nil else { return }
 
         self.navigationController?.popViewController(animated: false)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             self.performSegue(withIdentifier: "showErrorLog", sender: nil)
         }
     }

@@ -145,3 +145,13 @@ final class ToastView: RSTToastView
         NotificationCenter.default.post(name: ToastView.openErrorLogNotification, object: self)
     }
 }
+
+private extension ToastView
+{
+    @objc func showErrorLog()
+    {
+        guard self.opensErrorLog else { return }
+        
+        NotificationCenter.default.post(name: ToastView.openErrorLogNotification, object: self)
+    }
+}
