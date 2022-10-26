@@ -119,7 +119,6 @@ private extension ErrorLogViewController
             } else {
                 cell.menuButton.isUserInteractionEnabled = false
             }
-
             // Include errorDescriptionTextView's text in cell summary.
             cell.accessibilityLabel = [cell.errorFailureLabel.text, cell.dateLabel.text, cell.errorCodeLabel.text, cell.errorDescriptionTextView.text].compactMap { $0 }.joined(separator: ". ")
             
