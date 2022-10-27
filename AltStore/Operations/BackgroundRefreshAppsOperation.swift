@@ -25,8 +25,8 @@ enum RefreshError: LocalizedError
 
 private extension CFNotificationName
 {
-    static let requestAppState = CFNotificationName(Bundle.Info.orgbundleIdentifier + ".RequestAppState" as CFString)
-    static let appIsRunning = CFNotificationName(Bundle.Info.orgbundleIdentifier + ".AppState.Running" as CFString)
+    static let requestAppState = CFNotificationName("com.altstore.RequestAppState" as CFString)
+    static let appIsRunning = CFNotificationName("com.altstore.AppState.Running" as CFString)
     
     static func requestAppState(for appID: String) -> CFNotificationName
     {
