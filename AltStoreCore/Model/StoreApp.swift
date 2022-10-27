@@ -15,14 +15,7 @@ import AltSign
 
 public extension StoreApp
 {
-    #if ALPHA
-    static let altstoreAppID = Bundle.Info.appbundleIdentifier + ".Alpha"
-    #elseif BETA
-    static let altstoreAppID = Bundle.Info.appbundleIdentifier + ".Beta"
-    #else
-    static let altstoreAppID = Bundle.Info.appbundleIdentifier
-    #endif
-    
+    static let altstoreAppID = Bundle.Info.appbundleIdentifier 
     static let dolphinAppID = "me.oatmealdome.dolphinios-njb"
 }
 
