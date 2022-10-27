@@ -67,7 +67,7 @@ class Operation: RSTOperation, ProgressReporting
     {
         super.main()
         
-        let name = "com.altstore." + NSStringFromClass(type(of: self))
+        let name = Bundle.Info.orgbundleIdentifier + "." + NSStringFromClass(type(of: self))
         self.backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: name) { [weak self] in
             guard let backgroundTask = self?.backgroundTaskID else { return }
             

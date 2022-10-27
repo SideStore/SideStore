@@ -88,9 +88,9 @@ class AppManager
     
     private init()
     {
-        self.operationQueue.name = "com.altstore.AppManager.operationQueue"
+        self.operationQueue.name = Bundle.Info.orgbundleIdentifier + ".AppManager.operationQueue"
         
-        self.serialOperationQueue.name = "com.altstore.AppManager.serialOperationQueue"
+        self.serialOperationQueue.name = Bundle.Info.orgbundleIdentifier + ".AppManager.serialOperationQueue"
         self.serialOperationQueue.maxConcurrentOperationCount = 1
         
         if #available(iOS 13, *)

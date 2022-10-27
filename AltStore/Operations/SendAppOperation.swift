@@ -16,7 +16,7 @@ class SendAppOperation: ResultOperation<ServerConnection>
 {
     let context: InstallAppOperationContext
     
-    private let dispatchQueue = DispatchQueue(label: "com.altstore.SendAppOperation")
+    private let dispatchQueue = DispatchQueue(label: Bundle.Info.orgbundleIdentifier + ".SendAppOperation")
     
     private var serverConnection: ServerConnection?
     

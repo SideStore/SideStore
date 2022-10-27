@@ -40,7 +40,7 @@ class BackgroundTaskManager
             fatalError("Error. \(error)")
         }
         
-        self.audioEngineQueue = DispatchQueue(label: "com.altstore.BackgroundTaskManager")
+        self.audioEngineQueue = DispatchQueue(label: Bundle.Info.orgbundleIdentifier + ".BackgroundTaskManager")
     }
 }
 

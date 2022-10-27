@@ -67,7 +67,7 @@ class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, ALTAppl
         super.init()
         
         self.context.authenticationOperation = self
-        self.operationQueue.name = "com.altstore.AuthenticationOperation"
+        self.operationQueue.name = Bundle.Info.orgbundleIdentifier + ".AuthenticationOperation"
         self.progress.totalUnitCount = 4
     }
     

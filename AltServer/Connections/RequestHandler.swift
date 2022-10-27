@@ -223,7 +223,7 @@ private extension RequestHandler
 
     func installApp(at fileURL: URL, toDeviceWithUDID udid: String, activeProvisioningProfiles: Set<String>?, connection: Connection, completionHandler: @escaping (Result<Void, ALTServerError>) -> Void)
     {
-        let serialQueue = DispatchQueue(label: "com.altstore.ConnectionManager.installQueue", qos: .default)
+        let serialQueue = DispatchQueue(label: Bundle.Info.orgbundleIdentifier + ".ConnectionManager.installQueue", qos: .default)
         var isSending = false
         
         var observation: NSKeyValueObservation?
