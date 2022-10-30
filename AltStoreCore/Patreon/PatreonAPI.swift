@@ -407,7 +407,7 @@ private extension PatreonAPI
                                     #keyPath(InstalledApp.bundleIdentifier), StoreApp.altstoreAppID, #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.isBeta))
         
         let installedApps = InstalledApp.all(satisfying: predicate, in: context)
-        installedApps.forEach { $0.isActive = false }
+        //installedApps.forEach { $0.isActive = false }
     }
 }
 
