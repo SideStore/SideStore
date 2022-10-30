@@ -42,9 +42,9 @@ enum OperationError: LocalizedError
         case .unknownUDID: return NSLocalizedString("Unknown device UDID.", comment: "")
         case .invalidApp: return NSLocalizedString("The app is invalid.", comment: "")
         case .invalidParameters: return NSLocalizedString("Invalid parameters.", comment: "")
-        case .noSources: return NSLocalizedString("There are no AltStore sources.", comment: "")
-        case .openAppFailed(let name): return String(format: NSLocalizedString("AltStore was denied permission to launch %@.", comment: ""), name)
-        case .missingAppGroup: return NSLocalizedString("AltStore's shared app group could not be found.", comment: "")
+        case .noSources: return NSLocalizedString("There are no SideStore sources.", comment: "")
+        case .openAppFailed(let name): return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), name)
+        case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be found.", comment: "")
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs.", comment: "")
         }
     }
