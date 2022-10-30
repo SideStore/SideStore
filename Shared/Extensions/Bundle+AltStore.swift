@@ -56,7 +56,7 @@ public extension Bundle
 
 public extension Bundle
 {
-    static var baseAltStoreAppGroupID = "group." + Bundle.Info.appbundleIdentifier
+    static var baseAltStoreAppGroupID = "group.com.rileytestut.AltStore"
     
     var appGroups: [String] {
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []
