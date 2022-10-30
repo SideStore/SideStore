@@ -11,7 +11,7 @@ import CoreData
 
 public extension Source
 {
-    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
+    static let altStoreIdentifier = "com.SideStore.AltStore"
     static let altStoreSourceURL = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/app.json")!
 }
 
