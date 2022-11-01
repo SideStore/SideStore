@@ -32,7 +32,7 @@ class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>
             return
         }
         
-        let urlString = UserDefaults.standard.string(forKey: "customAnisetteURL") ?? "https://sideloadly.io/anisette/irGb3Quww8zrhgqnzmrx"
+        let urlString = UserDefaults.standard.string(forKey: "customAnisetteURL") ?? "http://191.101.206.188:6969/"
         guard let url = URL(string: urlString) else { return }
 
            let task = URLSession.shared.dataTask(with: url) { data, response, error in
