@@ -164,9 +164,6 @@ submodules:
 build_rust_dependencies:
 	$(info Building Rust dependencies…)
 
-	curl https://sh.rustup.rs -sSf | sh
-	source "$(HOME)/.cargo/env"
-	rustup target add aarch64-apple-ios
 	pushd Dependencies/em_proxy
 	cargo build --release --target aarch64-apple-ios
 	popd
@@ -179,6 +176,7 @@ install_rustup:
 
 	curl https://sh.rustup.rs -sSf | sh
 	source "$(HOME)/.cargo/env"
+	rustup target add aarch64-apple-ios
 
 # TODO: Add x86, armv7? toolchains
 # https://doc.rust-lang.org/nightly/rustc/platform-support.html
