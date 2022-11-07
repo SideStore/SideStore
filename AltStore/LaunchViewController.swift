@@ -54,17 +54,22 @@ class LaunchViewController: RSTLaunchViewController
     }
     
     func fetchPairingFile() -> String? {
-        let filename = "ALTPairingFile.plist"
+        let filename = "ALTPairingFile.mobiledevicepairing"
         let fm = FileManager.default
         let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(filename)")
         if fm.fileExists(atPath: documentsPath.path), let contents = try? String(contentsOf: documentsPath), !contents.isEmpty {
+            print("Loaded ALTPairingFile from \(documentsPath.path)")
             return contents
         } else if
-            let appResourcePath = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "plist"),
+            let appResourcePath = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
             fm.fileExists(atPath: appResourcePath.path),
-            let contents = try? String(contentsOf: appResourcePath), !contents.isEmpty  {
+            let data = fm.contents(atPath: appResourcePath.path),
+            let contents = String(data: data, encoding: .utf8),
+            !contents.isEmpty  {
+            print("Loaded ALTPairingFile from \(appResourcePath.path)")
             return contents
         } else if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String, !plistString.isEmpty, !plistString.contains("insert pairing file here"){
+            print("Loaded ALTPairingFile from Info.plist")
             return plistString
         } else {
             return nil
