@@ -11,12 +11,15 @@ import CoreData
 
 @propertyWrapper @dynamicMemberLookup
 struct Managed<ManagedObject>
+struct Managed<ManagedObject>
 {
     var wrappedValue: ManagedObject {
         didSet {
             self.managedObjectContext = self.managedObject?.managedObjectContext
+            self.managedObjectContext = self.managedObject?.managedObjectContext
         }
     }
+    
 
     var projectedValue: Managed<ManagedObject> {
         return self
@@ -30,6 +33,7 @@ struct Managed<ManagedObject>
     init(wrappedValue: ManagedObject)
     {
         self.wrappedValue = wrappedValue
+        self.managedObjectContext = self.managedObject?.managedObjectContext
         self.managedObjectContext = self.managedObject?.managedObjectContext
     }
     
