@@ -19,7 +19,6 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
     let context: AppOperationContext
     private let appName: String
     private let bundleIdentifier: String
-    private var sourceURL: URL?
     private let destinationURL: URL
 
     private let session = URLSession(configuration: .default)
@@ -31,7 +30,6 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
         self.context = context
         self.appName = app.name
         self.bundleIdentifier = app.bundleIdentifier
-        self.sourceURL = app.url
         self.destinationURL = destinationURL
 
         super.init()

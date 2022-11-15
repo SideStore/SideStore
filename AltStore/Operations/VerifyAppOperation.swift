@@ -40,7 +40,6 @@ struct VerificationError: ALTLocalizedError {
 
     var errorTitle: String?
     var errorFailure: String?
-
     @Managed var app: AppProtocol?
     var entitlements: [String: Any]?
     var sourceBundleID: String?
