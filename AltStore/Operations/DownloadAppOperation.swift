@@ -200,9 +200,11 @@ private extension DownloadAppOperation {
             let downloadTask = self.session.downloadTask(with: sourceURL) { (fileURL, response, error) in
                 do
                 {
-                    if let response = response as? HTTPURLResponse {
+                    if let response = response as? HTTPURLResponse
+                    {
                         guard response.statusCode != 404 else { throw CocoaError(.fileNoSuchFile, userInfo: [NSURLErrorKey: sourceURL]) }
                     }
+                    
                     let (fileURL, _) = try Result((fileURL, response), error).get()
                     finishOperation(.success(fileURL))
                     
