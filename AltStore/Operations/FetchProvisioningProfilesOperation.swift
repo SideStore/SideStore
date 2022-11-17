@@ -181,6 +181,7 @@ extension FetchProvisioningProfilesOperation
                 {
                     // Use legacy bundle ID format for AltStore (and its extensions).
                     updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
+                }
                 else
                 {
                     updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
