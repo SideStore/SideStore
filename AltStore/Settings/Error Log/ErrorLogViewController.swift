@@ -155,6 +155,7 @@ private extension ErrorLogViewController
                     }
                     else
                     {
+                        // InstalledApp was probably deleted.
                         completion(nil, nil)
                     }
                 }
