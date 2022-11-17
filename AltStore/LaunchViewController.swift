@@ -37,16 +37,59 @@ class LaunchViewController: RSTLaunchViewController
     
     override func viewDidLoad()
     {
+        defer {
+            // Create destinationViewController now so view controllers can register for receiving Notifications.
+            self.destinationViewController = self.storyboard!.instantiateViewController(withIdentifier: "tabBarController") as! TabBarController
+        }
         super.viewDidLoad()
-        start_em_proxy(bind_addr: "127.0.0.1:51820")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        start_em_proxy(bind_addr: Consts.Proxy.serverURL)
         
-        let pf = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String
+        guard let pf = fetchPairingFile() else {
+            displayError("Device pairing file not found.")
+            return
+        }
         set_usbmuxd_socket()
-        start_minimuxer(pairing_file: pf.unsafelyUnwrapped)
+        let res = start_minimuxer(pairing_file: pf)
+        if res != 0 {
+            displayError("minimuxer failed to start. Incorrect arguments were passed.")
+        }
         auto_mount_dev_image()
-        
-        // Create destinationViewController now so view controllers can register for receiving Notifications.
-        self.destinationViewController = self.storyboard!.instantiateViewController(withIdentifier: "tabBarController") as! TabBarController
+    }
+    
+    func fetchPairingFile() -> String? {
+        let filename = "ALTPairingFile.mobiledevicepairing"
+        let fm = FileManager.default
+        let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(filename)")
+        if fm.fileExists(atPath: documentsPath.path), let contents = try? String(contentsOf: documentsPath), !contents.isEmpty {
+            print("Loaded ALTPairingFile from \(documentsPath.path)")
+            return contents
+        } else if
+            let appResourcePath = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
+            fm.fileExists(atPath: appResourcePath.path),
+            let data = fm.contents(atPath: appResourcePath.path),
+            let contents = String(data: data, encoding: .utf8),
+            !contents.isEmpty  {
+            print("Loaded ALTPairingFile from \(appResourcePath.path)")
+            return contents
+        } else if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String, !plistString.isEmpty, !plistString.contains("insert pairing file here"){
+            print("Loaded ALTPairingFile from Info.plist")
+            return plistString
+        } else {
+            return nil
+        }
+    }
+    
+    func displayError(_ msg: String) {
+        print(msg)
+        // Create a new alert
+        let dialogMessage = UIAlertController(title: "Error launching SideStore", message: msg, preferredStyle: .alert)
+
+        // Present alert to user
+        self.present(dialogMessage, animated: true, completion: nil)
     }
 }
 

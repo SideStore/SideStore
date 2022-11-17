@@ -11,8 +11,29 @@ import CoreData
 
 public extension Source
 {
+    #if ALPHA
     static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
-    static let altStoreSourceURL = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/app.json")!
+    #else
+    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
+    #endif
+    
+    #if STAGING
+    
+    #if ALPHA
+    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    #else
+    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    #endif
+    
+    #else
+    
+    #if ALPHA
+    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    #else
+    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    #endif
+    
+    #endif
 }
 
 @objc(Source)
