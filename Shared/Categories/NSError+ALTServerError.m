@@ -14,6 +14,8 @@
 #import "AltStoreCore/AltStoreCore-Swift.h"
 #endif
 
+@import AltSign;
+
 NSErrorDomain const AltServerErrorDomain = @"AltServer.ServerError";
 NSErrorDomain const AltServerInstallationErrorDomain = @"AltServer.InstallationError";
 NSErrorDomain const AltServerConnectionErrorDomain = @"AltServer.ConnectionError";
@@ -186,7 +188,17 @@ NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSyste
             return NSLocalizedString(@"You cannot activate more than 3 apps with a non-developer Apple ID.", @"");
 
         case ALTServerErrorUnsupportediOSVersion:
-            return NSLocalizedString(@"Your device must be running iOS 12.2 or later to install SideStore.", @"");
+        {
+            NSString *appName = self.userInfo[ALTAppNameErrorKey];
+            NSString *osVersion = [self altserver_osVersion];
+            
+            if (appName == nil || osVersion == nil)
+            {
+                return NSLocalizedString(@"Your device must be running iOS 12.2 or later to install SideStore.", @"");
+            }
+            
+            return [NSString stringWithFormat:NSLocalizedString(@"%@ requires %@ or later.", @""), appName, osVersion];
+        }
             
         case ALTServerErrorUnknownRequest:
             return NSLocalizedString(@"SideStore does not support this request.", @"");
