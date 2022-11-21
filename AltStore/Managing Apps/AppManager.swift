@@ -67,6 +67,15 @@ final class AppManager
         }
     }
     
+    private lazy var progressLock: UnsafeMutablePointer<os_unfair_lock> = {
+        // Can't safely pass &os_unfair_lock to os_unfair_lock functions in Swift,
+        // so pass UnsafeMutablePointer instead which is guaranteed to be safe.
+        // https://stackoverflow.com/a/68615042
+        let lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
+        lock.initialize(to: .init())
+        return lock
+    }()
+    
     @available(iOS 13, *)
     private(set) var publisher: AppManagerPublisher {
         get { _publisher as! AppManagerPublisher }
@@ -100,6 +109,13 @@ final class AppManager
         {
             self.prepareSubscriptions()
         }
+    }
+    
+    deinit
+    {
+        // Should never be called, but do bookkeeping anyway.
+        self.progressLock.deinitialize(count: 1)
+        self.progressLock.deallocate()
     }
     
     @available(iOS 13, *)
@@ -801,12 +817,18 @@ extension AppManager
     
     func installationProgress(for app: AppProtocol) -> Progress?
     {
+        os_unfair_lock_lock(self.progressLock)
+        defer { os_unfair_lock_unlock(self.progressLock) }
+        
         let progress = self.installationProgress[app.bundleIdentifier]
         return progress
     }
     
     func refreshProgress(for app: AppProtocol) -> Progress?
     {
+        os_unfair_lock_lock(self.progressLock)
+        defer { os_unfair_lock_unlock(self.progressLock) }
+        
         let progress = self.refreshProgress[app.bundleIdentifier]
         return progress
     }
@@ -2092,6 +2114,9 @@ private extension AppManager
     
     func progress(for operation: AppOperation) -> Progress?
     {
+        os_unfair_lock_lock(self.progressLock)
+        defer { os_unfair_lock_unlock(self.progressLock) }
+        
         switch operation
         {
         case .install, .update: return self.installationProgress[operation.bundleIdentifier]
@@ -2101,6 +2126,9 @@ private extension AppManager
     
     func set(_ progress: Progress?, for operation: AppOperation)
     {
+        os_unfair_lock_lock(self.progressLock)
+        defer { os_unfair_lock_unlock(self.progressLock) }
+        
         switch operation
         {
         case .install, .update: self.installationProgress[operation.bundleIdentifier] = progress
