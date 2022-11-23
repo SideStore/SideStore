@@ -68,6 +68,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>altstore-com.rileytestut.AltStore</string>
+                                <string>sidestore-com.SideStore.SideStore</string>
 			</array>
 		</dict>
 	</array>
