@@ -1,12 +1,12 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MARKETING_VERSION = 1.0.0
-CURRENT_PROJECT_VERSION = 3000
+MARKETING_VERSION = 0.1.1
+CURRENT_PROJECT_VERSION = 3011
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ
-ORG_IDENTIFIER = com.joemattiello
+ORG_IDENTIFIER = com.SideStore
 
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
@@ -14,10 +14,11 @@ ORG_IDENTIFIER = com.joemattiello
 ORG_PREFIX = $(ORG_IDENTIFIER)
 
 PRODUCT_NAME = SideStore
+EXTENSION_PREFIX = $(ORG_PREFIX).SideStore
 //PRODUCT_NAME[configuration=Debug] = Prov Debug
 
-PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).$(PROJECT_NAME)
+PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).$(PRODUCT_NAME)
 //PRODUCT_BUNDLE_IDENTIFIER[configuration=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-debug
 
-APP_GROUP_IDENTIFIER        = $(ORG_PREFIX).$(PROJECT_NAME)
+APP_GROUP_IDENTIFIER        = $(ORG_PREFIX).$(PRODUCT_NAME)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
