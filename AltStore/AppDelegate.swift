@@ -72,7 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        AnalyticsManager.shared.start()
 
         self.setTintColor()
 

@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "appcenter-sdk-apple",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
-      "state" : {
-        "revision" : "8354a50fe01a7e54e196d3b5493b5ab53dd5866a",
-        "version" : "4.4.2"
-      }
-    },
-    {
       "identity" : "keychainaccess",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
@@ -52,15 +43,6 @@
       "state" : {
         "revision" : "033fcb41dac96b1b6effa945ca1f9ade002370b2",
         "version" : "1.1.1501"
-      }
-    },
-    {
-      "identity" : "plcrashreporter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/microsoft/PLCrashReporter.git",
-      "state" : {
-        "revision" : "6b27393cad517c067dceea85fadf050e70c4ceaa",
-        "version" : "1.10.1"
       }
     },
     {
