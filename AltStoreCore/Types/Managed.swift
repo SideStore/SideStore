@@ -13,7 +13,7 @@ import CoreData
 struct Managed<ManagedObject>
 struct Managed<ManagedObject>
 {
-    var wrappedValue: ManagedObject {
+    public var wrappedValue: ManagedObject {
         didSet {
             self.managedObjectContext = self.managedObject?.managedObjectContext
             self.managedObjectContext = self.managedObject?.managedObjectContext
@@ -37,7 +37,7 @@ struct Managed<ManagedObject>
         self.managedObjectContext = self.managedObject?.managedObjectContext
     }
     
-    subscript<T>(dynamicMember keyPath: KeyPath<ManagedObject, T>) -> T
+    public subscript<T>(dynamicMember keyPath: KeyPath<ManagedObject, T>) -> T
     {
         var result: T!
         
