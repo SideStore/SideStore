@@ -267,12 +267,12 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                     } else {
                         throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
                     }
-                    
+
 //                 else {
 //                throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
 //                }
             }
-            
+
             if let tintColorHex = try container.decodeIfPresent(String.self, forKey: .tintColor)
             {
                 guard let tintColor = UIColor(hexString: tintColorHex) else {
@@ -293,13 +293,13 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                 if (versions.count == 0){
                     throw DecodingError.dataCorruptedError(forKey: .versions, in: container, debugDescription: "At least one version is required in key: versions")
                 }
-                
+
                 for version in versions
                 {
                     version.appBundleID = self.bundleIdentifier
                 }
                 
-                self.setVersions(versions)
+                try self.setVersions(versions)
             }
             else
             {
@@ -317,7 +317,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                                                            size: Int64(size),
                                                            appBundleID: self.bundleIdentifier,
                                                            in: context)
-                self.setVersions([appVersion])
+                try self.setVersions([appVersion])
             }
         }
         catch
@@ -334,8 +334,12 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
 
 internal extension StoreApp
 {
-    func setVersions(_ versions: [AppVersion])
+    func setVersions(_ versions: [AppVersion]) throws
     {
+        guard let latestVersion = versions.first else {
+            throw MergeError.noVersions(for: self)
+        }
+
         self._versions = NSOrderedSet(array: versions)
         
         let latestSupportedVersion = versions.first(where: { $0.isSupported })
@@ -355,7 +359,6 @@ internal extension StoreApp
         }
                 
         // Preserve backwards compatibility by assigning legacy property values.
-        guard let latestVersion = versions.first else { preconditionFailure("StoreApp must have at least one AppVersion.") }
         self.latestVersionString = latestVersion.version
         self._versionDate = latestVersion.date
         self._versionDescription = latestVersion.localizedDescription
@@ -393,7 +396,7 @@ public extension StoreApp
                                                    appBundleID: app.bundleIdentifier,
                                                    sourceID: Source.altStoreIdentifier,
                                                    in: context)
-        app.setVersions([appVersion])
+        try? app.setVersions([appVersion])
         
         print("makeAltStoreApp StoreApp: \(String(describing: app))")
         
