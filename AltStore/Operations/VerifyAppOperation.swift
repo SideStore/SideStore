@@ -60,6 +60,8 @@ struct VerificationError: ALTLocalizedError {
             return String(formatted: "This device is running iOS %@, but %@", deviceOSVersion.stringValue, failureReason)
         default: return nil
         }
+        
+        return self.errorFailureReason
     }
 
     var errorFailureReason: String {
