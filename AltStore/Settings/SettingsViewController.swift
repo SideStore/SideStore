@@ -24,6 +24,7 @@ extension SettingsViewController
         case patreon
         case appRefresh
         case instructions
+        case techyThings
         case credits
         case debug
     }
@@ -253,6 +254,9 @@ private extension SettingsViewController
             
         case .instructions:
             break
+            
+        case .techyThings:
+            settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("TECHY THINGS", comment: "")
             
         case .credits:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("CREDITS", comment: "")
@@ -514,7 +518,7 @@ extension SettingsViewController
         {
         case .signIn where self.activeTeam != nil: return nil
         case .account where self.activeTeam == nil: return nil
-        case .signIn, .account, .patreon, .appRefresh, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .debug:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(headerView, for: section, isHeader: true)
             return headerView
@@ -534,7 +538,7 @@ extension SettingsViewController
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
             
-        case .account, .credits, .debug, .instructions: return nil
+        case .account, .credits, .debug, .instructions, .techyThings: return nil
         }
     }
 
@@ -545,7 +549,7 @@ extension SettingsViewController
         {
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0
-        case .signIn, .account, .patreon, .appRefresh, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .debug:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: true)
             return height
             
@@ -564,7 +568,7 @@ extension SettingsViewController
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
-        case .account, .credits, .debug, .instructions: return 0.0
+        case .account, .credits, .debug, .instructions, .techyThings: return 0.0
         }
     }
 }
@@ -577,7 +581,6 @@ extension SettingsViewController
         switch section
         {
         case .signIn: self.signIn()
-        case .instructions: break
         case .appRefresh:
             let row = AppRefreshRow.allCases[indexPath.row]
             switch row
@@ -798,7 +801,7 @@ extension SettingsViewController
 
             }
             
-        default: break
+        case .account, .patreon, .instructions, .techyThings: break
         }
     }
 }
