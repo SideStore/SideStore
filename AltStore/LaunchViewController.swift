@@ -83,7 +83,8 @@ class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate
             let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 // Try to load it from a file picker
                 var types = UTType.types(tag: "plist", tagClass: UTTagClass.filenameExtension, conformingTo: nil)
-                types.append(contentsOf: UTType.types(tag: "mobiledevicepairing", tagClass: UTTagClass.filenameExtension, conformingTo: nil))
+                types.append(contentsOf: UTType.types(tag: "mobiledevicepairing", tagClass: UTTagClass.filenameExtension, conformingTo: UTType.data))
+                types.append(.xml)
                 let documentPickerController = UIDocumentPickerViewController(forOpeningContentTypes: types)
                 documentPickerController.delegate = self
                 self.present(documentPickerController, animated: true, completion: nil)
