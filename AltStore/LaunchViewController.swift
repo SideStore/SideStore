@@ -141,7 +141,7 @@ class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        displayError("Choosing a pairing file was cancelled")
+        displayError("Choosing a pairing file was cancelled. Please re-open the app and try again.")
     }
     
     func start_minimuxer_threads(_ pairing_file: String) {
