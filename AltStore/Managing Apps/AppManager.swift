@@ -704,7 +704,6 @@ extension AppManager
             var installedApp: InstalledApp?
         }
         
-        let appName = installedApp.name
         let context = Context()
         context.installedApp = installedApp
         
@@ -714,11 +713,14 @@ extension AppManager
             switch result {
             case .success: completionHandler(.success(()))
             case .failure(let nsError as NSError):
-                let localizedTitle = String(format: NSLocalizedString("Failed to enable JIT for %@", comment: ""), appName)
+                let localizedTitle = String(format: NSLocalizedString("Failed to Enable JIT for %@", comment: ""), appName)
                 let error = nsError.withLocalizedTitle(localizedTitle)
+                
                 self.log(error, operation: .enableJIT, app: installedApp)
+                completionHandler(.failure(error))
             }
         }
+        enableJITOperation.addDependency(findServerOperation)
         
         self.run([enableJITOperation], context: context, requiresSerialQueue: true)
     }
@@ -1999,7 +2001,7 @@ private extension AppManager
         UNUserNotificationCenter.current().add(request)
     }
     
-    func log(_ error: Error, for operation: AppOperation)
+    func log(_ error: Error, operation: LoggedError.Operation, app: AppProtocol)
     {
         // Sanitize NSError on same thread before performing background task.
         let sanitizedError = (error as NSError).sanitizedForSerialization()
@@ -2016,9 +2018,9 @@ private extension AppManager
             case .restore: return .restore
             }
         }()
-                    
+                        
         DatabaseManager.shared.persistentContainer.performBackgroundTask { context in
-            var app = operation.app
+            var app = app
             if let managedApp = app as? NSManagedObject, let tempApp = context.object(with: managedApp.objectID) as? AppProtocol
             {
                 app = tempApp
@@ -2026,7 +2028,7 @@ private extension AppManager
             
             do
             {
-                _ = LoggedError(error: sanitizedError, app: app, operation: loggedErrorOperation, context: context)
+                _ = LoggedError(error: sanitizedError, app: app, operation: operation, context: context)
                 try context.save()
             }
             catch let saveError
