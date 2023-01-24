@@ -194,6 +194,7 @@ struct OperationError: ALTLocalizedError {
         }
         
     }
+    private var _failureReason: String?
     
     var recoverySuggestion: String? {
         switch self.code

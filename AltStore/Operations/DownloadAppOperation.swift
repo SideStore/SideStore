@@ -17,7 +17,6 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
 {
     let app: AppProtocol
     let context: AppOperationContext
-
     private let appName: String
     private let bundleIdentifier: String
     private var sourceURL: URL?
@@ -30,7 +29,6 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
     {
         self.app = app
         self.context = context
-
         self.appName = app.name
         self.bundleIdentifier = app.bundleIdentifier
         self.sourceURL = app.url
@@ -166,7 +164,6 @@ private extension DownloadAppOperation {
                 
                 var isDirectory: ObjCBool = false
                 guard FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory) else { throw OperationError.appNotFound(name: self.appName) }
-
                 try FileManager.default.createDirectory(at: self.temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
                 
                 let appBundleURL: URL
@@ -315,7 +312,7 @@ private extension DownloadAppOperation
         }
         catch let error as DecodingError
         {
-            let nsError = (error as NSError).withLocalizedFailure(String(format: NSLocalizedString("Could not determine dependencies for %@.", comment: ""), application.name))
+            let nsError = (error as NSError).withLocalizedFailure(String(format: NSLocalizedString("The dependencies for %@ could not be determined.", comment: ""), application.name))
             completionHandler(.failure(nsError))
         }
         catch
@@ -347,7 +344,7 @@ private extension DownloadAppOperation
             }
             catch let error as NSError
             {
-                let localizedFailure = String(format: NSLocalizedString("The dependency '%@' could not be downloaded.", comment: ""), dependency.preferredFilename)
+                let localizedFailure = String(format: NSLocalizedString("The dependency “%@” could not be downloaded.", comment: ""), dependency.preferredFilename)
                 completionHandler(.failure(error.withLocalizedFailure(localizedFailure)))
             }
         }

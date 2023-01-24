@@ -17,14 +17,12 @@ struct SourceError: ALTLocalizedError
     enum Code: Int, ALTErrorCode
     {
         typealias Error = SourceError
-
         case unsupported
     }
     
     var code: Code
     var errorTitle: String?
     var errorFailure: String?
-
     @Managed var source: Source
     
     var errorFailureReason: String {

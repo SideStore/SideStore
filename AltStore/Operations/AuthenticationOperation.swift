@@ -215,7 +215,6 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                     let account = Account.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Account.identifier), altTeam.account.identifier), in: context),
                     let team = Team.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Team.identifier), altTeam.identifier), in: context)
                 else { throw AuthenticationError(.noTeam) }
-
                 // Account
                 account.isActiveAccount = true
                 
@@ -495,7 +494,6 @@ private extension AuthenticationOperation
                 {
                     let certificate = try Result(certificate, error).get()
                     guard let privateKey = certificate.privateKey else { throw AuthenticationError(.missingPrivateKey) }
-
                     ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
                         do
                         {

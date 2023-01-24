@@ -30,7 +30,6 @@ extension CodableError
         case codableError(CodableError)
         indirect case array([UserInfoValue])
         indirect case dictionary([String: UserInfoValue])
-
         var value: Any? {
             switch self
             {
@@ -43,7 +42,6 @@ extension CodableError
             case .dictionary(let dictionary): return dictionary.compactMapValues { $0.value } // .compactMapValues instead of .mapValues to ensure nil values are removed.
             }
         }
-
         var codableValue: Codable? {
             switch self
             {
@@ -54,12 +52,10 @@ extension CodableError
                 let sanitizedError = nsError.sanitizedForSerialization()
                 let data = try? NSKeyedArchiver.archivedData(withRootObject: sanitizedError, requiringSecureCoding: true)
                 return data
-
             case .array(let array): return array
             case .dictionary(let dictionary): return dictionary
             }
         }
-
         init(_ rawValue: Any?)
         {
             switch rawValue
@@ -72,7 +68,6 @@ extension CodableError
             default: self = .unknown
             }
         }
-
         init(from decoder: Decoder) throws
         {
             let container = try decoder.singleValueContainer()
@@ -180,30 +175,25 @@ struct CodableError: Codable
                 provider?(self.error, NSLocalizedFailureReasonErrorKey) != nil ||
                 (self.error._domain == ALTServerError.errorDomain && self.error._code == ALTServerError.underlyingError.rawValue)
             )
-
             if !isRecognizedError
             {
                 // Error not recognized, so copy over NSLocalizedDescriptionKey and NSLocalizedFailureReasonErrorKey.
                 userInfo[NSLocalizedDescriptionKey] = userInfo[ErrorUserInfoKey.altLocalizedDescription]
                 userInfo[NSLocalizedFailureReasonErrorKey] = userInfo[ErrorUserInfoKey.altLocalizedFailureReason]
             }
-
             // Copy over NSLocalizedRecoverySuggestionErrorKey and NSDebugDescriptionErrorKey if provider returns nil.
             if provider?(self.error, NSLocalizedRecoverySuggestionErrorKey) == nil
             {
                 userInfo[NSLocalizedRecoverySuggestionErrorKey] = userInfo[ErrorUserInfoKey.altLocalizedRecoverySuggestion]
             }
-
             if provider?(self.error, NSDebugDescriptionErrorKey) == nil
             {
                 userInfo[NSDebugDescriptionErrorKey] = userInfo[ErrorUserInfoKey.altDebugDescription]
             }
-
             userInfo[ErrorUserInfoKey.altLocalizedDescription] = nil
             userInfo[ErrorUserInfoKey.altLocalizedFailureReason] = nil
             userInfo[ErrorUserInfoKey.altLocalizedRecoverySuggestion] = nil
             userInfo[ErrorUserInfoKey.altDebugDescription] = nil
-
             self.userInfo = userInfo
         }
         else if let rawUserInfo = try container.decodeIfPresent([String: UserInfoValue].self, forKey: .legacyUserInfo)
@@ -213,13 +203,11 @@ struct CodableError: Codable
             self.userInfo = userInfo
         }
     }
-
     func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.errorDomain, forKey: .errorDomain)
         try container.encode(self.errorCode, forKey: .errorCode)
-
         let rawLegacyUserInfo = self.userInfo?.compactMapValues { (value) -> UserInfoValue? in
             // .legacyUserInfo only supports String and NSError values.
             switch value

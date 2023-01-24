@@ -80,7 +80,6 @@ NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSyste
             NSError *underlyingError = self.userInfo[NSUnderlyingErrorKey];
             return underlyingError.localizedDescription;
         }
-
         default:
             return nil;
     }
@@ -95,7 +94,6 @@ NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSyste
             NSError *underlyingError = self.userInfo[NSUnderlyingErrorKey];
             return underlyingError.alt_localizedFailure;
         }
-
         case ALTServerErrorConnectionFailed:
         {
             NSError *underlyingError = self.userInfo[NSUnderlyingErrorKey];
@@ -135,6 +133,7 @@ NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSyste
                 return [NSString stringWithFormat:NSLocalizedString(@"Error code: %@", @""), underlyingErrorCode];
             }
             
+            // Return nil because this is a "pass-through" error, so if underlyingError doesn't have failure reason, this doesn't either.
             return nil;
         }
         
@@ -218,7 +217,7 @@ NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSyste
         case ALTServerErrorIncompatibleDeveloperDisk:
         {
             NSString *osVersion = [self altserver_osVersion] ?: NSLocalizedString(@"this device's OS version", @"");
-            NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"The disk is incompatible with %@.", @""), osVersion];
+            NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"The disk is incompatible with %@.", @""), osVersion]; // "Developer" disk is included in localizedFailure
             return failureReason;
         }
     }

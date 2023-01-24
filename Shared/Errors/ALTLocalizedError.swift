@@ -32,7 +32,6 @@ public extension ALTLocalizedError
         get { nil }
         set {}
     }
-
     var sourceLine: UInt? {
         get { nil }
         set {}
@@ -42,14 +41,12 @@ public extension ALTLocalizedError
 public protocol ALTErrorCode: RawRepresentable where RawValue == Int
 {
     associatedtype Error: ALTLocalizedError where Error.Code == Self
-
     static var errorDomain: String { get } // Optional
 }
 
 public protocol ALTErrorEnum: ALTErrorCode
 {
     associatedtype Error = DefaultLocalizedError<Self>
-
     var errorFailureReason: String { get }
 }
 
@@ -57,7 +54,6 @@ public protocol ALTErrorEnum: ALTErrorCode
 public extension ALTLocalizedError
 {
     var errorCode: Int { self.code.rawValue }
-
     var errorDescription: String? {
         guard (self as NSError).localizedFailure == nil else {
             // Error has localizedFailure, so return nil to construct localizedDescription from it + localizedFailureReason.
@@ -95,7 +91,6 @@ public extension ALTLocalizedError where Code: ALTErrorEnum
     static var errorDomain: String {
         return Code.errorDomain
     }
-
     // ALTErrorEnum Codes provide their failure reason directly.
     var errorFailureReason: String {
         return self.code.errorFailureReason
@@ -119,12 +114,10 @@ public extension ALTLocalizedError
     init(_ error: Self, localizedTitle: String? = nil, localizedFailure: String? = nil)
     {
         self = error
-
         if let localizedTitle
         {
             self.errorTitle = localizedTitle
         }
-
         if let localizedFailure
         {
             self.errorFailure = localizedFailure

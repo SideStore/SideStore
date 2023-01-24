@@ -197,9 +197,9 @@ private extension VerifyAppOperation
                 let permissions = entitlements.keys.sorted().joined(separator: "\n")
                 let message = String(format: NSLocalizedString("""
                     You must allow access to these private permissions before continuing:
-
+                    
                     %@
-
+                    
                     Private permissions allow apps to do more than normally allowed by iOS, including potentially accessing sensitive private data. Make sure to only install apps from sources you trust.
                     """, comment: ""), permissions)
                 

@@ -77,7 +77,6 @@ public extension NSError
         userInfo[NSLocalizedFailureReasonErrorKey] = self.localizedFailureReason
         userInfo[NSLocalizedRecoverySuggestionErrorKey] = self.localizedRecoverySuggestion
         userInfo[NSDebugDescriptionErrorKey] = self.localizedDebugDescription
-
         // Remove userInfo values that don't conform to NSSecureEncoding.
         userInfo = userInfo.filter { (key, value) in
             return (value as AnyObject) is NSSecureCoding

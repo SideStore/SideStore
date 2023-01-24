@@ -547,7 +547,6 @@ extension AppManager
             do
             {
                 guard let result = results.values.first else { throw OperationError.unknown() }
-
                 let installedApp = try result.get()
                 assert(installedApp.managedObjectContext != nil)
                 
@@ -612,7 +611,6 @@ extension AppManager
             do
             {
                 guard let result = results.values.first else { throw OperationError.unknown() }
-
                 let installedApp = try result.get()
                 assert(installedApp.managedObjectContext != nil)
                 

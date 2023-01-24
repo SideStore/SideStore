@@ -32,6 +32,23 @@ enum PatreonAPIErrorCode: Int, ALTErrorEnum, CaseIterable
     }
 }
 
+typealias PatreonAPIError = PatreonAPIErrorCode.Error
+enum PatreonAPIErrorCode: Int, ALTErrorEnum, CaseIterable
+{
+    case unknown
+    case notAuthenticated
+    case invalidAccessToken
+    
+    var errorFailureReason: String {
+        switch self
+        {
+        case .unknown: return NSLocalizedString("An unknown error occurred.", comment: "")
+        case .notAuthenticated: return NSLocalizedString("No connected Patreon account.", comment: "")
+        case .invalidAccessToken: return NSLocalizedString("Invalid access token.", comment: "")
+        }
+    }
+}
+
 extension PatreonAPI
 {
     enum AuthorizationType

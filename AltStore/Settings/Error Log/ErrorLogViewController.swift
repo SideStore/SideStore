@@ -46,14 +46,19 @@ final class ErrorLogViewController: UITableViewController
         self.tableView.dataSource = self.dataSource
         self.tableView.prefetchDataSource = self.dataSource
     }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
         guard let loggedError = sender as? LoggedError, segue.identifier == "showErrorDetails" else { return }
-
+        
         let navigationController = segue.destination as! UINavigationController
-
+        
         let errorDetailsViewController = navigationController.viewControllers.first as! ErrorDetailsViewController
         errorDetailsViewController.loggedError = loggedError
+    }
+    
+    @IBAction private func unwindFromErrorDetails(_ segue: UIStoryboardSegue)
+    {
     }
 }
 
@@ -76,13 +81,7 @@ private extension ErrorLogViewController
             let cell = cell as! ErrorLogTableViewCell
             cell.dateLabel.text = self.timeFormatter.string(from: loggedError.date)
             cell.errorFailureLabel.text = loggedError.localizedFailure ?? NSLocalizedString("Operation Failed", comment: "")
-            
-            switch loggedError.domain
-            {
-            case AltServerErrorDomain: cell.errorCodeLabel?.text = String(format: NSLocalizedString("AltServer Error %@", comment: ""), NSNumber(value: loggedError.code))
-            case OperationError.domain: cell.errorCodeLabel?.text = String(format: NSLocalizedString("AltStore Error %@", comment: ""), NSNumber(value: loggedError.code))
-            default: cell.errorCodeLabel?.text = loggedError.error.localizedErrorCode
-            }
+            cell.errorCodeLabel.text = loggedError.error.localizedErrorCode
             
             let nsError = loggedError.error as NSError
             let errorDescription = [nsError.localizedDescription, nsError.localizedRecoverySuggestion].compactMap { $0 }.joined(separator: "\n\n")
@@ -258,7 +257,7 @@ private extension ErrorLogViewController
         let baseURL = URL(string: "https://faq.altstore.io/getting-started/troubleshooting-guide")!
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
         
-        let query = [loggedError.domain, "\(loggedError.code)"].joined(separator: "+")
+        let query = [loggedError.domain, "\(loggedError.error.displayCode)"].joined(separator: "+")
         components.queryItems = [URLQueryItem(name: "q", value: query)]
         
         let safariViewController = SFSafariViewController(url: components.url ?? baseURL)
