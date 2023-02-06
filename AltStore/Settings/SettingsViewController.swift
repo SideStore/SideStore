@@ -26,6 +26,7 @@ extension SettingsViewController
         case instructions
         case techyThings
         case credits
+        case macDirtyCow
         case debug
     }
     
@@ -88,6 +89,7 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
     
     @IBOutlet private var refreshSideJITServer: UILabel!
+    @IBOutlet private var enforceThreeAppLimitSwitch: UISwitch!
     
     @IBOutlet private var versionLabel: UILabel!
     
@@ -198,6 +200,7 @@ private extension SettingsViewController
         self.backgroundRefreshSwitch.isOn = UserDefaults.standard.isBackgroundRefreshEnabled
         self.noIdleTimeoutSwitch.isOn = UserDefaults.standard.isIdleTimeoutDisableEnabled
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
+        self.enforceThreeAppLimitSwitch.isOn = !UserDefaults.standard.ignoreActiveAppsLimit
         
         if self.isViewLoaded
         {
@@ -261,6 +264,16 @@ private extension SettingsViewController
         case .credits:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("CREDITS", comment: "")
             
+        case .macDirtyCow:
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("MACDIRTYCOW", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("If you've removed the 3-sideloaded app limit via the MacDirtyCow exploit, disable this setting to sideload more than 3 apps at a time.", comment: "")
+            }
+            
         case .debug:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("DEBUG", comment: "")
         }
@@ -276,6 +289,20 @@ private extension SettingsViewController
         
         let size = settingsHeaderFooterView.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         return size.height
+    }
+    
+    func isSectionHidden(_ section: Section) -> Bool
+    {
+        switch section
+        {
+        case .macDirtyCow:
+            let ios16_2 = OperatingSystemVersion(majorVersion: 16, minorVersion: 2, patchVersion: 0)
+            
+            let isMacDirtyCowExploitSupported = !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16_2)
+            return !(isMacDirtyCowExploitSupported && UserDefaults.standard.isDebugModeEnabled)
+            
+        default: return false
+        }
     }
 }
 
@@ -340,6 +367,16 @@ private extension SettingsViewController
     @IBAction func toggleNoIdleTimeoutEnabled(_ sender: UISwitch)
     {
         UserDefaults.standard.isIdleTimeoutDisableEnabled = sender.isOn
+    }
+    
+    @IBAction func toggleEnforceThreeAppLimit(_ sender: UISwitch)
+    {
+        UserDefaults.standard.ignoreActiveAppsLimit = !sender.isOn
+        
+        if UserDefaults.standard.activeAppsLimit != nil
+        {
+            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+        }
     }
     
     @available(iOS 14, *)
@@ -470,6 +507,7 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where isSectionHidden(section): return 0
         case .signIn: return (self.activeTeam == nil) ? 1 : 0
         case .account: return (self.activeTeam == nil) ? 0 : 3
         case .appRefresh: return AppRefreshRow.allCases.count
@@ -516,9 +554,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         case .account where self.activeTeam == nil: return nil
-        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .macDirtyCow, .debug:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(headerView, for: section, isHeader: true)
             return headerView
@@ -532,8 +571,9 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
-        case .signIn, .patreon, .appRefresh:
+        case .signIn, .patreon, .appRefresh, .macDirtyCow:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -547,9 +587,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where isSectionHidden(section): return 1.0
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0
-        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .techyThings, .credits, .macDirtyCow, .debug:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: true)
             return height
             
@@ -562,9 +603,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where isSectionHidden(section): return 1.0
         case .signIn where self.activeTeam != nil: return 1.0
-        case .account where self.activeTeam == nil: return 1.0
-        case .signIn, .patreon, .appRefresh:
+        case .account where self.activeTeam == nil: return 1.0            
+        case .signIn, .patreon, .appRefresh, .macDirtyCow:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
@@ -801,7 +843,7 @@ extension SettingsViewController
 
             }
             
-        case .account, .patreon, .instructions, .techyThings: break
+        case .account, .patreon, .instructions, .techyThings, .macDirtyCow: break
         }
     }
 }

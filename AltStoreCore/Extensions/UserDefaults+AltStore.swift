@@ -52,6 +52,7 @@ public extension UserDefaults
     @NSManaged var trustedSourceIDs: [String]?
     @NSManaged var trustedServerURL: String?
     
+    @nonobjc
     var activeAppsLimit: Int? {
         get {
             return self._activeAppsLimit?.intValue
@@ -68,6 +69,8 @@ public extension UserDefaults
         }
     }
     @NSManaged @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber?
+    
+    @NSManaged var ignoreActiveAppsLimit: Bool
     
     class func registerDefaults()
     {
@@ -88,7 +91,8 @@ public extension UserDefaults
             #keyPath(UserDefaults.localServerSupportsRefreshing): localServerSupportsRefreshing,
             #keyPath(UserDefaults.requiresAppGroupMigration): true,
             #keyPath(UserDefaults.menuAnisetteList): "https://servers.sidestore.io/servers.json",
-            #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io"
+            #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io",
+            #keyPath(UserDefaults.ignoreActiveAppsLimit): false
         ] as [String : Any]
         
         UserDefaults.standard.register(defaults: defaults)
