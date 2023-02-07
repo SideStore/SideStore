@@ -307,6 +307,16 @@ extension AppManager
             presentingViewController.present(alertController, animated: true, completion: nil)
         }
     }
+    
+    func clearAppCache(completion: @escaping (Result<Void, Error>) -> Void)
+    {
+        let clearAppCacheOperation = ClearAppCacheOperation()
+        clearAppCacheOperation.resultHandler = { result in
+            completion(result)
+        }
+        
+        self.run([clearAppCacheOperation], context: nil)
+    }
 }
 
 extension AppManager
@@ -754,6 +764,12 @@ extension AppManager
         let progress = self.refreshProgress[app.bundleIdentifier]
         return progress
     }
+    
+    func isActivelyManagingApp(withBundleID bundleID: String) -> Bool
+    {
+        let isActivelyManaging = self.installationProgress.keys.contains(bundleID) || self.refreshProgress.keys.contains(bundleID)
+        return isActivelyManaging
+    }
 }
 
 extension AppManager
@@ -806,12 +822,6 @@ private extension AppManager
             
             return bundleIdentifier
         }
-    }
-    
-    func isActivelyManagingApp(withBundleID bundleID: String) -> Bool
-    {
-        let isActivelyManaging = self.installationProgress.keys.contains(bundleID) || self.refreshProgress.keys.contains(bundleID)
-        return isActivelyManaging
     }
     
     @discardableResult
