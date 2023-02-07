@@ -57,6 +57,12 @@ extension SettingsViewController
         case softwareLicenses
     }
     
+    fileprivate enum TechyThingsRow: Int, CaseIterable
+    {
+        case errorLog
+        case clearCache
+    }
+    
     fileprivate enum DebugRow: Int, CaseIterable
     {
         case sendFeedback
@@ -635,6 +641,13 @@ extension SettingsViewController
                 self.addRefreshAppsShortcut()
             }
             
+        case .techyThings:
+            let row = TechyThingsRow.allCases[indexPath.row]
+            switch row
+            {
+            case .errorLog: break
+            case .clearCache: self.clearCache()
+            }
             
         case .credits:
             let row = CreditsRow.allCases[indexPath.row]
@@ -843,7 +856,7 @@ extension SettingsViewController
 
             }
             
-        case .account, .patreon, .instructions, .techyThings, .macDirtyCow: break
+        case .account, .patreon, .instructions, .macDirtyCow: break
         }
     }
 }

@@ -18,7 +18,6 @@ struct BatchError: ALTLocalizedError
         
         case batchError
     }
-
     var code: Code = .batchError
     var underlyingErrors: [Error]
     
