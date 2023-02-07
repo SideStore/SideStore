@@ -71,6 +71,7 @@ public extension UserDefaults
     @NSManaged @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber?
     
     @NSManaged var ignoreActiveAppsLimit: Bool
+    @NSManaged var isMacDirtyCowSupported: Bool
     
     class func registerDefaults()
     {
@@ -80,6 +81,9 @@ public extension UserDefaults
         
         let ios14 = OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0)
         let localServerSupportsRefreshing = !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios14)
+        
+        let ios16_2 = OperatingSystemVersion(majorVersion: 16, minorVersion: 2, patchVersion: 0)
+        let isMacDirtyCowSupported = ProcessInfo.processInfo.isOperatingSystemAtLeast(ios14) && !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16_2) // MacDirtyCow supports iOS 14.0 - 16.1.2
         
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
@@ -92,10 +96,17 @@ public extension UserDefaults
             #keyPath(UserDefaults.requiresAppGroupMigration): true,
             #keyPath(UserDefaults.menuAnisetteList): "https://servers.sidestore.io/servers.json",
             #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io",
-            #keyPath(UserDefaults.ignoreActiveAppsLimit): false
+            #keyPath(UserDefaults.ignoreActiveAppsLimit): false,
+            #keyPath(UserDefaults.isMacDirtyCowSupported): isMacDirtyCowSupported
         ] as [String : Any]
         
         UserDefaults.standard.register(defaults: defaults)
         UserDefaults.shared.register(defaults: defaults)
+        
+        if !isMacDirtyCowSupported
+        {
+            // Disable ignoreActiveAppsLimit if running iOS version that doesn't support MacDirtyCow.
+            UserDefaults.standard.ignoreActiveAppsLimit = false
+        }
     }
 }
