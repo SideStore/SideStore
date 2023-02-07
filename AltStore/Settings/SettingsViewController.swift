@@ -48,6 +48,12 @@ extension SettingsViewController
         case softwareLicenses
     }
     
+    fileprivate enum TechyThingsRow: Int, CaseIterable
+    {
+        case errorLog
+        case clearCache
+    }
+    
     fileprivate enum DebugRow: Int, CaseIterable
     {
         case sendFeedback
@@ -291,6 +297,34 @@ private extension SettingsViewController
         self.present(viewController, animated: true, completion: nil)
     }
     
+    func clearCache()
+    {
+        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to clear AltStore's cache?", comment: ""),
+                                                message: NSLocalizedString("This will remove all temporary files as well as backups for uninstalled apps.", comment: ""),
+                                                preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { [weak self] _ in
+            self?.tableView.indexPathForSelectedRow.map { self?.tableView.deselectRow(at: $0, animated: true) }
+        })
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Clear Cache", comment: ""), style: .destructive) { [weak self] _ in
+            AppManager.shared.clearAppCache { result in
+                DispatchQueue.main.async {
+                    self?.tableView.indexPathForSelectedRow.map { self?.tableView.deselectRow(at: $0, animated: true) }
+                    
+                    switch result
+                    {
+                    case .success: break
+                    case .failure(let error):
+                        let alertController = UIAlertController(title: NSLocalizedString("Unable to Clear Cache", comment: ""), message: error.localizedDescription, preferredStyle: .alert)
+                        alertController.addAction(.ok)
+                        self?.present(alertController, animated: true)
+                    }
+                }
+            }
+        })
+        
+        self.present(alertController, animated: true)
+    }
+    
     @IBAction func handleDebugModeGesture(_ gestureRecognizer: UISwipeGestureRecognizer)
     {
         self.debugGestureCounter += 1
@@ -470,6 +504,14 @@ extension SettingsViewController
                 self.addRefreshAppsShortcut()
             }
             
+        case .techyThings:
+            let row = TechyThingsRow.allCases[indexPath.row]
+            switch row
+            {
+            case .errorLog: break
+            case .clearCache: self.clearCache()
+            }
+            
         case .credits:
             let row = CreditsRow.allCases[indexPath.row]
             switch row
@@ -561,7 +603,7 @@ extension SettingsViewController
             case .refreshAttempts, .errorLog: break
             }
             
-        default: break
+        case .account, .patreon, .instructions, .macDirtyCow: break
         }
     }
 }
