@@ -211,6 +211,16 @@ private extension SettingsViewController
         case .instructions:
             break
             
+        case .techyThings:
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("TECHY THINGS", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Free up disk space by removing non-essential data, such as temporary files and backups for uninstalled apps.", comment: "")
+            }
+            
         case .credits:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("CREDITS", comment: "")
             
@@ -445,7 +455,7 @@ extension SettingsViewController
         switch section
         {
         case .signIn where self.activeTeam != nil: return nil
-        case .signIn, .patreon, .appRefresh:
+        case .signIn, .patreon, .appRefresh, .techyThings, .macDirtyCow:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -476,11 +486,11 @@ extension SettingsViewController
         {
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0            
-        case .signIn, .patreon, .appRefresh:
+        case .signIn, .patreon, .appRefresh, .techyThings, .macDirtyCow:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
-        case .account, .credits, .debug, .instructions: return 0.0
+        case .account, .credits, .debug, .instructions, .techyThings: return 0.0
         }
     }
 }
