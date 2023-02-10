@@ -142,7 +142,7 @@ private extension SceneDelegate
                     NotificationCenter.default.post(name: AppDelegate.addSourceDeepLinkNotification, object: nil, userInfo: [AppDelegate.addSourceDeepLinkURLKey: sourceURL])
                 }
             
-            case "jitenable":
+            case "sidejit-enable":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
                 guard let jitdebugURLString = queryItems["url"] else { return }
                 
