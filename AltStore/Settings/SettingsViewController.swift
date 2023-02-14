@@ -309,7 +309,7 @@ private extension SettingsViewController
         switch section
         {
         case .macDirtyCow:
-            let isHidden = !(UserDefaults.standard.isMacDirtyCowSupported && UserDefaults.standard.isDebugModeEnabled)
+            let isHidden = !(UserDefaults.standard.isCowExploitSupported && UserDefaults.standard.isDebugModeEnabled)
             return isHidden
             
         default: return false
