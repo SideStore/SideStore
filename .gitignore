@@ -34,3 +34,9 @@ xcuserdata
 
 ## AppCode specific
 .idea/
+
+Payload/
+SideStore.ipa
+Dependencies/.last-prebuilt-fetch
+Dependencies/*.xcframework/**/*.a
+Dependencies/*.xcframework/**/*.h

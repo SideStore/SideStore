@@ -4,5 +4,6 @@
 
 #import "NSAttributedString+Markdown.h"
 #import "ALTAppPatcher.h"
+#include "minimuxer.h"
 
 #include "fragmentzip.h"

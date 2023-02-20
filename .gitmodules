@@ -19,9 +19,6 @@
 [submodule "Dependencies/libimobiledevice-glue"]
 	path = Dependencies/libimobiledevice-glue
 	url = https://github.com/libimobiledevice/libimobiledevice-glue
-[submodule "Dependencies/minimuxer"]
-	path = Dependencies/minimuxer
-	url = https://github.com/SideStore/minimuxer
 [submodule "Dependencies/libfragmentzip"]
 	path = Dependencies/libfragmentzip
 	url = https://github.com/SideStore/libfragmentzip.git

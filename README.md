@@ -35,21 +35,9 @@ SideStore is a just regular, sandboxed iOS application. The AltStore app target 
 
 We're hoping to eventually eliminate our dependency on it, as it increases the amount of unnecessary Objective-C in the project.
 
-## Compilation Instructions
-SideStore is fairly straightforward to compile and run if you're already an iOS or macOS developer. Here are some basic instructions to get you started:
+## Contributing
 
-1. Clone the repository 
-	```
-	git clone https://github.com/SideStore/SideStore.git --recurse-submodules
-	```
-2. After installing Rustup, run `rustup target add aarch64-apple-ios`
-12. Within the Dependencies/em_proxy and Dependencies/minimuxer directories, run `cargo build --release --target aarch64-apple-ios`
-2. Open `AltStore.xcodeproj` and select the AltStore project in the project navigator. On the `Signing & Capabilities` tab, change the team from to your own account.
-3. **(Development only)** Change the value for `ALTDeviceID` in the Info.plist to your device's UDID. Normally, SideServer embeds the device's UDID in SideStore's Info.plist during installation. When running through Xcode you'll need to set the value yourself or else SideStore won't resign (or even install) apps for the proper device. You can achieve this by changing a few things to be able to build and use SideStore.
-5. Copy `CodeSigning.xcconfig.sample` to `CodeSigning.xcconfig`
-6. Fill out all of the properties in `CodeSigning.xcconfig` to match your account.
-7. In `Shared/Extensions/Bundle+AltStore.swift`, replace "group.com.rileytestut.AltStore" with your own App Group ID. 
-8. Build + run app! 🎉
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Licensing
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,25 +11,24 @@
 		19104D952909BAEA00C49C7B /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
 		19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19104DB42909C06D00C49C7B /* EmotionalDamage.swift */; };
 		19104DBC2909C4E500C49C7B /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
-		191E5FAE290A5D92001A3B7C /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191E5FAD290A5D92001A3B7C /* minimuxer.swift */; };
-		191E5FB4290A5DA0001A3B7C /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		191E5FDC290AFA5C001A3B7C /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 191E5FDB290AFA5C001A3B7C /* OpenSSL */; };
 		191E607D290B2EA5001A3B7C /* jsmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 191E5FD0290A651D001A3B7C /* jsmn.c */; };
 		191E607E290B2EA7001A3B7C /* jplist.c in Sources */ = {isa = PBXBuildFile; fileRef = 191E5FCF290A651D001A3B7C /* jplist.c */; };
-		191E6087290C7B50001A3B7C /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FB5290A5E1F001A3B7C /* libminimuxer.a */; };
 		1920B04F2924AC8300744F60 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1920B04E2924AC8300744F60 /* Settings.bundle */; };
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		4879A95F2861046500FC1BBD /* AltSign in Frameworks */ = {isa = PBXBuildFile; productRef = 4879A95E2861046500FC1BBD /* AltSign */; };
 		4879A9622861049C00FC1BBD /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 4879A9612861049C00FC1BBD /* OpenSSL */; };
+		9999254C29A3F615005CF020 /* minimuxer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9999254829A3F5F3005CF020 /* minimuxer.xcframework */; };
+		9999254D29A3F65F005CF020 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191E5FAD290A5D92001A3B7C /* minimuxer.swift */; };
+		9999254E29A3F68B005CF020 /* minimuxer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9999254829A3F5F3005CF020 /* minimuxer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9999255129A3F77F005CF020 /* minimuxer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9999255029A3F77F005CF020 /* minimuxer.h */; };
 		99C4EF4D2979132100CB538D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 99C4EF4C2979132100CB538D /* SemanticVersion */; };
 		B3146ED2284F581E00BBC3FD /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3146ECD284F580500BBC3FD /* Roxas.framework */; };
 		B3146ED3284F581E00BBC3FD /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3146ECD284F580500BBC3FD /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33FFBA8295F8E98002259E6 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F894295F7F9B002B1159 /* libfragmentzip.a */; };
 		B33FFBAA295F8F78002259E6 /* preboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBA9295F8F78002259E6 /* preboard.c */; };
 		B33FFBAC295F8F98002259E6 /* companion_proxy.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBAB295F8F98002259E6 /* companion_proxy.c */; };
-		B343F858295F6331002B1159 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F84C295F6321002B1159 /* libminimuxer_static.a */; };
 		B343F859295F6335002B1159 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F853295F6323002B1159 /* libem_proxy_static.a */; };
-		B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F86C295F759E002B1159 /* libresolv.tbd */; };
 		B343F87C295F7C5D002B1159 /* opack.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F872295F7C5C002B1159 /* opack.c */; };
 		B343F87D295F7C5D002B1159 /* cbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F873295F7C5C002B1159 /* cbuf.c */; };
 		B343F87E295F7C5D002B1159 /* collection.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F874295F7C5D002B1159 /* collection.c */; };
@@ -359,13 +358,6 @@
 			remoteGlobalIDString = 19104DB12909C06C00C49C7B;
 			remoteInfo = EmotionalDamage;
 		};
-		191E5FB2290A5D9B001A3B7C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFD247622284B9A500981D42 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 191E5FAA290A5D92001A3B7C;
-			remoteInfo = minimuxer;
-		};
 		B3146ECC284F580500BBC3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
@@ -387,13 +379,6 @@
 			remoteGlobalIDString = BFADB00319AE7BB80050CF31;
 			remoteInfo = RoxasTests;
 		};
-		B343F84B295F6321002B1159 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA609C732349C7AAD9FA67C4;
-			remoteInfo = "minimuxer-staticlib";
-		};
 		B343F852295F6323002B1159 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
@@ -407,13 +392,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = CA60058A9FBE4D17AF51A7D5;
 			remoteInfo = "run-bin";
-		};
-		B343F86E295F76FD002B1159 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CA609C732349A560B9642892;
-			remoteInfo = "minimuxer-staticlib";
 		};
 		B343F870295F7704002B1159 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -480,6 +458,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9999254E29A3F68B005CF020 /* minimuxer.xcframework in Embed Frameworks */,
 				B3146ED3284F581E00BBC3FD /* Roxas.framework in Embed Frameworks */,
 				BF1614F2250822F100767AEA /* Roxas.framework in Embed Frameworks */,
 				BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */,
@@ -504,21 +483,18 @@
 		19104DA92909BC7100C49C7B /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
 		19104DB22909C06C00C49C7B /* libEmotionalDamage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEmotionalDamage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		19104DB42909C06D00C49C7B /* EmotionalDamage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionalDamage.swift; sourceTree = "<group>"; };
-		191E5FAB290A5D92001A3B7C /* libminimuxer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminimuxer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		191E5FAD290A5D92001A3B7C /* minimuxer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = minimuxer.swift; sourceTree = "<group>"; };
-		191E5FB5290A5E1F001A3B7C /* libminimuxer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libminimuxer.a; path = "Dependencies/minimuxer/target/aarch64-apple-ios/debug/libminimuxer.a"; sourceTree = "<group>"; };
 		191E5FCF290A651D001A3B7C /* jplist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jplist.c; path = Dependencies/libplist/src/jplist.c; sourceTree = SOURCE_ROOT; };
 		191E5FD0290A651D001A3B7C /* jsmn.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jsmn.c; path = Dependencies/libplist/src/jsmn.c; sourceTree = SOURCE_ROOT; };
 		191E5FD1290A651D001A3B7C /* jsmn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = jsmn.h; path = Dependencies/libplist/src/jsmn.h; sourceTree = SOURCE_ROOT; };
-		191E5FD7290A6EFB001A3B7C /* minimuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = minimuxer.h; path = ../Dependencies/minimuxer/minimuxer.h; sourceTree = "<group>"; };
 		1920B04E2924AC8300744F60 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTeamViewController.swift; sourceTree = "<group>"; };
+		9999254829A3F5F3005CF020 /* minimuxer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = minimuxer.xcframework; path = Dependencies/minimuxer.xcframework; sourceTree = SOURCE_ROOT; };
+		9999255029A3F77F005CF020 /* minimuxer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = minimuxer.h; path = "Dependencies/minimuxer.xcframework/ios-arm64/Headers/minimuxer.h"; sourceTree = SOURCE_ROOT; };
 		B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Roxas.xcodeproj; path = Dependencies/Roxas/Roxas.xcodeproj; sourceTree = "<group>"; };
 		B33FFBA9295F8F78002259E6 /* preboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = preboard.c; path = src/preboard.c; sourceTree = "<group>"; };
 		B33FFBAB295F8F98002259E6 /* companion_proxy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = companion_proxy.c; path = src/companion_proxy.c; sourceTree = "<group>"; };
-		B343F847295F6321002B1159 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = minimuxer.xcodeproj; path = Dependencies/minimuxer.xcodeproj; sourceTree = SOURCE_ROOT; };
 		B343F84D295F6323002B1159 /* em_proxy.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = em_proxy.xcodeproj; path = Dependencies/em_proxy.xcodeproj; sourceTree = SOURCE_ROOT; };
-		B343F86C295F759E002B1159 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libresolv.tbd; sourceTree = DEVELOPER_DIR; };
 		B343F872295F7C5C002B1159 /* opack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opack.c; sourceTree = "<group>"; };
 		B343F873295F7C5C002B1159 /* cbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbuf.c; sourceTree = "<group>"; };
 		B343F874295F7C5D002B1159 /* collection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = collection.c; sourceTree = "<group>"; };
@@ -856,16 +832,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */,
 				B343F859295F6335002B1159 /* libem_proxy_static.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		191E5FA8290A5D92001A3B7C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B343F858295F6331002B1159 /* libminimuxer_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -916,9 +883,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B33FFBA8295F8E98002259E6 /* libfragmentzip.a in Frameworks */,
-				191E6087290C7B50001A3B7C /* libminimuxer.a in Frameworks */,
-				191E5FB4290A5DA0001A3B7C /* libminimuxer.a in Frameworks */,
 				19104DBC2909C4E500C49C7B /* libEmotionalDamage.a in Frameworks */,
+				9999254C29A3F615005CF020 /* minimuxer.xcframework in Frameworks */,
 				19104D952909BAEA00C49C7B /* libimobiledevice.a in Frameworks */,
 				B3146ED2284F581E00BBC3FD /* Roxas.framework in Frameworks */,
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
@@ -948,8 +914,8 @@
 		191E5FAC290A5D92001A3B7C /* minimuxer */ = {
 			isa = PBXGroup;
 			children = (
-				B343F847295F6321002B1159 /* minimuxer.xcodeproj */,
-				191E5FD7290A6EFB001A3B7C /* minimuxer.h */,
+				9999254829A3F5F3005CF020 /* minimuxer.xcframework */,
+				9999255029A3F77F005CF020 /* minimuxer.h */,
 				191E5FAD290A5D92001A3B7C /* minimuxer.swift */,
 			);
 			path = minimuxer;
@@ -987,14 +953,6 @@
 			children = (
 			);
 			name = "Recovered References";
-			sourceTree = "<group>";
-		};
-		B343F848295F6321002B1159 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B343F84C295F6321002B1159 /* libminimuxer_static.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B343F84E295F6323002B1159 /* Products */ = {
@@ -1529,7 +1487,6 @@
 				BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */,
 				BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */,
 				19104DB22909C06C00C49C7B /* libEmotionalDamage.a */,
-				191E5FAB290A5D92001A3B7C /* libminimuxer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1570,8 +1527,6 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B343F86C295F759E002B1159 /* libresolv.tbd */,
-				191E5FB5290A5E1F001A3B7C /* libminimuxer.a */,
 				B39575F4284F29E20080B4FF /* Roxas.framework */,
 				D533E8B62727841800A9B5DD /* libAppleArchive.tbd */,
 				BF580497246A3D19008AE704 /* UIKit.framework */,
@@ -1770,10 +1725,11 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		191E5FD4290A6EE0001A3B7C /* Headers */ = {
+		9999254F29A3F6E6005CF020 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9999255129A3F77F005CF020 /* minimuxer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1851,24 +1807,6 @@
 			name = EmotionalDamage;
 			productName = EmotionalDamage;
 			productReference = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		191E5FAA290A5D92001A3B7C /* minimuxer */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 191E5FAF290A5D92001A3B7C /* Build configuration list for PBXNativeTarget "minimuxer" */;
-			buildPhases = (
-				191E5FD4290A6EE0001A3B7C /* Headers */,
-				191E5FA7290A5D92001A3B7C /* Sources */,
-				191E5FA8290A5D92001A3B7C /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B343F86F295F76FD002B1159 /* PBXTargetDependency */,
-			);
-			name = minimuxer;
-			productName = minimuxer;
-			productReference = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		BF18BFE624857D7900DD5981 /* AltDaemon */ = {
@@ -1973,6 +1911,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFD2477E2284B9A700981D42 /* Build configuration list for PBXNativeTarget "SideStore" */;
 			buildPhases = (
+				9999255A29A40D3B005CF020 /* ShellScript */,
+				9999254F29A3F6E6005CF020 /* Headers */,
 				BFD247662284B9A500981D42 /* Sources */,
 				BFD247672284B9A500981D42 /* Frameworks */,
 				BFD247682284B9A500981D42 /* Resources */,
@@ -1982,7 +1922,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				191E5FB3290A5D9B001A3B7C /* PBXTargetDependency */,
 				19104DBA2909C0F200C49C7B /* PBXTargetDependency */,
 				19104D942909BADB00C49C7B /* PBXTargetDependency */,
 				BF66EE842501AE50007EE018 /* PBXTargetDependency */,
@@ -2010,9 +1949,6 @@
 				ORGANIZATIONNAME = SideStore;
 				TargetAttributes = {
 					19104DB12909C06C00C49C7B = {
-						CreatedOnToolsVersion = 14.0;
-					};
-					191E5FAA290A5D92001A3B7C = {
 						CreatedOnToolsVersion = 14.0;
 					};
 					BF18BFE624857D7900DD5981 = {
@@ -2078,10 +2014,6 @@
 					ProjectRef = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 				},
 				{
-					ProductGroup = B343F848295F6321002B1159 /* Products */;
-					ProjectRef = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
-				},
-				{
 					ProductGroup = B3146EC7284F580500BBC3FD /* Products */;
 					ProjectRef = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
 				},
@@ -2095,7 +2027,6 @@
 				BF66EE7D2501AE50007EE018 /* AltStoreCore */,
 				BF989166250AABF3002ACF50 /* AltWidgetExtension */,
 				19104DB12909C06C00C49C7B /* EmotionalDamage */,
-				191E5FAA290A5D92001A3B7C /* minimuxer */,
 			);
 		};
 /* End PBXProject section */
@@ -2120,13 +2051,6 @@
 			fileType = wrapper.cfbundle;
 			path = RoxasTests.xctest;
 			remoteRef = B3146ED0284F580500BBC3FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B343F84C295F6321002B1159 /* libminimuxer_static.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libminimuxer_static.a;
-			remoteRef = B343F84B295F6321002B1159 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B343F853295F6323002B1159 /* libem_proxy_static.a */ = {
@@ -2224,20 +2148,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		9999255A29A40D3B005CF020 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Note: this will only run after processing the frameworks, which might make it only use an updated library until the next build\nbash ./Dependencies/fetch-prebuilt.sh\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		19104DAE2909C06C00C49C7B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		191E5FA7290A5D92001A3B7C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				191E5FAE290A5D92001A3B7C /* minimuxer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2432,6 +2370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9999254D29A3F65F005CF020 /* minimuxer.swift in Sources */,
 				BFDB6A0F22AB2776007EA6D6 /* SendAppOperation.swift in Sources */,
 				BFDB6A0D22AAFC1A007EA6D6 /* OperationError.swift in Sources */,
 				BF74989B23621C0700CED65F /* ForwardingNavigationController.swift in Sources */,
@@ -2539,11 +2478,6 @@
 			target = 19104DB12909C06C00C49C7B /* EmotionalDamage */;
 			targetProxy = 19104DB92909C0F200C49C7B /* PBXContainerItemProxy */;
 		};
-		191E5FB3290A5D9B001A3B7C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 191E5FAA290A5D92001A3B7C /* minimuxer */;
-			targetProxy = 191E5FB2290A5D9B001A3B7C /* PBXContainerItemProxy */;
-		};
 		191E5FDA290AFA49001A3B7C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 191E5FD9290AFA49001A3B7C /* OpenSSL */;
@@ -2551,11 +2485,6 @@
 		99C4EF51297994E200CB538D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 99C4EF50297994E200CB538D /* SemanticVersion */;
-		};
-		B343F86F295F76FD002B1159 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "minimuxer-staticlib";
-			targetProxy = B343F86E295F76FD002B1159 /* PBXContainerItemProxy */;
 		};
 		B343F871295F7704002B1159 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2658,54 +2587,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
 				WATCHOS_DEPLOYMENT_TARGET = 7.0;
-			};
-			name = Release;
-		};
-		191E5FB0290A5D92001A3B7C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 4FW3Q8784L;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/minimuxer/target/aarch64-apple-ios/release",
-					"$(PROJECT_DIR)/Dependencies/minimuxer/target/aarch64-apple-ios/debug",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = minimuxer/minimuxer.h;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		191E5FB1290A5D92001A3B7C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 4FW3Q8784L;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/minimuxer/target/aarch64-apple-ios/release",
-					"$(PROJECT_DIR)/Dependencies/minimuxer/target/aarch64-apple-ios/debug",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = minimuxer/minimuxer.h;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -3260,15 +3141,6 @@
 			buildConfigurations = (
 				19104DB72909C06D00C49C7B /* Debug */,
 				19104DB82909C06D00C49C7B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		191E5FAF290A5D92001A3B7C /* Build configuration list for PBXNativeTarget "minimuxer" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				191E5FB0290A5D92001A3B7C /* Debug */,
-				191E5FB1290A5D92001A3B7C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
