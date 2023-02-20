@@ -14,7 +14,6 @@ import Intents
 import AltStoreCore
 import AltSign
 import Roxas
-import EmotionalDamage
 
 extension AppDelegate
 {

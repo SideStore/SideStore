@@ -8,7 +8,6 @@
 
 import UIKit
 import Combine
-import minimuxer
 
 import AltStoreCore
 

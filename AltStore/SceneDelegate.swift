@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import EmotionalDamage
 
 @available(iOS 13, *)
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate

@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 
 import AltStoreCore
-import EmotionalDamage
 
 enum RefreshError: LocalizedError
 {

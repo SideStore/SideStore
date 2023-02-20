@@ -8,8 +8,6 @@
 
 import UIKit
 import Roxas
-import EmotionalDamage
-import minimuxer
 
 import AltStoreCore
 import UniformTypeIdentifiers
