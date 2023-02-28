@@ -198,6 +198,7 @@ private extension InstallAppOperation
         }
         catch
         {
+            self.didCleanUp = false
             print("Failed to remove temporary directory.", error)
         }
     }

@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - ultra-nightly
 
 jobs:
   build:
@@ -33,8 +34,11 @@ jobs:
           path: .nightly-build-num
           key: nightly-build-num
 
-      - name: Increase nightly build number and set as version
-        run: bash .github/workflows/increase-nightly-build-num.sh
+      # - name: Build minimuxer
+      #   run: cd Dependencies/minimuxer && cargo build --release --target aarch64-apple-ios
+
+      - name: Add ultra nightly suffix to version
+        run: sed -e '/MARKETING_VERSION = .*/s/$/-ultra-nightly.${{ github.run_number }}/' -i '' Build.xcconfig
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
@@ -72,16 +76,14 @@ jobs:
         uses: IsaacShelton/update-existing-release@v1.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release: "Nightly"
+          release: "Ultra Nightly"
           tag: "nightly"
           prerelease: true
           files: SideStore.ipa
           body: |
             This is an ⚠️ **EXPERIMENTAL** ⚠️ nightly build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
-            
-            Nightly builds are **extremely experimental builds only meant to be used by developers and alpha testers. They often contain bugs and experimental features. Use at your own risk!**
-            
-            If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore Beta](https://github.com/${{ github.repository }}/releases?q=beta).
+
+            Ultra nightly builds are like [nightly builds](https://github.com/SideStore/SideStore/releases/tag/nightly), but I manually merge in most of the PRs.
             
             ## Build Info
             

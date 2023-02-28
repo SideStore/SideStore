@@ -179,8 +179,6 @@ private extension SceneDelegate
                     }                }
                     
                 else { return }
-                
-                
             default: break
             }
         }
