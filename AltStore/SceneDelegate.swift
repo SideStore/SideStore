@@ -9,8 +9,6 @@
 import UIKit
 import AltStoreCore
 import EmotionalDamage
-import minimuxer
-    
 
 @available(iOS 13, *)
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate
@@ -141,26 +139,7 @@ private extension SceneDelegate
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.addSourceDeepLinkNotification, object: nil, userInfo: [AppDelegate.addSourceDeepLinkURLKey: sourceURL])
                 }
-            
-            case "sidejit-enable":
-                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
-                guard let jitdebugURLString = queryItems["url"] else { return }
                 
-                DispatchQueue.main.async {
-                    let v = minimuxer_to_operation(code: 1)
-                    
-                    do {
-                        var x = try debug_app(app_id: jitdebugURLString)
-                        switch x {
-                        case .Good: print(jitdebugURLString)
-                        case .Bad(let code): minimuxer_to_operation(code: code)
-                        }
-                    } catch Uhoh.Bad(let code) {
-                        minimuxer_to_operation(code: code)
-                    } catch {
-                        print(OperationError.unknown)
-                    }
-                }
             default: break
             }
         }
