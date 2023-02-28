@@ -48,6 +48,7 @@
 		B3C395F7284F362400DA9E2F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3C395F6284F362400DA9E2F /* AppCenterAnalytics */; };
 		B3C395F9284F362400DA9E2F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3C395F8284F362400DA9E2F /* AppCenterCrashes */; };
 		B3EE16B62925E27D00B3B1F5 /* AnisetteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EE16B52925E27D00B3B1F5 /* AnisetteManager.swift */; };
+		B5847002294F7811002A854E /* AnisetteServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5847001294F7811002A854E /* AnisetteServerViewController.swift */; };
 		BF02419622F2199300129732 /* RefreshAttemptsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */; };
 		BF08858322DE795100DE9F1E /* MyAppsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF08858222DE795100DE9F1E /* MyAppsViewController.swift */; };
 		BF08858522DE7EC800DE9F1E /* UpdateCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF08858422DE7EC800DE9F1E /* UpdateCollectionViewCell.swift */; };
@@ -541,6 +542,7 @@
 		B3C3960E284F4F9100DA9E2F /* AltStoreCore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.xcconfig; sourceTree = "<group>"; };
 		B3C3960F284F53E900DA9E2F /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		B3EE16B52925E27D00B3B1F5 /* AnisetteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnisetteManager.swift; sourceTree = "<group>"; };
+		B5847001294F7811002A854E /* AnisetteServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnisetteServerViewController.swift; sourceTree = "<group>"; };
 		BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshAttemptsViewController.swift; sourceTree = "<group>"; };
 		BF08858222DE795100DE9F1E /* MyAppsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAppsViewController.swift; sourceTree = "<group>"; };
 		BF08858422DE7EC800DE9F1E /* UpdateCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1653,6 +1655,7 @@
 				BFE6073B231AE1E7002B0E8E /* SettingsHeaderFooterView.xib */,
 				BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */,
 				BFF0B68D23219520007A79E1 /* PatreonViewController.swift */,
+				B5847001294F7811002A854E /* AnisetteServerViewController.swift */,
 				BFF0B68F23219C6D007A79E1 /* PatreonComponents.swift */,
 				BFF0B6912321A305007A79E1 /* AboutPatreonHeaderView.xib */,
 				BFF0B695232242D3007A79E1 /* LicensesViewController.swift */,
@@ -2465,6 +2468,7 @@
 				BF41B806233423AE00C593A3 /* TabBarController.swift in Sources */,
 				BFE00A202503097F00EB4D0C /* INInteraction+AltStore.swift in Sources */,
 				BFDB6A0B22AAEDB7007EA6D6 /* Operation.swift in Sources */,
+				B5847002294F7811002A854E /* AnisetteServerViewController.swift in Sources */,
 				BF770E6722BD57C4002A40FE /* BackgroundTaskManager.swift in Sources */,
 				BF44EEFC246B4550002A52F2 /* RemoveAppOperation.swift in Sources */,
 				BF3D64B022E8D4B800E9056B /* AppContentViewControllerCells.swift in Sources */,

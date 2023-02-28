@@ -253,6 +253,18 @@ private extension SettingsViewController
     {
         func signOut()
         {
+            let fm = FileManager.default
+            let documentsPath = fm.documentsDirectory.appendingPathComponent("adi.pb")
+            print("ADI Path: \(documentsPath)")
+            
+            if fm.fileExists(atPath: documentsPath.path) {
+                do {
+                    try fm.removeItem(at: documentsPath.absoluteURL)
+                    print("DELETED ADI")
+                } catch let error as NSError {
+                    print("REMOVE ERROR: \(error.domain)")
+                }
+            }
             DatabaseManager.shared.signOut { (error) in
                 DispatchQueue.main.async {
                     if let error = error

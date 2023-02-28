@@ -42,6 +42,7 @@ public extension UserDefaults
     @NSManaged var patronsRefreshID: String?
     
     @NSManaged var trustedSourceIDs: [String]?
+    @NSManaged var trustedServerURL: String?
     
     var activeAppsLimit: Int? {
         get {

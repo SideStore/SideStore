@@ -8,7 +8,28 @@
 
 import Foundation
 
+struct PublicAnisetteServer {
+    let label: String
+    let urlString: String
+}
+
 public struct AnisetteManager {
+    
+    static var publicServers: [PublicAnisetteServer] {
+        // TODO: Pull these servers from somewhere, also let users edit list
+        return [
+            PublicAnisetteServer(label: "Jawshoedan", urlString: "https://anisette.jawshoeadan.me"),
+            PublicAnisetteServer(label: "Buh", urlString: "http://191.101.206.188:6969"),
+            PublicAnisetteServer(label: "Macley (US)", urlString: "http://us1.sternserv.tech"),
+            PublicAnisetteServer(label: "Macley (DE)", urlString: "http://de1.sternserv.tech"),
+            PublicAnisetteServer(label: "DrPudding", urlString: "https://sign.rheaa.xyz"),
+            PublicAnisetteServer(label: "jkcoxson (AltServer)", urlString: "http://jkcoxson.com:2095"),
+            PublicAnisetteServer(label: "jkcoxson (Provision)", urlString: "http://jkcoxson.com:2052"),
+            PublicAnisetteServer(label: "Sideloadly", urlString: "https://sideloadly.io/anisette/irGb3Quww8zrhgqnzmrx"),
+            PublicAnisetteServer(label: "Nythepegasus", urlString: "http://45.33.29.114"),
+            PublicAnisetteServer(label: "crystall1nedev", urlString: "https://anisette.crystall1ne.software/")
+        ]
+    }
     
     /// User defined URL from Settings/UserDefaults
     static var userURL: String? {
