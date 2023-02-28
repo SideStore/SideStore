@@ -1,16 +1,12 @@
 name: Beta SideStore build
 on:
   push:
-    branches:
-      - develop
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+' # example: 1.0.0-beta.1
 
 jobs:
   build:
     name: Build and upload SideStore Beta
-    if: startsWith(github.event.head_commit.message, '[beta]')
-    concurrency:
-      group: ${{ github.ref }}
-      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -25,63 +21,11 @@ jobs:
         with:
           submodules: recursive
 
-      # - name: Cache rust cargo
-      #   id: cache-rust-cargo
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-cargo
-      #   with:
-      #     path: ~/.cargo
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - name: Cache rust minimuxer
-      #   id: cache-rust-minimuxer
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-minimuxer
-      #   with:
-      #     path: ./Dependencies/minimuxer/target
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - name: Cache rust em_proxy
-      #   id: cache-rust-em_proxy
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-em_proxy
-      #   with:
-      #     path: ./Dependencies/em_proxy/target
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
       - name: Install dependencies
         run: brew install ldid
 
-      - name: Install rustup
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          target: aarch64-apple-ios
-
-      # - name: Create emotional damage
-      #   run: cd Dependencies/em_proxy && cargo build --release --target aarch64-apple-ios
-
-      # - name: Build minimuxer
-      #   run: cd Dependencies/minimuxer && cargo build --release --target aarch64-apple-ios
-
-      - name: Add beta suffix to version
-        run: sed -e '/MARKETING_VERSION = .*/s/$/-beta.${{ github.run_number }}/' -i '' Build.xcconfig
+      - name: Change version to tag
+        run: sed -e '/MARKETING_VERSION = .*/s/= .*/= ${{ github.ref_name }}/' -i '' Build.xcconfig
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
@@ -89,29 +33,13 @@ jobs:
           xcode-version: ${{ matrix.version }}
 
       - name: Build SideStore
-        run: |
-          xcodebuild -project AltStore.xcodeproj \
-          -scheme AltStore \
-          -sdk iphoneos \
-          archive -archivePath ./archive \
-          CODE_SIGNING_REQUIRED=NO \
-          AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          CODE_SIGNING_ALLOWED=NO \
-          DEVELOPMENT_TEAM=XYZ0123456 \
-          ORG_IDENTIFIER=com.SideStore \
-          | xcpretty && exit ${PIPESTATUS[0]}
+        run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
-        run: |
-          rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-          ldid -SAltStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
+        run: make fakesign
 
       - name: Convert to IPA
-        run: |
-          mkdir Payload
-          mkdir Payload/SideStore.app
-          cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
-          zip -r SideStore.ipa Payload
+        run: make ipa
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
@@ -131,22 +59,22 @@ jobs:
         id: date_altstore
         run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - name: Upload to beta release
-        uses: IsaacShelton/update-existing-release@v1.3.1
+      - name: Upload to new beta release
+        uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release: "Beta"
-          tag: "beta"
+          name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          draft: true
           prerelease: true
           files: SideStore.ipa
           body: |
-            This is an ⚠️ **EXPERIMENTAL** ⚠️ beta build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
+            <!-- NOTE: to reset SideSource cache, go to `https://apps.sidestore.io/reset-cache/nightly/<sidesource key>`. This is not included in the GitHub Action since it makes draft releases so they can be edited and have a changelog. -->
+            Beta builds are hand-picked builds from development commits that will allow you to try out new features earlier than normal. However, **they might contain bugs and other issues. Use at your own risk!**
+
+            ## Changelog
             
-            Beta builds are hand-picked builds from development commits that will allow you to try out new features earlier than normal, but with a lower chance of bugs than if you used nightly builds. However, since these changes are newer and less tested, they still have a good chance of bugs, so **use at your own risk**.
-            
-            If you want to be on the bleeding edge and use the latest development builds, you can look at [SideStore Nightly](https://github.com/${{ github.repository }}/releases/tag/nightly). **Please be aware that these builds have a much higher chance of bugs than beta or stable**.
-            
-            If you use the `SideStore (Beta)` app, it will use the latest beta build (make sure to update it in "My Apps").
+            - TODO
             
             ## Build Info
             

@@ -381,13 +381,12 @@ private extension SourcesViewController
                 dispatchGroup.notify(queue: .main) {
                     if let error = fetchError
                     {
-                        finish(.failure(error))
+                        print(error)
+                        // 1 error doesn't mean all trusted sources failed to load! Riley, why did you do this???????
+//                        finish(.failure(error))
                     }
-                    else
-                    {
-                        let sources = featuredSourceURLs.compactMap { sourcesByURL[$0] }
-                        finish(.success(sources))
-                    }
+                    let sources = featuredSourceURLs.compactMap { sourcesByURL[$0] }
+                    finish(.success(sources))
                 }
             }
         }

@@ -2,7 +2,7 @@ name: Stable SideStore build
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+*'
+      - '[0-9]+.[0-9]+.[0-9]+' # example: 1.0.0
 
 jobs:
   build:
@@ -21,60 +21,11 @@ jobs:
         with:
           submodules: recursive
 
-      # - name: Cache rust cargo
-      #   id: cache-rust-cargo
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-cargo
-      #   with:
-      #     path: ~/.cargo
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - name: Cache rust minimuxer
-      #   id: cache-rust-minimuxer
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-minimuxer
-      #   with:
-      #     path: ./Dependencies/minimuxer/target
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - name: Cache rust em_proxy
-      #   id: cache-rust-em_proxy
-      #   uses: actions/cache@v3
-      #   env:
-      #     cache-name: cache-rust-em_proxy
-      #   with:
-      #     path: ./Dependencies/em_proxy/target
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
       - name: Install dependencies
         run: brew install ldid
 
-      - name: Install rustup
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          target: aarch64-apple-ios
-
-      # - name: Create emotional damage
-      #   run: cd Dependencies/em_proxy && cargo build --release --target aarch64-apple-ios
-
-      # - name: Build minimuxer
-      #   run: cd Dependencies/minimuxer && cargo build --release --target aarch64-apple-ios
+      - name: Change version to tag
+        run: sed -e '/MARKETING_VERSION = .*/s/= .*/= ${{ github.ref_name }}/' -i '' Build.xcconfig
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
@@ -82,29 +33,13 @@ jobs:
           xcode-version: ${{ matrix.version }}
 
       - name: Build SideStore
-        run: |
-          xcodebuild -project AltStore.xcodeproj \
-          -scheme AltStore \
-          -sdk iphoneos \
-          archive -archivePath ./archive \
-          CODE_SIGNING_REQUIRED=NO \
-          AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          CODE_SIGNING_ALLOWED=NO \
-          DEVELOPMENT_TEAM=XYZ0123456 \
-          ORG_IDENTIFIER=com.SideStore \
-          | xcpretty && exit ${PIPESTATUS[0]}
+        run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
-        run: |
-          rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-          ldid -SAltStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
+        run: make fakesign
 
       - name: Convert to IPA
-        run: |
-          mkdir Payload
-          mkdir Payload/SideStore.app
-          cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
-          zip -r SideStore.ipa Payload
+        run: make ipa
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
@@ -129,10 +64,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
           draft: true
           files: SideStore.ipa
           body: |
+            <!-- NOTE: to reset SideSource cache, go to `https://apps.sidestore.io/reset-cache/nightly/<sidesource key>`. This is not included in the GitHub Action since it makes draft releases so they can be edited and have a changelog. -->
             ## Changelog
             
             - TODO

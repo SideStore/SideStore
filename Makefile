@@ -2,8 +2,6 @@ SHELL := /bin/bash
 .PHONY: help ios update tvos
 
 RUBY := $(shell command -v ruby 2>/dev/null)
-RUST := $(shell command -v rust 2>/dev/null)
-RUSTUP := $(shell command -v rustup 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
 BUNDLER := $(shell command -v bundle 2>/dev/null)
 
@@ -72,11 +70,7 @@ help:
 
 ## Install dependencies.
 setup: \
-	pre_setup \
-	install_rust \
-	install_rustup \
-	install_rust_toolchain \
-	build_rust_dependencies
+	pre_setup
 
 # check_for_homebrew \
 # update_homebrew \
@@ -88,20 +82,6 @@ pull_request: \
 
 pre_setup:
 	$(info Project setup…)
-
-check_for_rust:
-	$(info Checking for Rust…)
-
-ifeq ($(RUST),)
-	$(error Rust is not installed.)
-endif
-
-check_for_rustup:
-	$(info Checking for Rustup…)
-
-ifeq ($(RUSTUP),)
-	$(error Rust is not installed.)
-endif
 
 check_for_ruby:
 	$(info Checking for Ruby…)
@@ -153,79 +133,12 @@ pull:
 ## -- Source Code Tasks --
 
 ## Pull upstream and update 3rd party frameworks
-# update: pull submodules build_rust_dependencies
-update: submodules build_rust_dependencies
+update: submodules
 
 submodules:
 	$(info Updating submodules…)
 
-	git submodule update --init --recursive
-
-build_rust_dependencies:
-	$(info Building Rust dependencies…)
-
-	pushd Dependencies/em_proxy
-	cargo build --release --target aarch64-apple-ios
-	popd
-	pushd Dependencies/minimuxer
-	cargo build --release --target aarch64-apple-ios
-	popd
-
-install_rustup:
-	$(info Installing Rustup…)
-
-	curl https://sh.rustup.rs -sSf | sh
-	source "$(HOME)/.cargo/env"
-	rustup target add aarch64-apple-ios
-
-# TODO: Add x86, armv7? toolchains
-# https://doc.rust-lang.org/nightly/rustc/platform-support.html
-
-install_cbindgen:
-	$(info Installing cbindgen…)
-
-	cargo install cbindgen
-
-install_rust_toolchain:
-	$(info Installing Rust toolchain…)
-
-	rustup target add aarch64-apple-ios
-
-install_rust_toolchain_ios_sim:
-	$(info Installing Rust iOS Sim toolchain…)
-
-	rustup target add aarch64-apple-ios-sim
-
-install_rust_toolchain_tvos:
-	$(info Installing Rust tvOS toolchain…)
-
-	rustup target add aarch64-apple-tvos
-
-install_rust_toolchain_tvos_sim:
-	$(info Installing Rust tvOS Sim toolchain…)
-
-	rustup target add aarch64-apple-tvos-sim
-
-install_rust_toolchain_watchos_sim:
-	$(info Installing Rust watchOS Sim toolchain…)
-
-	rustup target add aarch64-apple-watchos-sim
-
-install_rust_toolchain_watchos:
-	$(info Installing Rust watchOS toolchain…)
-
-	rustup target add aarch64-apple-watchos
-
-install_rust_toolchain_catalyst:
-	$(info Installing Rust macOS Catalyst toolchain…)
-
-	rustup target add aarch64-apple-ios-macabi
-
-install_rust:
-	$(info Installing Rust…)
-
-	curl https://sh.rustup.rs -sSf | sh
-	source "$(HOME)/.cargo/env"
+	git submodule update --init --recursive --remote
 
 ## -- QA Task Runners --
 
@@ -243,32 +156,24 @@ test:
 
 ## -- Building --
 
-developer_ios:
-	$(info Building iOS for Developer profile…)
+build:
+	@xcodebuild -project AltStore.xcodeproj \
+				-scheme AltStore \
+				-sdk iphoneos \
+				archive -archivePath ./archive \
+				CODE_SIGNING_REQUIRED=NO \
+				AD_HOC_CODE_SIGNING_ALLOWED=YES \
+				CODE_SIGNING_ALLOWED=NO \
+				DEVELOPMENT_TEAM=XYZ0123456 \
+				ORG_IDENTIFIER=com.SideStore
 
-	 xcodebuild -project AltStore.xcodeproj -scheme AltStore -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=com.SideStore | xcpretty
+fakesign:
+	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
+	ldid -SAltStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
 
-developer_tvos:
-	$(info Building tvOS for Developer profile…)
+ipa:
+	mkdir Payload
+	mkdir Payload/SideStore.app
+	cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
+	zip -r SideStore.ipa Payload
 
-	 xcodebuild -project AltStore.xcodeproj -scheme AltStore -sdk tvos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=com.SideStore | xcpretty
-
-## Update & build for iOS
-ios: | update developer_ios
-
-## Update & build for tvOS
-tvos: | update developer_tvos
-
-## Open the workspace
-open:
-	open AltStore.xcodeproj
-
-## tag and release to github
-release: | _var_VERSION
-	@if ! git diff --quiet HEAD; then \
-		( $(call _error,refusing to release with uncommitted changes) ; exit 1 ); \
-	fi
-	test
-	package
-	make --no-print-directory _tag VERSION=$(VERSION)
-	make --no-print-directory _push VERSION=$(VERSION)

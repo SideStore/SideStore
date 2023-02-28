@@ -392,7 +392,8 @@ extension AppManager
     func fetchAppIDs(completionHandler: @escaping (Result<([AppID], NSManagedObjectContext), Error>) -> Void)
     {
         let authenticationOperation = self.authenticate(presentingViewController: nil) { (result) in
-            print("Authenticated for fetching App IDs with result:", result)
+            // result contains name, email, auth token, OTP and other possibly personal/account specific info. we don't want this logged
+            //print("Authenticated for fetching App IDs with result:", result)
         }
         
         let fetchAppIDsOperation = FetchAppIDsOperation(context: authenticationOperation.context)
