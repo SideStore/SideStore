@@ -5,6 +5,8 @@
 # Xcode
 #
 
+Pods/
+
 ## Build generated
 build/
 DerivedData
