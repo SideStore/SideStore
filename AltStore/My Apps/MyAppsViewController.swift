@@ -1388,7 +1388,6 @@ private extension MyAppsViewController
         }
     }
     
-    @available(iOS 14, *)
     func enableJIT(for installedApp: InstalledApp)
     {
         
@@ -1641,7 +1640,6 @@ extension MyAppsViewController
     }
 }
 
-@available(iOS 13.0, *)
 extension MyAppsViewController
 {
     private func actions(for installedApp: InstalledApp) -> [UIMenuElement]

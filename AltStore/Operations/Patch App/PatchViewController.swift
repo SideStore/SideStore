@@ -13,7 +13,6 @@ import AltStoreCore
 import AltSign
 import Roxas
 
-@available(iOS 14.0, *)
 extension PatchViewController
 {
     enum Step
@@ -99,7 +98,6 @@ final class PatchViewController: UIViewController
     }
 }
 
-@available(iOS 14.0, *)
 private extension PatchViewController
 {
     func update()
@@ -212,7 +210,6 @@ private extension PatchViewController
     }
 }
 
-@available(iOS 14.0, *)
 private extension PatchViewController
 {
     @IBAction func performButtonAction()
@@ -254,7 +251,6 @@ private extension PatchViewController
     }
 }
 
-@available(iOS 14.0, *)
 private extension PatchViewController
 {
     func startProcess()

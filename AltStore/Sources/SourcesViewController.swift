@@ -586,7 +586,6 @@ extension SourcesViewController: UICollectionViewDelegateFlowLayout
     }
 }
 
-@available(iOS 13, *)
 extension SourcesViewController
 {
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?

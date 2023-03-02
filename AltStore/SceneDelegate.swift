@@ -75,7 +75,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
     }
 }
 
-@available(iOS 13.0, *)
 private extension SceneDelegate
 {
     func open(_ context: UIOpenURLContext)

@@ -390,7 +390,6 @@ private extension SettingsViewController
         }
     }
     
-    @available(iOS 14, *)
     @IBAction func addRefreshAppsShortcut()
     {
         guard let shortcut = INShortcut(intent: INInteraction.refreshAllApps().intent) else { return }

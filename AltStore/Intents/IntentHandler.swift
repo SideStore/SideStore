@@ -103,7 +103,6 @@ final class IntentHandler: NSObject, RefreshAllIntentHandling
     }
 }
 
-@available(iOS 14, *)
 private extension IntentHandler
 {
     func finish(_ intent: RefreshAllIntent, response: RefreshAllIntentResponse)
