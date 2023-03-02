@@ -16,6 +16,8 @@ import AltSign
 import Roxas
 import EmotionalDamage
 
+extension UIApplication: LegacyBackgroundFetching {}
+
 extension AppDelegate
 {
     static let openPatreonSettingsDeepLinkNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".OpenPatreonSettingsDeepLinkNotification")
@@ -244,7 +246,7 @@ extension AppDelegate
     private func prepareForBackgroundFetch()
     {
         // "Fetch" every hour, but then refresh only those that need to be refreshed (so we don't drain the battery).
-        UIApplication.shared.setMinimumBackgroundFetchInterval(1 * 60 * 60)
+        (UIApplication.shared as LegacyBackgroundFetching).setMinimumBackgroundFetchInterval(1 * 60 * 60)
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
         }
