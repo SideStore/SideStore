@@ -95,6 +95,7 @@ final class PillButton: UIButton
         self.contentEdgeInsets = UIEdgeInsets(top: Self.contentInsets.top, left: Self.contentInsets.leading, bottom: Self.contentInsets.bottom, right: Self.contentInsets.trailing)
         
         self.activityIndicatorView.style = .medium
+        self.activityIndicatorView.color = .white
         self.activityIndicatorView.isUserInteractionEnabled = false
         
         self.progressView.progress = 0

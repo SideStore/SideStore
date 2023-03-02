@@ -32,6 +32,7 @@ final class AuthenticationViewController: UIViewController
         super.viewDidLoad()
         
         self.signInButton.activityIndicatorView.style = .medium
+        self.signInButton.activityIndicatorView.color = .white
         
         for view in [self.appleIDBackgroundView!, self.passwordBackgroundView!, self.signInButton!]
         {

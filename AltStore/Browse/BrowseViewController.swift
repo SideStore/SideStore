@@ -96,6 +96,7 @@ private extension BrowseViewController
             
             cell.bannerView.button.addTarget(self, action: #selector(BrowseViewController.performAppAction(_:)), for: .primaryActionTriggered)
             cell.bannerView.button.activityIndicatorView.style = .medium
+            cell.bannerView.button.activityIndicatorView.color = .white
             
             // Explicitly set to false to ensure we're starting from a non-activity indicating state.
             // Otherwise, cell reuse can mess up some cached values.
