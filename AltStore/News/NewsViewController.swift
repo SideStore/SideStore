@@ -41,7 +41,7 @@ private final class AppBannerFooterView: UICollectionReusableView
     }
 }
 
-final class NewsViewController: UICollectionViewController
+class NewsViewController: UICollectionViewController, PeekPopPreviewing
 {
     private lazy var dataSource = self.makeDataSource()
     private lazy var placeholderView = RSTPlaceholderView(frame: .zero)
@@ -77,7 +77,7 @@ final class NewsViewController: UICollectionViewController
         self.collectionView.register(NewsCollectionViewCell.nib, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
         self.collectionView.register(AppBannerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "AppBanner")
         
-        self.registerForPreviewing(with: self, sourceView: self.collectionView)
+        (self as PeekPopPreviewing).registerForPreviewing(with: self, sourceView: self.collectionView)
         
         self.update()
     }
@@ -492,6 +492,7 @@ extension NewsViewController: UICollectionViewDelegateFlowLayout
 
 extension NewsViewController: UIViewControllerPreviewingDelegate
 {
+    @available(iOS, deprecated: 13.0)
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController?
     {
         if let indexPath = self.collectionView.indexPathForItem(at: location), let cell = self.collectionView.cellForItem(at: indexPath)
@@ -538,6 +539,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate
         }
     }
     
+    @available(iOS, deprecated: 13.0)
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController)
     {
         if let safariViewController = viewControllerToCommit as? SFSafariViewController
