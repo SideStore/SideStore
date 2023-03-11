@@ -1,0 +1,141 @@
+[
+  {
+    "ALTAppGroups": [
+      "group.$(APP_GROUP_IDENTIFIER)",
+      "group.com.SideStore.SideStore"
+    ],
+    "ALTDeviceID": "00008101-000129D63698001E",
+    "ALTServerID": "1F7D5B55-79CE-4546-A029-D4DDC4AF3B6D",
+    "ALTPairingFile": "<insert pairing file here>",
+    "ALTAnisetteURL": "https://sideloadly.io/anisette/irGb3Quww8zrhgqnzmrx",
+    "CFBundleDevelopmentRegion": "$(DEVELOPMENT_LANGUAGE)",
+    "CFBundleDocumentTypes": [
+      {
+        "CFBundleTypeIconFiles": [],
+        "CFBundleTypeName": "iOS App",
+        "CFBundleTypeRole": "Viewer",
+        "LSHandlerRank": "Alternate",
+        "LSItemContentTypes": [
+          "com.apple.itunes.ipa"
+        ]
+      }
+    ],
+    "CFBundleExecutable": "$(EXECUTABLE_NAME)",
+    "CFBundleIdentifier": "$(PRODUCT_BUNDLE_IDENTIFIER)",
+    "CFBundleInfoDictionaryVersion": "6.0",
+    "CFBundleName": "$(PRODUCT_NAME)",
+    "CFBundlePackageType": "APPL",
+    "LSSupportsOpeningDocumentsInPlace": true,
+    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+    "CFBundleURLTypes": [
+      {
+        "CFBundleTypeRole": "Editor",
+        "CFBundleURLName": "AltStore General",
+        "CFBundleURLSchemes": [
+          "altstore",
+          "sidestore"
+        ]
+      },
+      {
+        "CFBundleTypeRole": "Editor",
+        "CFBundleURLName": "AltStore Backup",
+        "CFBundleURLSchemes": [
+          "altstore-com.rileytestut.AltStore",
+          "sidestore-com.SideStore.SideStore"
+        ]
+      }
+    ],
+    "CFBundleVersion": "1",
+    "INIntentsSupported": [
+      "RefreshAllIntent",
+      "ViewAppIntent"
+    ],
+    "LSApplicationQueriesSchemes": [
+      "altstore-com.rileytestut.AltStore",
+      "altstore-com.rileytestut.AltStore.Beta",
+      "altstore-com.rileytestut.Delta",
+      "altstore-com.rileytestut.Delta.Beta",
+      "altstore-com.rileytestut.Delta.Lite",
+      "altstore-com.rileytestut.Delta.Lite.Beta",
+      "altstore-com.rileytestut.Clip",
+      "altstore-com.rileytestut.Clip.Beta"
+    ],
+    "LSRequiresIPhoneOS": true,
+    "NSBonjourServices": [
+      "_altserver._tcp"
+    ],
+    "NSLocalNetworkUsageDescription": "SideStore uses the local network to find and communicate with your device.",
+    "NSUserActivityTypes": [
+      "RefreshAllIntent",
+      "ViewAppIntent"
+    ],
+    "UIApplicationSceneManifest": {
+      "UIApplicationSupportsMultipleScenes": true,
+      "UISceneConfigurations": {
+        "UIWindowSceneSessionRoleApplication": [
+          {
+            "UILaunchStoryboardName": "LaunchScreen",
+            "UISceneConfigurationName": "Default Configuration",
+            "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate",
+            "UISceneStoryboardFile": "Main"
+          }
+        ]
+      }
+    },
+    "UIBackgroundModes": [
+      "audio",
+      "fetch",
+      "remote-notification"
+    ],
+    "UILaunchStoryboardName": "LaunchScreen",
+    "NSAppTransportSecurity": {
+      "NSAllowsArbitraryLoads": true
+    },
+    "UIMainStoryboardFile": "Main",
+    "UIRequiredDeviceCapabilities": [
+      "armv7"
+    ],
+    "UIStatusBarTintParameters": {
+      "UINavigationBar": {
+        "Style": "UIBarStyleDefault",
+        "Translucent": false
+      }
+    },
+    "UISupportedInterfaceOrientations": [
+      "UIInterfaceOrientationPortrait"
+    ],
+    "UISupportedInterfaceOrientations~ipad": [
+      "UIInterfaceOrientationPortrait",
+      "UIInterfaceOrientationPortraitUpsideDown",
+      "UIInterfaceOrientationLandscapeLeft",
+      "UIInterfaceOrientationLandscapeRight"
+    ],
+    "UTImportedTypeDeclarations": [
+      {
+        "UTTypeConformsTo": [
+          "public.data"
+        ],
+        "UTTypeDescription": "iOS App",
+        "UTTypeIconFiles": [],
+        "UTTypeIdentifier": "com.apple.itunes.ipa",
+        "UTTypeTagSpecification": {
+          "public.filename-extension": "ipa"
+        }
+      },
+      {
+        "UTTypeConformsTo": [
+          "com.apple.plist"
+        ],
+        "UTTypeDescription": "Mobile Device Pairing",
+        "UTTypeIconFiles": [],
+        "UTTypeIdentifier": "org.sidestore.mobiledevicepairing",
+        "UTTypeTagSpecification": {
+          "public.filename-extension": [
+            "mobiledevicepairing"
+          ]
+        }
+      }
+    ],
+    "UIFileSharingEnabled": true
+  }
+]

@@ -1,0 +1,41 @@
+//
+//  UIDevice+Vibration.swift
+//  AltStore
+//
+//  Created by Riley Testut on 9/1/21.
+//  Copyright © 2021 Riley Testut. All rights reserved.
+//
+
+import AudioToolbox
+import CoreHaptics
+import UIKit
+
+private extension SystemSoundID {
+    static let pop = SystemSoundID(1520)
+    static let cancelled = SystemSoundID(1521)
+    static let tryAgain = SystemSoundID(1102)
+}
+
+@available(iOS 13, *)
+extension UIDevice {
+    enum VibrationPattern {
+        case success
+        case error
+    }
+}
+
+@available(iOS 13, *)
+extension UIDevice {
+    var isVibrationSupported: Bool {
+        CHHapticEngine.capabilitiesForHardware().supportsHaptics
+    }
+
+    func vibrate(pattern: VibrationPattern) {
+        guard isVibrationSupported else { return }
+
+        switch pattern {
+        case .success: AudioServicesPlaySystemSound(.tryAgain)
+        case .error: AudioServicesPlaySystemSound(.cancelled)
+        }
+    }
+}

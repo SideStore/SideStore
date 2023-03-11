@@ -1,0 +1,404 @@
+//
+//  FetchProvisioningProfilesOperation.swift
+//  AltStore
+//
+//  Created by Riley Testut on 2/27/20.
+//  Copyright © 2020 Riley Testut. All rights reserved.
+//
+
+import Foundation
+
+import AltSign
+import SideStoreCore
+import RoxasUIKit
+
+@objc(FetchProvisioningProfilesOperation)
+final class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioningProfile]> {
+    let context: AppOperationContext
+
+    var additionalEntitlements: [ALTEntitlement: Any]?
+
+    private let appGroupsLock = NSLock()
+
+    init(context: AppOperationContext) {
+        self.context = context
+
+        super.init()
+
+        progress.totalUnitCount = 1
+    }
+
+    override func main() {
+        super.main()
+
+        if let error = context.error {
+            finish(.failure(error))
+            return
+        }
+
+        guard
+            let team = context.team,
+            let session = context.session
+        else { return finish(.failure(OperationError.invalidParameters)) }
+
+        guard let app = context.app else { return finish(.failure(OperationError.appNotFound)) }
+
+        progress.totalUnitCount = Int64(1 + app.appExtensions.count)
+
+        prepareProvisioningProfile(for: app, parentApp: nil, team: team, session: session) { result in
+            do {
+                self.progress.completedUnitCount += 1
+
+                let profile = try result.get()
+
+                var profiles = [app.bundleIdentifier: profile]
+                var error: Error?
+
+                let dispatchGroup = DispatchGroup()
+
+                for appExtension in app.appExtensions {
+                    dispatchGroup.enter()
+
+                    self.prepareProvisioningProfile(for: appExtension, parentApp: app, team: team, session: session) { result in
+                        switch result {
+                        case let .failure(e): error = e
+                        case let .success(profile): profiles[appExtension.bundleIdentifier] = profile
+                        }
+
+                        dispatchGroup.leave()
+
+                        self.progress.completedUnitCount += 1
+                    }
+                }
+
+                dispatchGroup.notify(queue: .global()) {
+                    if let error = error {
+                        self.finish(.failure(error))
+                    } else {
+                        self.finish(.success(profiles))
+                    }
+                }
+            } catch {
+                self.finish(.failure(error))
+            }
+        }
+    }
+
+    func process<T>(_ result: Result<T, Error>) -> T? {
+        switch result {
+        case let .failure(error):
+            finish(.failure(error))
+            return nil
+
+        case let .success(value):
+            guard !isCancelled else {
+                finish(.failure(OperationError.cancelled))
+                return nil
+            }
+
+            return value
+        }
+    }
+}
+
+extension FetchProvisioningProfilesOperation {
+    func prepareProvisioningProfile(for app: ALTApplication, parentApp: ALTApplication?, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void) {
+        DatabaseManager.shared.persistentContainer.performBackgroundTask { context in
+
+            let preferredBundleID: String?
+
+            // Check if we have already installed this app with this team before.
+            let predicate = NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), app.bundleIdentifier)
+            if let installedApp = InstalledApp.first(satisfying: predicate, in: context) {
+                // Teams match if installedApp.team has same identifier as team,
+                // or if installedApp.team is nil but resignedBundleIdentifier contains the team's identifier.
+                let teamsMatch = installedApp.team?.identifier == team.identifier || (installedApp.team == nil && installedApp.resignedBundleIdentifier.contains(team.identifier))
+
+//                #if DEBUG
+//
+//                if app.isAltStoreApp
+//                {
+//                    // Use legacy bundle ID format for AltStore.
+//                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
+//                }
+//                else
+//                {
+//                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
+//                }
+//
+//                #else
+
+                if teamsMatch {
+                    // This app is already installed with the same team, so use the same resigned bundle identifier as before.
+                    // This way, if we change the identifier format (again), AltStore will continue to use
+                    // the old bundle identifier to prevent it from installing as a new app.
+                    preferredBundleID = installedApp.resignedBundleIdentifier
+                } else {
+                    preferredBundleID = nil
+                }
+
+                // #endif
+            } else {
+                preferredBundleID = nil
+            }
+
+            let bundleID: String
+
+            if let preferredBundleID = preferredBundleID {
+                bundleID = preferredBundleID
+            } else {
+                // This app isn't already installed, so create the resigned bundle identifier ourselves.
+                // Or, if the app _is_ installed but with a different team, we need to create a new
+                // bundle identifier anyway to prevent collisions with the previous team.
+                let parentBundleID = parentApp?.bundleIdentifier ?? app.bundleIdentifier
+                let updatedParentBundleID: String
+
+                if app.isAltStoreApp {
+                    // Use legacy bundle ID format for AltStore (and its extensions).
+                    updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
+                } else {
+                    updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
+                }
+
+                bundleID = app.bundleIdentifier.replacingOccurrences(of: parentBundleID, with: updatedParentBundleID)
+            }
+
+            let preferredName: String
+
+            if let parentApp = parentApp {
+                preferredName = parentApp.name + " " + app.name
+            } else {
+                preferredName = app.name
+            }
+
+            // Register
+            self.registerAppID(for: app, name: preferredName, bundleIdentifier: bundleID, team: team, session: session) { result in
+                switch result {
+                case let .failure(error): completionHandler(.failure(error))
+                case let .success(appID):
+
+                    // Update features
+                    self.updateFeatures(for: appID, app: app, team: team, session: session) { result in
+                        switch result {
+                        case let .failure(error): completionHandler(.failure(error))
+                        case let .success(appID):
+
+                            // Update app groups
+                            self.updateAppGroups(for: appID, app: app, team: team, session: session) { result in
+                                switch result {
+                                case let .failure(error): completionHandler(.failure(error))
+                                case let .success(appID):
+
+                                    // Fetch Provisioning Profile
+                                    self.fetchProvisioningProfile(for: appID, team: team, session: session) { result in
+                                        completionHandler(result)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func registerAppID(for application: ALTApplication, name: String, bundleIdentifier: String, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void) {
+        ALTAppleAPI.shared.fetchAppIDs(for: team, session: session) { appIDs, error in
+            do {
+                let appIDs = try Result(appIDs, error).get()
+
+                if let appID = appIDs.first(where: { $0.bundleIdentifier.lowercased() == bundleIdentifier.lowercased() }) {
+                    completionHandler(.success(appID))
+                } else {
+                    let requiredAppIDs = 1 + application.appExtensions.count
+                    let availableAppIDs = max(0, Team.maximumFreeAppIDs - appIDs.count)
+
+                    let sortedExpirationDates = appIDs.compactMap { $0.expirationDate }.sorted(by: { $0 < $1 })
+
+                    if team.type == .free {
+                        if requiredAppIDs > availableAppIDs {
+                            if let expirationDate = sortedExpirationDates.first {
+                                throw OperationError.maximumAppIDLimitReached(application: application, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, nextExpirationDate: expirationDate)
+                            } else {
+                                throw ALTAppleAPIError(.maximumAppIDLimitReached)
+                            }
+                        }
+                    }
+
+                    ALTAppleAPI.shared.addAppID(withName: name, bundleIdentifier: bundleIdentifier, team: team, session: session) { appID, error in
+                        do {
+                            do {
+                                let appID = try Result(appID, error).get()
+                                completionHandler(.success(appID))
+                            } catch ALTAppleAPIError.maximumAppIDLimitReached {
+                                if let expirationDate = sortedExpirationDates.first {
+                                    throw OperationError.maximumAppIDLimitReached(application: application, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, nextExpirationDate: expirationDate)
+                                } else {
+                                    throw ALTAppleAPIError(.maximumAppIDLimitReached)
+                                }
+                            }
+                        } catch {
+                            completionHandler(.failure(error))
+                        }
+                    }
+                }
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+
+    func updateFeatures(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void) {
+        var entitlements = app.entitlements
+        for (key, value) in additionalEntitlements ?? [:] {
+            entitlements[key] = value
+        }
+
+        let requiredFeatures = entitlements.compactMap { entitlement, value -> (ALTFeature, Any)? in
+            guard let feature = ALTFeature(entitlement: entitlement) else { return nil }
+            return (feature, value)
+        }
+
+        var features = requiredFeatures.reduce(into: [ALTFeature: Any]()) { $0[$1.0] = $1.1 }
+
+        if let applicationGroups = entitlements[.appGroups] as? [String], !applicationGroups.isEmpty {
+            // App uses app groups, so assign `true` to enable the feature.
+            features[.appGroups] = true
+        } else {
+            // App has no app groups, so assign `false` to disable the feature.
+            features[.appGroups] = false
+        }
+
+        var updateFeatures = false
+
+        // Determine whether the required features are already enabled for the AppID.
+        for (feature, value) in features {
+            if let appIDValue = appID.features[feature] as AnyObject?, (value as AnyObject).isEqual(appIDValue) {
+                // AppID already has this feature enabled and the values are the same.
+                continue
+            } else if appID.features[feature] == nil, let shouldEnableFeature = value as? Bool, !shouldEnableFeature {
+                // AppID doesn't already have this feature enabled, but we want it disabled anyway.
+                continue
+            } else {
+                // AppID either doesn't have this feature enabled or the value has changed,
+                // so we need to update it to reflect new values.
+                updateFeatures = true
+                break
+            }
+        }
+
+        if updateFeatures {
+            let appID = appID.copy() as! ALTAppID
+            appID.features = features
+
+            ALTAppleAPI.shared.update(appID, team: team, session: session) { appID, error in
+                completionHandler(Result(appID, error))
+            }
+        } else {
+            completionHandler(.success(appID))
+        }
+    }
+
+    func updateAppGroups(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void) {
+        var entitlements = app.entitlements
+        for (key, value) in additionalEntitlements ?? [:] {
+            entitlements[key] = value
+        }
+
+        guard var applicationGroups = entitlements[.appGroups] as? [String], !applicationGroups.isEmpty else {
+            // Assigning an App ID to an empty app group array fails,
+            // so just do nothing if there are no app groups.
+            return completionHandler(.success(appID))
+        }
+
+        if app.isAltStoreApp {
+            // Potentially updating app groups for this specific AltStore.
+            // Find the (unique) AltStore app group, then replace it
+            // with the correct "base" app group ID.
+            // Otherwise, we may append a duplicate team identifier to the end.
+            if let index = applicationGroups.firstIndex(where: { $0.contains(Bundle.baseAltStoreAppGroupID) }) {
+                applicationGroups[index] = Bundle.baseAltStoreAppGroupID
+            } else {
+                applicationGroups.append(Bundle.baseAltStoreAppGroupID)
+            }
+        }
+
+        // Dispatch onto global queue to prevent appGroupsLock deadlock.
+        DispatchQueue.global().async {
+            // Ensure we're not concurrently fetching and updating app groups,
+            // which can lead to race conditions such as adding an app group twice.
+            self.appGroupsLock.lock()
+
+            func finish(_ result: Result<ALTAppID, Error>) {
+                self.appGroupsLock.unlock()
+                completionHandler(result)
+            }
+
+            ALTAppleAPI.shared.fetchAppGroups(for: team, session: session) { groups, error in
+                switch Result(groups, error) {
+                case let .failure(error): finish(.failure(error))
+                case let .success(fetchedGroups):
+                    let dispatchGroup = DispatchGroup()
+
+                    var groups = [ALTAppGroup]()
+                    var errors = [Error]()
+
+                    for groupIdentifier in applicationGroups {
+                        let adjustedGroupIdentifier = groupIdentifier + "." + team.identifier
+
+                        if let group = fetchedGroups.first(where: { $0.groupIdentifier == adjustedGroupIdentifier }) {
+                            groups.append(group)
+                        } else {
+                            dispatchGroup.enter()
+
+                            // Not all characters are allowed in group names, so we replace periods with spaces (like Apple does).
+                            let name = "AltStore " + groupIdentifier.replacingOccurrences(of: ".", with: " ")
+
+                            ALTAppleAPI.shared.addAppGroup(withName: name, groupIdentifier: adjustedGroupIdentifier, team: team, session: session) { group, error in
+                                switch Result(group, error) {
+                                case let .success(group): groups.append(group)
+                                case let .failure(error): errors.append(error)
+                                }
+
+                                dispatchGroup.leave()
+                            }
+                        }
+                    }
+
+                    dispatchGroup.notify(queue: .global()) {
+                        if let error = errors.first {
+                            finish(.failure(error))
+                        } else {
+                            ALTAppleAPI.shared.assign(appID, to: Array(groups), team: team, session: session) { success, error in
+                                let result = Result(success, error)
+                                finish(result.map { _ in appID })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func fetchProvisioningProfile(for appID: ALTAppID, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void) {
+        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { profile, error in
+            switch Result(profile, error) {
+            case let .failure(error): completionHandler(.failure(error))
+            case let .success(profile):
+
+                // Delete existing profile
+                ALTAppleAPI.shared.delete(profile, for: team, session: session) { success, error in
+                    switch Result(success, error) {
+                    case let .failure(error): completionHandler(.failure(error))
+                    case .success:
+
+                        // Fetch new provisiong profile
+                        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { profile, error in
+                            completionHandler(Result(profile, error))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

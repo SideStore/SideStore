@@ -1,3 +1,0 @@
-#include "Build.xcconfig"
-
-PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PRODUCT_NAME)

@@ -1,0 +1,28 @@
+# ---- About ----
+module: SideStore
+module_version: 1.0,0
+author: SideStore
+readme: README.md
+copyright: 'See [license](https://github.com/SideStore/SideStore/blob/develop/LICENSE) for more details.'
+
+# ---- URLs ----
+author_url: https://sidestore.io
+dash_url: https://sidestore.io/docsets/SideStore.xml
+github_url: https://github.com/SideStore/SideStore/
+github_file_prefix: https://github.com/SideStore/SideStore/tree/1.0.2/
+
+# ---- Sources ----
+source_directory: Sources
+documentation: .build/x86_64-apple-macosx/debug/SideStore.docc
+
+# ---- Generation ----
+clean: true
+output: docs
+min_acl: public
+hide_documentation_coverage: false
+skip_undocumented: false
+objc: false
+swift_version: 5.1.0
+
+# ---- Formatting ----
+theme: fullwidth

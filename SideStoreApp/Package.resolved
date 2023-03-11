@@ -1,0 +1,122 @@
+{
+  "pins" : [
+    {
+      "identity" : "altsign",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/AltSign",
+      "state" : {
+        "revision" : "eb4c74dcf6be2fb00a3edc0381aae59fbbdb4cf3",
+        "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "appcenter-sdk-apple",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/appcenter-sdk-apple",
+      "state" : {
+        "revision" : "b2dc99cfedead0bad4e6573d86c5228c89cff332",
+        "version" : "4.4.3"
+      }
+    },
+    {
+      "identity" : "down",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnxnguyen/Down.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e754ab1c80920dd51a8e08290c912ac1c2ac8b58"
+      }
+    },
+    {
+      "identity" : "imobiledevice.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/iMobileDevice.swift",
+      "state" : {
+        "revision" : "74e481106dd155c0cd21bca6795fd9fe5f751654",
+        "version" : "1.0.5"
+      }
+    },
+    {
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess",
+      "state" : {
+        "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
+        "version" : "4.2.2"
+      }
+    },
+    {
+      "identity" : "launchatlogin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/LaunchAtLogin.git",
+      "state" : {
+        "revision" : "7ad6331f9c38953eb1ce8737758e18f7607e984a",
+        "version" : "5.0.0"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke",
+      "state" : {
+        "revision" : "9318d02a8a6d20af56505c9673261c1fd3b3aebe",
+        "version" : "7.6.3"
+      }
+    },
+    {
+      "identity" : "openssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/OpenSSL.git",
+      "state" : {
+        "revision" : "87f41bf9488e7dd2b0de2ab97cb3eafc7304e0e6",
+        "version" : "1.1.2000"
+      }
+    },
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/PLCrashReporter.git",
+      "state" : {
+        "revision" : "81cdec2b3827feb03286cb297f4c501a8eb98df1",
+        "version" : "1.10.2"
+      }
+    },
+    {
+      "identity" : "roxas",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Roxas",
+      "state" : {
+        "revision" : "17338c09ec0ffeea4c68135f17c1f801a3d6d10d",
+        "version" : "1.2.2"
+      }
+    },
+    {
+      "identity" : "semanticversion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftPackageIndex/SemanticVersion",
+      "state" : {
+        "revision" : "fc670910dc0903cc269b3d0b776cda5703979c4e",
+        "version" : "0.3.5"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit",
+      "state" : {
+        "revision" : "7ea34a09b52c104077dea8e0b90f8dc55d43b36b",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "swiftpmplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SwiftPMPlugins.git",
+      "state" : {
+        "revision" : "2e4833a3ca65d0aaa986138b8ef350b7f549ba28",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}

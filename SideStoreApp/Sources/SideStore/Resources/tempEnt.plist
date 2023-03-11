@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>application-identifier</key>
+	<string>S32Z3HMYVQ.com.SideStore.SideStore</string>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+	<key>com.apple.developer.team-identifier</key>
+	<string>A72ZC8AJ5X</string>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.$(APP_GROUP_IDENTIFIER)</string>
+	</array>
+	<key>get-task-allow</key>
+	<true/>
+</dict>
+</plist>

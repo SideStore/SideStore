@@ -157,8 +157,8 @@ test:
 ## -- Building --
 
 build:
-	@xcodebuild -project AltStore.xcodeproj \
-				-scheme AltStore \
+	@xcodebuild -project SideStore.xcodeproj \
+				-scheme SideStore \
 				-sdk iphoneos \
 				archive -archivePath ./archive \
 				CODE_SIGNING_REQUIRED=NO \
@@ -169,8 +169,8 @@ build:
 				DWARF_DSYM_FOLDER_PATH="."
 
 fakesign:
-	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-	ldid -SAltStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
+	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/SideStoreCore.framework/Frameworks/
+	ldid -SSideStoreApp/Sources/SideStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
 
 ipa:
 	mkdir Payload

@@ -1,0 +1,20 @@
+# .github/workflows/sidestore-project.yml
+name: SideStore Project
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: tuist/tuist-action@0.13.0
+      with:
+        command: 'build'
+        arguments: ''
+

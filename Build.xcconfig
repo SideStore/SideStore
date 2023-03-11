@@ -6,19 +6,26 @@ CURRENT_PROJECT_VERSION = 3050
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ
-ORG_IDENTIFIER = com.SideStore
+ORG_IDENTIFIER = com.$(PROJECT_NAME)
 
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
 
 ORG_PREFIX = $(ORG_IDENTIFIER)
-
-PRODUCT_NAME = SideStore
-EXTENSION_PREFIX = $(ORG_PREFIX).SideStore
-//PRODUCT_NAME[configuration=Debug] = Prov Debug
-
-PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).SideStore
-//PRODUCT_BUNDLE_IDENTIFIER[configuration=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-debug
-
-APP_GROUP_IDENTIFIER        = $(ORG_PREFIX).SideStore
+APP_GROUP_IDENTIFIER        = $(ORG_PREFIX).$(PROJECT_NAME)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
+
+PRODUCT_NAME = $(PROJECT_NAME)
+PRODUCT_NAME[config=Debug] = $(PROJECT_NAME) Debug
+
+EXTENSION_PREFIX = $(ORG_PREFIX).$(PROJECT_NAME)
+
+PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).$(PROJECT_NAME:lower)
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-debug
+
+// MARK: - XCode / Swift
+
+// Clang and the build system support a new mode for building module dependencies called explicit modules
+// which improves build performance, reliability, and correctness.
+// https://developer.apple.com/documentation/xcode-release-notes/xcode-14_3-release-notes#New-Features-in-Xcode-143-Beta-2
+_EXPERIMENTAL_CLANG_EXPLICIT_MODULES = YES

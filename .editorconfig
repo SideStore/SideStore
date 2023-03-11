@@ -1,39 +1,35 @@
-# EditorConfig is awesome: https://EditorConfig.org
+# http://editorconfig.org
 
-# top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
 [*]
+indent_style = space
+charset = utf-8
+indent_size = 4
 end_of_line = lf
+trim_trailing_whitespace = true
 insert_final_newline = true
 
-# Matches multiple files with brace expansion notation
-# Set default charset
-[*.{js,py}]
-charset = utf-8# 4 space indentation
+[*.{md,markdown}]
+trim_trailing_whitespace = false
 
-# Swift files
-[*.swift]
-indent_style = space
-indent_size = 4
-charset = utf-8# 4 space indentation
-
-# 4 space indentation
-[*.py]
-indent_style = space
-indent_size = 4
-
-# Tab indentation (no size specified)
-[Makefile]
-indent_style = tab
-
-# Indentation override for all JS under lib directory
-[lib/**.js]
+[*.{c,h,m,mm}]
+trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-# Matches the exact files either package.json or .travis.yml
-[{package.json,.travis.yml}]
-indent_style = space
+[*.js]
+indent_size = 2
+
+[*.{swift}]
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 4
+
+[Makefile]
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 8
+
+[*.{yaml|yml}]
 indent_size = 2
