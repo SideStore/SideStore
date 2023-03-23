@@ -43,4 +43,4 @@ Please see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Licensing
 
-This project is licensed under the **AGPLv3 license**.
+This project is licensed under the **AGPLv3 license**. 
