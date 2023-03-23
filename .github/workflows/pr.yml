@@ -1,6 +1,6 @@
 name: Pull Request SideStore build
 on:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
