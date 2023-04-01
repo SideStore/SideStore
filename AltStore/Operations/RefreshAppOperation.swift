@@ -48,15 +48,10 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
                 print("Sending refresh app request...")
 
                 for p in profiles {
-                    let bytes = dataToBytes(p.value.data)
-                    if bytes == nil {
-                        return self.finish(.failure(OperationError.swiftBridgeIssue))
-                    }
                     do {
-                        try install_provisioning_profile(UnsafeBufferPointer(bytes!))
-                        bytes!.deallocate()
+                        let bytes = p.value.data.toRustByteSlice()
+                        try install_provisioning_profile(bytes.forRust())
                     } catch {
-                        bytes!.deallocate()
                         return self.finish(.failure(minimuxerToOperationError(error)))
                     }
                     

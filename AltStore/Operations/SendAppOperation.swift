@@ -46,15 +46,10 @@ final class SendAppOperation: ResultOperation<()>
         print("AFC App `fileURL`: \(fileURL.absoluteString)")
         
         if let data = NSData(contentsOf: fileURL) {
-            let bytes = dataToBytes(Data(data))
-            if bytes == nil {
-                return self.finish(.failure(OperationError.swiftBridgeIssue))
-            }
             do {
-                try yeet_app_afc(app.bundleIdentifier, UnsafeBufferPointer(bytes!))
-                bytes!.deallocate()
+                let bytes = Data(data).toRustByteSlice()
+                try yeet_app_afc(app.bundleIdentifier, bytes.forRust())
             } catch {
-                bytes!.deallocate()
                 return self.finish(.failure(minimuxerToOperationError(error)))
             }
             

@@ -36,6 +36,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		99F87D1529D8E41100B40039 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				9961EC2729BE9C1200AF2C6F /* SwiftBridgeCore.h */,
+				9987603229A454B500818586 /* minimuxer.h */,
+			);
+			name = Generated;
+			sourceTree = "<group>";
+		};
 		ADDEDBA66A6E2 /* Required for static linking */ = {
 			isa = PBXGroup;
 			children = (
@@ -63,8 +72,7 @@
 		CA6012A875F9D65BC3C892A8 = {
 			isa = PBXGroup;
 			children = (
-				9961EC2729BE9C1200AF2C6F /* SwiftBridgeCore.h */,
-				9987603229A454B500818586 /* minimuxer.h */,
+				99F87D1529D8E41100B40039 /* Generated */,
 				CA6012A875F922869D176AE5 /* Products */,
 				CA6012A875F998AF0B5890DB /* Frameworks */,
 			);
@@ -140,7 +148,6 @@
 				./minimuxer/minimuxer.h,
 				./minimuxer/SwiftBridgeCore.h,
 				./minimuxer/minimuxer.swift,
-				"./minimuxer/minimuxer-helpers.swift",
 				./minimuxer/SwiftBridgeCore.swift,
 				"./minimuxer/minimuxer-Bridging-Header.h",
 			);
