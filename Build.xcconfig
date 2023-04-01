@@ -14,11 +14,14 @@ ORG_IDENTIFIER = com.SideStore
 ORG_PREFIX = $(ORG_IDENTIFIER)
 
 PRODUCT_NAME = SideStore
-EXTENSION_PREFIX = $(ORG_PREFIX).SideStore
 //PRODUCT_NAME[configuration=Debug] = Prov Debug
 
 PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).SideStore
-//PRODUCT_BUNDLE_IDENTIFIER[configuration=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-debug
+// add team ID to bundle ID for debug builds since these will most likely be installed via Xcode
+// SideStore will expect the team ID to be at the end of the bundle ID, but this doesn't happen when we install via Xcode
+// we don't want to do this for release since those builds will most likely be installed via SideServer, which adds the team ID
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_PREFIX).SideStore.$(DEVELOPMENT_TEAM)
 
-APP_GROUP_IDENTIFIER        = $(ORG_PREFIX).SideStore
+EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
+APP_GROUP_IDENTIFIER        = $(PRODUCT_BUNDLE_IDENTIFIER)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
