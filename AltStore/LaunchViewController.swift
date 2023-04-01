@@ -132,7 +132,6 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             
             // Start minimuxer now that we have a file
             start_minimuxer_threads(pairing_string!)
-            
         } catch {
             displayError("Unable to read pairing file")
         }
@@ -149,7 +148,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     
     func start_minimuxer_threads(_ pairing_file: String) {
         target_minimuxer_address()
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].absoluteString
+        let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
             try start(pairing_file, documentsDirectory)
         } catch {
