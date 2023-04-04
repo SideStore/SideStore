@@ -199,6 +199,15 @@ private extension SourcesViewController
         let dataSource = RSTArrayCollectionViewDataSource<Source>(items: [])
         return dataSource
     }
+    
+    @IBSegueAction
+    func makeSourceDetailViewController(_ coder: NSCoder, sender: Any?) -> UIViewController?
+    {
+        guard let source = sender as? Source else { return nil }
+        
+        let sourceDetailViewController = SourceDetailViewController(source: source, coder: coder)
+        return sourceDetailViewController
+    }
 }
 
 private extension SourcesViewController
@@ -229,7 +238,7 @@ private extension SourcesViewController
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func addSource(url: URL, isTrusted: Bool = false, completionHandler: ((Result<Void, Error>) -> Void)? = nil)
+    func addSource(url: URL, completionHandler: ((Result<Void, Error>) -> Void)? = nil)
     {
         guard self.view.window != nil else { return }
         
@@ -262,6 +271,7 @@ private extension SourcesViewController
             }
         }
         
+        //TODO: Remove this now that trusted sources aren't necessary.
         var dependencies: [Foundation.Operation] = []
         if let fetchTrustedSourcesOperation = self.fetchTrustedSourcesOperation
         {
@@ -273,34 +283,13 @@ private extension SourcesViewController
         AppManager.shared.fetchSource(sourceURL: url, dependencies: dependencies) { (result) in
             do
             {
-                let source = try result.get()
-                let sourceName = source.name
-                let managedObjectContext = source.managedObjectContext
-                
-                // Hide warning when adding a featured trusted source.
-                let message = isTrusted ? nil : NSLocalizedString("Make sure to only add sources that you trust.", comment: "")
+                @Managed var source = try result.get()
                 
                 DispatchQueue.main.async {
-                    let alertController = UIAlertController(title: String(format: NSLocalizedString("Would you like to add the source “%@”?", comment: ""), sourceName),
-                                                            message: message, preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { _ in
-                        finish(.failure(OperationError.cancelled))
-                    })
-                    alertController.addAction(UIAlertAction(title: NSLocalizedString("Add Source", comment: ""), style: UIAlertAction.ok.style) { _ in
-                        managedObjectContext?.perform {
-                            do
-                            {
-                                try managedObjectContext?.save()
-                                finish(.success(()))
-                            }
-                            catch
-                            {
-                                finish(.failure(error))
-                            }
-                        }
-                    })
-                    self.present(alertController, animated: true, completion: nil)
+                    self.showSourceDetails(for: source)
                 }
+                
+                finish(.success(()))
             }
             catch
             {
@@ -416,7 +405,7 @@ private extension SourcesViewController
         sender.progress = completedProgress
         
         let source = self.dataSource.item(at: indexPath)
-        self.addSource(url: source.sourceURL, isTrusted: true) { _ in
+        self.addSource(url: source.sourceURL) { _ in
             //FIXME: Handle cell reuse.
             sender.progress = nil
         }
@@ -451,6 +440,11 @@ private extension SourcesViewController
         
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    func showSourceDetails(for source: Source)
+    {
+        self.performSegue(withIdentifier: "showSourceDetails", sender: source)
+    }
 }
 
 extension SourcesViewController
@@ -460,9 +454,7 @@ extension SourcesViewController
         self.collectionView.deselectItem(at: indexPath, animated: true)
         
         let source = self.dataSource.item(at: indexPath)
-        guard let error = source.error else { return }
-        
-        self.present(error)
+        self.showSourceDetails(for: source)
     }
 }
 
@@ -613,7 +605,7 @@ extension SourcesViewController
             }
             
             let addAction = UIAction(title: String(format: NSLocalizedString("Add “%@”", comment: ""), source.name), image: UIImage(systemName: "plus")) { (action) in
-                self.addSource(url: source.sourceURL, isTrusted: true)
+                self.addSource(url: source.sourceURL)
             }
             
             var actions: [UIAction] = []
