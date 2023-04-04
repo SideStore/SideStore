@@ -24,11 +24,37 @@ final class CollapsingTextView: UITextView
     
     var lineSpacing: Double = 2 {
         didSet {
-            self.setNeedsLayout()
+            if #available(iOS 16, *)
+            {
+                self.updateText()
+            }
+            else
+            {
+                self.setNeedsLayout()
+            }
+        }
+    }
+    
+    override var text: String! {
+        didSet {
+            guard #available(iOS 16, *) else { return }
+            self.updateText()
         }
     }
     
     let moreButton = UIButton(type: .system)
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?)
+    {
+        super.init(frame: frame, textContainer: textContainer)
+        
+        self.initialize()
+    }
+    
+    required init?(coder: NSCoder)
+    {
+        super.init(coder: coder)
+    }
     
     override func awakeFromNib()
     {
