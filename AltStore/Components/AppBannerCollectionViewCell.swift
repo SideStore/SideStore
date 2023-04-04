@@ -1,5 +1,5 @@
 //
-//  BannerCollectionViewCell.swift
+//  AppBannerCollectionViewCell.swift
 //  AltStore
 //
 //  Created by Riley Testut on 3/23/20.
@@ -10,15 +10,31 @@ import UIKit
 
 final class BannerCollectionViewCell: UICollectionViewCell
 {
-    private(set) var errorBadge: UIView?
-    @IBOutlet private(set) var bannerView: AppBannerView!
+    let bannerView = AppBannerView(frame: .zero)
     
-    override func awakeFromNib()
+    private(set) var errorBadge: UIView!
+    
+    override init(frame: CGRect)
     {
-        super.awakeFromNib()
+        super.init(frame: frame)
         
+        self.initialize()
+    }
+    
+    required init?(coder: NSCoder)
+    {
+        super.init(coder: coder)
+        
+        self.initialize()
+    }
+    
+    private func initialize()
+    {
         self.contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.contentView.preservesSuperviewLayoutMargins = true
+        
+        self.bannerView.translatesAutoresizingMaskIntoConstraints = false
+        self.contentView.addSubview(self.bannerView)
         
         let errorBadge = UIView()
         errorBadge.translatesAutoresizingMaskIntoConstraints = false
@@ -37,6 +53,11 @@ final class BannerCollectionViewCell: UICollectionViewCell
         errorBadge.addSubview(badgeView, pinningEdgesWith: .zero)
         
         NSLayoutConstraint.activate([
+            self.bannerView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            self.bannerView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            self.bannerView.leadingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.leadingAnchor),
+            self.bannerView.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor),
+            
             errorBadge.centerXAnchor.constraint(equalTo: self.bannerView.trailingAnchor, constant: -5),
             errorBadge.centerYAnchor.constraint(equalTo: self.bannerView.topAnchor, constant: 5),
             
