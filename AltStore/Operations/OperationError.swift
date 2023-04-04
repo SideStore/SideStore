@@ -45,6 +45,12 @@ extension OperationError
         case anisetteV3Error//(message: String)
 
         case cacheClearError//(errors: [String])
+        case forbidden
+        
+        /* Connection */
+        case serverNotFound = 1200
+        case connectionFailed
+        case connectionDropped
     }
 
     static let unknownResult: OperationError = .init(code: .unknownResult)
@@ -114,6 +120,9 @@ extension OperationError
 
     static func invalidParameters(_ message: String? = nil) -> OperationError {
         OperationError(code: .invalidParameters, failureReason: message)
+    
+    static func forbidden(failureReason: String? = nil, file: String = #fileID, line: UInt = #line) -> OperationError {
+        OperationError(code: .forbidden, failureReason: failureReason, sourceFile: file, sourceLine: line)
     }
 }
 
@@ -166,6 +175,11 @@ struct OperationError: ALTLocalizedError {
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs within a 7 day period.", comment: "")
         case .noSources: return NSLocalizedString("There are no SideStore sources.", comment: "")
         case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be accessed.", comment: "")
+        case .invalidParameters: return NSLocalizedString("Invalid parameters.", comment: "")
+        case .forbidden:
+            guard let failureReason = self._failureReason else { return NSLocalizedString("The operation is forbidden.", comment: "") }
+            return failureReason
+
         case .appNotFound:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
             return String(format: NSLocalizedString("%@ could not be found.", comment: ""), appName)
