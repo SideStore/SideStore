@@ -16,15 +16,16 @@ import AltSign
 final class DownloadAppOperation: ResultOperation<ALTApplication>
 {
     let app: AppProtocol
-    let context: AppOperationContext
+    let context: InstallAppOperationContext
+    
     private let appName: String
     private let bundleIdentifier: String
     private let destinationURL: URL
 
     private let session = URLSession(configuration: .default)
     private let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
-
-    init(app: AppProtocol, destinationURL: URL, context: AppOperationContext)
+    
+    init(app: AppProtocol, destinationURL: URL, context: InstallAppOperationContext)
     {
         self.app = app
         self.context = context
@@ -51,8 +52,14 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
         print("Downloading App:", self.bundleIdentifier)
 
         self.localizedFailure = String(format: NSLocalizedString("%@ could not be downloaded.", comment: ""), self.appName)
-
-        guard let storeApp = self.app as? StoreApp else { return self.download(self.app) }
+        
+        guard let storeApp = self.app as? StoreApp else {
+            // Only StoreApp allows falling back to previous versions.
+            // AppVersion can only install itself, and ALTApplication doesn't have previous versions.
+            return self.download(self.app)
+        }
+        
+        // Verify storeApp
         storeApp.managedObjectContext?.perform {
             do {
                 let latestVersion = try self.verify(storeApp)
@@ -107,10 +114,19 @@ private extension DownloadAppOperation {
 
         return version
     }
-
-    func download(@Managed _ app: AppProtocol) {
-        guard let sourceURL = self.sourceURL else { return self.finish(.failure(OperationError.appNotFound(name: self.appName))) }
-
+    
+    func download(@Managed _ app: AppProtocol)
+    {
+        guard let sourceURL = $app.url else { return self.finish(.failure(OperationError.appNotFound(name: self.appName))) }
+        
+        if let appVersion = app as? AppVersion
+        {
+            // All downloads go through this path, and `app` is
+            // always an AppVersion if downloading from a source,
+            // so context.appVersion != nil means downloading from source.
+            self.context.appVersion = appVersion
+        }
+        
         self.downloadIPA(from: sourceURL) { result in
             do
             {
@@ -178,6 +194,12 @@ private extension DownloadAppOperation {
                 {
                     // File, so assuming this is a .ipa file.
                     appBundleURL = try FileManager.default.unzipAppBundle(at: fileURL, toDirectory: self.temporaryDirectory)
+                    
+                    // Use context's temporaryDirectory to ensure .ipa isn't deleted before we're done installing.
+                    let ipaURL = self.context.temporaryDirectory.appendingPathComponent("App.ipa")
+                    try FileManager.default.copyItem(at: fileURL, to: ipaURL)
+                    
+                    self.context.ipaURL = ipaURL
                 }
                 
                 guard let application = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }

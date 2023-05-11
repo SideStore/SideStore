@@ -109,6 +109,7 @@ class InstallAppOperationContext: AppOperationContext
         return temporaryDirectory
     }()
     
+    var ipaURL: URL?
     var resignedApp: ALTApplication?
     var installedApp: InstalledApp? {
         didSet {
@@ -120,4 +121,8 @@ class InstallAppOperationContext: AppOperationContext
     var beginInstallationHandler: ((InstalledApp) -> Void)?
     
     var alternateIconURL: URL?
+    
+    // Non-nil when installing from a source.
+    @AsyncManaged
+    var appVersion: AppVersion?
 }
