@@ -10,18 +10,15 @@ import Foundation
 import CoreData
 
 @propertyWrapper @dynamicMemberLookup
-struct Managed<ManagedObject>
-struct Managed<ManagedObject>
+public struct Managed<ManagedObject>
 {
     public var wrappedValue: ManagedObject {
         didSet {
             self.managedObjectContext = self.managedObject?.managedObjectContext
-            self.managedObjectContext = self.managedObject?.managedObjectContext
         }
     }
     
-
-    var projectedValue: Managed<ManagedObject> {
+    public var projectedValue: Managed<ManagedObject> {
         return self
     }
     
@@ -29,43 +26,72 @@ struct Managed<ManagedObject>
     private var managedObject: NSManagedObject? {
         return self.wrappedValue as? NSManagedObject
     }
-
-    init(wrappedValue: ManagedObject)
+    
+    public init(wrappedValue: ManagedObject)
     {
         self.wrappedValue = wrappedValue
         self.managedObjectContext = self.managedObject?.managedObjectContext
-        self.managedObjectContext = self.managedObject?.managedObjectContext
     }
-    
-    public subscript<T>(dynamicMember keyPath: KeyPath<ManagedObject, T>) -> T
+}
+
+/// Run on managedObjectContext's queue.
+public extension Managed
+{
+    // Non-throwing
+    func perform<T>(_ closure: @escaping (ManagedObject) -> T) -> T
     {
         var result: T!
         
         if let context = self.managedObjectContext
         {
             context.performAndWait {
-                result = self.wrappedValue[keyPath: keyPath]
+                result = closure(self.wrappedValue)
             }
         }
         else
         {
-            result = self.wrappedValue[keyPath: keyPath]
+            result = closure(self.wrappedValue)
         }
         
         return result
     }
-
-    // Optionals
-    subscript<Wrapped, T>(dynamicMember keyPath: KeyPath<Wrapped, T>) -> T? where ManagedObject == Optional<Wrapped> {
-        var result: T?
-
-        if let context = self.managedObjectContext {
+    
+    // Throwing
+    func perform<T>(_ closure: @escaping (ManagedObject) throws -> T) throws -> T
+    {
+        var result: Result<T, Error>!
+        
+        if let context = self.managedObjectContext
+        {
             context.performAndWait {
-                result = self.wrappedValue?[keyPath: keyPath] as? T
+                result = Result { try closure(self.wrappedValue) }
             }
-        } else {
-            result = self.wrappedValue?[keyPath: keyPath] as? T
         }
+        else
+        {
+            result = Result { try closure(self.wrappedValue) }
+        }
+        
+        let value = try result.get()
+        return value
+    }
+}
+
+/// @dynamicMemberLookup
+public extension Managed
+{
+    subscript<T>(dynamicMember keyPath: KeyPath<ManagedObject, T>) -> T
+    {
+        let result = self.perform { $0[keyPath: keyPath] }
+        return result
+    }
+    
+    // Optionals
+    subscript<Wrapped, T>(dynamicMember keyPath: KeyPath<Wrapped, T>) -> T? where ManagedObject == Optional<Wrapped>
+    {
+        guard let wrappedValue else { return nil }
+        
+        let result = self.perform { _ in wrappedValue[keyPath: keyPath] }
         return result
     }
 }
