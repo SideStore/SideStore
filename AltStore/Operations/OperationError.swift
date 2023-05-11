@@ -19,7 +19,7 @@ extension OperationError
         // General
         case unknown = 1000
         case unknownResult = 1001
-        case cancelled = 1002
+        // case cancelled = 1002
         case timedOut = 1003
         case unableToConnectSideJIT
         case unableToRespondSideJITDevice
@@ -52,9 +52,10 @@ extension OperationError
         case connectionFailed = 1201
         case connectionDropped = 1202
     }
-
+    
+    static var cancelled: CancellationError { CancellationError() }
+    
     static let unknownResult: OperationError = .init(code: .unknownResult)
-    static let cancelled: OperationError = .init(code: .cancelled)
     static let timedOut: OperationError = .init(code: .timedOut)
     static let unableToConnectSideJIT: OperationError = .init(code: .unableToConnectSideJIT)
     static let unableToRespondSideJITDevice: OperationError = .init(code: .unableToRespondSideJITDevice)
@@ -167,7 +168,6 @@ struct OperationError: ALTLocalizedError {
             failureReason += " (\(sourceFile) line \(sourceLine)"
             return failureReason
         case .unknownResult: return NSLocalizedString("The operation returned an unknown result.", comment: "")
-        case .cancelled: return NSLocalizedString("The operation was cancelled.", comment: "")
         case .timedOut: return NSLocalizedString("The operation timed out.", comment: "")
         case .notAuthenticated: return NSLocalizedString("You are not signed in.", comment: "")
         case .unknownUDID: return NSLocalizedString("SideStore could not determine this device's UDID.", comment: "")
