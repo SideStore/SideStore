@@ -41,7 +41,6 @@ struct VerificationError: ALTLocalizedError {
     var errorTitle: String?
     var errorFailure: String?
     @Managed var app: AppProtocol?
-    var entitlements: [String: Any]?
     var sourceBundleID: String?
     var deviceOSVersion: OperatingSystemVersion?
     var requiredOSVersion: OperatingSystemVersion?
@@ -134,87 +133,11 @@ final class VerifyAppOperation: ResultOperation<Void>
                 throw VerificationError.iOSVersionNotSupported(app: app, requiredOSVersion: app.minimumiOSVersion)
             }
             
-            if #available(iOS 13.5, *)
-            {
-                // No psychic paper, so we can ignore private entitlements
-                app.hasPrivateEntitlements = false
-            }
-            else
-            {
-                // Make sure this goes last, since once user responds to alert we don't do any more app verification.
-                if let commentStart = app.entitlementsString.range(of: "<!---><!-->"), let commentEnd = app.entitlementsString.range(of: "<!-- -->")
-                {
-                    // Psychic Paper private entitlements.
-                    
-                    let entitlementsStart = app.entitlementsString.index(after: commentStart.upperBound)
-                    let rawEntitlements = String(app.entitlementsString[entitlementsStart ..< commentEnd.lowerBound])
-                    
-                    let plistTemplate = """
-                        <?xml version="1.0" encoding="UTF-8"?>
-                        <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-                        <plist version="1.0">
-                            <dict>
-                            %@
-                            </dict>
-                        </plist>
-                        """
-                    let entitlementsPlist = String(format: plistTemplate, rawEntitlements)
-                    let entitlements = try PropertyListSerialization.propertyList(from: entitlementsPlist.data(using: .utf8)!, options: [], format: nil) as! [String: Any]
-                    
-                    app.hasPrivateEntitlements = true
-                    let error = VerificationError.privateEntitlements(entitlements, app: app)
-                    self.process(error) { (result) in
-                        self.finish(result.mapError { $0 as Error })
-                    }
-                    
-                    return
-                }
-                else
-                {
-                    app.hasPrivateEntitlements = false
-                }
-            }
-            
             self.finish(.success(()))
         }
         catch
         {
             self.finish(.failure(error))
-        }
-    }
-}
-
-private extension VerifyAppOperation
-{
-    func process(_ error: VerificationError, completion: @escaping (Result<Void, VerificationError>) -> Void)
-    {
-        guard let presentingViewController = self.context.presentingViewController else { return completion(.failure(error)) }
-        
-        DispatchQueue.main.async {
-            switch error.code
-            {
-            case .privateEntitlements:
-                guard let entitlements = error.entitlements else { return completion(.failure(error)) }
-                let permissions = entitlements.keys.sorted().joined(separator: "\n")
-                let message = String(format: NSLocalizedString("""
-                    You must allow access to these private permissions before continuing:
-                    
-                    %@
-                    
-                    Private permissions allow apps to do more than normally allowed by iOS, including potentially accessing sensitive private data. Make sure to only install apps from sources you trust.
-                    """, comment: ""), permissions)
-                
-                let alertController = UIAlertController(title: error.failureReason ?? error.localizedDescription, message: message, preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: NSLocalizedString("Allow Access", comment: ""), style: .destructive) { (action) in
-                    completion(.success(()))
-                })
-                alertController.addAction(UIAlertAction(title: NSLocalizedString("Deny Access", comment: ""), style: .default, handler: { (action) in
-                    completion(.failure(error))
-                }))
-                presentingViewController.present(alertController, animated: true, completion: nil)
-                
-            case .mismatchedBundleIdentifiers, .iOSVersionNotSupported: return completion(.failure(error))
-            }
         }
     }
 }
