@@ -142,7 +142,9 @@ final class VerifyAppOperation: ResultOperation<Void>
                 do
                 {
                     guard let ipaURL = self.context.ipaURL else { throw OperationError.appNotFound(name: app.name) }
+                    
                     try await self.verifyHash(of: app, at: ipaURL, matches: appVersion)
+                    try await self.verifyDownloadedVersion(of: app, matches: appVersion)
                     
                     self.finish(.success(()))
                 }
@@ -173,5 +175,12 @@ private extension VerifyAppOperation
         print("[ALTLog] Comparing app hash (\(hashString)) against expected hash (\(expectedHash))...")
 
         guard hashString == expectedHash else { throw VerificationError.mismatchedHash(hashString, expectedHash: expectedHash, app: app) }
+    }
+    
+    func verifyDownloadedVersion(of app: ALTApplication, @AsyncManaged matches appVersion: AppVersion) async throws
+    {
+        let version = await $appVersion.version
+        
+        guard version == app.version else { throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app) }
     }
 }
