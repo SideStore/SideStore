@@ -177,12 +177,17 @@ private extension AppContentViewController
     
     func makePermissionsDataSource() -> RSTArrayCollectionViewDataSource<AppPermission>
     {        
-        let dataSource = RSTArrayCollectionViewDataSource(items: self.app.permissions)
+        let dataSource = RSTArrayCollectionViewDataSource(items: Array(self.app.permissions))
         dataSource.cellConfigurationHandler = { (cell, permission, indexPath) in
             let cell = cell as! PermissionCollectionViewCell
-            cell.button.setImage(permission.type.icon, for: .normal)
-            cell.button.tintColor = .label
-            cell.textLabel.text = permission.type.localizedShortName ?? permission.type.localizedName
+            // cell.button.setImage(permission.type.icon, for: .normal)
+            // cell.button.tintColor = .label
+            // cell.textLabel.text = permission.type.localizedShortName ?? permission.type.localizedName
+            
+            let icon = UIImage(systemName: permission.symbolName ?? "lock")
+            cell.button.setImage(icon, for: .normal)
+            
+            cell.textLabel.text = permission.localizedDisplayName
         }
         
         return dataSource
