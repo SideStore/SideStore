@@ -104,14 +104,27 @@ private extension ALTEntitlement
     ]
 }
 
+extension VerifyAppOperation
+{
+    enum PermissionReviewMode
+    {
+        case none
+        case all
+        case added
+    }
+}
+
 @objc(VerifyAppOperation)
 final class VerifyAppOperation: ResultOperation<Void>
 {
+    let permissionsMode: PermissionReviewMode
     let context: InstallAppOperationContext
+    
     var verificationHandler: ((VerificationError) -> Bool)?
     
-    init(context: InstallAppOperationContext)
+    init(permissionsMode: PermissionReviewMode, context: InstallAppOperationContext)
     {
+        self.permissionsMode = permissionsMode
         self.context = context
         
         super.init()
@@ -155,11 +168,7 @@ final class VerifyAppOperation: ResultOperation<Void>
                     
                     try await self.verifyHash(of: app, at: ipaURL, matches: appVersion)
                     try await self.verifyDownloadedVersion(of: app, matches: appVersion)
-                    
-                    if let storeApp = await self.context.$appVersion.app
-                    {
-                        try await self.verifyPermissions(of: app, match: storeApp)
-                    }
+                    try await self.verifyPermissions(of: app, match: appVersion)
                     
                     self.finish(.success(()))
                 }
@@ -197,6 +206,33 @@ private extension VerifyAppOperation
         let version = await $appVersion.version
         
         guard version == app.version else { throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app) }
+    }
+    
+    func verifyPermissions(of app: ALTApplication, @AsyncManaged match appVersion: AppVersion) async throws
+    {
+        guard self.permissionsMode != .none else { return }
+        guard let storeApp = await $appVersion.app else { throw OperationError.invalidParameters }
+        
+        // Verify source permissions match first.
+        let allPermissions = try await self.verifyPermissions(of: app, match: storeApp)
+        
+        switch self.permissionsMode
+        {
+        case .none, .all: break
+        case .added:
+            let installedAppURL = InstalledApp.fileURL(for: app)
+            guard let previousApp = ALTApplication(fileURL: installedAppURL) else { throw OperationError.appNotFound(name: app.name) }
+            
+            var previousEntitlements = Set(previousApp.entitlements.keys)
+            for appExtension in previousApp.appExtensions
+            {
+                previousEntitlements.formUnion(appExtension.entitlements.keys)
+            }
+            
+            // Make sure all entitlements already exist in previousApp.
+            let addedEntitlements = Array(allPermissions.lazy.compactMap { $0 as? ALTEntitlement }.filter { !previousEntitlements.contains($0) })
+            guard addedEntitlements.isEmpty else { throw VerificationError.addedPermissions(addedEntitlements, app: appVersion) }
+        }
     }
     
     @discardableResult

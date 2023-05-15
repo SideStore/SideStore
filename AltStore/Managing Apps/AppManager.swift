@@ -988,11 +988,17 @@ private extension AppManager
                 
                 switch operation
                 {
-                case .install(let app), .update(let app):
-                    let installProgress = self._install(app, operation: operation, group: group) { (result) in
+                case .install(let app):
+                    let installProgress = self._install(app, operation: operation, group: group, reviewPermissions: .all) { (result) in
                         self.finish(operation, result: result, group: group, progress: progress)
                     }
                     progress?.addChild(installProgress, withPendingUnitCount: 80)
+                    
+                case .update(let app):
+                    let updateProgress = self._install(app, operation: operation, group: group, reviewPermissions: .added) { (result) in
+                        self.finish(operation, result: result, group: group, progress: progress)
+                    }
+                    progress?.addChild(updateProgress, withPendingUnitCount: 80)
                     
                 case .activate(let app) where UserDefaults.standard.isLegacyDeactivationSupported: fallthrough
                 case .refresh(let app):
@@ -1258,11 +1264,6 @@ private extension AppManager
             {
                 let app = try result.get()
                 context.app = app
-                
-                if cacheApp
-                {
-                    try FileManager.default.copyItem(at: app.fileURL, to: InstalledApp.fileURL(for: app), shouldReplace: true)
-                }
             }
             catch
             {
@@ -1273,12 +1274,21 @@ private extension AppManager
         
         
         /* Verify App */
-        let verifyOperation = VerifyAppOperation(context: context)
+        let verifyOperation = VerifyAppOperation(permissionsMode: permissionReviewMode, context: context)
         verifyOperation.resultHandler = { (result) in
-            switch result
+            do
             {
-            case .failure(let error): context.error = error
-            case .success: break
+                try result.get()
+                
+                // Wait until we've finished verifying app before caching it.
+                if let app = context.app, cacheApp
+                {
+                    try FileManager.default.copyItem(at: app.fileURL, to: InstalledApp.fileURL(for: app), shouldReplace: true)
+                }
+            }
+            catch
+            {
+                context.error = error
             }
         }
         verifyOperation.addDependency(downloadOperation)
