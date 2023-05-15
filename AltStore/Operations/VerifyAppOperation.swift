@@ -120,8 +120,6 @@ final class VerifyAppOperation: ResultOperation<Void>
     let permissionsMode: PermissionReviewMode
     let context: InstallAppOperationContext
     
-    var verificationHandler: ((VerificationError) -> Bool)?
-    
     init(permissionsMode: PermissionReviewMode, context: InstallAppOperationContext)
     {
         self.permissionsMode = permissionsMode
