@@ -120,7 +120,9 @@ private extension SourcesViewController
     {
         let dataSource = RSTCompositeCollectionViewDataSource<Source>(dataSources: [self.addedSourcesDataSource, self.trustedSourcesDataSource])
         dataSource.proxy = self
-        dataSource.cellConfigurationHandler = { (cell, source, indexPath) in
+        dataSource.cellConfigurationHandler = { [weak self] (cell, source, indexPath) in
+            guard let self else { return }
+            
             let tintColor = UIColor.altPrimary
             
             let cell = cell as! AppBannerCollectionViewCell
@@ -337,9 +339,9 @@ private extension SourcesViewController
     
     func fetchTrustedSources()
     {
-        func finish(_ result: Result<[Source], Error>)
-        {
-            self.fetchTrustedSourcesResult = result.map { _ in () }
+        // Closure instead of local function so we can capture `self` weakly.
+        let finish: (Result<[Source], Error>) -> Void = { [weak self] result in
+            self?.fetchTrustedSourcesResult = result.map { _ in () }
             
             DispatchQueue.main.async {
                 do
@@ -348,19 +350,19 @@ private extension SourcesViewController
                     print("Fetched trusted sources:", sources.map { $0.identifier })
 
                     let sectionUpdate = RSTCellContentChange(type: .update, sectionIndex: 0)
-                    self.trustedSourcesDataSource.setItems(sources, with: [sectionUpdate])
+                    self?.trustedSourcesDataSource.setItems(sources, with: [sectionUpdate])
                 }
                 catch
                 {
                     print("Error fetching trusted sources:", error)
                     
                     let sectionUpdate = RSTCellContentChange(type: .update, sectionIndex: 0)
-                    self.trustedSourcesDataSource.setItems([], with: [sectionUpdate])
+                    self?.trustedSourcesDataSource.setItems([], with: [sectionUpdate])
                 }
             }
         }
         
-        self.fetchTrustedSourcesOperation = AppManager.shared.updateKnownSources { result in
+        self.fetchTrustedSourcesOperation = AppManager.shared.updateKnownSources { [weak self] result in
             switch result
             {
             case .failure(let error): finish(.failure(error))
@@ -370,7 +372,7 @@ private extension SourcesViewController
                 
                 // This context is never saved, but keeps the managed sources alive.
                 let context = DatabaseManager.shared.persistentContainer.newBackgroundSavingViewContext()
-                self._fetchTrustedSourcesContext = context
+                self?._fetchTrustedSourcesContext = context
                 
                 let dispatchGroup = DispatchGroup()
                 
