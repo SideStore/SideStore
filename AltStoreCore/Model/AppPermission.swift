@@ -84,7 +84,6 @@ public class AppPermission: NSManagedObject, Decodable, Fetchable
         {
         case .entitlement: return ALTEntitlement(rawValue: self._permission)
         case .privacy: return ALTAppPrivacyPermission(rawValue: self._permission)
-        case .backgroundMode: return ALTAppBackgroundMode(rawValue: self._permission)
         default: return UnknownAppPermission(rawValue: self._permission)
         }
     }
@@ -105,7 +104,6 @@ public class AppPermission: NSManagedObject, Decodable, Fetchable
     {
         case entitlement
         case privacyType = "privacy"
-        case backgroundMode = "background"
         
         case usageDescription
     }
@@ -131,11 +129,6 @@ public class AppPermission: NSManagedObject, Decodable, Fetchable
             {
                 self._permission = privacyType
                 self.type = .privacy
-            }
-            else if let backgroundMode = try container.decodeIfPresent(String.self, forKey: .backgroundMode)
-            {
-                self._permission = backgroundMode
-                self.type = .backgroundMode
             }
             else
             {
