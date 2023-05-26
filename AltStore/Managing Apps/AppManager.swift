@@ -1271,7 +1271,8 @@ private extension AppManager
         
         
         /* Verify App */
-        let verifyOperation = VerifyAppOperation(permissionsMode: permissionReviewMode, context: context)
+        let permissionsMode = UserDefaults.shared.permissionCheckingDisabled ? .none : permissionReviewMode
+        let verifyOperation = VerifyAppOperation(permissionsMode: permissionsMode, context: context)
         verifyOperation.resultHandler = { (result) in
             do
             {
