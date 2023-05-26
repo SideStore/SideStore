@@ -223,6 +223,11 @@ private extension BackgroundRefreshAppsOperation
             {
                 shouldPresentAlert = false
             }
+            catch ~OperationError.Code.serverNotFound
+            {
+                shouldPresentAlert = false
+            }
+
             catch
             {
                 print("Failed to refresh apps in background.", error)
