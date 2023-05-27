@@ -47,6 +47,9 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             return self.finish(.failure(OperationError.invalidParameters("InstallAppOperation.main: self.context.certificate or self.context.resignedApp or self.context.provisioningProfiles is nil")))
         }
         
+        @Managed var appVersion = self.context.appVersion
+        let storeBuildVersion = $appVersion.buildVersion
+        
         let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         backgroundContext.perform {
             
@@ -61,10 +64,14 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             }
             else
             {
-                installedApp = InstalledApp(resignedApp: resignedApp, originalBundleIdentifier: self.context.bundleIdentifier, certificateSerialNumber: certificate.serialNumber, context: backgroundContext)
+                installedApp = InstalledApp(resignedApp: resignedApp,
+                                            originalBundleIdentifier: self.context.bundleIdentifier,
+                                            certificateSerialNumber: certificate.serialNumber,
+                                            storeBuildVersion: storeBuildVersion,
+                                            context: backgroundContext)
             }
             
-            installedApp.update(resignedApp: resignedApp, certificateSerialNumber: certificate.serialNumber)
+            installedApp.update(resignedApp: resignedApp, certificateSerialNumber: certificate.serialNumber, storeBuildVersion: storeBuildVersion)
             installedApp.needsResign = false
             
             if let team = DatabaseManager.shared.activeTeam(in: backgroundContext)
