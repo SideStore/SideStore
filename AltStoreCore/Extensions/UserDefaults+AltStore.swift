@@ -76,6 +76,7 @@ public extension UserDefaults
     @NSManaged var isCowExploitSupported: Bool
     
     @NSManaged var permissionCheckingDisabled: Bool
+    @NSManaged var responseCachingDisabled: Bool
     
     class func registerDefaults()
     {
@@ -125,5 +126,9 @@ public extension UserDefaults
             // Disable ignoreActiveAppsLimit if running iOS version that doesn't support MacDirtyCow.
             UserDefaults.standard.ignoreActiveAppsLimit = false
         }
+        
+        #if !BETA
+        UserDefaults.standard.responseCachingDisabled = false
+        #endif
     }
 }
