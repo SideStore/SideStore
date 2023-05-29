@@ -14,7 +14,7 @@
 	<key>ALTPairingFile</key>
 	<string>&lt;insert pairing file here&gt;</string>
 	<key>ALTAnisetteURL</key>
-	<string>https://ani.sidestore.io:6969</string>
+	<string>http://ani.sidestore.io:6969</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDocumentTypes</key>
