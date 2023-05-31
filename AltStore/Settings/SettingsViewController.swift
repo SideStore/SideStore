@@ -6,17 +6,17 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-import UIKit
-import SafariServices
-import MessageUI
 import Intents
 import IntentsUI
+import MessageUI
+import SafariServices
+import UIKit
 
 import AltStoreCore
 
-extension SettingsViewController
+private extension SettingsViewController
 {
-    fileprivate enum Section: Int, CaseIterable
+    enum Section: Int, CaseIterable
     {
         case signIn
         case account
@@ -24,23 +24,25 @@ extension SettingsViewController
         case appRefresh
         case instructions
         case credits
+        case cowExploit
         case debug
     }
     
-    fileprivate enum AppRefreshRow: Int, CaseIterable
+    enum AppRefreshRow: Int, CaseIterable
     {
         case backgroundRefresh
         
         @available(iOS 14, *)
         case addToSiri
         
-        static var allCases: [AppRefreshRow] {
+        static var allCases: [AppRefreshRow]
+        {
             guard #available(iOS 14, *) else { return [.backgroundRefresh] }
             return [.backgroundRefresh, .addToSiri]
         }
     }
     
-    fileprivate enum CreditsRow: Int, CaseIterable
+    enum CreditsRow: Int, CaseIterable
     {
         case developer
         case operations
@@ -48,7 +50,7 @@ extension SettingsViewController
         case softwareLicenses
     }
     
-    fileprivate enum DebugRow: Int, CaseIterable
+    enum DebugRow: Int, CaseIterable
     {
         case sendFeedback
         case refreshAttempts
@@ -73,10 +75,12 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var accountTypeLabel: UILabel!
     
     @IBOutlet private var backgroundRefreshSwitch: UISwitch!
-    
+    @IBOutlet private var enableCowExploitSwitch: UISwitch!
+
     @IBOutlet private var versionLabel: UILabel!
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    override var preferredStatusBarStyle: UIStatusBarStyle
+    {
         return .lightContent
     }
     
@@ -148,7 +152,8 @@ private extension SettingsViewController
         }
         
         self.backgroundRefreshSwitch.isOn = UserDefaults.standard.isBackgroundRefreshEnabled
-        
+        self.enableCowExploitSwitch.isOn = UserDefaults.standard.enableCowExploit
+
         if self.isViewLoaded
         {
             self.tableView.reloadData()
@@ -204,6 +209,16 @@ private extension SettingsViewController
             
         case .instructions:
             break
+        
+        case .cowExploit:
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("EXPLOITS", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Your device supports the M_D_C exploit. When this setting is on, the exploit is used to enable you to sideload more than 3 apps at a time. (warning: might be unstable)", comment: "")
+            }
             
         case .credits:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("CREDITS", comment: "")
@@ -224,14 +239,28 @@ private extension SettingsViewController
         let size = settingsHeaderFooterView.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         return size.height
     }
+    
+    func isSectionHidden(_ section: Section) -> Bool
+    {
+        switch section
+        {
+        case .cowExploit:
+            let isHidden = !(UserDefaults.standard.isCowExploitSupported)
+            return isHidden
+
+        default: return false
+        }
+    }
 }
 
 private extension SettingsViewController
 {
     func signIn()
     {
-        AppManager.shared.authenticate(presentingViewController: self) { (result) in
-            DispatchQueue.main.async {
+        AppManager.shared.authenticate(presentingViewController: self)
+        { result in
+            DispatchQueue.main.async
+            {
                 switch result
                 {
                 case .failure(OperationError.cancelled):
@@ -254,8 +283,10 @@ private extension SettingsViewController
     {
         func signOut()
         {
-            DatabaseManager.shared.signOut { (error) in
-                DispatchQueue.main.async {
+            DatabaseManager.shared.signOut
+            { error in
+                DispatchQueue.main.async
+                {
                     if let error = error
                     {
                         let toastView = ToastView(error: error)
@@ -270,7 +301,7 @@ private extension SettingsViewController
         let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to sign out?", comment: ""), message: NSLocalizedString("You will no longer be able to install or refresh apps once you sign out.", comment: ""), preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: NSLocalizedString("Sign Out", comment: ""), style: .destructive) { _ in signOut() })
         alertController.addAction(.cancel)
-        //Fix crash on iPad
+        // Fix crash on iPad
         alertController.popoverPresentationController?.barButtonItem = sender
         self.present(alertController, animated: true, completion: nil)
     }
@@ -278,6 +309,16 @@ private extension SettingsViewController
     @IBAction func toggleIsBackgroundRefreshEnabled(_ sender: UISwitch)
     {
         UserDefaults.standard.isBackgroundRefreshEnabled = sender.isOn
+    }
+    
+    @IBAction func toggleenableCowExploit(_ sender: UISwitch)
+    {
+        UserDefaults.standard.enableCowExploit = sender.isOn
+
+        if UserDefaults.standard.activeAppsLimit != nil
+        {
+            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+        }
     }
     
     @available(iOS 14, *)
@@ -305,7 +346,8 @@ private extension SettingsViewController
         }
         else
         {
-            self.debugGestureTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] (timer) in
+            self.debugGestureTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false)
+            { [weak self] _ in
                 self?.debugGestureCounter = 0
             }
         }
@@ -314,7 +356,8 @@ private extension SettingsViewController
     func openTwitter(username: String)
     {
         let twitterAppURL = URL(string: "twitter://user?screen_name=" + username)!
-        UIApplication.shared.open(twitterAppURL, options: [:]) { (success) in
+        UIApplication.shared.open(twitterAppURL, options: [:])
+        { success in
             if success
             {
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow
@@ -340,7 +383,8 @@ private extension SettingsViewController
     {
         guard self.presentedViewController == nil else { return }
                 
-        UIView.performWithoutAnimation {
+        UIView.performWithoutAnimation
+        {
             self.navigationController?.popViewController(animated: false)
             self.performSegue(withIdentifier: "showPatreon", sender: nil)
         }
@@ -366,6 +410,7 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where self.isSectionHidden(section): return 0
         case .signIn: return (self.activeTeam == nil) ? 1 : 0
         case .account: return (self.activeTeam == nil) ? 0 : 3
         case .appRefresh: return AppRefreshRow.allCases.count
@@ -394,9 +439,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where self.isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         case .account where self.activeTeam == nil: return nil
-        case .signIn, .account, .patreon, .appRefresh, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .credits, .cowExploit, .debug:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(headerView, for: section, isHeader: true)
             return headerView
@@ -410,8 +456,9 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where self.isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
-        case .signIn, .patreon, .appRefresh:
+        case .signIn, .patreon, .appRefresh, .cowExploit:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -425,9 +472,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where self.isSectionHidden(section): return 1.0
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0
-        case .signIn, .account, .patreon, .appRefresh, .credits, .debug:
+        case .signIn, .account, .patreon, .appRefresh, .credits, .debug, .cowExploit:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: true)
             return height
             
@@ -440,9 +488,10 @@ extension SettingsViewController
         let section = Section.allCases[section]
         switch section
         {
+        case _ where self.isSectionHidden(section): return 1.0
         case .signIn where self.activeTeam != nil: return 1.0
-        case .account where self.activeTeam == nil: return 1.0            
-        case .signIn, .patreon, .appRefresh:
+        case .account where self.activeTeam == nil: return 1.0
+        case .signIn, .patreon, .appRefresh, .cowExploit:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
@@ -516,8 +565,10 @@ extension SettingsViewController
                     message: NSLocalizedString("You can reset the pairing file when you cannot sideload apps or enable JIT. You need to restart SideStore.", comment: ""),
                     preferredStyle: UIAlertController.Style.actionSheet)
                 
-                alertController.addAction(UIAlertAction(title: NSLocalizedString("Delete and Reset", comment: ""), style: .destructive){ _ in
-                    if fm.fileExists(atPath: documentsPath.path), let contents = try? String(contentsOf: documentsPath), !contents.isEmpty {
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Delete and Reset", comment: ""), style: .destructive)
+                { _ in
+                    if fm.fileExists(atPath: documentsPath.path), let contents = try? String(contentsOf: documentsPath), !contents.isEmpty
+                    {
                         try? fm.removeItem(atPath: documentsPath.path)
                         NSLog("Pairing File Reseted")
                     }
@@ -526,7 +577,7 @@ extension SettingsViewController
                     self.present(dialogMessage, animated: true, completion: nil)
                 })
                 alertController.addAction(.cancel)
-                //Fix crash on iPad
+                // Fix crash on iPad
                 alertController.popoverPresentationController?.sourceView = self.tableView
                 alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
                 self.present(alertController, animated: true)
@@ -552,15 +603,18 @@ extension SettingsViewController
                 self.tableView.deselectRow(at: indexPath, animated: true)
             case .advancedSettings:
                 // Create the URL that deep links to your app's custom settings.
-                if let url = URL(string: UIApplication.openSettingsURLString) {
+                if let url = URL(string: UIApplication.openSettingsURLString)
+                {
                     // Ask the system to open that URL.
                     UIApplication.shared.open(url)
-                } else {
+                }
+                else
+                {
                     ELOG("UIApplication.openSettingsURLString invalid")
                 }
             case .refreshAttempts, .errorLog: break
             }
-            
+        case .cowExploit: break
         default: break
         }
     }

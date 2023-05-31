@@ -8,8 +8,8 @@
 import Foundation
 import Network
 
-import AltStoreCore
 import AltSign
+import AltStoreCore
 import Roxas
 import minimuxer
 
@@ -45,8 +45,8 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
         else { return self.finish(.failure(OperationError.invalidParameters)) }
         
         let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
-        backgroundContext.perform {
-            
+        backgroundContext.perform
+        {
             /* App */
             let installedApp: InstalledApp
             
@@ -142,8 +142,9 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                         installedApp.isActive = false
                     }
                 }
-
-                activeProfiles = Set(activeApps.flatMap { (installedApp) -> [String] in
+                
+                activeProfiles = Set(activeApps.flatMap
+                { installedApp -> [String] in
                     let appExtensionProfiles = installedApp.appExtensions.map { $0.resignedBundleIdentifier }
                     return [installedApp.resignedBundleIdentifier] + appExtensionProfiles
                 })
@@ -205,6 +206,52 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 }
             }
             
+            let res = minimuxer_install_ipa(ns_bundle_ptr)
+            if res == 0
+            {
+                installedApp.refreshedDate = Date()
+                self.finish(.success(installedApp))
+            }
+            else if res == -15
+            {
+                // try again
+                if UserDefaults.standard.enableCowExploit && UserDefaults.standard.isCowExploitSupported
+                {
+                    patch3AppLimit
+                    { result in
+                        switch result
+                        {
+                        case .success:
+                            UserDefaults.standard.set(bootTime(), forKey: "cowExploitRanBootTime")
+                            print("patched sucessfully")
+                        case .failure(let err):
+                            switch err
+                            {
+                            case .NoFDA:
+                                self.finish(.failure(OperationError.cowExploitNoFDA))
+                                return
+                            case .FailedPatchd:
+                                self.finish(.failure(OperationError.cowExploitFailedPatchd))
+                                return
+                            }
+                        }
+                    }
+                    
+                    let res_try_again = minimuxer_install_ipa(ns_bundle_ptr)
+                    if res_try_again == 0
+                    {
+                        installedApp.refreshedDate = Date()
+                        self.finish(.success(installedApp))
+                    }
+                    else
+                    {
+                        self.finish(.failure(minimuxer_to_operation(code: res_try_again)))
+                    }
+                }
+            }
+            else
+            {
+                self.finish(.failure(minimuxer_to_operation(code: res)))
             do {
                 try install_ipa(installedApp.bundleIdentifier)
                 installing = false

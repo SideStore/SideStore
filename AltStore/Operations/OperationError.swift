@@ -6,12 +6,11 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-import Foundation
 import AltSign
+import Foundation
 import minimuxer
 
-enum OperationError: LocalizedError
-{
+enum OperationError: LocalizedError {
     static let domain = OperationError.unknown._domain
     
     case unknown
@@ -33,7 +32,20 @@ enum OperationError: LocalizedError
     
     case openAppFailed(name: String)
     case missingAppGroup
-    
+    case noDevice
+    case createService(name: String)
+    case getFromDevice(name: String)
+    case setArgument(name: String)
+    case afc
+    case install
+    case uninstall
+    case lookupApps
+    case detach
+    case functionArguments
+    case profileInstall
+    case noConnection
+    case cowExploitNoFDA
+    case cowExploitFailedPatchd
     case anisetteV1Error(message: String)
     case provisioningError(result: String, message: String?)
     case anisetteV3Error(message: String)
@@ -53,6 +65,20 @@ enum OperationError: LocalizedError
         case .openAppFailed(let name): return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), name)
         case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be found.", comment: "")
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs.", comment: "")
+        case .noDevice: return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
+        case .createService(let name): return String(format: NSLocalizedString("Cannot start a %@ server on the device.", comment: ""), name)
+        case .getFromDevice(let name): return String(format: NSLocalizedString("Cannot fetch %@ from the device.", comment: ""), name)
+        case .setArgument(let name): return String(format: NSLocalizedString("Cannot set %@ on the device.", comment: ""), name)
+        case .afc: return NSLocalizedString("AFC was unable to manage files on the device", comment: "")
+        case .install: return NSLocalizedString("Unable to install the app from the staging directory", comment: "")
+        case .uninstall: return NSLocalizedString("Unable to uninstall the app", comment: "")
+        case .lookupApps: return NSLocalizedString("Unable to fetch apps from the device", comment: "")
+        case .detach: return NSLocalizedString("Unable to detach from the app's process", comment: "")
+        case .functionArguments: return NSLocalizedString("A function was passed invalid arguments", comment: "")
+        case .profileInstall: return NSLocalizedString("Unable to manage profiles on the device", comment: "")
+        case .noConnection: return NSLocalizedString("Unable to connect to the device, make sure Wireguard is enabled and you're connected to WiFi", comment: "")
+        case .cowExploitNoFDA: return NSLocalizedString("Unable to get Full Disk Access using exploit.", comment: "")
+        case .cowExploitFailedPatchd: return NSLocalizedString("Unable to patch installd using exploit.", comment: "")
         case .anisetteV1Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: ""), message)
         case .provisioningError(let result, let message): return String(format: NSLocalizedString("An error occurred when provisioning: %@%@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), result, message != nil ? (" (" + message! + ")") : "")
         case .anisetteV3Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), message)
@@ -60,18 +86,15 @@ enum OperationError: LocalizedError
     }
     
     var recoverySuggestion: String? {
-        switch self
-        {
+        switch self {
         case .maximumAppIDLimitReached(let application, let requiredAppIDs, let availableAppIDs, let date):
             let baseMessage = NSLocalizedString("Delete sideloaded apps to free up App ID slots.", comment: "")
             let message: String
             
-            if requiredAppIDs > 1
-            {
+            if requiredAppIDs > 1 {
                 let availableText: String
                 
-                switch availableAppIDs
-                {
+                switch availableAppIDs {
                 case 0: availableText = NSLocalizedString("none are available", comment: "")
                 case 1: availableText = NSLocalizedString("only 1 is available", comment: "")
                 default: availableText = String(format: NSLocalizedString("only %@ are available", comment: ""), NSNumber(value: availableAppIDs))
@@ -80,8 +103,7 @@ enum OperationError: LocalizedError
                 let prefixMessage = String(format: NSLocalizedString("%@ requires %@ App IDs, but %@.", comment: ""), application.name, NSNumber(value: requiredAppIDs), availableText)
                 message = prefixMessage + " " + baseMessage
             }
-            else
-            {
+            else {
                 let dateComponents = Calendar.current.dateComponents([.day, .hour, .minute], from: Date(), to: date)
                 
                 let dateComponentsFormatter = DateComponentsFormatter()

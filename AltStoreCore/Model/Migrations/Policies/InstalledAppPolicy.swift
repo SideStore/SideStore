@@ -6,8 +6,8 @@
 //  Copyright © 2020 Riley Testut. All rights reserved.
 //
 
-import CoreData
 import AltSign
+import CoreData
 
 @objc(InstalledAppToInstalledAppMigrationPolicy)
 class InstalledAppToInstalledAppMigrationPolicy: NSEntityMigrationPolicy
@@ -50,7 +50,7 @@ class InstalledAppToInstalledAppMigrationPolicy: NSEntityMigrationPolicy
             
             // We can assume there is an active app limit,
             // but will confirm next time user authenticates.
-            UserDefaults.standard.activeAppsLimit = ALTActiveAppsLimit
+            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
         }
         
         return NSNumber(value: isActive)

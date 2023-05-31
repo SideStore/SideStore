@@ -19,6 +19,10 @@
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		4879A95F2861046500FC1BBD /* AltSign in Frameworks */ = {isa = PBXBuildFile; productRef = 4879A95E2861046500FC1BBD /* AltSign */; };
 		4879A9622861049C00FC1BBD /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 4879A9612861049C00FC1BBD /* OpenSSL */; };
+		7DBDF4BC2991727500C18375 /* grant_fda.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DBDF4B72991727200C18375 /* grant_fda.m */; };
+		7DBDF4BD2991727500C18375 /* helping_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DBDF4B82991727200C18375 /* helping_tools.m */; };
+		7DBDF4BE2991727500C18375 /* vm_unalign_csr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7DBDF4B92991727300C18375 /* vm_unalign_csr.c */; };
+		7DBDF4C0299172A000C18375 /* CowExploits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBDF4BF299172A000C18375 /* CowExploits.swift */; };
 		9922FFEC29B501C50020F868 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 9922FFEB29B501C50020F868 /* Starscream */; };
 		99C4EF4D2979132100CB538D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 99C4EF4C2979132100CB538D /* SemanticVersion */; };
 		99F87D0529D8B4E200B40039 /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */; };
@@ -511,6 +515,13 @@
 		191E5FD1290A651D001A3B7C /* jsmn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = jsmn.h; path = Dependencies/libplist/src/jsmn.h; sourceTree = SOURCE_ROOT; };
 		1920B04E2924AC8300744F60 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTeamViewController.swift; sourceTree = "<group>"; };
+		7DBDF4B62991727000C18375 /* helping_tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helping_tools.h; sourceTree = "<group>"; };
+		7DBDF4B72991727200C18375 /* grant_fda.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = grant_fda.m; sourceTree = "<group>"; };
+		7DBDF4B82991727200C18375 /* helping_tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = helping_tools.m; sourceTree = "<group>"; };
+		7DBDF4B92991727300C18375 /* vm_unalign_csr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vm_unalign_csr.c; sourceTree = "<group>"; };
+		7DBDF4BA2991727400C18375 /* grant_fda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = grant_fda.h; sourceTree = "<group>"; };
+		7DBDF4BB2991727500C18375 /* vm_unalign_csr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_unalign_csr.h; sourceTree = "<group>"; };
+		7DBDF4BF299172A000C18375 /* CowExploits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CowExploits.swift; sourceTree = "<group>"; };
 		9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "minimuxer-helpers.swift"; path = "Dependencies/minimuxer/minimuxer-helpers.swift"; sourceTree = SOURCE_ROOT; };
 		99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Dependencies/minimuxer/SwiftBridgeCore.swift; sourceTree = SOURCE_ROOT; };
 		99F87D1729D8E4C900B40039 /* minimuxer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = minimuxer.swift; path = Dependencies/minimuxer/minimuxer.swift; sourceTree = SOURCE_ROOT; };
@@ -971,6 +982,18 @@
 			path = "libimobiledevice-glue/src";
 			sourceTree = "<group>";
 		};
+		7DBDF49C2991720500C18375 /* MDCExploit */ = {
+			isa = PBXGroup;
+			children = (
+				7DBDF4BA2991727400C18375 /* grant_fda.h */,
+				7DBDF4B72991727200C18375 /* grant_fda.m */,
+				7DBDF4B62991727000C18375 /* helping_tools.h */,
+				7DBDF4B82991727200C18375 /* helping_tools.m */,
+				7DBDF4B92991727300C18375 /* vm_unalign_csr.c */,
+				7DBDF4BB2991727500C18375 /* vm_unalign_csr.h */,
+				7DBDF4BF299172A000C18375 /* CowExploits.swift */,
+			);
+			path = MDCExploit;
 		99F87D1429D8E3F100B40039 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
@@ -1398,6 +1421,7 @@
 		BF6C8FA8242935CA00125131 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				7DBDF49C2991720500C18375 /* MDCExploit */,
 				BF6C8FA9242935DB00125131 /* MarkdownAttributedString */,
 			);
 			name = Dependencies;
@@ -2465,7 +2489,9 @@
 				BFC1F38D22AEE3A4003AC21A /* DownloadAppOperation.swift in Sources */,
 				BFE6073A231ADF82002B0E8E /* SettingsViewController.swift in Sources */,
 				D57F2C9126E0070200B9FA39 /* EnableJITOperation.swift in Sources */,
+				7DBDF4BD2991727500C18375 /* helping_tools.m in Sources */,
 				BF8CAE4E248AEABA004D6CCE /* UIDevice+Jailbreak.swift in Sources */,
+				7DBDF4BE2991727500C18375 /* vm_unalign_csr.c in Sources */,
 				D5E1E7C128077DE90016FC96 /* FetchTrustedSourcesOperation.swift in Sources */,
 				BFE338DF22F0EADB002E24B9 /* FetchSourceOperation.swift in Sources */,
 				D54DED1428CBC44B008B27A0 /* ErrorLogTableViewCell.swift in Sources */,
@@ -2511,8 +2537,10 @@
 				BFB39B5C252BC10E00D1BE50 /* Managed.swift in Sources */,
 				BF770E5822BC3D0F002A40FE /* RefreshGroup.swift in Sources */,
 				19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */,
+				7DBDF4BC2991727500C18375 /* grant_fda.m in Sources */,
 				99F87D0529D8B4E200B40039 /* minimuxer-helpers.swift in Sources */,
 				BF18B0F122E25DF9005C4CF5 /* ToastView.swift in Sources */,
+				7DBDF4C0299172A000C18375 /* CowExploits.swift in Sources */,
 				BF3D649F22E7B24C00E9056B /* CollapsingTextView.swift in Sources */,
 				BF02419622F2199300129732 /* RefreshAttemptsViewController.swift in Sources */,
 				B376FE3E29258C8900E18883 /* OSLog+SideStore.swift in Sources */,
@@ -3023,7 +3051,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AltWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3053,7 +3081,7 @@
 				CODE_SIGN_ENTITLEMENTS = AltWidget/AltWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AltWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

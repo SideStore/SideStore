@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import Roxas
 import Network
+import Roxas
 
-import AltStoreCore
 import AltSign
+import AltStoreCore
 
 enum AuthenticationError: LocalizedError
 {
@@ -22,8 +22,10 @@ enum AuthenticationError: LocalizedError
     case missingPrivateKey
     case missingCertificate
     
-    var errorDescription: String? {
-        switch self {
+    var errorDescription: String?
+    {
+        switch self
+        {
         case .noTeam: return NSLocalizedString("Developer team could not be found.", comment: "")
         case .teamSelectorError: return NSLocalizedString("Error presenting team selector view.", comment: "")
         case .noCertificate: return NSLocalizedString("Developer certificate could not be found.", comment: "")
@@ -82,7 +84,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         }
                 
         // Sign In
-        self.signIn() { (result) in
+        self.signIn
+        { result in
             guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
             
             switch result
@@ -93,7 +96,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 self.progress.completedUnitCount += 1
                 
                 // Fetch Team
-                self.fetchTeam(for: account, session: session) { (result) in
+                self.fetchTeam(for: account, session: session)
+                { result in
                     guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                     
                     switch result
@@ -104,7 +108,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                         self.progress.completedUnitCount += 1
                         
                         // Fetch Certificate
-                        self.fetchCertificate(for: team, session: session) { (result) in
+                        self.fetchCertificate(for: team, session: session)
+                        { result in
                             guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                             
                             switch result
@@ -115,7 +120,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                 self.progress.completedUnitCount += 1
                                        
                                 // Register Device
-                                self.registerCurrentDevice(for: team, session: session) { (result) in
+                                self.registerCurrentDevice(for: team, session: session)
+                                { result in
                                     guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                                     
                                     switch result
@@ -125,7 +131,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                         self.progress.completedUnitCount += 1
                                         
                                         // Save account/team to disk.
-                                        self.save(team) { (result) in
+                                        self.save(team)
+                                        { result in
                                             guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                                             
                                             switch result
@@ -133,7 +140,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                             case .failure(let error): self.finish(.failure(error))
                                             case .success:
                                                 // Must cache App IDs _after_ saving account/team to disk.
-                                                self.cacheAppIDs(team: team, session: session) { (result) in
+                                                self.cacheAppIDs(team: team, session: session)
+                                                { result in
                                                     let result = result.map { _ in (team, certificate, session) }
                                                     self.finish(result)
                                                 }
@@ -152,7 +160,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
     func save(_ altTeam: ALTTeam, completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
-        context.performAndWait {
+        context.performAndWait
+        {
             do
             {
                 let account: Account
@@ -204,7 +213,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         print("Finished authenticating with result:", result.error?.localizedDescription ?? "success")
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
-        context.perform {
+        context.perform
+        {
             do
             {
                 let (altTeam, altCertificate, session) = try result.get()
@@ -241,7 +251,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 let activeAppsMinimumVersion = OperatingSystemVersion(majorVersion: 13, minorVersion: 3, patchVersion: 1)
                 if team.type == .free, ProcessInfo.processInfo.isOperatingSystemAtLeast(activeAppsMinimumVersion)
                 {
-                    UserDefaults.standard.activeAppsLimit = ALTActiveAppsLimit
+                    UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
                 }
                 else
                 {
@@ -258,14 +268,16 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 Keychain.shared.signingCertificate = altCertificate.p12Data()
                 Keychain.shared.signingCertificatePassword = altCertificate.machineIdentifier
                 
-                self.showInstructionsIfNecessary() { (didShowInstructions) in
-                    
+                self.showInstructionsIfNecessary
+                { _ in
                     let signer = ALTSigner(team: altTeam, certificate: altCertificate)
                     // Refresh screen must go last since a successful refresh will cause the app to quit.
-                    self.showRefreshScreenIfNecessary(signer: signer, session: session) { (didShowRefreshAlert) in
+                    self.showRefreshScreenIfNecessary(signer: signer, session: session)
+                    { _ in
                         super.finish(result)
                         
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async
+                        {
                             self.navigationController.dismiss(animated: true, completion: nil)
                         }
                     }
@@ -275,7 +287,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
             {
                 super.finish(result)
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async
+                {
                     self.navigationController.dismiss(animated: true, completion: nil)
                 }
             }
@@ -295,7 +308,7 @@ private extension AuthenticationOperation
         {
             guard presentingViewController.presentedViewController == nil else { return false }
             
-            self.navigationController.setViewControllers([viewController], animated: false)            
+            self.navigationController.setViewControllers([viewController], animated: false)
             presentingViewController.present(self.navigationController, animated: true, completion: nil)
         }
         else
@@ -314,14 +327,16 @@ private extension AuthenticationOperation
     {
         func authenticate()
         {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async
+            {
                 let authenticationViewController = self.storyboard.instantiateViewController(withIdentifier: "authenticationViewController") as! AuthenticationViewController
-                authenticationViewController.authenticationHandler = { (appleID, password, completionHandler) in
-                    self.authenticate(appleID: appleID, password: password) { (result) in
+                authenticationViewController.authenticationHandler = { appleID, password, completionHandler in
+                    self.authenticate(appleID: appleID, password: password)
+                    { result in
                         completionHandler(result)
                     }
                 }
-                authenticationViewController.completionHandler = { (result) in
+                authenticationViewController.completionHandler = { result in
                     if let (account, session, password) = result
                     {
                         // We presented the Auth UI and the user signed in.
@@ -346,7 +361,8 @@ private extension AuthenticationOperation
         
         if let appleID = Keychain.shared.appleIDEmailAddress, let password = Keychain.shared.appleIDPassword
         {
-            self.authenticate(appleID: appleID, password: password) { (result) in
+            self.authenticate(appleID: appleID, password: password)
+            { result in
                 switch result
                 {
                 case .success((let account, let session)):
@@ -372,7 +388,7 @@ private extension AuthenticationOperation
         self.appleIDEmailAddress = appleID
         
         let fetchAnisetteDataOperation = FetchAnisetteDataOperation(context: self.context)
-        fetchAnisetteDataOperation.resultHandler = { (result) in
+        fetchAnisetteDataOperation.resultHandler = { result in
             switch result
             {
             case .failure(let error): completionHandler(.failure(error))
@@ -381,10 +397,12 @@ private extension AuthenticationOperation
                 
                 if let presentingViewController = self.presentingViewController
                 {
-                    verificationHandler = { (completionHandler) in
-                        DispatchQueue.main.async {
+                    verificationHandler = { completionHandler in
+                        DispatchQueue.main.async
+                        {
                             let alertController = UIAlertController(title: NSLocalizedString("Please enter the 6-digit verification code that was sent to your Apple devices.", comment: ""), message: nil, preferredStyle: .alert)
-                            alertController.addTextField { (textField) in
+                            alertController.addTextField
+                            { textField in
                                 textField.autocorrectionType = .no
                                 textField.autocapitalizationType = .none
                                 textField.keyboardType = .numberPad
@@ -392,7 +410,8 @@ private extension AuthenticationOperation
                                 NotificationCenter.default.addObserver(self, selector: #selector(AuthenticationOperation.textFieldTextDidChange(_:)), name: UITextField.textDidChangeNotification, object: textField)
                             }
                             
-                            let submitAction = UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default) { (action) in
+                            let submitAction = UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default)
+                            { _ in
                                 let textField = alertController.textFields?.first
                                 
                                 let code = textField?.text ?? ""
@@ -402,7 +421,8 @@ private extension AuthenticationOperation
                             alertController.addAction(submitAction)
                             self.submitCodeAction = submitAction
                             
-                            alertController.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { (action) in
+                            alertController.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel)
+                            { _ in
                                 completionHandler(nil)
                             })
                             
@@ -424,7 +444,8 @@ private extension AuthenticationOperation
                 }
                     
                 ALTAppleAPI.shared.authenticate(appleID: appleID, password: password, anisetteData: anisetteData,
-                                                verificationHandler: verificationHandler) { (account, session, error) in
+                                                verificationHandler: verificationHandler)
+                { account, session, error in
                     if let account = account, let session = session
                     {
                         completionHandler(.success((account, session)))
@@ -443,34 +464,43 @@ private extension AuthenticationOperation
     func fetchTeam(for account: ALTAccount, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTTeam, Swift.Error>) -> Void)
     {
         func selectTeam(from teams: [ALTTeam])
-         {
-             if teams.count <= 1 {
-                 if let team = teams.first {
-                     return completionHandler(.success(team))
-                 } else {
-                     return completionHandler(.failure(AuthenticationError.noTeam))
-                 }
-             } else {
-                 DispatchQueue.main.async {
-                     let selectTeamViewController = self.storyboard.instantiateViewController(withIdentifier: "selectTeamViewController") as! SelectTeamViewController
+        {
+            if teams.count <= 1
+            {
+                if let team = teams.first
+                {
+                    return completionHandler(.success(team))
+                }
+                else
+                {
+                    return completionHandler(.failure(AuthenticationError.noTeam))
+                }
+            }
+            else
+            {
+                DispatchQueue.main.async
+                {
+                    let selectTeamViewController = self.storyboard.instantiateViewController(withIdentifier: "selectTeamViewController") as! SelectTeamViewController
 
-                     selectTeamViewController.teams = teams
-                     selectTeamViewController.completionHandler = completionHandler
+                    selectTeamViewController.teams = teams
+                    selectTeamViewController.completionHandler = completionHandler
 
-                     if !self.present(selectTeamViewController)
-                     {
-                         return completionHandler(.failure(AuthenticationError.noTeam))
-                     }
-                 }
-             }
-         }
+                    if !self.present(selectTeamViewController)
+                    {
+                        return completionHandler(.failure(AuthenticationError.noTeam))
+                    }
+                }
+            }
+        }
 
-        ALTAppleAPI.shared.fetchTeams(for: account, session: session) { (teams, error) in
+        ALTAppleAPI.shared.fetchTeams(for: account, session: session)
+        { teams, error in
             switch Result(teams, error)
             {
             case .failure(let error): completionHandler(.failure(error))
             case .success(let teams):
-                DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
+                DatabaseManager.shared.persistentContainer.performBackgroundTask
+                { context in
                     if let activeTeam = DatabaseManager.shared.activeTeam(in: context), let altTeam = teams.first(where: { $0.identifier == activeTeam.identifier })
                     {
                         completionHandler(.success(altTeam))
@@ -489,18 +519,22 @@ private extension AuthenticationOperation
         func requestCertificate()
         {
             let machineName = "AltStore - " + UIDevice.current.name
-            ALTAppleAPI.shared.addCertificate(machineName: machineName, to: team, session: session) { (certificate, error) in
+            ALTAppleAPI.shared.addCertificate(machineName: machineName, to: team, session: session)
+            { certificate, error in
                 do
                 {
                     let certificate = try Result(certificate, error).get()
                     guard let privateKey = certificate.privateKey else { throw AuthenticationError.missingPrivateKey }
                     
-                    ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
+                    ALTAppleAPI.shared.fetchCertificates(for: team, session: session)
+                    { certificates, error in
                         do
                         {
                             let certificates = try Result(certificates, error).get()
                             
-                            guard let certificate = certificates.first(where: { $0.serialNumber == certificate.serialNumber }) else {
+                            guard let certificate = certificates.first(where: { $0.serialNumber == certificate.serialNumber })
+                            else
+                            {
                                 throw AuthenticationError.missingCertificate
                             }
                             
@@ -524,7 +558,8 @@ private extension AuthenticationOperation
         {
             guard let certificate = certificates.first(where: { $0.machineName?.starts(with: "AltStore") == true }) ?? certificates.first else { return completionHandler(.failure(AuthenticationError.noCertificate)) }
             
-            ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { (success, error) in
+            ALTAppleAPI.shared.revoke(certificate, for: team, session: session)
+            { success, error in
                 if let error = error, !success
                 {
                     completionHandler(.failure(error))
@@ -536,7 +571,8 @@ private extension AuthenticationOperation
             }
         }
         
-        ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
+        ALTAppleAPI.shared.fetchCertificates(for: team, session: session)
+        { certificates, error in
             do
             {
                 let certificates = try Result(certificates, error).get()
@@ -593,11 +629,14 @@ private extension AuthenticationOperation
     
     func registerCurrentDevice(for team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTDevice, Error>) -> Void)
     {
-        guard let udid = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.deviceID) as? String else {
+        guard let udid = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.deviceID) as? String
+        else
+        {
             return completionHandler(.failure(OperationError.unknownUDID))
         }
         
-        ALTAppleAPI.shared.fetchDevices(for: team, types: [.iphone, .ipad], session: session) { (devices, error) in
+        ALTAppleAPI.shared.fetchDevices(for: team, types: [.iphone, .ipad], session: session)
+        { devices, error in
             do
             {
                 let devices = try Result(devices, error).get()
@@ -608,7 +647,8 @@ private extension AuthenticationOperation
                 }
                 else
                 {
-                    ALTAppleAPI.shared.registerDevice(name: UIDevice.current.name, identifier: udid, type: .iphone, team: team, session: session) { (device, error) in
+                    ALTAppleAPI.shared.registerDevice(name: UIDevice.current.name, identifier: udid, type: .iphone, team: team, session: session)
+                    { device, error in
                         completionHandler(Result(device, error))
                     }
                 }
@@ -623,7 +663,7 @@ private extension AuthenticationOperation
     func cacheAppIDs(team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
         let fetchAppIDsOperation = FetchAppIDsOperation(context: self.context)
-        fetchAppIDsOperation.resultHandler = { (result) in
+        fetchAppIDsOperation.resultHandler = { result in
             do
             {
                 let (_, context) = try result.get()
@@ -644,7 +684,8 @@ private extension AuthenticationOperation
     {
         guard self.shouldShowInstructions else { return completionHandler(false) }
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async
+        {
             let instructionsViewController = self.storyboard.instantiateViewController(withIdentifier: "instructionsViewController") as! InstructionsViewController
             instructionsViewController.showsBottomButton = true
             instructionsViewController.completionHandler = {
@@ -668,7 +709,8 @@ private extension AuthenticationOperation
 #if DEBUG
         completionHandler(false)
 #else
-        DispatchQueue.main.async {
+        DispatchQueue.main.async
+        {
             let context = AuthenticatedOperationContext(context: self.context)
             context.operations.removeAllObjects() // Prevent deadlock due to endless waiting on previous operations to finish.
             

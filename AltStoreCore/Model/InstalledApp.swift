@@ -6,14 +6,28 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 import AltSign
 import SemanticVersion
 
 // Free developer accounts are limited to only 3 active sideloaded apps at a time as of iOS 13.3.1.
-public let ALTActiveAppsLimit = 3
+public extension InstalledApp
+{
+    static var freeAccountActiveAppsLimit: Int
+    {
+        if UserDefaults.standard.enableCowExploit && UserDefaults.standard.isCowExploitSupported
+        {
+            return 99999
+        }
+        else
+        {
+            // Free developer accounts are limited to only 3 active sideloaded apps at a time as of iOS 13.3.1.
+            return 3
+        }
+    }
+}
 
 public protocol InstalledAppProtocol: Fetchable
 {
@@ -56,18 +70,21 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
     
     @NSManaged public private(set) var loggedErrors: NSSet /* Set<LoggedError> */ // Use NSSet to avoid eagerly fetching values.
     
-    public var isSideloaded: Bool {
+    public var isSideloaded: Bool
+    {
         return self.storeApp == nil
     }
     
-    @objc public var hasUpdate: Bool {
+    @objc public var hasUpdate: Bool
+    {
         if self.storeApp == nil { return false }
         if self.storeApp!.latestVersion == nil { return false }
         
         let currentVersion = SemanticVersion(self.version)
         let latestVersion = SemanticVersion(self.storeApp!.latestVersion!.version)
         
-        if currentVersion == nil || latestVersion == nil {
+        if currentVersion == nil || latestVersion == nil
+        {
             // One of the versions is not valid SemVer, fall back to comparing the version strings by character
             return self.version < self.storeApp!.latestVersion!.version
         }
@@ -75,16 +92,18 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
         return currentVersion! < latestVersion!
     }
     
-    public var appIDCount: Int {
+    public var appIDCount: Int
+    {
         return 1 + self.appExtensions.count
     }
     
-    public var requiredActiveSlots: Int {
+    public var requiredActiveSlots: Int
+    {
         let requiredActiveSlots = UserDefaults.standard.activeAppLimitIncludesExtensions ? self.appIDCount : 1
         return requiredActiveSlots
     }
     
-    private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
+    override private init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
     {
         super.init(entity: entity, insertInto: context)
     }
@@ -132,7 +151,8 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
         let alternateIconURL = self.alternateIconURL
         let fileURL = self.fileURL
         
-        DispatchQueue.global().async {
+        DispatchQueue.global().async
+        {
             do
             {
                 if hasAlternateIcon,
@@ -255,7 +275,8 @@ public extension InstalledApp
 
 public extension InstalledApp
 {
-    var openAppURL: URL {
+    var openAppURL: URL
+    {
         let openAppURL = URL(string: "altstore-" + self.bundleIdentifier + "://")!
         return openAppURL
     }
@@ -269,7 +290,8 @@ public extension InstalledApp
 
 public extension InstalledApp
 {
-    class var appsDirectoryURL: URL {
+    class var appsDirectoryURL: URL
+    {
         let baseDirectory = FileManager.default.altstoreSharedDirectory ?? FileManager.default.applicationSupportDirectory
         let appsDirectoryURL = baseDirectory.appendingPathComponent("Apps")
         
@@ -279,7 +301,8 @@ public extension InstalledApp
         return appsDirectoryURL
     }
     
-    class var legacyAppsDirectoryURL: URL {
+    class var legacyAppsDirectoryURL: URL
+    {
         let baseDirectory = FileManager.default.applicationSupportDirectory
         let appsDirectoryURL = baseDirectory.appendingPathComponent("Apps")
         print("legacy `appsDirectoryURL` is set to: \(appsDirectoryURL.absoluteString)")
@@ -327,27 +350,33 @@ public extension InstalledApp
         return installedBackupAppUTI
     }
     
-    var directoryURL: URL {
+    var directoryURL: URL
+    {
         return InstalledApp.directoryURL(for: self)
     }
     
-    var fileURL: URL {
+    var fileURL: URL
+    {
         return InstalledApp.fileURL(for: self)
     }
     
-    var refreshedIPAURL: URL {
+    var refreshedIPAURL: URL
+    {
         return InstalledApp.refreshedIPAURL(for: self)
     }
     
-    var installedAppUTI: String {
+    var installedAppUTI: String
+    {
         return InstalledApp.installedAppUTI(forBundleIdentifier: self.resignedBundleIdentifier)
     }
     
-    var installedBackupAppUTI: String {
+    var installedBackupAppUTI: String
+    {
         return InstalledApp.installedBackupAppUTI(forBundleIdentifier: self.resignedBundleIdentifier)
     }
     
-    var alternateIconURL: URL {
+    var alternateIconURL: URL
+    {
         return InstalledApp.alternateIconURL(for: self)
     }
 }

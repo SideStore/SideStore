@@ -6,14 +6,15 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-import UIKit
-import Roxas
 import EmotionalDamage
 import minimuxer
+import Roxas
+import UIKit
 
 import AltStoreCore
 import UniformTypeIdentifiers
 
+final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate {
 let pairingFileName = "ALTPairingFile.mobiledevicepairing"
 
 final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate
@@ -23,7 +24,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     private var destinationViewController: UIViewController!
     
     override var launchConditions: [RSTLaunchCondition] {
-        let isDatabaseStarted = RSTLaunchCondition(condition: { DatabaseManager.shared.isStarted }) { (completionHandler) in
+        let isDatabaseStarted = RSTLaunchCondition(condition: { DatabaseManager.shared.isStarted }) { completionHandler in
             DatabaseManager.shared.start(completionHandler: completionHandler)
         }
 
@@ -38,8 +39,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         return self.children.first
     }
     
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         defer {
             // Create destinationViewController now so view controllers can register for receiving Notifications.
             self.destinationViewController = self.storyboard!.instantiateViewController(withIdentifier: "tabBarController") as! TabBarController
@@ -51,12 +51,13 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         super.viewDidAppear(true)
         #if !targetEnvironment(simulator)
         start_em_proxy(bind_addr: Consts.Proxy.serverURL)
-        
+
         guard let pf = fetchPairingFile() else {
-            displayError("Device pairing file not found.")
+            self.displayError("Device pairing file not found.")
             return
         }
-        start_minimuxer_threads(pf)
+        
+        self.start_minimuxer_threads(pf)
         #endif
     }
     
@@ -72,10 +73,11 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             fm.fileExists(atPath: appResourcePath.path),
             let data = fm.contents(atPath: appResourcePath.path),
             let contents = String(data: data, encoding: .utf8),
-            !contents.isEmpty  {
+            !contents.isEmpty
+        {
             print("Loaded ALTPairingFile from \(appResourcePath.path)")
             return contents
-        } else if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String, !plistString.isEmpty, !plistString.contains("insert pairing file here"){
+        } else if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String, !plistString.isEmpty, !plistString.contains("insert pairing file here") {
             print("Loaded ALTPairingFile from Info.plist")
             return plistString
         } else {
@@ -84,18 +86,18 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             let dialogMessage = UIAlertController(title: "Pairing File", message: "Select the pairing file for your device. For more information, go to https://wiki.sidestore.io/guides/install#pairing-process", preferredStyle: .alert)
             
             // Create OK button with action handler
-            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { _ in
                 // Try to load it from a file picker
                 var types = UTType.types(tag: "plist", tagClass: UTTagClass.filenameExtension, conformingTo: nil)
                 types.append(contentsOf: UTType.types(tag: "mobiledevicepairing", tagClass: UTTagClass.filenameExtension, conformingTo: UTType.data))
                 types.append(.xml)
                 let documentPickerController = UIDocumentPickerViewController(forOpeningContentTypes: types)
-                documentPickerController.shouldShowFileExtensions = true
+//                documentPickerController.shouldShowFileExtensions = true
                 documentPickerController.delegate = self
                 self.present(documentPickerController, animated: true, completion: nil)
-             })
+            })
             
-            //Add OK button to a dialog message
+            // Add OK button to a dialog message
             dialogMessage.addAction(ok)
 
             // Present Alert to
@@ -123,7 +125,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             let data1 = try Data(contentsOf: urls[0])
             let pairing_string = String(bytes: data1, encoding: .utf8)
             if pairing_string == nil {
-                displayError("Unable to read pairing file")
+                self.displayError("Unable to read pairing file")
             }
             
             // Save to a file for next launch
@@ -133,20 +135,34 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             // Start minimuxer now that we have a file
             start_minimuxer_threads(pairing_string!)
         } catch {
-            displayError("Unable to read pairing file")
+            self.displayError("Unable to read pairing file")
         }
         
-        if (isSecuredURL) {
+        if isSecuredURL {
             url.stopAccessingSecurityScopedResource()
         }
         controller.dismiss(animated: true, completion: nil)
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        displayError("Choosing a pairing file was cancelled. Please re-open the app and try again.")
+        self.displayError("Choosing a pairing file was cancelled. Please re-open the app and try again.")
     }
     
     func start_minimuxer_threads(_ pairing_file: String) {
+        set_usbmuxd_socket()
+        #if false // Retries
+        var res = start_minimuxer(pairing_file: pairing_file)
+        var attempts = 10
+        while attempts != 0, res != 0 {
+            print("start_minimuxer `res` != 0, retry #\(attempts)")
+            res = start_minimuxer(pairing_file: pairing_file)
+            attempts -= 1
+        }
+        #else
+        let res = start_minimuxer(pairing_file: pairing_file)
+        #endif
+        if res != 0 {
+            self.displayError("minimuxer failed to start. Incorrect arguments were passed.")
         target_minimuxer_address()
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
@@ -159,46 +175,37 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     }
 }
 
-extension LaunchViewController
-{
-    override func handleLaunchError(_ error: Error)
-    {
-        do
-        {
+extension LaunchViewController {
+    override func handleLaunchError(_ error: Error) {
+        do {
             throw error
-        }
-        catch let error as NSError
-        {
+        } catch let error as NSError {
             let title = error.userInfo[NSLocalizedFailureErrorKey] as? String ?? NSLocalizedString("Unable to Launch SideStore", comment: "")
             
             let errorDescription: String
             
-            if #available(iOS 14.5, *)
-            {
+            if #available(iOS 14.5, *) {
                 let errorMessages = [error.debugDescription] + error.underlyingErrors.map { ($0 as NSError).debugDescription }
                 errorDescription = errorMessages.joined(separator: "\n\n")
-            }
-            else
-            {
+            } else {
                 errorDescription = error.debugDescription
             }
             
             let alertController = UIAlertController(title: title, message: errorDescription, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default, handler: { (action) in
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default, handler: { _ in
                 self.handleLaunchConditions()
             }))
             self.present(alertController, animated: true, completion: nil)
         }
     }
     
-    override func finishLaunching()
-    {
+    override func finishLaunching() {
         super.finishLaunching()
         
         guard !self.didFinishLaunching else { return }
         
         AppManager.shared.update()
-        AppManager.shared.updatePatronsIfNeeded()        
+        AppManager.shared.updatePatronsIfNeeded()
         PatreonAPI.shared.refreshPatreonAccount()
         
         // Add view controller as child (rather than presenting modally)
@@ -213,6 +220,37 @@ extension LaunchViewController
             self.destinationViewController.view.alpha = 1.0
         }
         
+        if UserDefaults.standard.enableCowExploit, UserDefaults.standard.isCowExploitSupported {
+            if let previous_exploit_time = UserDefaults.standard.object(forKey: "cowExploitRanBootTime") {
+                let last_rantime = previous_exploit_time as! Date
+                if last_rantime == bootTime() {
+                    return print("exploit has ran this boot - \(last_rantime)")
+                }
+            }
+            self.runExploit()
+        }
+        
         self.didFinishLaunching = true
+    }
+    
+    func runExploit() {
+        if UserDefaults.standard.enableCowExploit && UserDefaults.standard.isCowExploitSupported {
+            patch3AppLimit { result in
+                switch result {
+                case .success:
+                    UserDefaults.standard.set(bootTime(), forKey: "cowExploitRanBootTime")
+                    print("patched sucessfully")
+                case .failure(let err):
+                    switch err {
+                    case .NoFDA(let msg):
+                        self.displayError("Failed to get full disk access: \(msg)")
+                        return
+                    case .FailedPatchd:
+                        self.displayError("Failed to install patchd.")
+                        return
+                    }
+                }
+            }
+        }
     }
 }
