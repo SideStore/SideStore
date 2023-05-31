@@ -7,7 +7,7 @@ DATE=`date -u +'%Y.%m.%d'`
 BUILD_NUM=1
 
 write() {
-    sed -e "/MARKETING_VERSION = .*/s/$/-nightly.$DATE.$BUILD_NUM/" -i '' Build.xcconfig
+    sed -e "/MARKETING_VERSION = .*/s/$/-nightly.$DATE.$BUILD_NUM+$(git rev-parse --short HEAD)/" -i '' Build.xcconfig
     echo "$DATE,$BUILD_NUM" > .nightly-build-num
 }
 

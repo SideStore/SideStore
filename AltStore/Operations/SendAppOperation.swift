@@ -9,6 +9,7 @@ import Foundation
 import Network
 
 import AltStoreCore
+import minimuxer
 
 @objc(SendAppOperation)
 final class SendAppOperation: ResultOperation<()>
@@ -44,24 +45,18 @@ final class SendAppOperation: ResultOperation<()>
         
         print("AFC App `fileURL`: \(fileURL.absoluteString)")
         
-        let ns_bundle = NSString(string: app.bundleIdentifier)
-        let ns_bundle_ptr = UnsafeMutablePointer<CChar>(mutating: ns_bundle.utf8String)
-
         if let data = NSData(contentsOf: fileURL) {
-            let pls = UnsafeMutablePointer<UInt8>.allocate(capacity: data.length)
-            for (index, data) in data.enumerated() {
-                pls[index] = data
-            }
-            let res = minimuxer_yeet_app_afc(ns_bundle_ptr, pls, UInt(data.length))
-            if res == 0 {
-                print("minimuxer_yeet_app_afc `res` == \(res)")
-                self.progress.completedUnitCount += 1
-                self.finish(.success(()))
-            } else {
-                self.finish(.failure(minimuxer_to_operation(code: res)))
+            do {
+                let bytes = Data(data).toRustByteSlice()
+                try yeet_app_afc(app.bundleIdentifier, bytes.forRust())
+            } catch {
+                return self.finish(.failure(error))
             }
             
+            self.progress.completedUnitCount += 1
+            self.finish(.success(()))
         } else {
+            print("IPA doesn't exist????")
             self.finish(.failure(ALTServerError(.underlyingError)))
         }
     }

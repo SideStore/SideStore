@@ -15,6 +15,10 @@ import AltStoreCore
 import UniformTypeIdentifiers
 
 final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate {
+let pairingFileName = "ALTPairingFile.mobiledevicepairing"
+
+final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDelegate
+{
     private var didFinishLaunching = false
     
     private var destinationViewController: UIViewController!
@@ -125,14 +129,11 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             }
             
             // Save to a file for next launch
-            let filename = "ALTPairingFile.mobiledevicepairing"
-            let fm = FileManager.default
-            let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(filename)")
-            try pairing_string?.write(to: documentsPath, atomically: true, encoding: String.Encoding.utf8)
+            let pairingFile = FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)")
+            try pairing_string?.write(to: pairingFile, atomically: true, encoding: String.Encoding.utf8)
             
             // Start minimuxer now that we have a file
-            self.start_minimuxer_threads(pairing_string!)
-            
+            start_minimuxer_threads(pairing_string!)
         } catch {
             self.displayError("Unable to read pairing file")
         }
@@ -162,8 +163,15 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         #endif
         if res != 0 {
             self.displayError("minimuxer failed to start. Incorrect arguments were passed.")
+        target_minimuxer_address()
+        let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
+        do {
+            try start(pairing_file, documentsDirectory)
+        } catch {
+            try! FileManager.default.removeItem(at: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)"))
+            displayError("minimuxer failed to start, please restart SideStore. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR!!!!!! REPORT TO GITHUB ISSUES!")")
         }
-        auto_mount_dev_image()
+        start_auto_mounter(documentsDirectory)
     }
 }
 

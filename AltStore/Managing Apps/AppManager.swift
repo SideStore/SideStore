@@ -876,7 +876,9 @@ private extension AppManager
 
                     if app.certificateSerialNumber != group.context.certificate?.serialNumber ||
                         uti != nil ||
-                        app.needsResign
+                        app.needsResign ||
+                        // We need to reinstall ourselves on refresh to ensure the new provisioning profile is used
+                        app.bundleIdentifier == StoreApp.altstoreAppID
                     {
                         // Resign app instead of just refreshing profiles because either:
                         // * Refreshing using different certificate

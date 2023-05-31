@@ -36,6 +36,13 @@ jobs:
       - name: Increase nightly build number and set as version
         run: bash .github/workflows/increase-nightly-build-num.sh
 
+      - name: Get version
+        id: version
+        run: echo "version=$(grep MARKETING_VERSION Build.xcconfig | sed -e "s/MARKETING_VERSION = //g")" >> $GITHUB_OUTPUT
+
+      - name: Echo version
+        run: echo "${{ steps.version.outputs.version }}"
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
         with:
@@ -49,22 +56,6 @@ jobs:
 
       - name: Convert to IPA
         run: make ipa
-
-      - name: Upload SideStore.ipa Artifact
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: SideStore.ipa
-          path: SideStore.ipa
-
-      - name: Upload *.dSYM Artifact
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: SideStore-dSYM
-          path: ./*.dSYM/
-
-      - name: Get version
-        id: version
-        run: echo "version=$(grep MARKETING_VERSION Build.xcconfig | sed -e "s/MARKETING_VERSION = //g")" >> $GITHUB_OUTPUT
 
       - name: Get current date
         id: date
@@ -95,6 +86,21 @@ jobs:
             Built at (UTC date): `${{ steps.date_altstore.outputs.date }}`
             Commit SHA: `${{ github.sha }}`
             Version: `${{ steps.version.outputs.version }}`
+
+      - name: Add version to IPA file name
+        run: mv SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
+
+      - name: Upload SideStore.ipa Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}.ipa
+          path: SideStore-${{ steps.version.outputs.version }}.ipa
+
+      - name: Upload *.dSYM Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}-dSYM
+          path: ./*.dSYM/
 
       - name: Reset cache for apps.sidestore.io/nightly
         run: sleep 10 && curl https://apps.sidestore.io/reset-cache/nightly/${{ secrets.SIDESOURCE_KEY }}

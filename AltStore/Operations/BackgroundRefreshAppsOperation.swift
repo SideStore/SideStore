@@ -11,6 +11,7 @@ import CoreData
 
 import AltStoreCore
 import EmotionalDamage
+import minimuxer
 
 enum RefreshError: LocalizedError
 {
@@ -97,6 +98,14 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
             return
         }
         start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+        target_minimuxer_address()
+        let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
+        do {
+            try minimuxer.start(try String(contentsOf: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)")), documentsDirectory)
+        } catch {
+            self.finish(.failure(error))
+        }
+        start_auto_mounter(documentsDirectory)
         
         self.managedObjectContext.perform {
             print("Apps to refresh:", self.installedApps.map(\.bundleIdentifier))

@@ -30,7 +30,7 @@
 			</array>
 			<key>Values</key>
 			<array>
-				<string>https://ani.sidestore.io</string>
+				<string>http://ani.sidestore.io:6969</string>
 				<string>http://us1.sternserv.tech</string>
 				<string>http://de1.sternserv.tech</string>
 				<string>https://sign.rheaa.xyz</string>

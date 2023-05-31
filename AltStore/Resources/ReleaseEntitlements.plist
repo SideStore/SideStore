@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>application-identifier</key>
-	<string>A72ZC8AJ5X.com.SideStore.AltStore</string>
+	<string>XYZ0123456.com.SideStore.SideStore</string>
 	<key>aps-environment</key>
 	<string>development</string>
 	<key>com.apple.developer.siri</key>
 	<true/>
 	<key>com.apple.developer.team-identifier</key>
-	<string>A72ZC8AJ5X</string>
+	<string>XYZ0123456</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.SideStore.AltStore</string>
+		<string>group.com.SideStore.SideStore</string>
 	</array>
 	<key>get-task-allow</key>
 	<true/>

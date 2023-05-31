@@ -77,6 +77,12 @@ public class Keychain
     @KeychainItem(key: "patreonAccountID")
     public var patreonAccountID: String?
     
+    @KeychainItem(key: "identifier")
+    public var identifier: String?
+    
+    @KeychainItem(key: "adiPb")
+    public var adiPb: String?
+    
     private init()
     {
     }

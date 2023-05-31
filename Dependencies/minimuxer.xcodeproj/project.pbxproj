@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9961EC2829BE9C2000AF2C6F /* SwiftBridgeCore.h in Sources */ = {isa = PBXBuildFile; fileRef = 9961EC2729BE9C1200AF2C6F /* SwiftBridgeCore.h */; };
 		9987603329A454B500818586 /* minimuxer.h in Sources */ = {isa = PBXBuildFile; fileRef = 9987603229A454B500818586 /* minimuxer.h */; };
 /* End PBXBuildFile section */
 
@@ -28,12 +29,22 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		9961EC2729BE9C1200AF2C6F /* SwiftBridgeCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwiftBridgeCore.h; path = minimuxer/SwiftBridgeCore.h; sourceTree = "<group>"; };
 		9987603229A454B500818586 /* minimuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = minimuxer.h; path = minimuxer/minimuxer.h; sourceTree = "<group>"; };
 		ADDEDBA66A6E1 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		CA609C732349C7AAD9FA67C4 /* libminimuxer_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminimuxer_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		99F87D1529D8E41100B40039 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				9961EC2729BE9C1200AF2C6F /* SwiftBridgeCore.h */,
+				9987603229A454B500818586 /* minimuxer.h */,
+			);
+			name = Generated;
+			sourceTree = "<group>";
+		};
 		ADDEDBA66A6E2 /* Required for static linking */ = {
 			isa = PBXGroup;
 			children = (
@@ -61,7 +72,7 @@
 		CA6012A875F9D65BC3C892A8 = {
 			isa = PBXGroup;
 			children = (
-				9987603229A454B500818586 /* minimuxer.h */,
+				99F87D1529D8E41100B40039 /* Generated */,
 				CA6012A875F922869D176AE5 /* Products */,
 				CA6012A875F998AF0B5890DB /* Frameworks */,
 			);
@@ -74,7 +85,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA600589A243A560B9642892 /* Build configuration list for PBXNativeTarget "minimuxer-staticlib" */;
 			buildPhases = (
-				9987603629A4611D00818586 /* ShellScript */,
+				9987603629A4611D00818586 /* Run Script */,
 				CA600F638141A560B9642892 /* Sources */,
 				CA6012A875F9AF6EBB7F357C /* Universal Binary lipo */,
 			);
@@ -121,7 +132,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9987603629A4611D00818586 /* ShellScript */ = {
+		9987603629A4611D00818586 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -130,10 +141,15 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				./minimuxer/minimuxer.h,
+				./minimuxer/SwiftBridgeCore.h,
+				./minimuxer/minimuxer.swift,
+				./minimuxer/SwiftBridgeCore.swift,
+				"./minimuxer/minimuxer-Bridging-Header.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -166,6 +182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9961EC2829BE9C2000AF2C6F /* SwiftBridgeCore.h in Sources */,
 				9987603329A454B500818586 /* minimuxer.h in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -182,7 +199,7 @@
 				INSTALL_MODE_FLAG = "";
 				INSTALL_OWNER = "";
 				LIB_FILE_NAME = "";
-				"LIB_FILE_NAME[sdk=iphoneos*]" = libminimuxer;
+				"LIB_FILE_NAME[sdk=iphoneos*]" = "libminimuxer-ios";
 				"LIB_FILE_NAME[sdk=iphonesimulator*]" = "libminimuxer-sim";
 				PRODUCT_NAME = minimuxer_static;
 				SKIP_INSTALL = YES;
@@ -199,7 +216,7 @@
 				INSTALL_MODE_FLAG = "";
 				INSTALL_OWNER = "";
 				LIB_FILE_NAME = "";
-				"LIB_FILE_NAME[sdk=iphoneos*]" = libminimuxer;
+				"LIB_FILE_NAME[sdk=iphoneos*]" = "libminimuxer-ios";
 				"LIB_FILE_NAME[sdk=iphonesimulator*]" = "libminimuxer-sim";
 				PRODUCT_NAME = minimuxer_static;
 				SKIP_INSTALL = YES;

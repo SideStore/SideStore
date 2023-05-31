@@ -39,15 +39,11 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
             let resignedBundleIdentifier = installedApp.resignedBundleIdentifier
             
             do {
-                let res = try remove_app(app_id: resignedBundleIdentifier)
-                if case Uhoh.Bad(let code) = res {
-                    self.finish(.failure(minimuxer_to_operation(code: code)))
-                }
-            } catch Uhoh.Bad(let code) {
-                self.finish(.failure(minimuxer_to_operation(code: code)))
+                try remove_app(resignedBundleIdentifier)
             } catch {
-                self.finish(.failure(ALTServerError(.appDeletionFailed)))
+                return self.finish(.failure(error))
             }
+            
             DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
                 self.progress.completedUnitCount += 1
                 

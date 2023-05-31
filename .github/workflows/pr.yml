@@ -23,7 +23,16 @@ jobs:
         run: brew install ldid
 
       - name: Add PR suffix to version
-        run: sed -e "/MARKETING_VERSION = .*/s/\$/-pr.${{ github.event.pull_request.number }}+$(git rev-parse --short HEAD)/" -i '' Build.xcconfig
+        run: sed -e "/MARKETING_VERSION = .*/s/\$/-pr.${{ github.event.pull_request.number }}+$(git rev-parse --short ${COMMIT:-HEAD})/" -i '' Build.xcconfig
+        env:
+          COMMIT: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get version
+        id: version
+        run: echo "version=$(grep MARKETING_VERSION Build.xcconfig | sed -e "s/MARKETING_VERSION = //g")" >> $GITHUB_OUTPUT
+
+      - name: Echo version
+        run: echo "${{ steps.version.outputs.version }}"
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
@@ -39,14 +48,17 @@ jobs:
       - name: Convert to IPA
         run: make ipa
 
+      - name: Add version to IPA file name
+        run: mv SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
+
       - name: Upload SideStore.ipa Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: SideStore.ipa
-          path: SideStore.ipa
+          name: SideStore-${{ steps.version.outputs.version }}.ipa
+          path: SideStore-${{ steps.version.outputs.version }}.ipa
 
       - name: Upload *.dSYM Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: SideStore-dSYM
+          name: SideStore-${{ steps.version.outputs.version }}-dSYM
           path: ./*.dSYM/

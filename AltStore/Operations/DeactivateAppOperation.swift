@@ -44,14 +44,9 @@ final class DeactivateAppOperation: ResultOperation<InstalledApp>
             
             for profile in allIdentifiers {
                 do {
-                    let res = try remove_provisioning_profile(id: profile)
-                    if case Uhoh.Bad(let code) = res {
-                        self.finish(.failure(minimuxer_to_operation(code: code)))
-                    }
-                } catch Uhoh.Bad(let code) {
-                    self.finish(.failure(minimuxer_to_operation(code: code)))
+                    try remove_provisioning_profile(profile)
                 } catch {
-                    self.finish(.failure(ALTServerError(.unknownResponse)))
+                    return self.finish(.failure(error))
                 }
             }
             

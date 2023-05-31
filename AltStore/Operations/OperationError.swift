@@ -8,6 +8,7 @@
 
 import AltSign
 import Foundation
+import minimuxer
 
 enum OperationError: LocalizedError {
     static let domain = OperationError.unknown._domain
@@ -31,7 +32,6 @@ enum OperationError: LocalizedError {
     
     case openAppFailed(name: String)
     case missingAppGroup
-    
     case noDevice
     case createService(name: String)
     case getFromDevice(name: String)
@@ -46,6 +46,9 @@ enum OperationError: LocalizedError {
     case noConnection
     case cowExploitNoFDA
     case cowExploitFailedPatchd
+    case anisetteV1Error(message: String)
+    case provisioningError(result: String, message: String?)
+    case anisetteV3Error(message: String)
     
     var failureReason: String? {
         switch self {
@@ -76,6 +79,9 @@ enum OperationError: LocalizedError {
         case .noConnection: return NSLocalizedString("Unable to connect to the device, make sure Wireguard is enabled and you're connected to WiFi", comment: "")
         case .cowExploitNoFDA: return NSLocalizedString("Unable to get Full Disk Access using exploit.", comment: "")
         case .cowExploitFailedPatchd: return NSLocalizedString("Unable to patch installd using exploit.", comment: "")
+        case .anisetteV1Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: ""), message)
+        case .provisioningError(let result, let message): return String(format: NSLocalizedString("An error occurred when provisioning: %@%@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), result, message != nil ? (" (" + message! + ")") : "")
+        case .anisetteV3Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), message)
         }
     }
     
@@ -117,49 +123,66 @@ enum OperationError: LocalizedError {
     }
 }
 
-func minimuxer_to_operation(code: Int32) -> OperationError {
-    switch code {
-    case 1:
-        return OperationError.noDevice
-    case 2:
-        return OperationError.createService(name: "debug")
-    case 3:
-        return OperationError.createService(name: "instproxy")
-    case 4:
-        return OperationError.getFromDevice(name: "installed apps")
-    case 5:
-        return OperationError.getFromDevice(name: "path to the app")
-    case 6:
-        return OperationError.getFromDevice(name: "bundle path")
-    case 7:
-        return OperationError.setArgument(name: "max packet")
-    case 8:
-        return OperationError.setArgument(name: "working directory")
-    case 9:
-        return OperationError.setArgument(name: "argv")
-    case 10:
-        return OperationError.getFromDevice(name: "launch success")
-    case 11:
-        return OperationError.detach
-    case 12:
-        return OperationError.functionArguments
-    case 13:
-        return OperationError.createService(name: "AFC")
-    case 14:
-        return OperationError.afc
-    case 15:
-        return OperationError.install
-    case 16:
-        return OperationError.uninstall
-    case 17:
-        return OperationError.createService(name: "misagent")
-    case 18:
-        return OperationError.profileInstall
-    case 19:
-        return OperationError.profileInstall
-    case 20:
-        return OperationError.noConnection
-    default:
-        return OperationError.unknown
+extension MinimuxerError: LocalizedError {
+    public var failureReason: String? {
+        switch self {
+        case .NoDevice:
+            return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
+        case .NoConnection:
+            return NSLocalizedString("Unable to connect to the device, make sure Wireguard is enabled and you're connected to WiFi", comment: "")
+        case .PairingFile:
+            return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use jitterbugpair to generate it", comment: "")
+            
+        case .CreateDebug:
+            return self.createService(name: "debug")
+        case .LookupApps:
+            return self.getFromDevice(name: "installed apps")
+        case .FindApp:
+            return self.getFromDevice(name: "path to the app")
+        case .BundlePath:
+            return self.getFromDevice(name: "bundle path")
+        case .MaxPacket:
+            return self.setArgument(name: "max packet")
+        case .WorkingDirectory:
+            return self.setArgument(name: "working directory")
+        case .Argv:
+            return self.setArgument(name: "argv")
+        case .LaunchSuccess:
+            return self.getFromDevice(name: "launch success")
+        case .Detach:
+            return NSLocalizedString("Unable to detach from the app's process", comment: "")
+        case .Attach:
+            return NSLocalizedString("Unable to attach to the app's process", comment: "")
+            
+        case .CreateInstproxy:
+            return self.createService(name: "instproxy")
+        case .CreateAfc:
+            return self.createService(name: "AFC")
+        case .RwAfc:
+            return NSLocalizedString("AFC was unable to manage files on the device", comment: "")
+        case .InstallApp:
+            return NSLocalizedString("Unable to install the app from the staging directory", comment: "")
+        case .UninstallApp:
+            return NSLocalizedString("Unable to uninstall the app", comment: "")
+
+        case .CreateMisagent:
+            return self.createService(name: "misagent")
+        case .ProfileInstall:
+            return NSLocalizedString("Unable to manage profiles on the device", comment: "")
+        case .ProfileRemove:
+            return NSLocalizedString("Unable to manage profiles on the device", comment: "")
+        }
+    }
+    
+    fileprivate func createService(name: String) -> String {
+        return String(format: NSLocalizedString("Cannot start a %@ server on the device.", comment: ""), name)
+    }
+    
+    fileprivate func getFromDevice(name: String) -> String {
+        return String(format: NSLocalizedString("Cannot fetch %@ from the device.", comment: ""), name)
+    }
+    
+    fileprivate func setArgument(name: String) -> String {
+        return String(format: NSLocalizedString("Cannot set %@ on the device.", comment: ""), name)
     }
 }

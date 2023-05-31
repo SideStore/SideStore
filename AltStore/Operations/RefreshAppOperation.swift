@@ -49,15 +49,12 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
 
                 for p in profiles {
                     do {
-                        let x = try install_provisioning_profile(plist: p.value.data)
-                        if case .Bad(let code) = x {
-                            self.finish(.failure(minimuxer_to_operation(code: code)))
-                        }
-                    } catch Uhoh.Bad(let code) {
-                        self.finish(.failure(minimuxer_to_operation(code: code)))
+                        let bytes = p.value.data.toRustByteSlice()
+                        try install_provisioning_profile(bytes.forRust())
                     } catch {
-                        self.finish(.failure(OperationError.unknown))
+                        return self.finish(.failure(error))
                     }
+                    
                     self.progress.completedUnitCount += 1
                     
                     let predicate = NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), app.bundleIdentifier)

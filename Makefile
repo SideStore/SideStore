@@ -170,7 +170,7 @@ build:
 
 fakesign:
 	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-	ldid -SAltStore/Resources/tempEnt.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
+	ldid -SAltStore/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
 
 ipa:
 	mkdir Payload
