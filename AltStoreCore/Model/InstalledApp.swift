@@ -12,8 +12,8 @@ import CoreData
 import AltSign
 import SemanticVersion
 
-// Free developer accounts are limited to only 3 active sideloaded apps at a time as of iOS 13.3.1.
-public let ALTActiveAppsLimit = 3
+
+public let ALTActiveAppsLimit = 10
 
 public protocol InstalledAppProtocol: Fetchable
 {
