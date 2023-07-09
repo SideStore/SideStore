@@ -138,7 +138,6 @@
 		BF58048A246A28F9008AE704 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF580488246A28F9008AE704 /* LaunchScreen.storyboard */; };
 		BF580496246A3CB5008AE704 /* UIColor+AltBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF580495246A3CB5008AE704 /* UIColor+AltBackup.swift */; };
 		BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF580497246A3D19008AE704 /* UIKit.framework */; };
-		BF58049B246A432D008AE704 /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C336124197D700034FD24 /* NSError+AltStore.swift */; };
 		BF663C4F2433ED8200DAA738 /* FileManager+DirectorySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF663C4E2433ED8200DAA738 /* FileManager+DirectorySize.swift */; };
 		BF66EE822501AE50007EE018 /* AltStoreCore.h in Headers */ = {isa = PBXBuildFile; fileRef = BF66EE802501AE50007EE018 /* AltStoreCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
@@ -184,7 +183,6 @@
 		BF66EEE92501AED0007EE018 /* JSONDecoder+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF66EEE52501AED0007EE018 /* JSONDecoder+Properties.swift */; };
 		BF66EEEA2501AED0007EE018 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF66EEE62501AED0007EE018 /* UIColor+Hex.swift */; };
 		BF66EEEB2501AED0007EE018 /* UIApplication+AppExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF66EEE72501AED0007EE018 /* UIApplication+AppExtension.swift */; };
-		BF6C336224197D700034FD24 /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C336124197D700034FD24 /* NSError+AltStore.swift */; };
 		BF6C8FAC242935ED00125131 /* NSAttributedString+Markdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6C8FAA242935ED00125131 /* NSAttributedString+Markdown.m */; };
 		BF6C8FAE2429597900125131 /* BannerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C8FAD2429597900125131 /* BannerCollectionViewCell.swift */; };
 		BF6C8FB02429599900125131 /* TextCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C8FAF2429599900125131 /* TextCollectionReusableView.swift */; };
@@ -215,7 +213,7 @@
 		BF9ABA4B22DD1380008935CF /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9ABA4A22DD137F008935CF /* NavigationBar.swift */; };
 		BF9ABA4D22DD16DE008935CF /* PillButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9ABA4C22DD16DE008935CF /* PillButton.swift */; };
 		BFA8172B23C5633D001B5953 /* FetchAnisetteDataOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA8172A23C5633D001B5953 /* FetchAnisetteDataOperation.swift */; };
-		BFAECC522501B0A400528F27 /* CodableServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD44605241188C300EAB90A /* CodableServerError.swift */; };
+		BFAECC522501B0A400528F27 /* CodableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD44605241188C300EAB90A /* CodableError.swift */; };
 		BFAECC532501B0A400528F27 /* ServerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1E3128229F474900370A3C /* ServerProtocol.swift */; };
 		BFAECC542501B0A400528F27 /* NSError+ALTServerError.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1E314922A060F400370A3C /* NSError+ALTServerError.m */; };
 		BFAECC552501B0A400528F27 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18BFF624858BDE00DD5981 /* Connection.swift */; };
@@ -302,6 +300,17 @@
 		BFE60742231B07E6002B0E8E /* SettingsHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE60741231B07E6002B0E8E /* SettingsHeaderFooterView.swift */; };
 		BFE6325A22A83BEB00F30809 /* Authentication.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFE6325922A83BEB00F30809 /* Authentication.storyboard */; };
 		BFE6326C22A86FF300F30809 /* AuthenticationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6326B22A86FF300F30809 /* AuthenticationOperation.swift */; };
+		BFE972E3260A8B2700D0BDAC /* NSError+libimobiledevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFE972E2260A8B2700D0BDAC /* NSError+libimobiledevice.mm */; };
+		BFECAC7F24FD950B0077C41F /* CodableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD44605241188C300EAB90A /* CodableError.swift */; };
+		BFECAC8024FD950B0077C41F /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18BFF22485828200DD5981 /* ConnectionManager.swift */; };
+		BFECAC8124FD950B0077C41F /* ALTServerError+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF767CB2489AB5C0097E58C /* ALTServerError+Conveniences.swift */; };
+		BFECAC8224FD950B0077C41F /* ServerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1E3128229F474900370A3C /* ServerProtocol.swift */; };
+		BFECAC8324FD950B0077C41F /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF767CD2489ABE90097E58C /* NetworkConnection.swift */; };
+		BFECAC8424FD950B0077C41F /* ALTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BF718BD723C93DB700A89F2D /* ALTConstants.m */; };
+		BFECAC8524FD950B0077C41F /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18BFF624858BDE00DD5981 /* Connection.swift */; };
+		BFECAC8624FD950B0077C41F /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8852295C90300587369 /* Result+Conveniences.swift */; };
+		BFECAC8724FD950B0077C41F /* Bundle+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1E314122A05D4C00370A3C /* Bundle+AltStore.swift */; };
+		BFECAC8824FD950E0077C41F /* CodableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD44605241188C300EAB90A /* CodableError.swift */; };
 		BFECAC8824FD950E0077C41F /* CodableServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD44605241188C300EAB90A /* CodableServerError.swift */; };
 		BFECAC8924FD950E0077C41F /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18BFF22485828200DD5981 /* ConnectionManager.swift */; };
 		BFECAC8A24FD950E0077C41F /* ALTServerError+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF767CB2489AB5C0097E58C /* ALTServerError+Conveniences.swift */; };
@@ -324,9 +333,17 @@
 		BFF0B69A2322D7D0007A79E1 /* UIScreen+CompactHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0B6992322D7D0007A79E1 /* UIScreen+CompactHeight.swift */; };
 		BFF435D8255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF435D7255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift */; };
 		BFF615A82510042B00484D3B /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
+		BFF767C82489A74E0097E58C /* WirelessConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF767C72489A74E0097E58C /* WirelessConnectionHandler.swift */; };
+		BFF7C90F257844C900E55F36 /* AltXPC.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = BFF7C904257844C900E55F36 /* AltXPC.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BFF7C920257844FA00E55F36 /* ALTPluginService.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5C5FCE237DF69100EDD0C6 /* ALTPluginService.m */; };
+		BFF7C9342578492100E55F36 /* ALTAnisetteData.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB49AA823834CF900D542D9 /* ALTAnisetteData.m */; };
+		D51AD27E29356B7B00967AAA /* ALTWrappedError.h in Headers */ = {isa = PBXBuildFile; fileRef = D51AD27C29356B7B00967AAA /* ALTWrappedError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D51AD27F29356B7B00967AAA /* ALTWrappedError.m in Sources */ = {isa = PBXBuildFile; fileRef = D51AD27D29356B7B00967AAA /* ALTWrappedError.m */; };
+		D51AD28029356B8000967AAA /* ALTWrappedError.m in Sources */ = {isa = PBXBuildFile; fileRef = D51AD27D29356B7B00967AAA /* ALTWrappedError.m */; };
 		D52C08EE28AEC37A006C4AE5 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52C08ED28AEC37A006C4AE5 /* AppVersion.swift */; };
 		D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D533E8B62727841800A9B5DD /* libAppleArchive.tbd */; settings = {ATTRIBUTES = (Weak, ); }; };
 		D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D533E8BD2727BBF800A9B5DD /* libcurl.a */; };
+		D540E93828EE1BDE000F1B0F /* ErrorDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D540E93728EE1BDE000F1B0F /* ErrorDetailsViewController.swift */; };
 		D54DED1428CBC44B008B27A0 /* ErrorLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54DED1328CBC44B008B27A0 /* ErrorLogTableViewCell.swift */; };
 		D55E163728776CB700A627A1 /* ComplicationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55E163528776CB000A627A1 /* ComplicationView.swift */; };
 		D57DF638271E32F000677701 /* PatchApp.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D57DF637271E32F000677701 /* PatchApp.storyboard */; };
@@ -336,11 +353,15 @@
 		D57FE84428C7DB7100216002 /* ErrorLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57FE84328C7DB7100216002 /* ErrorLogViewController.swift */; };
 		D58916FE28C7C55C00E39C8B /* LoggedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58916FD28C7C55C00E39C8B /* LoggedError.swift */; };
 		D593F1942717749A006E82DE /* PatchAppOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D593F1932717749A006E82DE /* PatchAppOperation.swift */; };
+		D5ACE84528E3B8450021CAB9 /* ClearAppCacheOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5ACE84428E3B8450021CAB9 /* ClearAppCacheOperation.swift */; };
 		D5CA0C4B280E141900469595 /* ManagedPatron.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CA0C4A280E141900469595 /* ManagedPatron.swift */; };
 		D5CA0C4E280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = D5CA0C4D280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel */; };
 		D5DAE0942804B0B80034D8D4 /* ScreenshotProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DAE0932804B0B80034D8D4 /* ScreenshotProcessor.swift */; };
 		D5DAE0962804DF430034D8D4 /* UpdatePatronsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DAE0952804DF430034D8D4 /* UpdatePatronsOperation.swift */; };
+		D5DB145A28F9DC5A00A8F606 /* ALTLocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DB145828F9DC1000A8F606 /* ALTLocalizedError.swift */; };
+		D5DB145B28F9DC5C00A8F606 /* ALTLocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DB145828F9DC1000A8F606 /* ALTLocalizedError.swift */; };
 		D5E1E7C128077DE90016FC96 /* FetchTrustedSourcesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E1E7C028077DE90016FC96 /* FetchTrustedSourcesOperation.swift */; };
+		D5E3FB9828FDFAD90034B72C /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C336124197D700034FD24 /* NSError+AltStore.swift */; };
 		D5F2F6A92720B7C20081CCF5 /* PatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F2F6A82720B7C20081CCF5 /* PatchViewController.swift */; };
 		D5F99A1828D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = D5F99A1728D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel */; };
 		D5F99A1A28D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F99A1928D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift */; };
@@ -757,7 +778,7 @@
 		BFD2478B2284C4C300981D42 /* AppIconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconImageView.swift; sourceTree = "<group>"; };
 		BFD2478E2284C8F900981D42 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		BFD2479E2284FBD000981D42 /* UIColor+AltStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AltStore.swift"; sourceTree = "<group>"; };
-		BFD44605241188C300EAB90A /* CodableServerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableServerError.swift; sourceTree = "<group>"; };
+		BFD44605241188C300EAB90A /* CodableError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableError.swift; sourceTree = "<group>"; };
 		BFD52BD222A06EFB000B7ED1 /* ALTConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTConstants.h; sourceTree = "<group>"; };
 		BFD52BE522A1A9CA000B7ED1 /* ptrarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ptrarray.c; path = Dependencies/libplist/src/ptrarray.c; sourceTree = SOURCE_ROOT; };
 		BFD52BE622A1A9CA000B7ED1 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base64.c; path = Dependencies/libplist/src/base64.c; sourceTree = SOURCE_ROOT; };
@@ -824,12 +845,15 @@
 		BFF7C906257844C900E55F36 /* AltXPCProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AltXPCProtocol.h; sourceTree = "<group>"; };
 		BFF7EC4C25081E9300BDE521 /* AltStore 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 8.xcdatamodel"; sourceTree = "<group>"; };
 		BFFCFA45248835530077BFCE /* AltDaemon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AltDaemon.entitlements; sourceTree = "<group>"; };
+		D51AD27C29356B7B00967AAA /* ALTWrappedError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTWrappedError.h; sourceTree = "<group>"; };
+		D51AD27D29356B7B00967AAA /* ALTWrappedError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTWrappedError.m; sourceTree = "<group>"; };
 		D52C08ED28AEC37A006C4AE5 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		D52E988928D002D30032BE6B /* AltStore 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 11.xcdatamodel"; sourceTree = "<group>"; };
 		D533E8B62727841800A9B5DD /* libAppleArchive.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAppleArchive.tbd; path = usr/lib/libAppleArchive.tbd; sourceTree = SDKROOT; };
 		D533E8B82727B61400A9B5DD /* fragmentzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fragmentzip.h; sourceTree = "<group>"; };
 		D533E8BB2727BBEE00A9B5DD /* libfragmentzip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfragmentzip.a; path = Dependencies/fragmentzip/libfragmentzip.a; sourceTree = SOURCE_ROOT; };
 		D533E8BD2727BBF800A9B5DD /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = Dependencies/libcurl/libcurl.a; sourceTree = SOURCE_ROOT; };
+		D540E93728EE1BDE000F1B0F /* ErrorDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDetailsViewController.swift; sourceTree = "<group>"; };
 		D54DED1328CBC44B008B27A0 /* ErrorLogTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLogTableViewCell.swift; sourceTree = "<group>"; };
 		D55E163528776CB000A627A1 /* ComplicationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationView.swift; sourceTree = "<group>"; };
 		D57DF637271E32F000677701 /* PatchApp.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PatchApp.storyboard; sourceTree = "<group>"; };
@@ -840,11 +864,13 @@
 		D57FE84328C7DB7100216002 /* ErrorLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLogViewController.swift; sourceTree = "<group>"; };
 		D58916FD28C7C55C00E39C8B /* LoggedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedError.swift; sourceTree = "<group>"; };
 		D593F1932717749A006E82DE /* PatchAppOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchAppOperation.swift; sourceTree = "<group>"; };
+		D5ACE84428E3B8450021CAB9 /* ClearAppCacheOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearAppCacheOperation.swift; sourceTree = "<group>"; };
 		D5CA0C4A280E141900469595 /* ManagedPatron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedPatron.swift; sourceTree = "<group>"; };
 		D5CA0C4C280E242500469595 /* AltStore 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 10.xcdatamodel"; sourceTree = "<group>"; };
 		D5CA0C4D280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore9ToAltStore10.xcmappingmodel; sourceTree = "<group>"; };
 		D5DAE0932804B0B80034D8D4 /* ScreenshotProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotProcessor.swift; sourceTree = "<group>"; };
 		D5DAE0952804DF430034D8D4 /* UpdatePatronsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePatronsOperation.swift; sourceTree = "<group>"; };
+		D5DB145828F9DC1000A8F606 /* ALTLocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALTLocalizedError.swift; sourceTree = "<group>"; };
 		D5E1E7C028077DE90016FC96 /* FetchTrustedSourcesOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchTrustedSourcesOperation.swift; sourceTree = "<group>"; };
 		D5F2F6A82720B7C20081CCF5 /* PatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchViewController.swift; sourceTree = "<group>"; };
 		D5F99A1728D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore10ToAltStore11.xcmappingmodel; sourceTree = "<group>"; };
@@ -1060,7 +1086,7 @@
 			isa = PBXGroup;
 			children = (
 				BF1E3128229F474900370A3C /* ServerProtocol.swift */,
-				BFD44605241188C300EAB90A /* CodableServerError.swift */,
+				BFD44605241188C300EAB90A /* CodableError.swift */,
 			);
 			path = "Server Protocol";
 			sourceTree = "<group>";
@@ -1073,6 +1099,7 @@
 				BF18BFFF2485A75F00DD5981 /* Server Protocol */,
 				BFF767CF2489AC240097E58C /* Connections */,
 				BFF7C92D2578464D00E55F36 /* XPC */,
+				D5DB145728F9DC0300A8F606 /* Errors */,
 				BFF767C32489A6800097E58C /* Extensions */,
 				BFF767C42489A6980097E58C /* Categories */,
 			);
@@ -1694,6 +1721,7 @@
 				D57F2C9026E0070200B9FA39 /* EnableJITOperation.swift */,
 				D5DAE0952804DF430034D8D4 /* UpdatePatronsOperation.swift */,
 				D5E1E7C028077DE90016FC96 /* FetchTrustedSourcesOperation.swift */,
+				D5ACE84428E3B8450021CAB9 /* ClearAppCacheOperation.swift */,
 				BF7B44062725A4B8005288A4 /* Patch App */,
 			);
 			path = Operations;
@@ -1769,8 +1797,19 @@
 			children = (
 				D57FE84328C7DB7100216002 /* ErrorLogViewController.swift */,
 				D54DED1328CBC44B008B27A0 /* ErrorLogTableViewCell.swift */,
+				D540E93728EE1BDE000F1B0F /* ErrorDetailsViewController.swift */,
 			);
 			path = "Error Log";
+			sourceTree = "<group>";
+		};
+		D5DB145728F9DC0300A8F606 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				D5DB145828F9DC1000A8F606 /* ALTLocalizedError.swift */,
+				D51AD27C29356B7B00967AAA /* ALTWrappedError.h */,
+				D51AD27D29356B7B00967AAA /* ALTWrappedError.m */,
+			);
+			path = Errors;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1828,6 +1867,7 @@
 				BFAECC5D2501B0BF00528F27 /* ALTConnection.h in Headers */,
 				BF66EE942501AEBC007EE018 /* ALTAppPermission.h in Headers */,
 				BFAECC602501B0BF00528F27 /* NSError+ALTServerError.h in Headers */,
+				D51AD27E29356B7B00967AAA /* ALTWrappedError.h in Headers */,
 				BFAECC5E2501B0BF00528F27 /* CFNotificationName+AltStore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2272,7 +2312,7 @@
 				BF1FE358251A9FB000C3CE09 /* NSXPCConnection+MachServices.swift in Sources */,
 				BFECAC8F24FD950E0077C41F /* Result+Conveniences.swift in Sources */,
 				BF8CAE472489E772004D6CCE /* DaemonRequestHandler.swift in Sources */,
-				BFECAC8824FD950E0077C41F /* CodableServerError.swift in Sources */,
+				BFECAC8824FD950E0077C41F /* CodableError.swift in Sources */,
 				BFC712C32512D5F100AB5EBE /* XPCConnection.swift in Sources */,
 				BFC712C52512D5F100AB5EBE /* XPCConnectionHandler.swift in Sources */,
 				BFECAC8A24FD950E0077C41F /* ALTServerError+Conveniences.swift in Sources */,
@@ -2285,6 +2325,46 @@
 				BF10EB34248730750055E6DB /* main.swift in Sources */,
 				BF8CAE462489E772004D6CCE /* AppManager.swift in Sources */,
 				BFECAC9024FD950E0077C41F /* Bundle+AltStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF458689229872EA00BD7491 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFF767C82489A74E0097E58C /* WirelessConnectionHandler.swift in Sources */,
+				BFF0394B25F0551600BE607D /* MenuController.swift in Sources */,
+				BFECAC8024FD950B0077C41F /* ConnectionManager.swift in Sources */,
+				BFC15ADA27BC352300ED2FB4 /* PluginVersion.swift in Sources */,
+				BFECAC8324FD950B0077C41F /* NetworkConnection.swift in Sources */,
+				BF541C0B25E5A5FA00CD46B2 /* FileManager+URLs.swift in Sources */,
+				BFECAC8724FD950B0077C41F /* Bundle+AltStore.swift in Sources */,
+				BF3F786422CAA41E008FBD20 /* ALTDeviceManager+Installation.swift in Sources */,
+				BF18BFFD2485A1E400DD5981 /* WiredConnectionHandler.swift in Sources */,
+				BFC712BB2512B9CF00AB5EBE /* PluginManager.swift in Sources */,
+				BFECAC8224FD950B0077C41F /* ServerProtocol.swift in Sources */,
+				BFECAC8124FD950B0077C41F /* ALTServerError+Conveniences.swift in Sources */,
+				BFECAC7F24FD950B0077C41F /* CodableError.swift in Sources */,
+				D51AD28029356B8000967AAA /* ALTWrappedError.m in Sources */,
+				BFECAC8624FD950B0077C41F /* Result+Conveniences.swift in Sources */,
+				BF265D1925F843A000080DC9 /* NSError+AltStore.swift in Sources */,
+				BF904DEA265DAE9A00E86C2A /* InstalledApp.swift in Sources */,
+				BFF435D9255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift in Sources */,
+				BF718BD523C928A300A89F2D /* ALTNotificationConnection.mm in Sources */,
+				BF1E312B229F474900370A3C /* RequestHandler.swift in Sources */,
+				BF718BD123C91BD300A89F2D /* ALTWiredConnection.mm in Sources */,
+				BFAD678E25E0649500D4C4D1 /* ALTDebugConnection.mm in Sources */,
+				BFECAC8524FD950B0077C41F /* Connection.swift in Sources */,
+				BF458690229872EA00BD7491 /* AppDelegate.swift in Sources */,
+				BFECAC8424FD950B0077C41F /* ALTConstants.m in Sources */,
+				BF4586C52298CDB800BD7491 /* ALTDeviceManager.mm in Sources */,
+				BF0241AA22F29CCD00129732 /* UserDefaults+AltServer.swift in Sources */,
+				BFECAC9424FD98BA0077C41F /* NSError+ALTServerError.m in Sources */,
+				BFAD67A325E0854500D4C4D1 /* DeveloperDiskManager.swift in Sources */,
+				BFECAC9324FD98BA0077C41F /* CFNotificationName+AltStore.m in Sources */,
+				BFE48975238007CE003239E0 /* AnisetteDataManager.swift in Sources */,
+				D5DB145B28F9DC5C00A8F606 /* ALTLocalizedError.swift in Sources */,
+				BFE972E3260A8B2700D0BDAC /* NSError+libimobiledevice.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2366,7 +2446,6 @@
 				BF580482246A28F7008AE704 /* ViewController.swift in Sources */,
 				BF44EEF0246B08BA002A52F2 /* BackupController.swift in Sources */,
 				03F06CD52942C27E001C4D68 /* Bundle+AltStore.swift in Sources */,
-				BF58049B246A432D008AE704 /* NSError+AltStore.swift in Sources */,
 				BF58047E246A28F7008AE704 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2382,7 +2461,7 @@
 				BF66EECD2501AECA007EE018 /* StoreAppPolicy.swift in Sources */,
 				BF66EEE82501AED0007EE018 /* UserDefaults+AltStore.swift in Sources */,
 				BF340E9A250AD39500A192CB /* ViewApp.intentdefinition in Sources */,
-				BFAECC522501B0A400528F27 /* CodableServerError.swift in Sources */,
+				BFAECC522501B0A400528F27 /* CodableError.swift in Sources */,
 				BF66EE9E2501AEC1007EE018 /* Fetchable.swift in Sources */,
 				BF66EEDF2501AECA007EE018 /* PatreonAccount.swift in Sources */,
 				BFAECC532501B0A400528F27 /* ServerProtocol.swift in Sources */,
@@ -2404,6 +2483,7 @@
 				D58916FE28C7C55C00E39C8B /* LoggedError.swift in Sources */,
 				BFBF331B2526762200B7B8C9 /* AltStore8ToAltStore9.xcmappingmodel in Sources */,
 				D5CA0C4E280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel in Sources */,
+				D51AD27F29356B7B00967AAA /* ALTWrappedError.m in Sources */,
 				BF989184250AACFC002ACF50 /* Date+RelativeDate.swift in Sources */,
 				BF66EE962501AEBC007EE018 /* ALTPatreonBenefitType.m in Sources */,
 				BFAECC5A2501B0A400528F27 /* NetworkConnection.swift in Sources */,
@@ -2421,12 +2501,14 @@
 				D5F99A1A28D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift in Sources */,
 				BFAECC562501B0A400528F27 /* ALTServerError+Conveniences.swift in Sources */,
 				BFAECC592501B0A400528F27 /* Result+Conveniences.swift in Sources */,
+				D5E3FB9828FDFAD90034B72C /* NSError+AltStore.swift in Sources */,
 				BFAECC542501B0A400528F27 /* NSError+ALTServerError.m in Sources */,
 				BF66EEE12501AECA007EE018 /* DatabaseManager.swift in Sources */,
 				D52C08EE28AEC37A006C4AE5 /* AppVersion.swift in Sources */,
 				BF66EEEA2501AED0007EE018 /* UIColor+Hex.swift in Sources */,
 				BF66EECC2501AECA007EE018 /* Source.swift in Sources */,
 				BF66EED72501AECA007EE018 /* InstalledApp.swift in Sources */,
+				D5DB145A28F9DC5A00A8F606 /* ALTLocalizedError.swift in Sources */,
 				BF66EECE2501AECA007EE018 /* InstalledAppPolicy.swift in Sources */,
 				BF1FE359251A9FB000C3CE09 /* NSXPCConnection+MachServices.swift in Sources */,
 				BF66EEA62501AEC5007EE018 /* PatreonAPI.swift in Sources */,
@@ -2461,6 +2543,7 @@
 				BF3D649D22E7AC1B00E9056B /* PermissionPopoverViewController.swift in Sources */,
 				D57F2C9426E01BC700B9FA39 /* UIDevice+Vibration.swift in Sources */,
 				BFD2478F2284C8F900981D42 /* Button.swift in Sources */,
+				D540E93828EE1BDE000F1B0F /* ErrorDetailsViewController.swift in Sources */,
 				BF56D2AC23DF8E170006506D /* FetchAppIDsOperation.swift in Sources */,
 				BFC1F38D22AEE3A4003AC21A /* DownloadAppOperation.swift in Sources */,
 				BFE6073A231ADF82002B0E8E /* SettingsViewController.swift in Sources */,
@@ -2482,7 +2565,6 @@
 				BF8F69C422E662D300049BA1 /* AppViewController.swift in Sources */,
 				BFF0B68E23219520007A79E1 /* PatreonViewController.swift in Sources */,
 				BFF00D302501BD7D00746320 /* Intents.intentdefinition in Sources */,
-				BF6C336224197D700034FD24 /* NSError+AltStore.swift in Sources */,
 				D5DAE0942804B0B80034D8D4 /* ScreenshotProcessor.swift in Sources */,
 				BFD2476E2284B9A500981D42 /* AppDelegate.swift in Sources */,
 				BF41B806233423AE00C593A3 /* TabBarController.swift in Sources */,
@@ -2504,6 +2586,7 @@
 				BFD6B03322DFF20800B86064 /* MyAppsComponents.swift in Sources */,
 				BF41B808233433C100C593A3 /* LoadingState.swift in Sources */,
 				BFF0B69A2322D7D0007A79E1 /* UIScreen+CompactHeight.swift in Sources */,
+				D5ACE84528E3B8450021CAB9 /* ClearAppCacheOperation.swift in Sources */,
 				D5F2F6A92720B7C20081CCF5 /* PatchViewController.swift in Sources */,
 				B39F16132918D7C5002E9404 /* Consts.swift in Sources */,
 				BF8F69C222E659F700049BA1 /* AppContentViewController.swift in Sources */,

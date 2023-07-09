@@ -13,7 +13,8 @@ import Network
 import AltStoreCore
 import AltSign
 
-enum AuthenticationError: LocalizedError
+typealias AuthenticationError = AuthenticationErrorCode.Error
+enum AuthenticationErrorCode: Int, ALTErrorEnum, CaseIterable
 {
     case noTeam
     case noCertificate
@@ -22,11 +23,10 @@ enum AuthenticationError: LocalizedError
     case missingPrivateKey
     case missingCertificate
     
-    var errorDescription: String? {
+    var errorFailureReason: String {
         switch self {
-        case .noTeam: return NSLocalizedString("Developer team could not be found.", comment: "")
-        case .teamSelectorError: return NSLocalizedString("Error presenting team selector view.", comment: "")
-        case .noCertificate: return NSLocalizedString("Developer certificate could not be found.", comment: "")
+        case .noTeam: return NSLocalizedString("Your Apple ID has no developer teams.", comment: "")
+        case .noCertificate: return NSLocalizedString("The developer certificate could not be found.", comment: "")
         case .missingPrivateKey: return NSLocalizedString("The certificate's private key could not be found.", comment: "")
         case .missingCertificate: return NSLocalizedString("The certificate could not be found.", comment: "")
         }
@@ -212,7 +212,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 guard
                     let account = Account.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Account.identifier), altTeam.account.identifier), in: context),
                     let team = Team.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Team.identifier), altTeam.identifier), in: context)
-                else { throw AuthenticationError.noTeam }
+                else { throw AuthenticationError(.noTeam) }
                 
                 // Account
                 account.isActiveAccount = true
@@ -431,7 +431,7 @@ private extension AuthenticationOperation
                     }
                     else
                     {
-                        completionHandler(.failure(error ?? OperationError.unknown))
+                        completionHandler(.failure(error ?? OperationError.unknown()))
                     }
                 }
             }
@@ -443,27 +443,24 @@ private extension AuthenticationOperation
     func fetchTeam(for account: ALTAccount, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTTeam, Swift.Error>) -> Void)
     {
         func selectTeam(from teams: [ALTTeam])
-         {
-             if teams.count <= 1 {
-                 if let team = teams.first {
-                     return completionHandler(.success(team))
-                 } else {
-                     return completionHandler(.failure(AuthenticationError.noTeam))
-                 }
-             } else {
-                 DispatchQueue.main.async {
-                     let selectTeamViewController = self.storyboard.instantiateViewController(withIdentifier: "selectTeamViewController") as! SelectTeamViewController
-
-                     selectTeamViewController.teams = teams
-                     selectTeamViewController.completionHandler = completionHandler
-
-                     if !self.present(selectTeamViewController)
-                     {
-                         return completionHandler(.failure(AuthenticationError.noTeam))
-                     }
-                 }
-             }
-         }
+        {
+            if let team = teams.first(where: { $0.type == .individual })
+            {
+                return completionHandler(.success(team))
+            }
+            else if let team = teams.first(where: { $0.type == .free })
+            {
+                return completionHandler(.success(team))
+            }
+            else if let team = teams.first
+            {
+                return completionHandler(.success(team))
+            }
+            else
+            {
+                return completionHandler(.failure(AuthenticationError(.noTeam)))
+            }
+        }
 
         ALTAppleAPI.shared.fetchTeams(for: account, session: session) { (teams, error) in
             switch Result(teams, error)
@@ -493,7 +490,7 @@ private extension AuthenticationOperation
                 do
                 {
                     let certificate = try Result(certificate, error).get()
-                    guard let privateKey = certificate.privateKey else { throw AuthenticationError.missingPrivateKey }
+                    guard let privateKey = certificate.privateKey else { throw AuthenticationError(.missingPrivateKey) }
                     
                     ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
                         do
@@ -501,7 +498,7 @@ private extension AuthenticationOperation
                             let certificates = try Result(certificates, error).get()
                             
                             guard let certificate = certificates.first(where: { $0.serialNumber == certificate.serialNumber }) else {
-                                throw AuthenticationError.missingCertificate
+                                throw AuthenticationError(.missingCertificate)
                             }
                             
                             certificate.privateKey = privateKey
@@ -522,7 +519,7 @@ private extension AuthenticationOperation
         
         func replaceCertificate(from certificates: [ALTCertificate])
         {
-            guard let certificate = certificates.first(where: { $0.machineName?.starts(with: "AltStore") == true }) ?? certificates.first else { return completionHandler(.failure(AuthenticationError.noCertificate)) }
+            guard let certificate = certificates.first(where: { $0.machineName?.starts(with: "AltStore") == true }) ?? certificates.first else { return completionHandler(.failure(AuthenticationError(.noCertificate))) }
             
             ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { (success, error) in
                 if let error = error, !success

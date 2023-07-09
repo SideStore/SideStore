@@ -42,7 +42,7 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
             
             guard let profiles = self.context.provisioningProfiles else { throw OperationError.invalidParameters }
             
-            guard let app = self.context.app else { throw OperationError.appNotFound }
+            guard let app = self.context.app else { throw OperationError.appNotFound(name: nil) }
             
             DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
                 print("Sending refresh app request...")
@@ -52,7 +52,7 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
                         let bytes = p.value.data.toRustByteSlice()
                         try install_provisioning_profile(bytes.forRust())
                     } catch {
-                        return self.finish(.failure(error))
+                        return self.finish(.failure(error(name: app.name)))
                     }
                     
                     self.progress.completedUnitCount += 1

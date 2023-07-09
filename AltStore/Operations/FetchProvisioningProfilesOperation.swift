@@ -45,7 +45,7 @@ final class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProv
             let session = self.context.session
         else { return self.finish(.failure(OperationError.invalidParameters)) }
         
-        guard let app = self.context.app else { return self.finish(.failure(OperationError.appNotFound)) }
+        guard let app = self.context.app else { return self.finish(.failure(OperationError.appNotFound(name: nil))) }
         
         self.progress.totalUnitCount = Int64(1 + app.appExtensions.count)
         
@@ -260,7 +260,7 @@ extension FetchProvisioningProfilesOperation
                         {
                             if let expirationDate = sortedExpirationDates.first
                             {
-                                throw OperationError.maximumAppIDLimitReached(application: application, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, nextExpirationDate: expirationDate)
+                                throw OperationError.maximumAppIDLimitReached(appName: application.name, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, expirationDate: expirationDate)
                             }
                             else
                             {
@@ -290,7 +290,7 @@ extension FetchProvisioningProfilesOperation
                             {
                                 if let expirationDate = sortedExpirationDates.first
                                 {
-                                    throw OperationError.maximumAppIDLimitReached(application: application, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, nextExpirationDate: expirationDate)
+                                    throw OperationError.maximumAppIDLimitReached(appName: application.name, requiredAppIDs: requiredAppIDs, availableAppIDs: availableAppIDs, expirationDate: expirationDate)
                                 }
                                 else
                                 {
