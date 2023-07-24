@@ -150,7 +150,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             }
             
             var installing = true
-            if installedApp.storeApp?.bundleIdentifier == Bundle.Info.appbundleIdentifier {
+            if installedApp.storeApp?.bundleIdentifier.range(of: Bundle.Info.appbundleIdentifier) != nil {
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     if UIApplication.shared.applicationState != .active {
@@ -172,12 +172,13 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     try install_ipa(installedApp.bundleIdentifier)
                     installing = false
                     installedApp.refreshedDate = Date()
-                    return self.finish(.success(installedApp))
+                    self.finish(.success(installedApp))
+                    break
                 } catch {
                     if (attempts == 0){
                         installing = false
-                        return self.finish(.failure(error))
-                    } else { attempts -= 1 }
+                        self.finish(.failure(MinimuxerError.InstallApp))
+                    }
                 }
             }
         }

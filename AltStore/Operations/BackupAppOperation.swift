@@ -43,10 +43,7 @@ class BackupAppOperation: ResultOperation<Void>
         
         do
         {
-            if let error = self.context.error
-            {
-                throw error
-            }
+            if let error = self.context.error { throw error }
             
             guard let installedApp = self.context.installedApp, let context = installedApp.managedObjectContext else { throw OperationError.invalidParameters }
             context.perform {

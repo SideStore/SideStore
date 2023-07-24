@@ -51,18 +51,21 @@ final class SendAppOperation: ResultOperation<()>
                 do {
                     let bytes = Data(data).toRustByteSlice()
                     try yeet_app_afc(app.bundleIdentifier, bytes.forRust())
+                    self.progress.completedUnitCount += 1
+                    self.finish(.success(()))
+                    break
                 } catch {
                     attempts -= 1
                     if (attempts == 0) {
-                        return self.finish(.failure(error))
-                    } else { continue }
+                        self.finish(.failure(MinimuxerError.RwAfc))
+                    }
                 }
                 self.progress.completedUnitCount += 1
                 return self.finish(.success(()))
             }
         } else {
             print("IPA doesn't exist????")
-            return self.finish(.failure(ALTServerError(.underlyingError)))
+            self.finish(.failure(OperationError.appNotFound))
         }
     }
 }
