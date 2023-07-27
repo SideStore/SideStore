@@ -169,12 +169,9 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
 
                             let content = UNMutableNotificationContent()
                             content.title = "Refreshing..."
-                            content.body = "To finish refreshing, SideStore must be moved to the background, which it does by going to the home screen. Please reopen SideStore after it is done refreshing!"
+                            content.body = "To finish refreshing SideStore must go to the home screen. Please reopen after!"
                             let notification = UNNotificationRequest(identifier: Bundle.Info.appbundleIdentifier + ".FinishRefreshNotification", content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false))
                             UNUserNotificationCenter.current().add(notification)
-
-                            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-
                             break
                         default:
                             print("Notifications are not enabled")
@@ -194,11 +191,11 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                                     topController.present(alert, animated: true)
                                 } else {
                                     print("No key window? Let's just go home")
-                                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                                 }
                             }
                         }
                     }
+                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                 }
             }
             var attempts = 10
