@@ -56,12 +56,12 @@ final class SendAppOperation: ResultOperation<()>
                     break
                 } catch {
                     attempts -= 1
-                    if (attempts == 0) {
+                    if (attempts <= 0) {
                         self.finish(.failure(MinimuxerError.RwAfc))
                     }
                 }
                 self.progress.completedUnitCount += 1
-                return self.finish(.success(()))
+                self.finish(.success(()))
             }
         } else {
             print("IPA doesn't exist????")

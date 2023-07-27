@@ -54,7 +54,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                 } catch {
                     retries -= 1
                     if (retries <= 0){
-                        return self.finish(.failure(error))
+                        self.finish(.failure(error))
                     }
                 }
             }

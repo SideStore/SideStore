@@ -175,7 +175,8 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     self.finish(.success(installedApp))
                     break
                 } catch {
-                    if (attempts == 0){
+                    attempts -= 1
+                    if (attempts <= 0){
                         installing = false
                         self.finish(.failure(MinimuxerError.InstallApp))
                     }
