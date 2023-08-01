@@ -10,7 +10,7 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report! Before you continue filling out the report, please **[search in GitHub Issues](https://github.com/SideStore/SideStore/issues?q=is%3Aissue+is%3Aopen) for the bug you are experiencing** in case it has already been reported.
         
-        **Please use [Discord](https://discord.gg/SidesStore) or [GitHub Discussions](https://github.com/SideStore/SideStore/discussions) for support.**
+        **Please use [Discord](https://discord.gg/SideStore) or [GitHub Discussions](https://github.com/SideStore/SideStore/discussions) for support.**
   - type: textarea
     id: description
     attributes:
