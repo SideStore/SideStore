@@ -36,9 +36,10 @@ body:
   - type: checkboxes
     id: confirm-latest-version
     attributes:
-      label: I confirm that I am using the latest version of SideStore.
+      label: Are you currently using the latest version of SideStore?
       options:
-      - label: Yes
+      - label: "Yes, I'm using the latest version"
+      - label: "No, I need to update."
     validations:
       required: true
   - type: textarea
