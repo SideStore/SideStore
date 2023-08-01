@@ -33,10 +33,13 @@ body:
       description: To retrieve this, go to `Settings` in the SideStore app and scroll down to the bottom.
     validations:
       required: true
-  - type: checkboxes
+  - type: radio
     id: confirm-latest-version
     attributes:
       label: I confirm that I am using the latest version of SideStore.
+      options:
+        - Yes
+        - No
     validations:
       required: true
   - type: textarea
