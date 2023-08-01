@@ -10,7 +10,7 @@ body:
       value: |
         Thanks for taking the time to fill out this feature request! Before you continue filling out the form, please **[search in GitHub Issues](https://github.com/SideStore/SideStore/issues?q=is%3Aissue+is%3Aopen) for the feature you are suggestion** in case it has already been suggested.
         
-        **Please use [Discord](https://discord.gg/RgpFBX3Q3k) or [GitHub Discussions](https://github.com/SideStore/SideStore/discussions) for support.**
+        **Please use [Discord](https://discord.gg/SideStore) or [GitHub Discussions](https://github.com/SideStore/SideStore/discussions) for support.**
   - type: textarea
     id: description
     attributes:
