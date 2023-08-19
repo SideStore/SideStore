@@ -105,7 +105,6 @@ struct WidgetView : View
             }
         }
         .widgetBackground(backgroundView(icon: entry.app?.icon, tintColor: entry.app?.tintColor))
-
     }
 }
 
