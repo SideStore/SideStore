@@ -11,13 +11,14 @@ import AltStoreCore
 
 struct BatchError: ALTLocalizedError
 {
+    /*
     enum Code: Int, ALTErrorCode
     {
         typealias Error = BatchError
         
         case batchError
     }
-    
+    */
     var code: Code = .batchError
     var underlyingErrors: [Error]
     
