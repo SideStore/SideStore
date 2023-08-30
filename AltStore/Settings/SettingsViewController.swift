@@ -537,6 +537,9 @@ extension SettingsViewController
                     let toastView = ToastView(text: NSLocalizedString("Cannot Send Mail", comment: ""), detailText: nil)
                     toastView.show(in: self)
                 }
+                
+            case .clearCache: self.clearCache()
+
             case .resetPairingFile:
                 let filename = "ALTPairingFile.mobiledevicepairing"
                 let fm = FileManager.default
@@ -589,7 +592,7 @@ extension SettingsViewController
                     ELOG("UIApplication.openSettingsURLString invalid")
                 }
             case .refreshAttempts, .errorLog: break
-            case .clearCache: self.clearCache()
+
             }
             
         default: break
