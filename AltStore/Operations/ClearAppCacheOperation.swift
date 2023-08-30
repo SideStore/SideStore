@@ -8,17 +8,17 @@
 
 import Foundation
 import AltStoreCore
-
+/*
 struct BatchError: ALTLocalizedError
 {
-    /*
+
     enum Code: Int, ALTErrorCode
     {
         typealias Error = BatchError
         
         case batchError
     }
-    */
+
     var code: Code = .batchError
     var underlyingErrors: [Error]
     
@@ -39,7 +39,7 @@ struct BatchError: ALTLocalizedError
         return message
     }
 }
-
+*/
 @objc(ClearAppCacheOperation)
 class ClearAppCacheOperation: ResultOperation<Void>
 {
@@ -60,7 +60,7 @@ class ClearAppCacheOperation: ResultOperation<Void>
         self.clearTemporaryDirectory { result in
             switch result
             {
-            case .failure(let batchError as BatchError): allErrors.append(contentsOf: batchError.underlyingErrors)
+            //case .failure(let batchError as BatchError): allErrors.append(contentsOf: batchError.underlyingErrors)
             case .failure(let error): allErrors.append(error)
             case .success: break
             }
@@ -68,7 +68,7 @@ class ClearAppCacheOperation: ResultOperation<Void>
             self.removeUninstalledAppBackupDirectories { result in
                 switch result
                 {
-                case .failure(let batchError as BatchError): allErrors.append(contentsOf: batchError.underlyingErrors)
+                //case .failure(let batchError as BatchError): allErrors.append(contentsOf: batchError.underlyingErrors)
                 case .failure(let error): allErrors.append(error)
                 case .success: break
                 }
