@@ -52,11 +52,11 @@ extension SettingsViewController
     {
         case sendFeedback
         case refreshAttempts
-        case clearCache
         case errorLog
         case resetPairingFile
         case resetAdiPb
         case advancedSettings
+        case clearCache
     }
 }
 
@@ -294,7 +294,7 @@ private extension SettingsViewController
     
     func clearCache()
     {
-        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to clear AltStore's cache?", comment: ""),
+        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to clear SideStore's cache?", comment: ""),
                                                 message: NSLocalizedString("This will remove all temporary files as well as backups for uninstalled apps.", comment: ""),
                                                 preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { [weak self] _ in
@@ -537,8 +537,6 @@ extension SettingsViewController
                     let toastView = ToastView(text: NSLocalizedString("Cannot Send Mail", comment: ""), detailText: nil)
                     toastView.show(in: self)
                 }
-                
-            case .clearCache: self.clearCache()
 
             case .resetPairingFile:
                 let filename = "ALTPairingFile.mobiledevicepairing"
@@ -592,6 +590,7 @@ extension SettingsViewController
                     ELOG("UIApplication.openSettingsURLString invalid")
                 }
             case .refreshAttempts, .errorLog: break
+            case .clearCache: self.clearCache()
 
             }
             
