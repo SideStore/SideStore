@@ -80,7 +80,7 @@ class ClearAppCacheOperation: ResultOperation<Void>
                 else
                 {
                     //let error = BatchError(errors: allErrors)
-                    self.finish(.failure(error))
+                    //self.finish(.failure(error))
                 }
             }
         }
@@ -122,7 +122,7 @@ private extension ClearAppCacheOperation
                 if !errors.isEmpty
                 {
                     //let error = BatchError(errors: errors)
-                    completion(.failure(error))
+                    //completion(.failure(error))
                 }
                 else
                 {
@@ -186,7 +186,7 @@ private extension ClearAppCacheOperation
                     if !errors.isEmpty
                     {
                         //let error = BatchError(errors: errors)
-                        completion(.failure(error))
+                        //completion(.failure(error))
                     }
                     else
                     {

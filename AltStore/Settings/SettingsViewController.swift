@@ -48,16 +48,11 @@ extension SettingsViewController
         case softwareLicenses
     }
     
-    fileprivate enum TechyThingsRow: Int, CaseIterable
-    {
-        case errorLog
-        case clearCache
-    }
-    
     fileprivate enum DebugRow: Int, CaseIterable
     {
         case sendFeedback
         case refreshAttempts
+        case clearCache
         case errorLog
         case resetPairingFile
         case resetAdiPb
@@ -210,16 +205,6 @@ private extension SettingsViewController
             
         case .instructions:
             break
-            
-        case .techyThings:
-            if isHeader
-            {
-                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("TECHY THINGS", comment: "")
-            }
-            else
-            {
-                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Free up disk space by removing non-essential data, such as temporary files and backups for uninstalled apps.", comment: "")
-            }
             
         case .credits:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("CREDITS", comment: "")
@@ -455,7 +440,7 @@ extension SettingsViewController
         switch section
         {
         case .signIn where self.activeTeam != nil: return nil
-        case .signIn, .patreon, .appRefresh, .techyThings, .macDirtyCow:
+        case .signIn, .patreon, .appRefresh:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -486,11 +471,11 @@ extension SettingsViewController
         {
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0            
-        case .signIn, .patreon, .appRefresh, .techyThings, .macDirtyCow:
+        case .signIn, .patreon, .appRefresh:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
-        case .account, .credits, .debug, .instructions, .techyThings: return 0.0
+        case .account, .credits, .debug, .instructions: return 0.0
         }
     }
 }
@@ -514,13 +499,6 @@ extension SettingsViewController
                 self.addRefreshAppsShortcut()
             }
             
-        case .techyThings:
-            let row = TechyThingsRow.allCases[indexPath.row]
-            switch row
-            {
-            case .errorLog: break
-            case .clearCache: self.clearCache()
-            }
             
         case .credits:
             let row = CreditsRow.allCases[indexPath.row]
@@ -611,6 +589,7 @@ extension SettingsViewController
                     ELOG("UIApplication.openSettingsURLString invalid")
                 }
             case .refreshAttempts, .errorLog: break
+            case .clearCache: self.clearCache()
             }
             
         default: break
