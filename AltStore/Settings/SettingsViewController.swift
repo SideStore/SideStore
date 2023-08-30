@@ -52,11 +52,12 @@ extension SettingsViewController
     {
         case sendFeedback
         case refreshAttempts
+        case clearCache
         case errorLog
         case resetPairingFile
         case resetAdiPb
         case advancedSettings
-        case clearCache
+    
     }
 }
 
@@ -592,7 +593,7 @@ extension SettingsViewController
                     ELOG("UIApplication.openSettingsURLString invalid")
                 }
             case .refreshAttempts, .errorLog: break
-            case .clearCache: self.clearCache()
+
             }
             
         default: break
