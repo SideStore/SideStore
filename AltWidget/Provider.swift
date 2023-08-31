@@ -1,14 +1,12 @@
 //
-//  AltWidget.swift
-//  AltWidget
+//  Provider.swift
+//  AltStore
 //
 //  Created by Riley Testut on 6/26/20.
 //  Copyright © 2020 Riley Testut. All rights reserved.
 //
 
-import SwiftUI
 import WidgetKit
-import UIKit
 import CoreData
 
 import AltStoreCore
@@ -21,34 +19,6 @@ struct AppEntry: TimelineEntry
     
     var app: AppSnapshot?
     var isPlaceholder: Bool = false
-}
-
-struct AppSnapshot
-{
-    var name: String
-    var bundleIdentifier: String
-    var expirationDate: Date
-    var refreshedDate: Date
-    
-    var tintColor: UIColor?
-    var icon: UIImage?
-}
-
-extension AppSnapshot
-{
-    // Declared in extension so we retain synthesized initializer.
-    init(installedApp: InstalledApp)
-    {
-        self.name = installedApp.name
-        self.bundleIdentifier = installedApp.bundleIdentifier
-        self.expirationDate = installedApp.expirationDate
-        self.refreshedDate = installedApp.refreshedDate
-        
-        self.tintColor = installedApp.storeApp?.tintColor
-        
-        let application = ALTApplication(fileURL: installedApp.fileURL)
-        self.icon = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180))
-    }
 }
 
 struct Provider: IntentTimelineProvider
