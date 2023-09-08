@@ -4108,7 +4108,7 @@
 				PRODUCT_NAME = altjit;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AltJIT/AltJIT-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
@@ -4148,7 +4148,7 @@
 				PRODUCT_NAME = altjit;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AltJIT/AltJIT-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
