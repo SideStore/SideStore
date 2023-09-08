@@ -58,7 +58,8 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
     let installedApps: [InstalledApp]
     private let managedObjectContext: NSManagedObjectContext
     
-    var presentsFinishedNotification: Bool = false
+    var presentsFinishedNotification: Bool = true
+    var ignoresServerNotFoundError: Bool = true
     
     private let refreshIdentifier: String = UUID().uuidString
     private var runningApplications: Set<String> = []
@@ -225,7 +226,7 @@ private extension BackgroundRefreshAppsOperation
             {
                 shouldPresentAlert = false
             }
-            catch ~OperationError.Code.serverNotFound
+            catch ~OperationError.Code.serverNotFound where self.ignoresServerNotFoundError
             {
                 shouldPresentAlert = false
             }
