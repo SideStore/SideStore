@@ -10,6 +10,7 @@ import UIKit
 import Roxas
 import EmotionalDamage
 import minimuxer
+import WidgetKit
 
 import AltStoreCore
 import UniformTypeIdentifiers
@@ -304,6 +305,8 @@ extension LaunchViewController
         PatreonAPI.shared.refreshPatreonAccount()
         
         self.updateKnownSources()
+        
+        WidgetCenter.shared.reloadAllTimelines()
         
         // Add view controller as child (rather than presenting modally)
         // so tint adjustment + card presentations works correctly.
