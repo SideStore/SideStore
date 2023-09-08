@@ -3540,6 +3540,111 @@
 			};
 			name = Release;
 		};
+		BF45869B229872EA00BD7491 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 11611D46F8A7C8B928E8156B /* Pods-AltServer.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = AltServer/AltServer.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 75;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 6XVY5G3U44;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					HAVE_OPENSSL,
+					HAVE_STPNCPY,
+					HAVE_STPCPY,
+					HAVE_VASPRINTF,
+					HAVE_ASPRINTF,
+					"\"PACKAGE_STRING=\\\"AltServer 1.0\\\"\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/ldid/libplist/include\"",
+					"\"$(SRCROOT)/Dependencies/libimobiledevice\"",
+					"\"$(SRCROOT)/Dependencies/libimobiledevice/include\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/OpenSSL/macos/include\"",
+					"\"$(SRCROOT)/Dependencies/libusbmuxd/include\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/lib\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/ldid/libplist/libcnary/include\"",
+					"\"${SDKROOT}/usr/include/libxml2\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/xcode\"",
+				);
+				INFOPLIST_FILE = AltServer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.7b1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rileytestut.AltServer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "AltServer/AltServer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		BF45869C229872EA00BD7491 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 589BA531D903B28F292063E5 /* Pods-AltServer.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = AltServer/AltServer.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 75;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 6XVY5G3U44;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					HAVE_OPENSSL,
+					HAVE_STPNCPY,
+					HAVE_STPCPY,
+					HAVE_VASPRINTF,
+					HAVE_ASPRINTF,
+					"\"PACKAGE_STRING=\\\"AltServer 1.0\\\"\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/ldid/libplist/include\"",
+					"\"$(SRCROOT)/Dependencies/libimobiledevice\"",
+					"\"$(SRCROOT)/Dependencies/libimobiledevice/include\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/OpenSSL/macos/include\"",
+					"\"$(SRCROOT)/Dependencies/libusbmuxd/include\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/lib\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/ldid/libplist/libcnary/include\"",
+					"\"${SDKROOT}/usr/include/libxml2\"",
+					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/xcode\"",
+				);
+				INFOPLIST_FILE = AltServer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.7b1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rileytestut.AltServer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "AltServer/AltServer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		BF4587342298D31600BD7491 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
