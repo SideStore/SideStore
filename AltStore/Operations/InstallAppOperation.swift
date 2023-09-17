@@ -115,7 +115,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             
             // Temporary directory and resigned .ipa no longer needed, so delete them now to ensure AltStore doesn't quit before we get the chance to.
             self.cleanUp()
-
+            
             var activeProfiles: Set<String>?
             if let sideloadedAppsLimit = UserDefaults.standard.activeAppsLimit
             {
@@ -123,7 +123,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 
                 let fetchRequest = InstalledApp.activeAppsFetchRequest()
                 fetchRequest.includesPendingChanges = false
-                
+
                 var activeApps = InstalledApp.fetch(fetchRequest, in: backgroundContext)
                 if !activeApps.contains(installedApp)
                 {
