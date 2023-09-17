@@ -148,7 +148,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     return [installedApp.resignedBundleIdentifier] + appExtensionProfiles
                 })
             }
-            
+
             var installing = true
             if installedApp.storeApp?.bundleIdentifier.range(of: Bundle.Info.appbundleIdentifier) != nil {
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
@@ -166,7 +166,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                         switch (settings.authorizationStatus) {
                         case .authorized, .ephemeral, .provisional:
                             print("Notifications are enabled")
-                            
+
                             let content = UNMutableNotificationContent()
                             content.title = "Refreshing..."
                             content.body = "SideStore will automatically move to the homescreen to finish refreshing!"
@@ -181,7 +181,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                                 print("Going home")
                                 UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                             }))
-                            
+
                             DispatchQueue.main.async {
                                 let keyWindow = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
                                 if var topController = keyWindow?.rootViewController {
