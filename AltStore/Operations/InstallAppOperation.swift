@@ -115,7 +115,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             
             // Temporary directory and resigned .ipa no longer needed, so delete them now to ensure AltStore doesn't quit before we get the chance to.
             self.cleanUp()
-            
+
             var activeProfiles: Set<String>?
             if let sideloadedAppsLimit = UserDefaults.standard.activeAppsLimit
             {
@@ -148,7 +148,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     return [installedApp.resignedBundleIdentifier] + appExtensionProfiles
                 })
             }
-
+            
             var installing = true
             if installedApp.storeApp?.bundleIdentifier.range(of: Bundle.Info.appbundleIdentifier) != nil {
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
