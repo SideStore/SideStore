@@ -175,7 +175,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                             break
                         default:
                             print("Notifications are not enabled")
-                            
+
                             let alert = UIAlertController(title: "Finish Refresh", message: "Please reopen SideStore after the process is finished.To finish refreshing, SideStore must be moved to the background. To do this, you can either go to the Home Screen manually or by hitting Continue. Please reopen SideStore after doing this.", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default, handler: { _ in
                                 print("Going home")
