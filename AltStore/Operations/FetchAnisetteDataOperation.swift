@@ -218,7 +218,7 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
         self.socket.connect()
     }
     
-    func didReceive(event: WebSocketEvent, client: WebSocket) {
+    func didReceive(event: WebSocketEvent, client: WebSocketClient) {
         switch event {
         case .text(let string):
             do {
@@ -429,7 +429,7 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
     }
 }
 
-extension WebSocket {
+extension WebSocketClient {
     func json(_ dictionary: [String: String]) {
         let data = try! JSONSerialization.data(withJSONObject: dictionary, options: [])
         self.write(string: String(data: data, encoding: .utf8)!)
