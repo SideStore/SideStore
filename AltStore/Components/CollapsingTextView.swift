@@ -22,7 +22,7 @@ final class CollapsingTextView: UITextView
         }
     }
     
-    var lineSpacing: CGFloat = 2 {
+    var lineSpacing: Double = 2 {
         didSet {
             self.setNeedsLayout()
         }
@@ -34,7 +34,19 @@ final class CollapsingTextView: UITextView
     {
         super.awakeFromNib()
         
-        self.layoutManager.delegate = self
+        self.initialize()
+    }
+    
+    private func initialize()
+    {
+        if #available(iOS 16, *)
+        {
+            self.updateText()
+        }
+        else
+        {
+            self.layoutManager.delegate = self
+        }
         
         self.textContainerInset = .zero
         self.textContainer.lineFragmentPadding = 0
@@ -107,6 +119,25 @@ private extension CollapsingTextView
     @objc func toggleCollapsed(_ sender: UIButton)
     {
         self.isCollapsed.toggle()
+    }
+    
+    @available(iOS 16, *)
+    func updateText()
+    {
+        do
+        {
+            let style = NSMutableParagraphStyle()
+            style.lineSpacing = self.lineSpacing
+            
+            var attributedText = try AttributedString(self.attributedText, including: \.uiKit)
+            attributedText[AttributeScopes.UIKitAttributes.ParagraphStyleAttribute.self] = style
+            
+            self.attributedText = NSAttributedString(attributedText)
+        }
+        catch
+        {
+            print("[ALTLog] Failed to update CollapsingTextView line spacing:", error)
+        }
     }
 }
 

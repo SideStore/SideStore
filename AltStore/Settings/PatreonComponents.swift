@@ -56,6 +56,8 @@ final class PatronsFooterView: UICollectionReusableView
 final class AboutPatreonHeaderView: UICollectionReusableView
 {
     @IBOutlet var supportButton: UIButton!
+    @IBOutlet var twitterButton: UIButton!
+    @IBOutlet var instagramButton: UIButton!
     @IBOutlet var accountButton: UIButton!
     @IBOutlet var textView: UITextView!
     
@@ -79,12 +81,12 @@ final class AboutPatreonHeaderView: UICollectionReusableView
             imageView.layer.cornerRadius = imageView.bounds.midY
         }
         
-        for button in [self.supportButton, self.accountButton].compactMap({ $0 })
+        for button in [self.supportButton, self.accountButton, self.twitterButton, self.instagramButton].compactMap({ $0 })
         {
             button.clipsToBounds = true
             button.layer.cornerRadius = 16
         }
-    }
+}
     
     override func layoutMarginsDidChange()
     {

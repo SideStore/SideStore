@@ -3,7 +3,7 @@ blank_issues_enabled: false
 
 contact_links:
   - name: Discord
-    url: https://discord.gg/RgpFBX3Q3k
+    url: https://discord.gg/sidestore-949183273383395328
     about: If you need support, please go here first instead of making an issue!
   - name: GitHub Discussions
     url: https://github.com/SideStore/SideStore/discussions

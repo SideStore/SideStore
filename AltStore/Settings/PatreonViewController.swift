@@ -111,7 +111,9 @@ private extension PatreonViewController
         headerView.layoutMargins = self.view.layoutMargins
         
         headerView.supportButton.addTarget(self, action: #selector(PatreonViewController.openPatreonURL(_:)), for: .primaryActionTriggered)
-        
+        headerView.twitterButton.addTarget(self, action: #selector(PatreonViewController.openTwitterURL(_:)), for: .primaryActionTriggered)
+        headerView.instagramButton.addTarget(self, action: #selector(PatreonViewController.openInstagramURL(_:)), for: .primaryActionTriggered)
+
         let defaultSupportButtonTitle = NSLocalizedString("Become a patron", comment: "")
         let isPatronSupportButtonTitle = NSLocalizedString("View Patreon", comment: "")
         
@@ -176,6 +178,24 @@ private extension PatreonViewController
         let patreonURL = URL(string: "https://www.patreon.com/SideStore")!
         
         let safariViewController = SFSafariViewController(url: patreonURL)
+        safariViewController.preferredControlTintColor = self.view.tintColor
+        self.present(safariViewController, animated: true, completion: nil)
+    }
+    
+    @objc func openTwitterURL(_ sender: UIButton)
+    {
+        let twitterURL = URL(string: "https://twitter.com/SideStore_io")!
+        
+        let safariViewController = SFSafariViewController(url: twitterURL)
+        safariViewController.preferredControlTintColor = self.view.tintColor
+        self.present(safariViewController, animated: true, completion: nil)
+    }
+    
+    @objc func openInstagramURL(_ sender: UIButton)
+    {
+        let twitterURL = URL(string: "https://instagram.com/sidestore.io")!
+        
+        let safariViewController = SFSafariViewController(url: twitterURL)
         safariViewController.preferredControlTintColor = self.view.tintColor
         self.present(safariViewController, animated: true, completion: nil)
     }

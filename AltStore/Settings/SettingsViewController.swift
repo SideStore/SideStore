@@ -178,11 +178,11 @@ private extension SettingsViewController
         case .patreon:
             if isHeader
             {
-                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("PATREON", comment: "")
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("SUPPORT US", comment: "")
             }
             else
             {
-                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Support the SideStore Team by becoming a patron!", comment: "")
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Support the SideStore Team by following our socials or becoming a patron!", comment: "")
             }
 
         case .account:

@@ -33,8 +33,7 @@ final class SendAppOperation: ResultOperation<()>
         
         if let error = self.context.error
         {
-            self.finish(.failure(error))
-            return
+            return self.finish(.failure(error))
         }
         
         guard let resignedApp = self.context.resignedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
@@ -46,18 +45,27 @@ final class SendAppOperation: ResultOperation<()>
         print("AFC App `fileURL`: \(fileURL.absoluteString)")
         
         if let data = NSData(contentsOf: fileURL) {
-            do {
-                let bytes = Data(data).toRustByteSlice()
-                try yeet_app_afc(app.bundleIdentifier, bytes.forRust())
-            } catch {
-                return self.finish(.failure(error))
+            var attempts = 10
+            while (attempts != 0){
+                print("Send app attempts left: \(attempts)")
+                do {
+                    let bytes = Data(data).toRustByteSlice()
+                    try yeet_app_afc(app.bundleIdentifier, bytes.forRust())
+                    self.progress.completedUnitCount += 1
+                    self.finish(.success(()))
+                    break
+                } catch {
+                    attempts -= 1
+                    if (attempts <= 0) {
+                        self.finish(.failure(MinimuxerError.RwAfc))
+                    }
+                }
+                self.progress.completedUnitCount += 1
+                self.finish(.success(()))
             }
-            
-            self.progress.completedUnitCount += 1
-            self.finish(.success(()))
         } else {
             print("IPA doesn't exist????")
-            self.finish(.failure(ALTServerError(.underlyingError)))
+            self.finish(.failure(OperationError.appNotFound))
         }
     }
 }

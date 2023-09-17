@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "imobiledevice.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/iMobileDevice.swift",
+      "state" : {
+        "revision" : "74e481106dd155c0cd21bca6795fd9fe5f751654",
+        "version" : "1.0.5"
+      }
+    },
+    {
       "identity" : "keychainaccess",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",

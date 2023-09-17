@@ -45,13 +45,19 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
         guard let installedApp = self.context.installedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
         
         installedApp.managedObjectContext?.perform {
-            do {
-                try debug_app(installedApp.resignedBundleIdentifier)
-            } catch {
-                return self.finish(.failure(error))
+            var retries = 3
+            while (retries > 0){
+                do {
+                    try debug_app(installedApp.resignedBundleIdentifier)
+                    self.finish(.success(()))
+                    break
+                } catch {
+                    retries -= 1
+                    if (retries <= 0){
+                        self.finish(.failure(error))
+                    }
+                }
             }
-            
-            self.finish(.success(()))
         }
     }
 }

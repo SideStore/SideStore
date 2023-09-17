@@ -3221,7 +3221,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/fragmentzip",
+					"$(PROJECT_DIR)/Dependencies/libfragmentzip",
 					"$(PROJECT_DIR)/Dependencies/libcurl",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
@@ -3255,7 +3255,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/fragmentzip",
+					"$(PROJECT_DIR)/Dependencies/libfragmentzip",
 					"$(PROJECT_DIR)/Dependencies/libcurl",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
