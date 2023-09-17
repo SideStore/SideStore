@@ -123,7 +123,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 
                 let fetchRequest = InstalledApp.activeAppsFetchRequest()
                 fetchRequest.includesPendingChanges = false
-
+                
                 var activeApps = InstalledApp.fetch(fetchRequest, in: backgroundContext)
                 if !activeApps.contains(installedApp)
                 {
@@ -142,7 +142,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                         installedApp.isActive = false
                     }
                 }
-                
+
                 activeProfiles = Set(activeApps.flatMap { (installedApp) -> [String] in
                     let appExtensionProfiles = installedApp.appExtensions.map { $0.resignedBundleIdentifier }
                     return [installedApp.resignedBundleIdentifier] + appExtensionProfiles
