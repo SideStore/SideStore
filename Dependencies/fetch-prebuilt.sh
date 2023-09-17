@@ -20,21 +20,21 @@ check_for_update() {
     if [[ $LAST_FETCH -lt $(expr $(date +%s) - 3600) ]] || [[ "$2" == "force" ]]; then
         echo "Checking $1 for update"
         echo
-        LATEST_COMMIT=`curl https://api.github.com/repos/Dadoum/$1/releases/latest | perl -n -e '/Commit: https:\\/\\/github\\.com\\/[^\\/]*\\/[^\\/]*\\/commit\\/([^"]*)/ && print $1'`
+        LATEST_COMMIT=`curl https://api.github.com/repos/SideStore/$1/releases/latest | perl -n -e '/Commit: https:\\/\\/github\\.com\\/[^\\/]*\\/[^\\/]*\\/commit\\/([^"]*)/ && print $1'`
         echo
         echo "Last commit: $LAST_COMMIT"
         echo "Latest commit: $LATEST_COMMIT"
         if [[ "$LAST_COMMIT" != "$LATEST_COMMIT" ]]; then
             echo "Found update, downloading binaries"
             echo
-            wget -O "$1/lib$1-sim.a" "https://github.com/Dadoum/$1/releases/latest/download/lib$1-sim.a"
+            wget -O "$1/lib$1-sim.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1-sim.a"
             if [[ "$1" != "minimuxer" ]]; then
-                wget -O "$1/lib$1.a" "https://github.com/Dadoum/$1/releases/latest/download/lib$1.a"
-                wget -O "$1/$1.h" "https://github.com/Dadoum/$1/releases/latest/download/$1.h"
+                wget -O "$1/lib$1.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1.a"
+                wget -O "$1/$1.h" "https://github.com/SideStore/$1/releases/latest/download/$1.h"
                 echo
             else
-                wget -O "$1/lib$1-ios.a" "https://github.com/Dadoum/$1/releases/latest/download/lib$1-ios.a"
-                wget -O "$1/generated.zip" "https://github.com/Dadoum/$1/releases/latest/download/generated.zip"
+                wget -O "$1/lib$1-ios.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1-ios.a"
+                wget -O "$1/generated.zip" "https://github.com/SideStore/$1/releases/latest/download/generated.zip"
                 echo
                 echo "Unzipping generated.zip"
                 cd "$1"
