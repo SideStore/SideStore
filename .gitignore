@@ -35,6 +35,8 @@ xcuserdata
 ## AppCode specific
 .idea/
 
+.build
+
 Payload/
 SideStore.ipa
 *.dSYM
