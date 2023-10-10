@@ -11,11 +11,7 @@ import UIKit
 
 public extension Source
 {
-    #if ALPHA
-    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
-    #else
-    static let altStoreIdentifier = Bundle.Info.appbundleIdentifier
-    #endif
+    static let altStoreIdentifier = try! Source.sourceID(from: Source.altStoreSourceURL)
     
     #if STAGING
     
@@ -202,7 +198,7 @@ public class Source: NSManagedObject, Fetchable, Decodable
 {
     /* Properties */
     @NSManaged public var name: String
-    @NSManaged public var identifier: String
+    @NSManaged public private(set) var identifier: String
     @NSManaged public var sourceURL: URL
     
     /* Source Detail */
@@ -254,7 +250,6 @@ public class Source: NSManagedObject, Fetchable, Decodable
     private enum CodingKeys: String, CodingKey
     {
         case name
-        case identifier
         case sourceURL
         case subtitle
         case localizedDescription = "description"
@@ -283,11 +278,8 @@ public class Source: NSManagedObject, Fetchable, Decodable
         
         do
         {
-            self.sourceURL = sourceURL
-            
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.name = try container.decode(String.self, forKey: .name)
-            self.identifier = try container.decode(String.self, forKey: .identifier)
             
             // Optional Values
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
@@ -313,7 +305,6 @@ public class Source: NSManagedObject, Fetchable, Decodable
             
             for (index, app) in apps.enumerated()
             {
-                app.sourceIdentifier = self.identifier
                 app.sortIndex = Int32(index)
             }
             self._apps = NSMutableOrderedSet(array: apps)
@@ -321,7 +312,6 @@ public class Source: NSManagedObject, Fetchable, Decodable
             let newsItems = try container.decodeIfPresent([NewsItem].self, forKey: .news) ?? []
             for (index, item) in newsItems.enumerated()
             {
-                item.sourceIdentifier = self.identifier
                 item.sortIndex = Int32(index)
             }
                                 
@@ -343,6 +333,9 @@ public class Source: NSManagedObject, Fetchable, Decodable
             let featuredAppBundleIDs = try container.decodeIfPresent([String].self, forKey: .featuredApps)
             let featuredApps = featuredAppBundleIDs?.compactMap { appsByID[$0] }
             self.setFeaturedApps(featuredApps)
+            
+            // Updates identifier + apps & newsItems
+            try self.setSourceURL(sourceURL)
         }
         catch
         {
@@ -397,6 +390,54 @@ public extension Source
 
 internal extension Source
 {
+    class func sourceID(from sourceURL: URL) throws -> String
+    {
+        // Based on https://encyclopedia.pub/entry/29841
+
+        guard var components = URLComponents(url: sourceURL, resolvingAgainstBaseURL: true) else { throw URLError(.badURL, userInfo: [NSURLErrorKey: sourceURL]) }
+        
+        if components.scheme == nil && components.host == nil
+        {
+            // Special handling for URLs without explicit scheme & incorrectly assumed to have nil host (e.g. "altstore.io/my/path")
+            guard let updatedComponents = URLComponents(string: "https://" + sourceURL.absoluteString) else { throw URLError(.cannotFindHost, userInfo: [NSURLErrorKey: sourceURL]) }
+            components = updatedComponents
+        }
+        
+        // 1. Don't use percent encoding
+        guard let host = components.host else { throw URLError(.cannotFindHost, userInfo: [NSURLErrorKey: sourceURL]) }
+        
+        // 2. Ignore scheme
+        var standardizedID = host
+        
+        // 3. Add port (if not default)
+        if let port = components.port, port != 80 && port != 443
+        {
+            standardizedID += ":" + String(port)
+        }
+        
+        // 4. Add path without fragment or query parameters
+        // 5. Remove duplicate slashes
+        let path = components.path.replacingOccurrences(of: "//", with: "/") // Only remove duplicate slashes from path, not entire URL.
+        standardizedID += path // path has leading `/`
+                
+        // 6. Convert to lowercase
+        standardizedID = standardizedID.lowercased()
+        
+        // 7. Remove trailing `/`
+        if standardizedID.hasSuffix("/")
+        {
+            standardizedID.removeLast()
+        }
+        
+        // 8. Remove leading "www"
+        if standardizedID.hasPrefix("www.")
+        {
+            standardizedID.removeFirst(4)
+        }
+        
+        return standardizedID
+    }
+    
     func setFeaturedApps(_ featuredApps: [StoreApp]?)
     {
         // Explicitly update relationships for all apps to ensure featuredApps merges correctly.
@@ -415,6 +456,27 @@ internal extension Source
         
         self._featuredApps = NSOrderedSet(array: featuredApps ?? [])
         self._hasFeaturedApps = (featuredApps != nil)
+    }
+}
+
+public extension Source
+{
+    func setSourceURL(_ sourceURL: URL) throws
+    {
+        let identifier = try Source.sourceID(from: sourceURL)
+
+        self.identifier = identifier
+        self.sourceURL = sourceURL
+        
+        for app in self.apps
+        {
+            app.sourceIdentifier = identifier
+        }
+        
+        for newsItem in self.newsItems 
+        {
+            newsItem.sourceIdentifier = identifier
+        }
     }
 }
 
