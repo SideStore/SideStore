@@ -37,6 +37,8 @@ NSErrorUserInfoKey const ALTDeviceNameErrorKey = @"deviceName";
 NSErrorUserInfoKey const ALTOperatingSystemNameErrorKey = @"ALTOperatingSystemName";
 NSErrorUserInfoKey const ALTOperatingSystemVersionErrorKey = @"ALTOperatingSystemVersion";
 
+NSErrorUserInfoKey const ALTNSCodingPathKey = @"NSCodingPath";
+
 @implementation NSError (ALTServerError)
 
 + (void)load
