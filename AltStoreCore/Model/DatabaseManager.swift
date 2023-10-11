@@ -86,8 +86,24 @@ public extension DatabaseManager
             
             guard !self.isStarted else { return finish(nil) }
             
-            if self.persistentContainer.isMigrationRequired {
-
+            #if DEBUG
+            // Wrap in #if DEBUG to *ensure* we never accidentally delete production databases.
+            if ProcessInfo.processInfo.isPreview
+            {
+                do
+                {
+                    print("!!! Purging database for preview...")
+                    try FileManager.default.removeItem(at: PersistentContainer.defaultDirectoryURL())
+                }
+                catch
+                {
+                    print("Failed to remove database directory for preview.", error)
+                }
+            }
+            #endif
+            
+            if self.persistentContainer.isMigrationRequired
+            {
                 // Quit any other running AltStore processes to prevent concurrent database access during and after migration.
                 self.ignoreWillMigrateDatabaseNotification = true
                 CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), .willMigrateDatabase, nil, nil, true)
@@ -161,6 +177,22 @@ public extension DatabaseManager
                 completion(.failure(error))
             }
         }
+    }
+}
+
+public extension DatabaseManager
+{
+    func startForPreview()
+    {
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        self.dispatchQueue.async {
+            self.startCompletionHandlers.append { error in
+                semaphore.signal()
+            }
+        }
+        
+        semaphore.wait()
     }
 }
 
