@@ -1743,6 +1743,7 @@
 				D52A2F962ACB40F700BDF8E3 /* Logger+AltStore.swift */,
 				D5B6F6A82AD75D01007EED5A /* ProcessInfo+Previews.swift */,
 				D56915052AD5D75B00A2B747 /* Regex+Permissions.swift */,
+				D5B6F6A82AD75D01007EED5A /* ProcessInfo+Previews.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
