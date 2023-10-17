@@ -41,7 +41,8 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
         
         guard
             let certificate = self.context.certificate,
-            let resignedApp = self.context.resignedApp
+            let resignedApp = self.context.resignedApp,
+            let provisioningProfiles = self.context.provisioningProfiles
         else { return self.finish(.failure(OperationError.invalidParameters)) }
         
         let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
@@ -116,8 +117,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             // Temporary directory and resigned .ipa no longer needed, so delete them now to ensure AltStore doesn't quit before we get the chance to.
             self.cleanUp()
             
-            var activeProfiles: Set<String>?
-            if let sideloadedAppsLimit = UserDefaults.standard.activeAppsLimit
+            if let sideloadedAppsLimit = UserDefaults.standard.activeAppsLimit, provisioningProfiles.contains(where: { $1.isFreeProvisioningProfile == true })
             {
                 // When installing these new profiles, AltServer will remove all non-active profiles to ensure we remain under limit.
                 
@@ -142,11 +142,10 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                         installedApp.isActive = false
                     }
                 }
-
-                activeProfiles = Set(activeApps.flatMap { (installedApp) -> [String] in
-                    let appExtensionProfiles = installedApp.appExtensions.map { $0.resignedBundleIdentifier }
-                    return [installedApp.resignedBundleIdentifier] + appExtensionProfiles
-                })
+            }
+            else
+            {
+                installedApp.isActive = true
             }
             
             var installing = true

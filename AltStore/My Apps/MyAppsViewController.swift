@@ -1460,7 +1460,7 @@ extension MyAppsViewController
                 let registeredAppIDs = team.appIDs.count
                 
                 let maximumAppIDCount = 10
-                let remainingAppIDs = max(maximumAppIDCount - registeredAppIDs, 0)
+                let remainingAppIDs = maximumAppIDCount - registeredAppIDs
                 
                 if remainingAppIDs == 1
                 {
@@ -1471,7 +1471,7 @@ extension MyAppsViewController
                     footerView.textLabel.text = String(format: NSLocalizedString("%@ App IDs Remaining", comment: ""), NSNumber(value: remainingAppIDs))
                 }
                 
-                footerView.textLabel.isHidden = false
+                footerView.textLabel.isHidden = remainingAppIDs < 0
                 
             case .individual, .organization, .unknown: footerView.textLabel.isHidden = true
             @unknown default: break

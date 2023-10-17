@@ -1027,6 +1027,32 @@ private extension AppManager
         verifyOperation.addDependency(downloadOperation)
         
         
+        /* Refresh Anisette Data */
+        let refreshAnisetteDataOperation = FetchAnisetteDataOperation(context: group.context)
+        refreshAnisetteDataOperation.resultHandler = { (result) in
+            switch result
+            {
+            case .failure(let error): context.error = error
+            case .success(let anisetteData): group.context.session?.anisetteData = anisetteData
+            }
+        }
+        refreshAnisetteDataOperation.addDependency(verifyOperation)
+
+
+        /* Fetch Provisioning Profiles */
+        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
+        fetchProvisioningProfilesOperation.additionalEntitlements = additionalEntitlements
+        fetchProvisioningProfilesOperation.resultHandler = { (result) in
+            switch result
+            {
+            case .failure(let error): context.error = error
+            case .success(let provisioningProfiles): context.provisioningProfiles = provisioningProfiles
+            }
+        }
+        fetchProvisioningProfilesOperation.addDependency(refreshAnisetteDataOperation)
+        progress.addChild(fetchProvisioningProfilesOperation.progress, withPendingUnitCount: 5)
+
+
         /* Deactivate Apps (if necessary) */
         let deactivateAppsOperation = RSTAsyncBlockOperation { [weak self] (operation) in
             do
@@ -1041,6 +1067,12 @@ private extension AppManager
                 if let error = context.error
                 {
                     throw error
+                }
+                
+                guard let profiles = context.provisioningProfiles else { throw OperationError.invalidParameters }
+                if !profiles.contains(where: { $1.isFreeProvisioningProfile == true }) {
+                    operation.finish()
+                    return
                 }
                                 
                 guard let app = context.app, let presentingViewController = context.authenticatedContext.presentingViewController else { throw OperationError.invalidParameters }
@@ -1061,7 +1093,7 @@ private extension AppManager
                 operation.finish()
             }
         }
-        deactivateAppsOperation.addDependency(verifyOperation)
+        deactivateAppsOperation.addDependency(fetchProvisioningProfilesOperation)
         
         
         /* Patch App */
@@ -1136,32 +1168,6 @@ private extension AppManager
         patchAppOperation.addDependency(deactivateAppsOperation)
         
         
-        /* Refresh Anisette Data */
-        let refreshAnisetteDataOperation = FetchAnisetteDataOperation(context: group.context)
-        refreshAnisetteDataOperation.resultHandler = { (result) in
-            switch result
-            {
-            case .failure(let error): context.error = error
-            case .success(let anisetteData): group.context.session?.anisetteData = anisetteData
-            }
-        }
-        refreshAnisetteDataOperation.addDependency(patchAppOperation)
-        
-        
-        /* Fetch Provisioning Profiles */
-        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
-        fetchProvisioningProfilesOperation.additionalEntitlements = additionalEntitlements
-        fetchProvisioningProfilesOperation.resultHandler = { (result) in
-            switch result
-            {
-            case .failure(let error): context.error = error
-            case .success(let provisioningProfiles): context.provisioningProfiles = provisioningProfiles
-            }
-        }
-        fetchProvisioningProfilesOperation.addDependency(refreshAnisetteDataOperation)
-        progress.addChild(fetchProvisioningProfilesOperation.progress, withPendingUnitCount: 5)
-        
-        
         /* Resign */
         let resignAppOperation = ResignAppOperation(context: context)
         resignAppOperation.resultHandler = { (result) in
@@ -1171,7 +1177,7 @@ private extension AppManager
             case .success(let resignedApp): context.resignedApp = resignedApp
             }
         }
-        resignAppOperation.addDependency(fetchProvisioningProfilesOperation)
+        resignAppOperation.addDependency(patchAppOperation)
         progress.addChild(resignAppOperation.progress, withPendingUnitCount: 20)
         
         
@@ -1214,7 +1220,7 @@ private extension AppManager
         progress.addChild(installOperation.progress, withPendingUnitCount: 30)
         installOperation.addDependency(sendAppOperation)
         
-        let operations = [downloadOperation, verifyOperation, deactivateAppsOperation, patchAppOperation, refreshAnisetteDataOperation, fetchProvisioningProfilesOperation, resignAppOperation, sendAppOperation, installOperation]
+        let operations = [downloadOperation, verifyOperation, refreshAnisetteDataOperation, fetchProvisioningProfilesOperation, deactivateAppsOperation, patchAppOperation, resignAppOperation, sendAppOperation, installOperation]
         group.add(operations)
         self.run(operations, context: group.context)
         
