@@ -116,8 +116,6 @@ final class SourcesViewController: UICollectionViewController
             self.placeholderView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
             self.placeholderView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
             
-            self.placeholderView.leadingAnchor.constraint(equalTo: self.placeholderView.stackView.leadingAnchor),
-            self.placeholderView.trailingAnchor.constraint(equalTo: self.placeholderView.stackView.trailingAnchor),
             self.placeholderView.topAnchor.constraint(equalTo: self.placeholderView.stackView.topAnchor),
             self.placeholderView.bottomAnchor.constraint(equalTo: self.placeholderView.stackView.bottomAnchor),
         ])
