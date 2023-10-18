@@ -1325,9 +1325,16 @@ Settings by i cons from the Noun Project</string>
                                     <action selector="showMinimuxerLogs:" destination="g8a-Rf-zWa" id="V0f-0y-C6C"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem systemItem="action" id="BNj-HE-KHr">
+                                <connections>
+                                    <action selector="exportDetailedLog:" destination="g8a-Rf-zWa" id="Kbw-Q5-9WO"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="clearLogButton" destination="BnQ-Eh-1gC" id="MHl-Kh-ick"/>
+                        <outlet property="exportLogButton" destination="BNj-HE-KHr" id="w9g-yA-0Yx"/>
                         <segue destination="7gm-d1-zWK" kind="presentation" identifier="showErrorDetails" id="9vz-y6-evp"/>
                     </connections>
                 </tableViewController>
