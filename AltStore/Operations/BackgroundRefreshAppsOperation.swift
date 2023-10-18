@@ -114,7 +114,7 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         }
 
         self.managedObjectContext.perform {
-            print("Apps to refresh:", self.installedApps.map(\.bundleIdentifier))
+            Logger.sideload.notice("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier), privacy: .public)")
             
             self.startListeningForRunningApps()
             
@@ -125,7 +125,10 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
                 self.managedObjectContext.perform {
                     
                     let filteredApps = self.installedApps.filter { !self.runningApplications.contains($0.bundleIdentifier) }
-                    print("Filtered Apps to Refresh:", filteredApps.map { $0.bundleIdentifier })
+                    if !self.runningApplications.isEmpty
+                    {
+                        Logger.sideload.notice("Skipping refreshing running apps: \(self.runningApplications, privacy: .public)")
+                    }
                     
                     let group = AppManager.shared.refresh(filteredApps, presentingViewController: nil)
                     group.beginInstallationHandler = { (installedApp) in
@@ -235,6 +238,8 @@ private extension BackgroundRefreshAppsOperation
             {
                 print("Failed to refresh apps in background.", error)
 
+                Logger.sideload.error("Failed to refresh apps in background. \(error.localizedDescription, privacy: .public)")
+                
                 content.title = NSLocalizedString("Failed to Refresh Apps", comment: "")
                 content.body = error.localizedDescription
             }
@@ -275,7 +280,7 @@ private extension BackgroundRefreshAppsOperation
             _ = RefreshAttempt(identifier: self.refreshIdentifier, result: result, context: context)
             
             do { try context.save() }
-            catch { print("Failed to save refresh attempt.", error) }
+            catch { Logger.sideload.error("Failed to save refresh attempt. \(error.localizedDescription, privacy: .public)") }
         }
     }
     

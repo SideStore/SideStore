@@ -8,6 +8,8 @@
 
 import Foundation
 
+import AltStoreCore
+
 @objc(RemoveAppBackupOperation)
 final class RemoveAppBackupOperation: ResultOperation<Void>
 {
@@ -63,14 +65,14 @@ final class RemoveAppBackupOperation: ResultOperation<Void>
                     
                     #else
                     
-                    print("Failed to remove app backup directory:", error)
+                    Logger.sideload.error("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
                     self.finish(.failure(error))
                     
                     #endif
                 }
                 catch
                 {
-                    print("Failed to remove app backup directory:", error)
+                    Logger.sideload.error("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
                     self.finish(.failure(error))
                 }
             }

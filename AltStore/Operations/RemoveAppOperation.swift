@@ -37,6 +37,8 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
             return self.finish(.failure(OperationError.invalidParameters("RemoveAppOperation.main: self.context.installedApp is nil")))
         }
         
+        Logger.sideload.notice("Removing app \(self.context.bundleIdentifier, privacy: .public)...")
+        
         installedApp.managedObjectContext?.perform {
             let resignedBundleIdentifier = installedApp.resignedBundleIdentifier
             

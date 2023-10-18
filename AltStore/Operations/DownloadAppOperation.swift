@@ -51,6 +51,10 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
 
         print("Downloading App:", self.bundleIdentifier)
 
+        
+        Logger.sideload.notice("Downloading app \(self.bundleIdentifier, privacy: .public)...")
+        
+        // Set _after_ checking self.context.error to prevent overwriting localized failure for previous errors.
         self.localizedFailure = String(format: NSLocalizedString("%@ could not be downloaded.", comment: ""), self.appName)
         
         guard let storeApp = self.app as? StoreApp else {
@@ -100,6 +104,7 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
             try FileManager.default.removeItem(at: self.temporaryDirectory)
         } catch {
             print("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory).", error)
+            Logger.sideload.error("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory, privacy: .public). \(error.localizedDescription, privacy: .public)")
         }
         super.finish(result)
     }
@@ -156,6 +161,9 @@ private extension DownloadAppOperation {
                         try FileManager.default.copyItem(at: application.fileURL, to: self.destinationURL, shouldReplace: true)
                                                 
                         guard let copiedApplication = ALTApplication(fileURL: self.destinationURL) else { throw OperationError.invalidApp }
+                        
+                        Logger.sideload.notice("Downloaded app \(copiedApplication.bundleIdentifier, privacy: .public) from \(sourceURL, privacy: .public)")
+                        
                         self.finish(.success(copiedApplication))
                         
                         self.progress.completedUnitCount += 1

@@ -40,6 +40,8 @@ final class SendAppOperation: ResultOperation<()>
             return self.finish(.failure(OperationError.invalidParameters("SendAppOperation.main: self.resignedApp is nil")))
         }
         
+        Logger.sideload.notice("Sending app \(self.context.bundleIdentifier, privacy: .public) to AltServer \(server.localizedName ?? "nil", privacy: .public)...")
+        
         // self.context.resignedApp.fileURL points to the app bundle, but we want the .ipa.
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL)
         let fileURL = InstalledApp.refreshedIPAURL(for: app)
