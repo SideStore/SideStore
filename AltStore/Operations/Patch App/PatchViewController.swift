@@ -81,7 +81,7 @@ final class PatchViewController: UIViewController
         }
         catch
         {
-            print("Failed to create temporary directory:", error)
+            Logger.fugu14.error("Failed to create temporary directory \(self.temporaryDirectory.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
         }
         
         self.update()
@@ -197,7 +197,7 @@ private extension PatchViewController
         }
         catch
         {
-            print("Failed to remove temporary directory:", error)
+            Logger.fugu14.error("Failed to remove temporary directory \(self.temporaryDirectory.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
         }
         
         if let observation = self.didEnterBackgroundObservation
@@ -313,7 +313,7 @@ private extension PatchViewController
             }
             catch
             {
-                print("Error unzipping app bundle:", error)
+                Logger.fugu14.error("Error unzipping app bundle: \(error.localizedDescription, privacy: .public)")
                 unzippingError = error
             }
         }
