@@ -22,7 +22,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
     private lazy var dataSource = self.makeDataSource()
     private lazy var placeholderView = RSTPlaceholderView(frame: .zero)
     
-    private let prototypeCell = BrowseCollectionViewCell.instantiate(with: BrowseCollectionViewCell.nib!)!
+    private let prototypeCell = AppCardCollectionViewCell(frame: .zero)
     
     private var loadingState: LoadingState = .loading {
         didSet {
@@ -59,7 +59,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         
         self.prototypeCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.collectionView.register(BrowseCollectionViewCell.nib, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(AppCardCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -121,14 +121,11 @@ private extension BrowseViewController
         let context = self.source?.managedObjectContext ?? DatabaseManager.shared.viewContext
         let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<StoreApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: context)
         dataSource.cellConfigurationHandler = { (cell, app, indexPath) in
-            let cell = cell as! BrowseCollectionViewCell
+            let cell = cell as! AppCardCollectionViewCell
             cell.layoutMargins.left = self.view.layoutMargins.left
             cell.layoutMargins.right = self.view.layoutMargins.right
             
-            cell.subtitleLabel.text = app.subtitle
-            cell.imageURLs = Array(app.screenshotURLs.prefix(2))
-            
-            cell.bannerView.configure(for: app)
+            cell.configure(for: app)
             
             cell.bannerView.iconImageView.image = nil
             cell.bannerView.iconImageView.isIndicatingActivity = true
@@ -188,7 +185,7 @@ private extension BrowseViewController
             }
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
-            let cell = cell as! BrowseCollectionViewCell
+            let cell = cell as! AppCardCollectionViewCell
             cell.bannerView.iconImageView.isIndicatingActivity = false
             cell.bannerView.iconImageView.image = image
             
@@ -365,21 +362,18 @@ extension BrowseViewController: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
         let item = self.dataSource.item(at: indexPath)
+        let itemID = item.globallyUniqueID ?? item.bundleIdentifier
 
-        if let previousSize = self.cachedItemSizes[item.bundleIdentifier]
+        if let previousSize = self.cachedItemSizes[itemID]
         {
             return previousSize
         }
-
-        let maxVisibleScreenshots = 2 as CGFloat
-        let aspectRatio: CGFloat = 16.0 / 9.0
         
-        let layout = self.prototypeCell.screenshotsCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        let padding = (layout.minimumInteritemSpacing * (maxVisibleScreenshots - 1)) + layout.sectionInset.left + layout.sectionInset.right
-
         self.dataSource.cellConfigurationHandler(self.prototypeCell, item, indexPath)
+        
+        let insets = (self.view.layoutMargins.left + self.view.layoutMargins.right)
 
-        let widthConstraint = self.prototypeCell.contentView.widthAnchor.constraint(equalToConstant: collectionView.bounds.width)
+        let widthConstraint = self.prototypeCell.contentView.widthAnchor.constraint(equalToConstant: collectionView.bounds.width - insets)
         widthConstraint.isActive = true
         defer { widthConstraint.isActive = false }
 
@@ -387,17 +381,8 @@ extension BrowseViewController: UICollectionViewDelegateFlowLayout
         self.prototypeCell.frame.size.width = widthConstraint.constant
         self.prototypeCell.layoutIfNeeded()
         
-        let collectionViewWidth = self.prototypeCell.screenshotsCollectionView.bounds.width
-        let screenshotWidth = ((collectionViewWidth - padding) / maxVisibleScreenshots).rounded(.down)
-        let screenshotHeight = screenshotWidth * aspectRatio
-
-        let heightConstraint = self.prototypeCell.screenshotsCollectionView.heightAnchor.constraint(equalToConstant: screenshotHeight)
-        heightConstraint.priority = .defaultHigh // Prevent temporary unsatisfiable constraints error.
-        heightConstraint.isActive = true
-        defer { heightConstraint.isActive = false }
-
         let itemSize = self.prototypeCell.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        self.cachedItemSizes[item.bundleIdentifier] = itemSize
+        self.cachedItemSizes[itemID] = itemSize
         return itemSize
     }
     
@@ -433,4 +418,17 @@ extension BrowseViewController: UIViewControllerPreviewingDelegate
     {
         self.navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
+}
+
+@available(iOS 17, *)
+#Preview(traits: .portrait) {
+    DatabaseManager.shared.startForPreview()
+   
+    let storyboard = UIStoryboard(name: "Main", bundle: .main)
+    let browseViewController = storyboard.instantiateViewController(identifier: "browseViewController") { coder in
+        BrowseViewController(source: nil, coder: coder)
+    }
+    
+    let navigationController = UINavigationController(rootViewController: browseViewController)
+    return navigationController
 }
