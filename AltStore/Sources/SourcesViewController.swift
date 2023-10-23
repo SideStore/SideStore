@@ -78,7 +78,6 @@ final class SourcesViewController: UICollectionViewController
         self.navigationController?.view.tintColor = .altPrimary
         
         self.collectionView.register(AppBannerCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
-        self.collectionView.register(UICollectionViewListCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UICollectionView.elementKindSectionHeader)
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -91,7 +90,8 @@ final class SourcesViewController: UICollectionViewController
         self.placeholderView = RSTPlaceholderView(frame: .zero)
         self.placeholderView.translatesAutoresizingMaskIntoConstraints = false
         self.placeholderView.textLabel.text = NSLocalizedString("Add More Sources!", comment: "")
-        self.placeholderView.detailTextLabel.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis massa tortor, tempor vel est vitae, consequat luctus arcu."
+        self.placeholderView.detailTextLabel.text = NSLocalizedString("Sources determine what apps are available in AltStore. The more sources you add, the better your AltStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!", comment: "")
+        self.placeholderView.detailTextLabel.textAlignment = .natural
         backgroundView.addSubview(self.placeholderView)
         
         let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title3).bolded()
@@ -156,7 +156,6 @@ private extension SourcesViewController
     func makeLayout() -> UICollectionViewCompositionalLayout
     {
         var configuration = UICollectionLayoutListConfiguration(appearance: .grouped)
-        configuration.headerMode = .supplementary
         configuration.showsSeparators = false
         configuration.backgroundColor = .clear
         
@@ -538,97 +537,97 @@ extension SourcesViewController
         self.showSourceDetails(for: source)
     }
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView
-    {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kind, for: indexPath) as! UICollectionViewListCell
+    // override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView
+    // {
+    //     let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kind, for: indexPath) as! UICollectionViewListCell
         
-        var configuation = UIListContentConfiguration.cell()
-        configuation.text = NSLocalizedString("Sources control what apps are available to download through AltStore.", comment: "")
-        configuation.textProperties.color = .secondaryLabel
-        configuation.textProperties.alignment = .natural
+    //     var configuation = UIListContentConfiguration.cell()
+    //     configuation.text = NSLocalizedString("Sources control what apps are available to download through AltStore.", comment: "")
+    //     configuation.textProperties.color = .secondaryLabel
+    //     configuation.textProperties.alignment = .natural
         
-        headerView.contentConfiguration = configuation
+    //     headerView.contentConfiguration = configuation
         
-        switch kind
-        {
-        case UICollectionView.elementKindSectionHeader:
-            switch Section.allCases[indexPath.section]
-            {
-            case .added:
-                headerView.textLabel.text = NSLocalizedString("Sources control what apps are available to download through SideStore.", comment: "")
-                headerView.textLabel.font = UIFont.preferredFont(forTextStyle: .callout)
-                headerView.textLabel.textAlignment = .natural
+    //     switch kind
+    //     {
+    //     case UICollectionView.elementKindSectionHeader:
+    //         switch Section.allCases[indexPath.section]
+    //         {
+    //         case .added:
+    //             headerView.textLabel.text = NSLocalizedString("Sources control what apps are available to download through SideStore.", comment: "")
+    //             headerView.textLabel.font = UIFont.preferredFont(forTextStyle: .callout)
+    //             headerView.textLabel.textAlignment = .natural
                 
-                headerView.topLayoutConstraint.constant = 14
-                headerView.bottomLayoutConstraint.constant = 30
+    //             headerView.topLayoutConstraint.constant = 14
+    //             headerView.bottomLayoutConstraint.constant = 30
                 
-            case .trusted:
-                switch self.fetchTrustedSourcesResult
-                {
-                case .failure: headerView.textLabel.text = NSLocalizedString("Error Loading Trusted Sources", comment: "")
-                case .success, .none: headerView.textLabel.text = NSLocalizedString("Trusted Sources", comment: "")
-                }
+    //         case .trusted:
+    //             switch self.fetchTrustedSourcesResult
+    //             {
+    //             case .failure: headerView.textLabel.text = NSLocalizedString("Error Loading Trusted Sources", comment: "")
+    //             case .success, .none: headerView.textLabel.text = NSLocalizedString("Trusted Sources", comment: "")
+    //             }
                 
-                let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .callout).withSymbolicTraits(.traitBold)!
-                headerView.textLabel.font = UIFont(descriptor: descriptor, size: 0)
-                headerView.textLabel.textAlignment = .center
+    //             let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .callout).withSymbolicTraits(.traitBold)!
+    //             headerView.textLabel.font = UIFont(descriptor: descriptor, size: 0)
+    //             headerView.textLabel.textAlignment = .center
                 
-                headerView.topLayoutConstraint.constant = 54
-                headerView.bottomLayoutConstraint.constant = 15
-            }
+    //             headerView.topLayoutConstraint.constant = 54
+    //             headerView.bottomLayoutConstraint.constant = 15
+    //         }
             
-        case UICollectionView.elementKindSectionFooter:
-            let footerView = headerView as! SourcesFooterView
-            let font = UIFont.preferredFont(forTextStyle: .subheadline)
+    //     case UICollectionView.elementKindSectionFooter:
+    //         let footerView = headerView as! SourcesFooterView
+    //         let font = UIFont.preferredFont(forTextStyle: .subheadline)
             
-            switch self.fetchTrustedSourcesResult
-            {
-            case .failure(let error):
-                footerView.textView.font = font
-                footerView.textView.text = error.localizedDescription
+    //         switch self.fetchTrustedSourcesResult
+    //         {
+    //         case .failure(let error):
+    //             footerView.textView.font = font
+    //             footerView.textView.text = error.localizedDescription
                 
-                footerView.activityIndicatorView.stopAnimating()
-                footerView.topLayoutConstraint.constant = 0
-                footerView.textView.textAlignment = .center
+    //             footerView.activityIndicatorView.stopAnimating()
+    //             footerView.topLayoutConstraint.constant = 0
+    //             footerView.textView.textAlignment = .center
                 
-            case .success, .none:
-                footerView.textView.delegate = self
+    //         case .success, .none:
+    //             footerView.textView.delegate = self
                 
-                let attributedText = NSMutableAttributedString(
-                    string: NSLocalizedString("SideStore has reviewed these sources to make sure they meet our safety standards.", comment: ""),
-                    attributes: [.font: font, .foregroundColor: UIColor.gray]
-                )
-                //attributedText.mutableString.append(" ")
+    //             let attributedText = NSMutableAttributedString(
+    //                 string: NSLocalizedString("SideStore has reviewed these sources to make sure they meet our safety standards.", comment: ""),
+    //                 attributes: [.font: font, .foregroundColor: UIColor.gray]
+    //             )
+    //             //attributedText.mutableString.append(" ")
                 
-                //let boldedFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
-                //let openPatreonURL = URL(string: "https://SideStore.io/")!
+    //             //let boldedFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
+    //             //let openPatreonURL = URL(string: "https://SideStore.io/")!
                 
-                // let joinPatreonText = NSAttributedString(
-                    // string: NSLocalizedString("", comment: ""),
-                    // attributes: [.font: boldedFont, .link: openPatreonURL, .underlineColor: UIColor.clear]
-                //)
-                //attributedText.append(joinPatreonText)
+    //             // let joinPatreonText = NSAttributedString(
+    //                 // string: NSLocalizedString("", comment: ""),
+    //                 // attributes: [.font: boldedFont, .link: openPatreonURL, .underlineColor: UIColor.clear]
+    //             //)
+    //             //attributedText.append(joinPatreonText)
                 
-                footerView.textView.attributedText = attributedText
-                footerView.textView.textAlignment = .natural
+    //             footerView.textView.attributedText = attributedText
+    //             footerView.textView.textAlignment = .natural
                 
-                if self.fetchTrustedSourcesResult != nil
-                {
-                    footerView.activityIndicatorView.stopAnimating()
-                    footerView.topLayoutConstraint.constant = 20
-                }
-                else
-                {
-                    footerView.activityIndicatorView.startAnimating()
-                    footerView.topLayoutConstraint.constant = 0
-                }
-            }
+    //             if self.fetchTrustedSourcesResult != nil
+    //             {
+    //                 footerView.activityIndicatorView.stopAnimating()
+    //                 footerView.topLayoutConstraint.constant = 20
+    //             }
+    //             else
+    //             {
+    //                 footerView.activityIndicatorView.startAnimating()
+    //                 footerView.topLayoutConstraint.constant = 0
+    //             }
+    //         }
             
-        default: break
-        }
+    //     default: break
+    //     }
                 
-        return headerView
-    }
+    //     return headerView
+    // }
 }
 
 extension SourcesViewController: NSFetchedResultsControllerDelegate
