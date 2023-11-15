@@ -91,6 +91,18 @@ extension PlatformURL: Comparable {
 
 public typealias PlatformURLs = [PlatformURL]
 
+extension StoreApp
+{
+    private struct PatreonParameters: Decodable
+    {
+        var pledge: Decimal?
+        var currency: String?
+        var tiers: Set<String>?
+        var benefit: String?
+        var hidden: Bool?
+    }
+}
+
 @objc(StoreApp)
 public class StoreApp: NSManagedObject, Decodable, Fetchable
 {
@@ -111,6 +123,14 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
 
     @NSManaged public private(set) var tintColor: UIColor?
     @NSManaged public private(set) var isBeta: Bool
+    
+    @NSManaged public var isPledged: Bool
+    @NSManaged public private(set) var isPledgeRequired: Bool
+    @NSManaged public private(set) var isHiddenWithoutPledge: Bool
+    @NSManaged public private(set) var pledgeCurrency: String?
+    
+    @nonobjc public var pledgeAmount: Decimal? { _pledgeAmount as? Decimal }
+    @NSManaged @objc(pledgeAmount) private var _pledgeAmount: NSDecimalNumber?
     
     @NSManaged public var sortIndex: Int32
     
@@ -232,6 +252,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case size
         case isBeta = "beta"
         case versions
+        case patreon
         
         // Legacy
         case version
@@ -379,6 +400,33 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                                                            appBundleID: self.bundleIdentifier,
                                                            in: context)
                 try self.setVersions([appVersion])
+            }
+            
+            // Must _explicitly_ set to false to ensure it updates cached database value.
+            self.isPledged = false
+            
+            if let patreon = try container.decodeIfPresent(PatreonParameters.self, forKey: .patreon)
+            {
+                self.isPledgeRequired = true
+                self.isHiddenWithoutPledge = patreon.hidden ?? false // Default to showing Patreon apps
+                                
+                if let pledge = patreon.pledge
+                {
+                    self._pledgeAmount = pledge as NSDecimalNumber
+                    self.pledgeCurrency = patreon.currency ?? "USD" // Only set pledge currency if explicitly given pledge.
+                }
+                else if patreon.pledge == nil && patreon.tiers == nil && patreon.benefit == nil
+                {
+                    // No conditions, so default to pledgeAmount of 0 to simplify logic.
+                    self._pledgeAmount = 0 as NSDecimalNumber
+                }
+            }
+            else
+            {
+                self.isPledgeRequired = false
+                self.isHiddenWithoutPledge = false
+                self._pledgeAmount = nil
+                self.pledgeCurrency = nil
             }
         }
         catch
