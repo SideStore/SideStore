@@ -18,6 +18,10 @@ public class PatreonAccount: NSManagedObject, Fetchable
     
     @NSManaged public var isPatron: Bool
     
+    /* Relationships */
+    @nonobjc public var pledges: Set<Pledge> { _pledges as! Set<Pledge> }
+    @NSManaged @objc(pledges) internal var _pledges: NSSet
+    
     private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
     {
         super.init(entity: entity, insertInto: context)
