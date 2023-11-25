@@ -98,6 +98,9 @@ private extension AppIDsViewController
                 formatter.allowedUnits = [.minute, .hour, .day]
                 formatter.maximumUnitCount = 1
                 
+                formatter.unitsStyle = DateComponentsFormatter.UnitsStyle.abbreviated
+
+                
                 cell.bannerView.button.setTitle(formatter.string(from: Date(), to: expirationDate)?.uppercased(), for: .normal)
                 
                 formatter.includesTimeRemainingPhrase = true
