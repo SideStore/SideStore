@@ -334,8 +334,15 @@ private extension MyAppsViewController
             formatter.unitsStyle = .full
             formatter.includesApproximationPhrase = false
             formatter.includesTimeRemainingPhrase = false
-            formatter.allowedUnits = [.minute, .hour, .day]
-
+            switch numberOfDays
+            {
+            case 1...: formatter.allowedUnits = [.day]
+            case 0: formatter.allowedUnits = [.hour, .minute]
+            default: formatter.allowedUnits = [.day]
+            }
+            
+            
+            
             cell.bannerView.button.setTitle(formatter.string(from: currentDate, to: installedApp.expirationDate)?.uppercased(), for: .normal)
             
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Refresh %@", comment: ""), installedApp.name)

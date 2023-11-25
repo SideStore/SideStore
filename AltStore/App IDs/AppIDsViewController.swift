@@ -97,6 +97,15 @@ private extension AppIDsViewController
                 formatter.includesTimeRemainingPhrase = false
                 formatter.allowedUnits = [.minute, .hour, .day]
                 
+                let numberOfDays = expirationDate.numberOfCalendarDays(since: Date())
+
+                
+                switch numberOfDays
+                {
+                case 1...: formatter.allowedUnits = [.day]
+                case 0: formatter.allowedUnits = [.hour, .minute]
+                default: formatter.allowedUnits = [.day]
+                }
                 
                 cell.bannerView.button.setTitle(formatter.string(from: Date(), to: expirationDate)?.uppercased(), for: .normal)
                 
