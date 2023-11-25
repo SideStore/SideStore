@@ -102,7 +102,7 @@ private extension AppIDsViewController
                 
                 formatter.includesTimeRemainingPhrase = true
                 
-                attributedAccessibilityLabel.mutableString.append((formatter.string(from: expirationDate, to: Date()) ?? "Unknown amount of time") + " ")
+                attributedAccessibilityLabel.mutableString.append((formatter.string(from: expirationDate, to: Date()) ?? NSLocalizedString("Unknown", comment: "")) + " ")
             }
             else
             {
