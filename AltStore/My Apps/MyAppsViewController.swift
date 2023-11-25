@@ -329,21 +329,20 @@ private extension MyAppsViewController
             let currentDate = Date()
             
             let numberOfDays = installedApp.expirationDate.numberOfCalendarDays(since: currentDate)
-            let numberOfDaysText: String
             
-            if numberOfDays == 1
-            {
-                numberOfDaysText = NSLocalizedString("1 day", comment: "")
-            }
-            else
-            {
-                numberOfDaysText = String(format: NSLocalizedString("%@ days", comment: ""), NSNumber(value: numberOfDays))
-            }
+            let formatter = DateComponentsFormatter()
+            formatter.unitsStyle = .full
+            formatter.includesApproximationPhrase = false
+            formatter.includesTimeRemainingPhrase = false
+            formatter.allowedUnits = [.minute, .hour, .day]
+
+            cell.bannerView.button.setTitle(formatter.string(from: installedApp.expirationDate, to: currentDate)?.uppercased(), for: .normal)
             
-            cell.bannerView.button.setTitle(numberOfDaysText.uppercased(), for: .normal)
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Refresh %@", comment: ""), installedApp.name)
-            
-            cell.bannerView.accessibilityLabel? += ". " + String(format: NSLocalizedString("Expires in %@", comment: ""), numberOfDaysText)
+
+            formatter.includesTimeRemainingPhrase = true
+
+            cell.bannerView.accessibilityLabel? += ". " + (formatter.string(from: installedApp.expirationDate, to: currentDate) ?? NSLocalizedString("Unknown", comment: "")) + " "
             
             // Make sure refresh button is correct size.
             cell.layoutIfNeeded()
