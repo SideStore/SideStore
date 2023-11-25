@@ -334,12 +334,10 @@ private extension MyAppsViewController
             formatter.unitsStyle = .full
             formatter.includesApproximationPhrase = false
             formatter.includesTimeRemainingPhrase = false
-            switch numberOfDays
-            {
-            case 1...: formatter.allowedUnits = [.day]
-            case 0: formatter.allowedUnits = [.hour, .minute]
-            default: formatter.allowedUnits = [.day]
-            }
+            
+            formatter.allowedUnits = [.day, .hour, .minute]
+
+            formatter.maximumUnitCount = 1
             
             
             
