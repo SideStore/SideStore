@@ -11,6 +11,7 @@ import Roxas
 
 import AltStoreCore
 import AltSign
+import minimuxer
 
 @objc(ResignAppOperation)
 final class ResignAppOperation: ResultOperation<ALTApplication>
@@ -181,7 +182,7 @@ private extension ResignAppOperation
 
                 if app.isAltStoreApp
                 {
-                    guard let udid = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.deviceID) as? String else { throw OperationError.unknownUDID }
+                    guard let udid = fetch_udid()?.toString() as? String else { throw OperationError.unknownUDID }
                     guard let pairingFileString = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) as? String else { throw OperationError.unknownUDID }                    
                     additionalValues[Bundle.Info.devicePairingString] = pairingFileString
                     additionalValues[Bundle.Info.deviceID] = udid
@@ -202,7 +203,7 @@ private extension ResignAppOperation
                         // The embedded certificate + certificate identifier are already in app bundle, no need to update them.
                     }
                 }
-                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.deviceID) as? String
+                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetch_udid()?.toString() as? String
                 {
                     // There is an ALTDeviceID entry, so assume the app is using AltKit and replace it with the device's UDID.
                     additionalValues[Bundle.Info.deviceID] = udid

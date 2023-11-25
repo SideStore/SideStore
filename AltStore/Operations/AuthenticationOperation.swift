@@ -12,6 +12,7 @@ import Network
 
 import AltStoreCore
 import AltSign
+import minimuxer
 
 enum AuthenticationError: LocalizedError
 {
@@ -593,7 +594,7 @@ private extension AuthenticationOperation
     
     func registerCurrentDevice(for team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTDevice, Error>) -> Void)
     {
-        guard let udid = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.deviceID) as? String else {
+        guard let udid = fetch_udid()?.toString() else {
             return completionHandler(.failure(OperationError.unknownUDID))
         }
         
