@@ -336,13 +336,13 @@ private extension MyAppsViewController
             formatter.includesTimeRemainingPhrase = false
             formatter.allowedUnits = [.minute, .hour, .day]
 
-            cell.bannerView.button.setTitle(formatter.string(from: installedApp.expirationDate, to: currentDate)?.uppercased(), for: .normal)
+            cell.bannerView.button.setTitle(formatter.string(from: currentDate, to: installedApp.expirationDate)?.uppercased(), for: .normal)
             
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Refresh %@", comment: ""), installedApp.name)
 
             formatter.includesTimeRemainingPhrase = true
 
-            cell.bannerView.accessibilityLabel? += ". " + (formatter.string(from: installedApp.expirationDate, to: currentDate) ?? NSLocalizedString("Unknown", comment: "")) + " "
+            cell.bannerView.accessibilityLabel? += ". " + (formatter.string(from: currentDate, to: installedApp.expirationDate) ?? NSLocalizedString("Unknown", comment: "")) + " "
             
             // Make sure refresh button is correct size.
             cell.layoutIfNeeded()

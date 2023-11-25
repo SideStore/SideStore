@@ -98,11 +98,11 @@ private extension AppIDsViewController
                 formatter.allowedUnits = [.minute, .hour, .day]
                 
                 
-                cell.bannerView.button.setTitle(formatter.string(from: expirationDate, to: Date())?.uppercased(), for: .normal)
+                cell.bannerView.button.setTitle(formatter.string(from: Date(), to: expirationDate)?.uppercased(), for: .normal)
                 
                 formatter.includesTimeRemainingPhrase = true
                 
-                attributedAccessibilityLabel.mutableString.append((formatter.string(from: expirationDate, to: Date()) ?? NSLocalizedString("Unknown", comment: "")) + " ")
+                attributedAccessibilityLabel.mutableString.append((formatter.string(from: Date(), to: expirationDate) ?? NSLocalizedString("Unknown", comment: "")) + " ")
             }
             else
             {
