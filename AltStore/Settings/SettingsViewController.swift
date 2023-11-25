@@ -52,8 +52,8 @@ extension SettingsViewController
     {
         case sendFeedback
         case refreshAttempts
-        case clearCache
         case errorLog
+        case clearCache
         case resetPairingFile
         case resetAdiPb
         case advancedSettings
