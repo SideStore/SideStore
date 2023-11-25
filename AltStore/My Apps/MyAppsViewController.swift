@@ -337,8 +337,6 @@ private extension MyAppsViewController
             
             formatter.allowedUnits = [.day, .hour, .minute]
             
-            formatter.unitsStyle = DateComponentsFormatter.UnitsStyle.abbreviated
-
             formatter.maximumUnitCount = 1
             
             
