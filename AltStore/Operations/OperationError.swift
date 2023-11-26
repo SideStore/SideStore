@@ -40,6 +40,8 @@ enum OperationError: LocalizedError
     case provisioningError(result: String, message: String?)
     case anisetteV3Error(message: String)
     
+    case cacheClearError(errors: [String])
+    
     var failureReason: String? {
         switch self {
         case .unknown: return NSLocalizedString("An unknown error occured.", comment: "")
@@ -60,6 +62,7 @@ enum OperationError: LocalizedError
         case .anisetteV1Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: ""), message)
         case .provisioningError(let result, let message): return String(format: NSLocalizedString("An error occurred when provisioning: %@%@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), result, message != nil ? (" (" + message! + ")") : "")
         case .anisetteV3Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), message)
+        case .cacheClearError(let errors): return String(format: NSLocalizedString("An error occurred while clearing cache: %@", comment: ""), errors.joined(separator: "\n"))
         }
     }
     

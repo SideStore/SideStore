@@ -318,6 +318,11 @@ private extension SettingsViewController
             }
         })
         
+        if let popoverController = alertController.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+        }
+        
         self.present(alertController, animated: true)
     }
     
