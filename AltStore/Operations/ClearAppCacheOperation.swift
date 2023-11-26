@@ -79,8 +79,9 @@ class ClearAppCacheOperation: ResultOperation<Void>
                 }
                 else
                 {
-                    //let error = BatchError(errors: allErrors)
-                    //self.finish(.failure(error))
+                    self.finish(.failure(OperationError.cacheClearError(errors: allErrors.map({ error in
+                        return error.localizedDescription
+                    }))))
                 }
             }
         }
@@ -121,8 +122,9 @@ private extension ClearAppCacheOperation
                 
                 if !errors.isEmpty
                 {
-                    //let error = BatchError(errors: errors)
-                    //completion(.failure(error))
+                    completion(.failure(OperationError.cacheClearError(errors: errors.map({ error in
+                        return error.localizedDescription
+                    }))))
                 }
                 else
                 {
@@ -163,6 +165,7 @@ private extension ClearAppCacheOperation
                                                                                options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
                     var errors = [Error]()
                     
+                    
                     for backupDirectory in fileURLs
                     {
                         do
@@ -185,8 +188,9 @@ private extension ClearAppCacheOperation
                     
                     if !errors.isEmpty
                     {
-                        //let error = BatchError(errors: errors)
-                        //completion(.failure(error))
+                        completion(.failure(OperationError.cacheClearError(errors: errors.map({ error in
+                            return error.localizedDescription
+                        }))))
                     }
                     else
                     {
