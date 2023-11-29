@@ -16,7 +16,8 @@ public class PatreonAccount: NSManagedObject, Fetchable
     @NSManaged public var name: String
     @NSManaged public var firstName: String?
     
-    @NSManaged public var isPatron: Bool
+    // Use `isPatron` for backwards compatibility.
+    @NSManaged @objc(isPatron) public var isAltStorePatron: Bool
     
     /* Relationships */
     @nonobjc public var pledges: Set<Pledge> { _pledges as! Set<Pledge> }
