@@ -113,11 +113,10 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         (self as PeekPopPreviewing).registerForPreviewing(with: self, sourceView: self.collectionView)
     }
     
-    override func viewWillAppear(_ animated: Bool)
+    override func viewIsAppearing(_ animated: Bool)
     {
-        super.viewWillAppear(animated)
+        super.viewIsAppearing(animated)
         
-        self.updateDataSource()
         self.update()
         
         self.fetchAppIDs()
