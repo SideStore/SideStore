@@ -51,6 +51,7 @@ public extension UserDefaults
     
     @NSManaged var trustedSourceIDs: [String]?
     @NSManaged var trustedServerURL: String?
+    @NSManaged var skipPatreonDownloads: Bool
     
     @nonobjc
     var activeAppsLimit: Int? {
