@@ -17,7 +17,9 @@ import Roxas
 @objc(DownloadAppOperation)
 final class DownloadAppOperation: ResultOperation<ALTApplication>
 {
-    let app: AppProtocol
+    @Managed
+    private(set) var app: AppProtocol
+    
     let context: InstallAppOperationContext
     
     private let appName: String
@@ -67,15 +69,36 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
             return self.download(self.app)
         }
         
-        // Verify storeApp
-        storeApp.managedObjectContext?.perform {
-            do {
-                let latestVersion = try self.verify(storeApp)
-                self.download(latestVersion)
+        self.$app.perform { app in
+            do
+            {
+                var appVersion: AppVersion?
+                
+                if let version = app as? AppVersion
+                {
+                    appVersion = version
+                }
+                else if let storeApp = app as? StoreApp
+                {
+                    guard let latestVersion = storeApp.latestAvailableVersion else {
+                        let failureReason = String(format: NSLocalizedString("The latest version of %@ could not be determined.", comment: ""), self.appName)
+                        throw OperationError.unknown(failureReason: failureReason)
+                    }
+                    
+                    // Attempt to download latest _available_ version, and fall back to older versions if necessary.
+                    appVersion = latestVersion
+                }
+                
+                if let appVersion
+                {
+                    try self.verify(appVersion)
+                }
+                
+                self.download(appVersion ?? app)
             }
             catch let error as VerificationError where error.code == .iOSVersionNotSupported
             {
-                guard let presentingViewController = self.context.presentingViewController, let latestSupportedVersion = storeApp.latestSupportedVersion
+                guard let presentingViewController = self.context.presentingViewController, let storeApp = app.storeApp, let latestSupportedVersion = storeApp.latestSupportedVersion
                 else { return self.finish(.failure(error)) }
                 
                 if let installedApp = storeApp.installedApp
@@ -86,7 +109,7 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
                 let title = NSLocalizedString("Unsupported iOS Version", comment: "")
                 let message = error.localizedDescription + "\n\n" + NSLocalizedString("Would you like to download the last version compatible with this device instead?", comment: "")
                 let localizedVersion = latestSupportedVersion.localizedVersion
-                                
+                
                 DispatchQueue.main.async {
                     let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { _ in
@@ -114,19 +137,18 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
     }
 }
 
-private extension DownloadAppOperation {
-    func verify(_ storeApp: StoreApp) throws -> AppVersion {
-        guard let version = storeApp.latestAvailableVersion else {
-            let failureReason = String(format: NSLocalizedString("The latest version of %@ could not be determined.", comment: ""), self.appName)
-            throw OperationError.unknown(failureReason: failureReason)
+private extension DownloadAppOperation
+{
+    func verify(_ version: AppVersion) throws
+    {
+        if let minOSVersion = version.minOSVersion, !ProcessInfo.processInfo.isOperatingSystemAtLeast(minOSVersion)
+        {
+            throw VerificationError.iOSVersionNotSupported(app: version, requiredOSVersion: minOSVersion)
         }
-        if let minOSVersion = version.minOSVersion, !ProcessInfo.processInfo.isOperatingSystemAtLeast(minOSVersion) {
-            throw VerificationError.iOSVersionNotSupported(app: storeApp, requiredOSVersion: minOSVersion)
-        } else if let maxOSVersion = version.maxOSVersion, ProcessInfo.processInfo.operatingSystemVersion > maxOSVersion {
-            throw VerificationError.iOSVersionNotSupported(app: storeApp, requiredOSVersion: maxOSVersion)
+        else if let maxOSVersion = version.maxOSVersion, ProcessInfo.processInfo.operatingSystemVersion > maxOSVersion
+        {
+            throw VerificationError.iOSVersionNotSupported(app: version, requiredOSVersion: maxOSVersion)
         }
-
-        return version
     }
     
     func download(@Managed _ app: AppProtocol)

@@ -346,13 +346,21 @@ private extension AppViewController
 {
     func update()
     {
+        var buttonAction: AppBannerView.AppAction?
+        
+        if let installedApp = self.app.installedApp, let latestVersion = self.app.latestAvailableVersion, !installedApp.matches(latestVersion)
+        {
+            // Explicitly set button action to .update if there is an update available, even if it's not supported.
+            buttonAction = .update
+        }
+        
         for button in [self.bannerView.button!, self.navigationBarDownloadButton!]
         {
             button.tintColor = self.app.tintColor
             button.isIndicatingActivity = false
         }
         
-        self.bannerView.configure(for: self.app)
+        self.bannerView.configure(for: self.app, action: buttonAction)
         
         let title = self.bannerView.button.title(for: .normal)
         self.navigationBarDownloadButton.setTitle(title, for: .normal)
@@ -484,9 +492,9 @@ extension AppViewController
     {
         if let installedApp = self.app.installedApp
         {
-            if let latestVersion = self.app.latestSupportedVersion, !installedApp.matches(latestVersion)
+            if let latestVersion = self.app.latestAvailableVersion, !installedApp.matches(latestVersion)
             {
-                self.updateApp(installedApp)
+                self.updateApp(installedApp, to: latestVersion)
             }
             else
             {
@@ -536,7 +544,7 @@ extension AppViewController
         UIApplication.shared.open(installedApp.openAppURL)
     }
     
-    func updateApp(_ installedApp: InstalledApp)
+    func updateApp(_ installedApp: InstalledApp, to version: AppVersion)
     {
         let previousProgress = AppManager.shared.installationProgress(for: installedApp)
         guard previousProgress == nil else {
@@ -545,7 +553,7 @@ extension AppViewController
             return
         }
         
-        _ = AppManager.shared.update(installedApp, presentingViewController: self) { (result) in
+        AppManager.shared.update(installedApp, to: version, presentingViewController: self) { (result) in
             DispatchQueue.main.async {
                 switch result
                 {
