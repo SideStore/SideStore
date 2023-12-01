@@ -237,7 +237,8 @@ private extension MyAppsViewController
             cell.bannerView.iconImageView.image = nil
             cell.bannerView.iconImageView.isIndicatingActivity = true
             
-            cell.bannerView.configure(for: app)
+            cell.bannerView.button.isIndicatingActivity = false
+            cell.bannerView.configure(for: app, action: .update)
             
             let versionDate = Date().relativeDateString(since: latestSupportedVersion.date)
             cell.bannerView.subtitleLabel.text = versionDate
@@ -255,7 +256,6 @@ private extension MyAppsViewController
             
             cell.bannerView.accessibilityLabel = String(format: NSLocalizedString("%@ %@ update. Released on %@.", comment: ""), appName, latestSupportedVersion.localizedVersion, versionDate)
             
-            cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.updateApp(_:)), for: .primaryActionTriggered)
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Update %@", comment: ""), installedApp.name)
             
@@ -269,9 +269,6 @@ private extension MyAppsViewController
             }
             
             cell.versionDescriptionTextView.moreButton.addTarget(self, action: #selector(MyAppsViewController.toggleUpdateCellMode(_:)), for: .primaryActionTriggered)
-            
-            let progress = AppManager.shared.installationProgress(for: app)
-            cell.bannerView.button.progress = progress
             
             cell.setNeedsLayout()
         }
@@ -340,17 +337,6 @@ private extension MyAppsViewController
                 cell.deactivateBadge?.transform = CGAffineTransform.identity.scaledBy(x: 0.33, y: 0.33)
             }
             
-            cell.bannerView.configure(for: installedApp)
-            
-            cell.bannerView.iconImageView.isIndicatingActivity = true
-            
-            cell.bannerView.buttonLabel.isHidden = false
-            cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
-            
-            cell.bannerView.button.isIndicatingActivity = false
-            cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
-            cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.refreshApp(_:)), for: .primaryActionTriggered)
-            
             let currentDate = Date()
             
             let numberOfDays = installedApp.expirationDate.numberOfCalendarDays(since: currentDate)
@@ -367,6 +353,17 @@ private extension MyAppsViewController
             
             
             cell.bannerView.button.setTitle(formatter.string(from: currentDate, to: installedApp.expirationDate)?.uppercased(), for: .normal)
+            
+            cell.bannerView.button.isIndicatingActivity = false
+            cell.bannerView.configure(for: installedApp, action: .custom(numberOfDaysText.uppercased()))
+            
+            cell.bannerView.iconImageView.isIndicatingActivity = true
+            
+            cell.bannerView.buttonLabel.isHidden = false
+            cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
+            
+            cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
+            cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.refreshApp(_:)), for: .primaryActionTriggered)
             
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Refresh %@", comment: ""), installedApp.name)
 
@@ -457,11 +454,10 @@ private extension MyAppsViewController
             cell.deactivateBadge?.alpha = 0.0
             cell.deactivateBadge?.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
             
-            cell.bannerView.configure(for: installedApp)
-            
             cell.bannerView.button.isIndicatingActivity = false
+            cell.bannerView.configure(for: installedApp, action: .custom(NSLocalizedString("ACTIVATE", comment: "")))
+            
             cell.bannerView.button.tintColor = tintColor
-            cell.bannerView.button.setTitle(NSLocalizedString("ACTIVATE", comment: ""), for: .normal)
             cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
             cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.activateApp(_:)), for: .primaryActionTriggered)
             cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Activate %@", comment: ""), installedApp.name)
