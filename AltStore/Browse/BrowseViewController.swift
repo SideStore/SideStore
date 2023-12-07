@@ -50,10 +50,11 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         self.collectionView.backgroundColor = .altBackground
         self.collectionView.alwaysBounceVertical = true
         
-        #if BETA
-        self.dataSource.searchController.searchableKeyPaths = [#keyPath(InstalledApp.name)]
+        self.dataSource.searchController.searchableKeyPaths = [#keyPath(StoreApp.name),
+                                                               #keyPath(StoreApp.subtitle),
+                                                               #keyPath(StoreApp.developerName),
+                                                               #keyPath(StoreApp.bundleIdentifier)]
         self.navigationItem.searchController = self.dataSource.searchController
-        #endif
         
         self.prototypeCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -88,6 +89,10 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
             self.navigationItem.scrollEdgeAppearance = edgeAppearance
         }
         
+        if #available(iOS 16, *)
+        {
+            self.navigationItem.preferredSearchBarPlacement = .inline
+        }
         
         self.preparePipeline()
         
