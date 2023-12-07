@@ -9,6 +9,9 @@
 import Foundation
 import AltStoreCore
 /*
+
+import Nuke
+
 struct BatchError: ALTLocalizedError
 {
 
@@ -54,6 +57,8 @@ class ClearAppCacheOperation: ResultOperation<Void>
     {
         super.main()
         
+        self.clearNukeCache()
+        
         var allErrors = [Error]()
         
         self.clearTemporaryDirectory { result in
@@ -89,6 +94,12 @@ class ClearAppCacheOperation: ResultOperation<Void>
 
 private extension ClearAppCacheOperation
 {
+    func clearNukeCache()
+    {
+        guard let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache else { return }
+        dataCache.removeAll()
+    }
+    
     func clearTemporaryDirectory(completion: @escaping (Result<Void, Error>) -> Void)
     {
         let intent = NSFileAccessIntent.writingIntent(with: FileManager.default.temporaryDirectory, options: [.forDeleting])
