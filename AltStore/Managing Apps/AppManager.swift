@@ -2103,6 +2103,7 @@ private extension AppManager
         switch error
         {
         case is CancellationError: return // Don't log CancellationErrors
+        case let nsError as NSError where nsError.domain == CancellationError()._domain: return
         default: break
         }
         
