@@ -37,9 +37,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
     private lazy var placeholderView = RSTPlaceholderView(frame: .zero)
     
     private let prototypeCell = AppCardCollectionViewCell(frame: .zero)
-    
     private var sortButton: UIBarButtonItem?
-    private var categoriesMenu: UIMenu?
     
     private var preferredAppSorting: AppSorting = UserDefaults.shared.preferredAppSorting
     
@@ -85,7 +83,6 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         self.collectionView.backgroundColor = .altBackground
         self.collectionView.alwaysBounceVertical = true
         
-        self.dataSource.searchController.delegate = self
         self.dataSource.searchController.searchableKeyPaths = [#keyPath(StoreApp.name),
                                                                #keyPath(StoreApp.subtitle),
                                                                #keyPath(StoreApp.developerName),
@@ -119,8 +116,6 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
             ])
             
             self.navigationItem.titleMenuProvider = { _ in categoriesMenu }
-            
-            self.categoriesMenu = categoriesMenu
         }
         
         self.titleSourceIconView = AppIconImageView(style: .circular)
@@ -138,7 +133,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         
         if #available(iOS 16, *)
         {
-            self.navigationItem.preferredSearchBarPlacement = .inline
+            self.navigationItem.preferredSearchBarPlacement = .automatic
         }
         
         if #available(iOS 15, *)
@@ -530,7 +525,7 @@ private extension BrowseViewController
         let sortButton = UIBarButtonItem(title: NSLocalizedString("Sort by…", comment: ""), image: sortIcon, primaryAction: nil, menu: sortMenu)
         self.sortButton = sortButton
         
-        self.navigationItem.rightBarButtonItems = [sortButton, .flexibleSpace()] // flexibleSpace() required to prevent showing full search bar inline.
+        self.navigationItem.rightBarButtonItems = [sortButton]
     }
 }
 
@@ -675,30 +670,6 @@ extension BrowseViewController: UIViewControllerPreviewingDelegate
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController)
     {
         self.navigationController?.pushViewController(viewControllerToCommit, animated: true)
-    }
-}
-
-extension BrowseViewController: UISearchControllerDelegate
-{
-    func willPresentSearchController(_ searchController: UISearchController)
-    {
-        // Hide titleView + menu to ensure search bar is as large as possible.
-        self.navigationItem.titleView = nil
-        
-        if #available(iOS 16, *)
-        {
-            self.navigationItem.titleMenuProvider = nil
-        }
-    }
-    
-    func willDismissSearchController(_ searchController: UISearchController) 
-    {
-        self.navigationItem.titleView = self.titleStackView
-        
-        if let categoriesMenu, #available(iOS 16, *)
-        {
-            self.navigationItem.titleMenuProvider = { _ in categoriesMenu }
-        }
     }
 }
 
