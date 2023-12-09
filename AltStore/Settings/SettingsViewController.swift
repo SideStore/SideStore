@@ -132,7 +132,12 @@ final class SettingsViewController: UITableViewController
         {
             #if BETA
             // Only show build version for BETA builds.
-            let localizedVersion = installedApp.localizedVersion
+            let localizedVersion = if let bundleVersion = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String {
+                "\(installedApp.version) (\(bundleVersion))"
+            }
+            else {
+                installedApp.localizedVersion
+            }
             #else
             let localizedVersion = installedApp.version
             #endif
