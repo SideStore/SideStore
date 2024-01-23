@@ -237,6 +237,7 @@ struct OperationError: ALTLocalizedError {
         switch self.code
         {
         case .noWiFi: return NSLocalizedString("Make sure the VPN is toggled on and you are connected to any WiFi network!", comment: "")
+        case .serverNotFound: return NSLocalizedString("Make sure you're on the same Wi-Fi network as a computer running AltServer, or try connecting this device to your computer via USB.", comment: "")
         case .maximumAppIDLimitReached:
             let baseMessage = NSLocalizedString("Delete sideloaded apps to free up App ID slots.", comment: "")
             guard let appName, let requiredAppIDs, let availableAppIDs, let expirationDate else { return baseMessage }
