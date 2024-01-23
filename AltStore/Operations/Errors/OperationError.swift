@@ -46,6 +46,7 @@ extension OperationError
 
         case cacheClearError//(errors: [String])
         case forbidden = 1013
+        case sourceNotAdded = 1014
         
         /* Connection */
         case serverNotFound = 1200
@@ -130,6 +131,10 @@ extension OperationError
         OperationError(code: .forbidden, failureReason: failureReason, sourceFile: file, sourceLine: line)
     }
     
+    static func sourceNotAdded(@Managed _ source: Source, file: String = #fileID, line: UInt = #line) -> OperationError {
+        OperationError(code: .sourceNotAdded, sourceName: $source.name, sourceFile: file, sourceLine: line)
+    }
+    
     static func pledgeRequired(appName: String, file: String = #fileID, line: UInt = #line) -> OperationError {
         OperationError(code: .pledgeRequired, appName: appName, sourceFile: file, sourceLine: line)
     }
@@ -146,9 +151,13 @@ struct OperationError: ALTLocalizedError {
 
     var errorTitle: String?
     var errorFailure: String?
-
+    
+    @UserInfoValue
     var appName: String?
-
+    
+    @UserInfoValue
+    var sourceName: String?
+    
     var requiredAppIDs: Int?
     var availableAppIDs: Int?
     var expirationDate: Date?
@@ -165,6 +174,7 @@ struct OperationError: ALTLocalizedError {
         self._failureReason = failureReason
 
         self.appName = appName
+        self.sourceName = sourceName
         self.requiredAppIDs = requiredAppIDs
         self.availableAppIDs = availableAppIDs
         self.expirationDate = expirationDate
@@ -191,6 +201,10 @@ struct OperationError: ALTLocalizedError {
         case .forbidden:
             guard let failureReason = self._failureReason else { return NSLocalizedString("The operation is forbidden.", comment: "") }
             return failureReason
+            
+        case .sourceNotAdded:
+            let sourceName = self.sourceName.map { String(format: NSLocalizedString("The source “%@”", comment: ""), $0) } ?? NSLocalizedString("The source", comment: "")
+            return String(format: NSLocalizedString("%@ is not added to AltStore.", comment: ""), sourceName)
 
         case .appNotFound:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
