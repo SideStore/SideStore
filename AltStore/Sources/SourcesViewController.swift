@@ -57,6 +57,8 @@ final class SourcesViewController: UICollectionViewController
     
     private lazy var dataSource = self.makeDataSource()
     
+    private weak var _installingApp: StoreApp?
+    
     private var placeholderView: RSTPlaceholderView!
     private var placeholderViewButton: UIButton!
     private var placeholderViewCenterYConstraint: NSLayoutConstraint!
@@ -114,6 +116,8 @@ final class SourcesViewController: UICollectionViewController
         ])
 
         self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(SourcesViewController.showInstallingAppToastView(_:)), name: AppManager.willInstallAppFromNewSourceNotification, object: nil)
         
         self.update()
     }
@@ -511,6 +515,26 @@ private extension SourcesViewController
             
             self.editButtonItem.isEnabled = true
         }
+    }
+    
+    @objc func showInstallingAppToastView(_ notification: Notification)
+    {
+        guard let app = notification.object as? StoreApp else { return }
+        self._installingApp = app
+        
+        let text = String(format: NSLocalizedString("Downloading %@…", comment: ""), app.name)        
+        let toastView = ToastView(text: text, detailText: NSLocalizedString("Tap to view progress.", comment: ""))
+        toastView.addTarget(self, action: #selector(SourcesViewController.showAppDetail), for: .touchUpInside)
+        toastView.show(in: self)
+    }
+    
+    @objc func showAppDetail()
+    {
+        guard let app = self._installingApp else { return }
+        self._installingApp = nil
+        
+        let appViewController = AppViewController.makeAppViewController(app: app)
+        self.navigationController?.pushViewController(appViewController, animated: true)
     }
 }
 
