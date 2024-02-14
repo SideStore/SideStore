@@ -754,6 +754,11 @@ extension SettingsViewController
             case .softwareLicenses: break
             }
             
+            if let selectedIndexPath = self.tableView.indexPathForSelectedRow
+            {
+                self.tableView.deselectRow(at: selectedIndexPath, animated: true)
+            }
+            
         case .debug:
             let row = DebugRow.allCases[indexPath.row]
             switch row
