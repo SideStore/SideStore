@@ -152,6 +152,9 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     @NSManaged public private(set) var tintColor: UIColor?
     @NSManaged public private(set) var isBeta: Bool
     
+    // Required for Marketplace apps.
+    @NSManaged public private(set) var marketplaceID: String?
+
     @NSManaged public var isPledged: Bool
     @NSManaged public private(set) var isPledgeRequired: Bool
     @NSManaged public private(set) var isHiddenWithoutPledge: Bool
@@ -275,6 +278,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     {
         case name
         case bundleIdentifier
+        case marketplaceID
         case developerName
         case localizedDescription
         case iconURL
@@ -345,6 +349,8 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                     } else {
                         throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
                     }
+            // Required for Marketplace apps, but we'll verify later.
+            self.marketplaceID = try container.decodeIfPresent(String.self, forKey: .marketplaceID)
 
 //                 else {
 //                throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
