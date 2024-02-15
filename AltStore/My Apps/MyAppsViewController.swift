@@ -1662,7 +1662,7 @@ extension MyAppsViewController
                     headerView.button.titleLabel?.transform = CGAffineTransform.identity.rotated(by: .pi)
                 }
                 
-                headerView.isHidden = (self.updatesDataSource.itemCount <= 2)
+                headerView.isHidden = (self.updatesDataSource.fetchedResultsController.fetchedObjects?.count ?? 0 <= maximumCollapsedUpdatesCount)
                 
                 headerView.button.layoutIfNeeded()
             }
@@ -2041,7 +2041,7 @@ extension MyAppsViewController: UICollectionViewDelegateFlowLayout
         {
         case .noUpdates: return .zero
         case .updates:
-            let height: CGFloat = self.updatesDataSource.itemCount > maximumCollapsedUpdatesCount ? 26 : 0
+            let height: CGFloat = (self.updatesDataSource.fetchedResultsController.fetchedObjects?.count ?? 0 > maximumCollapsedUpdatesCount) ? 26 : 0
             return CGSize(width: collectionView.bounds.width, height: height)
             
         case .activeApps: return CGSize(width: collectionView.bounds.width, height: 29)
