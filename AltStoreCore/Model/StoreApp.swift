@@ -424,6 +424,33 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                 for version in versions
                 {
                     version.appBundleID = self.bundleIdentifier
+
+                    if self.marketplaceID != nil
+                    {
+                        struct IndexCodingKey: CodingKey
+                        {
+                            var stringValue: String { self.intValue?.description ?? "" }
+                            var intValue: Int?
+
+                            init?(stringValue: String)
+                            {
+                                fatalError()
+                            }
+
+                            init(intValue: Int)
+                            {
+                                self.intValue = intValue
+                            }
+                        }
+
+                        // Marketplace apps must provide build version.
+                        guard version.buildVersion != nil else {
+                            let codingPath = container.codingPath + [CodingKeys.versions as CodingKey] + [IndexCodingKey(intValue: index) as CodingKey]
+                            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Notarized apps must provide a build version.")
+                            throw DecodingError.keyNotFound(AppVersion.CodingKeys.buildVersion, context)
+                        }
+                    }
+
                 }
                 
                 try self.setVersions(versions)
