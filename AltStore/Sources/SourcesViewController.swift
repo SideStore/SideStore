@@ -197,7 +197,7 @@ private extension SourcesViewController
     {
         let alertController = UIAlertController(title: NSLocalizedString("Add Source", comment: ""), message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField) in
-            textField.placeholder = "https://apps.altstore.io"
+            textField.placeholder = "https://apps.sidestore.io"
             textField.textContentType = .URL
         }
         alertController.addAction(.cancel)
@@ -545,19 +545,19 @@ extension SourcesViewController: UICollectionViewDelegateFlowLayout
                 footerView.textView.delegate = self
                 
                 let attributedText = NSMutableAttributedString(
-                    string: NSLocalizedString("SideStore has reviewed these sources to make sure they meet our safety standards.\n\nSupport for untrusted sources is currently in beta, but you can help test them out by", comment: ""),
+                    string: NSLocalizedString("SideStore has reviewed these sources to make sure they meet our safety standards.", comment: ""),
                     attributes: [.font: font, .foregroundColor: UIColor.gray]
                 )
-                attributedText.mutableString.append(" ")
+                //attributedText.mutableString.append(" ")
                 
-                let boldedFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
-                let openPatreonURL = URL(string: "https://SideStore.io/patreon")!
+                //let boldedFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
+                //let openPatreonURL = URL(string: "https://SideStore.io/")!
                 
-                let joinPatreonText = NSAttributedString(
-                    string: NSLocalizedString("joining our Patreon.", comment: ""),
-                    attributes: [.font: boldedFont, .link: openPatreonURL, .underlineColor: UIColor.clear]
-                )
-                attributedText.append(joinPatreonText)
+                // let joinPatreonText = NSAttributedString(
+                    // string: NSLocalizedString("", comment: ""),
+                    // attributes: [.font: boldedFont, .link: openPatreonURL, .underlineColor: UIColor.clear]
+                //)
+                //attributedText.append(joinPatreonText)
                 
                 footerView.textView.attributedText = attributedText
                 footerView.textView.textAlignment = .natural
