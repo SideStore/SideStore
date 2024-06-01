@@ -1405,33 +1405,11 @@ private extension MyAppsViewController
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
-                          if let issues = issue {
-                             if issues == "invalidurl" {
-                                let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
-                                toastView.show(in: self)
-                                return
-                             } else if issues == "errorconnecting" {
-                                let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
-                                toastView.show(in: self)
-                                return
-                             } else if issues == "Could not find device!" {
-                                let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
-                                toastView.show(in: self)
-                                return
-                             } else {
-                                // let toastView = ToastView(error:)
-                                // toastView.show(in: self)
-                                return
-                             }
-                          }
-                       }
-                    } else {
-                       if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
-                          getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { issue in
+                       DispatchQueue.main.async {
+                          self.getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
                              if let issues = issue {
                                 if issues == "invalidurl" {
-                                   let toastView = ToastView(error: OperationError.wrongIP)
+                                   let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
                                    toastView.show(in: self)
                                    return
                                 } else if issues == "errorconnecting" {
@@ -1443,14 +1421,40 @@ private extension MyAppsViewController
                                    toastView.show(in: self)
                                    return
                                 } else {
-                                   // let toastView = ToastView(error: NSLocalizedString(issues, comment: ""))
+                                   // let toastView = ToastView(error:)
                                    // toastView.show(in: self)
                                    return
                                 }
                              }
                           }
                        }
-                   }
+                    } else {
+                       if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
+                          DispatchQueue.main.async {
+                             self.getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { issue in
+                                if let issues = issue {
+                                   if issues == "invalidurl" {
+                                      let toastView = ToastView(error: OperationError.wrongIP)
+                                      toastView.show(in: self)
+                                      return
+                                   } else if issues == "errorconnecting" {
+                                      let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
+                                      toastView.show(in: self)
+                                      return
+                                   } else if issues == "Could not find device!" {
+                                      let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
+                                      toastView.show(in: self)
+                                      return
+                                   } else {
+                                      // let toastView = ToastView(error: NSLocalizedString(issues, comment: ""))
+                                      // toastView.show(in: self)
+                                      return
+                                   }
+                                }
+                             }
+                          }
+                       }
+                    }
                 }
                 return
             } else {
