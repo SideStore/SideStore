@@ -64,7 +64,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                              }                         
                           case .success():
                              self.finish(.success(()))
-                             print("it worked les goooo")
+                             print("Thank you for using this, it was made by Stossy11 and tested by trolley or sniper1239408")
                           }
                       }
                    } else {
@@ -85,6 +85,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                              }
                          case .success():
                             self.finish(.success(()))
+                            print("Thank you for using this, it was made by Stossy11 and tested by trolley or sniper1239408")
                      }
                   }
                 }
