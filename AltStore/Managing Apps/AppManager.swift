@@ -23,6 +23,14 @@ import minimuxer
 
 import Nuke
 
+
+enum SideJITServerErrorType: Error {
+    case invalidURL
+    case errorConnecting
+    case deviceNotFound
+    case other(String)
+}
+
 extension AppManager
 {
     static let didFetchSourceNotification = Notification.Name("io.altstore.AppManager.didFetchSource")
@@ -687,10 +695,53 @@ extension AppManager
             }
         
             if #available(iOS 17, *) {
-                if UserDefaults.standard.sidejitenable {
-                    getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "")
-                }
-            } else {
+               let SideJITON = UserDefaults.standard.sidejitenable
+               if SideJITON {
+                  if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
+                     getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { result in
+                         switch result {
+                         case .failure(let error):
+                             switch error {
+                             case .invalidURL:
+                                 completionHandler(.failure(OperationError.unabletoconnectSideJIT))
+                             case .errorConnecting:
+                                 completionHandler(.failure(OperationError.unabletoconnectSideJIT))
+                             case .deviceNotFound:
+                                 completionHandler(.failure(OperationError.unabletoconSideJITDevice))
+                             case .other(let message):
+                                 print(message)
+                                 // handle other errors
+                             }
+                         case .success():
+                            print("it worked les goooo")
+                         }
+                     }
+
+                  } else {
+                     if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
+                        getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { result in
+                           switch result {
+                           case .failure(let error):
+                               switch error {
+                               case .invalidURL:
+                                   completionHandler(.failure(OperationError.unabletoconnectSideJIT))
+                               case .errorConnecting:
+                                   completionHandler(.failure(OperationError.unabletoconnectSideJIT))
+                               case .deviceNotFound:
+                                   completionHandler(.failure(OperationError.unabletoconSideJITDevice))
+                               case .other(let message):
+                                   print(message)
+                                   // handle other errors
+                               }
+                           case .success():
+                              print("it worked les goooo")
+                           }
+                       }
+                     }
+                  }
+               }
+               return
+            }
             
             let context = Context()
             context.installedApp = installedApp
@@ -702,61 +753,76 @@ extension AppManager
             }
             
             self.run([enableJITOperation], context: context, requiresSerialQueue: true)
-        }
     }
+   
     
-    func getrequest(from installedApp: String, IP ipadress: String) -> String? {
-            let serverUrl = ipadress ?? ""
+   func getrequest(from installedApp: String, IP ipadress: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
+            var serverUrl = ipadress ?? ""
             let serverUdid: String = fetch_udid()?.toString() ?? ""
             let appname = installedApp
             let serveradress2 = serverUdid + "/" + appname
-        
+      
+            var ErrorString: String
         
             var combinedString = "\(serverUrl)" + "/" + serveradress2 + "/"
         guard let url = URL(string: combinedString) else {
             print("Invalid URL: " + combinedString)
-            return("beans")
+            completion(.failure(.invalidURL))
+            return
         }
         
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 print("Error fetching data: \(error.localizedDescription)")
+                completion(.failure(.errorConnecting))
                 return
             }
             
-            if let data = data {
-                    if let dataString = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedApp)'!" {
-                        let content = UNMutableNotificationContent()
-                        content.title = "JIT Successfully Enabled"
-                        content.subtitle = "JIT Enabled For \(installedApp)"
-                        content.sound = UNNotificationSound.default
-
-                        // show this notification five seconds from now
-                        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-
-                        // choose a random identifier
-                        let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
-
-                        // add our notification request
-                        UNUserNotificationCenter.current().add(request)
-                    } else {
-                        let content = UNMutableNotificationContent()
-                        content.title = "An Error Occured"
-                        content.subtitle = "Please check your SideJITServer Console"
-                        content.sound = UNNotificationSound.default
-
-                        // show this notification five seconds from now
-                        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-
-                        // choose a random identifier
-                        let request = UNNotificationRequest(identifier: "EnabledJITError", content: content, trigger: nil)
-
-                        // add our notification request
-                        UNUserNotificationCenter.current().add(request)
-                }
-            }
+           if let data = data {
+              if let dataString = String(data: data, encoding: .utf8) {
+                 if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedApp)'!" {
+                    let content = UNMutableNotificationContent()
+                    content.title = "JIT Successfully Enabled"
+                    content.subtitle = "JIT Enabled For \(installedApp)"
+                    content.sound = UNNotificationSound.default
+                    
+                    // show this notification five seconds from now
+                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                    
+                    // choose a random identifier
+                    let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
+                    
+                    // add our notification request
+                    UNUserNotificationCenter.current().add(request)
+                    return
+                 } else {
+                    
+                    switch dataString {
+                    case "Could not find device!":
+                        completion(.failure(.deviceNotFound))
+                    default:
+                        completion(.failure(.other(dataString)))
+                    }
+                    return
+                    /*
+                     let content = UNMutableNotificationContent()
+                     content.title = "An Error Occured"
+                     content.subtitle = "Please check your SideJITServer Console"
+                     content.sound = UNNotificationSound.default
+                     
+                     // show this notification five seconds from now
+                     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                     
+                     // choose a random identifier
+                     let request = UNNotificationRequest(identifier: "EnabledJITError", content: content, trigger: nil)
+                     
+                     // add our notification request
+                     UNUserNotificationCenter.current().add(request)
+                     */
+                 }
+              }
+           }
         }.resume()
-        return("")
     }
     @available(iOS 14.0, *)
     func patch(resignedApp: ALTApplication, presentingViewController: UIViewController, context authContext: AuthenticatedOperationContext, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> PatchAppOperation

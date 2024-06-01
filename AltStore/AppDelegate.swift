@@ -64,6 +64,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if UserDefaults.standard.sidejitenable {
             getrequest2()
+            print("SideJITServer Enabled")
         }
         askfornetwork()
         
@@ -450,7 +451,7 @@ private extension AppDelegate
                     let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
                     UNUserNotificationCenter.current().add(request)
                 }
-
+  
                 DispatchQueue.main.async {
                     UIApplication.shared.applicationIconBadgeNumber = updates.count
                 }

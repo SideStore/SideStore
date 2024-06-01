@@ -48,7 +48,11 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
             if sideJITenabled {
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
-                    getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "")
+                   if UserDefaults.standard.textInputSideJITServerurl?.isEmpty {
+                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080")
+                   } else {
+                       getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "")
+                  }
                 }
                 return
             } else {
