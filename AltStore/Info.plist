@@ -70,16 +70,6 @@
 				<string>sidestore-com.SideStore.SideStore</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>AltStore JIT</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>sidestore</string>
-			</array>
-		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>

@@ -162,21 +162,7 @@ private extension SettingsViewController
         if let team = DatabaseManager.shared.activeTeam()
         {
             self.accountNameLabel.text = team.name
-           if team.account.appleID.contains("stossy11") {
-              self.accountEmailLabel.text = "Welcome Stossy11"
-              print("Basic code running...")
-
-              var Stossy: String = "GOATED"
-              print(Stossy)
-
-              Stossy = "true"
-              print(Stossy)
-           } else {
-              var Stossy: String = "GOATED"
-              Stossy = "false"
-              print(Stossy)
-              self.accountEmailLabel.text = team.account.appleID
-           }
+            self.accountEmailLabel.text = team.account.appleID
             self.accountTypeLabel.text = team.type.localizedDescription
             
             self.activeTeam = team
