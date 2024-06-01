@@ -1401,7 +1401,8 @@ private extension MyAppsViewController
         if #available(iOS 17, *) {
            let sideJITenabled = UserDefaults.standard.sidejitenable
            
-            if sideJITenabled {
+            if !sideJITenabled {
+               /*
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
@@ -1485,16 +1486,17 @@ private extension MyAppsViewController
                     }
                 }
                 return
-            } else {
+               */
                 let toastView = ToastView(error: OperationError.tooNewError)
                 toastView.show(in: self)
                 return
             }
-        }
-        if !minimuxer.ready() {
-            let toastView = ToastView(error: MinimuxerError.NoConnection)
-            toastView.show(in: self)
-            return
+        } else {
+           if !minimuxer.ready() {
+              let toastView = ToastView(error: MinimuxerError.NoConnection)
+              toastView.show(in: self)
+              return
+           }
         }
         AppManager.shared.enableJIT(for: installedApp) { result in
             DispatchQueue.main.async {
@@ -1559,6 +1561,19 @@ private extension MyAppsViewController
             completion("invalidurl")
             return
         }
+      
+        if !url.absoluteString.hasPrefix("http") {
+           print("Invalid URL: " + combinedString)
+           completion("invalidurl")
+           return
+        }
+      
+      
+      if url.absoluteString.contains("\\s") {
+         print("Invalid URL: " + combinedString)
+         completion("invalidurl")
+         return
+      }
         
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {

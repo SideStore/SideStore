@@ -694,6 +694,7 @@ extension AppManager
                 var installedApp: InstalledApp?
             }
         
+            /*
             if #available(iOS 17, *) {
                let SideJITON = UserDefaults.standard.sidejitenable
                if SideJITON {
@@ -743,7 +744,8 @@ extension AppManager
                }
                return
             }
-            
+            */
+       
             let context = Context()
             context.installedApp = installedApp
             
@@ -771,6 +773,20 @@ extension AppManager
             completion(.failure(.invalidURL))
             return
         }
+      
+      if !url.absoluteString.hasPrefix("http") {
+         print("Invalid URL: " + combinedString)
+         completion(.failure(.invalidURL))
+         return
+      }
+    
+    
+    if url.absoluteString.contains("\\s") {
+       print("Invalid URL: " + combinedString)
+       completion(.failure(.invalidURL))
+       return
+    }
+      
         
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {

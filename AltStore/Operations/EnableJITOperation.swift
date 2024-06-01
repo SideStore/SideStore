@@ -49,9 +49,46 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                    if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name)
+                      getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { result in
+                          switch result {
+                          case .failure(let error):
+                             switch error {
+                             case .invalidURL:
+                                self.finish(.failure(OperationError.unabletoconnectSideJIT))
+                             case .errorConnecting:
+                                self.finish(.failure(OperationError.unabletoconnectSideJIT))
+                             case .deviceNotFound:
+                                self.finish(.failure(OperationError.unabletoconSideJITDevice))
+                             case .other(let message):
+                                 print(message)
+                                self.finish(.failure(OperationError.SideJITIssue(error: message)))
+                                 // handle other errors
+                             }                         
+                          case .success():
+                             self.finish(.success(()))
+                             print("it worked les goooo")
+                          }
+                      }
                    } else {
-                       getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "", installedappname: installedApp.name)
+                      getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "", installedappname: installedApp.name) { result in
+                         switch result {
+                         case .failure(let error):
+                             switch error {
+                             case .invalidURL:
+                                self.finish(.failure(OperationError.unabletoconnectSideJIT))
+                             case .errorConnecting:
+                                self.finish(.failure(OperationError.unabletoconnectSideJIT))
+                             case .deviceNotFound:
+                                self.finish(.failure(OperationError.unabletoconSideJITDevice))
+                             case .other(let message):
+                                 print(message)
+                                self.finish(.failure(OperationError.SideJITIssue(error: message)))
+                                 // handle other errors
+                             }
+                         case .success():
+                            self.finish(.success(()))
+                         }
+                     }
                   }
                 }
                 return
@@ -74,22 +111,39 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                 return nil
             }
         
-            func getrequest(from installedApp: String, IP ipadress: String, installedappname: String) -> String? {
-                    let serverUrl = ipadress ?? ""
+           func getrequest(from installedApp: String, IP ipadress: String, installedappname: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
+                    var serverUrl = ipadress ?? ""
                     let serverUdid: String = fetch_udid()?.toString() ?? ""
                     let appname = installedApp
                     let serveradress2 = serverUdid + "/" + appname
-                
+              
+                    var ErrorString: String
                 
                     var combinedString = "\(serverUrl)" + "/" + serveradress2 + "/"
                 guard let url = URL(string: combinedString) else {
                     print("Invalid URL: " + combinedString)
-                    return("beans")
+                    completion(.failure(.invalidURL))
+                    return
                 }
+              
+              if !url.absoluteString.hasPrefix("http") {
+                 print("Invalid URL: " + combinedString)
+                 completion(.failure(.invalidURL))
+                 return
+              }
+            
+            
+            if url.absoluteString.contains("\\s") {
+               print("Invalid URL: " + combinedString)
+               completion(.failure(.invalidURL))
+               return
+            }
+              
                 
                 URLSession.shared.dataTask(with: url) { data, _, error in
                     if let error = error {
                         print("Error fetching data: \(error.localizedDescription)")
+                        completion(.failure(.errorConnecting))
                         return
                     }
                     
@@ -97,7 +151,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                       if let dataString = String(data: data, encoding: .utf8) {
                          if dataString == "Enabled JIT for '\(installedappname)'!" {
                             let content = UNMutableNotificationContent()
-                            content.title = "JIT Succsessfully Enabled"
+                            content.title = "JIT Successfully Enabled"
                             content.subtitle = "JIT Enabled For \(installedApp)"
                             content.sound = UNNotificationSound.default
                             
@@ -109,25 +163,35 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                             
                             // add our notification request
                             UNUserNotificationCenter.current().add(request)
+                            return
                          } else {
-                            let content = UNMutableNotificationContent()
-                            content.title = "An Error Occured"
-                            content.subtitle = "Please check your SideJITServer Console"
-                            content.sound = UNNotificationSound.default
                             
-                            // show this notification five seconds from now
-                            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-                            
-                            // choose a random identifier
-                            let request = UNNotificationRequest(identifier: "EnabledJITError", content: content, trigger: nil)
-                            
-                            // add our notification request
-                            UNUserNotificationCenter.current().add(request)
+                            switch dataString {
+                            case "Could not find device!":
+                                completion(.failure(.deviceNotFound))
+                            default:
+                                completion(.failure(.other(dataString)))
+                            }
+                            return
+                            /*
+                             let content = UNMutableNotificationContent()
+                             content.title = "An Error Occured"
+                             content.subtitle = "Please check your SideJITServer Console"
+                             content.sound = UNNotificationSound.default
+                             
+                             // show this notification five seconds from now
+                             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                             
+                             // choose a random identifier
+                             let request = UNNotificationRequest(identifier: "EnabledJITError", content: content, trigger: nil)
+                             
+                             // add our notification request
+                             UNUserNotificationCenter.current().add(request)
+                             */
                          }
                       }
-                    }
+                   }
                 }.resume()
-                return("")
             }
         } else {
             installedApp.managedObjectContext?.perform {
