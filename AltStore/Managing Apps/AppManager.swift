@@ -781,7 +781,7 @@ extension AppManager
             
            if let data = data {
               if let dataString = String(data: data, encoding: .utf8) {
-                 if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedApp)'!" {
+                 if dataString == "Enabled JIT for '\(installedappname)'!" {
                     let content = UNMutableNotificationContent()
                     content.title = "JIT Successfully Enabled"
                     content.subtitle = "JIT Enabled For \(installedApp)"

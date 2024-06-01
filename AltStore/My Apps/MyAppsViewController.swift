@@ -1569,7 +1569,7 @@ private extension MyAppsViewController
 
            if let data = data {
               if let dataString = String(data: data, encoding: .utf8) {
-                 if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedappname)'!" {
+                 if dataString == "Enabled JIT for '\(installedappname)'!" {
                     completion(nil)
                  } else {
                     datastrings = dataString
