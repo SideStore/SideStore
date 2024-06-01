@@ -588,43 +588,62 @@ extension SettingsViewController
             case .clearCache: self.clearCache()
                 
             case .refreshSideJITServer:
-            let alertController = UIAlertController(
-                title: NSLocalizedString("Are you sure to Refresh SideJITServer?", comment: ""),
-                message: NSLocalizedString("if you do not have SideJITServer setup this will do nothing", comment: ""),
-                preferredStyle: UIAlertController.Style.actionSheet)
-
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Refresh", comment: ""), style: .destructive){ _ in
-                if UserDefaults.standard.sidejitenable {
-                    var SJSURL = ""
-                    if UserDefaults.standard.textInputSideJITServerurl ?? "" == "" {
-                        SJSURL = "http://sidejitserver._http._tcp.local:8080"
-                    } else {
-                        SJSURL = UserDefaults.standard.textInputSideJITServerurl ?? ""
-                    }  // replace with your URL
-                    let combinedString2 = SJSURL + "/re/"
-
-                    guard let url = URL(string: combinedString2) else {
-                        print("Invalid URL")
-                        return
-                    }
-
-                    let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-                        if let error = error {
-                            print("Error: \(error)")
+               if #available(iOS 17, *) {
+                  let alertController = UIAlertController(
+                     title: NSLocalizedString("Are you sure to Refresh SideJITServer?", comment: ""),
+                     message: NSLocalizedString("if you do not have SideJITServer setup this will do nothing", comment: ""),
+                     preferredStyle: UIAlertController.Style.actionSheet)
+                  
+                  alertController.addAction(UIAlertAction(title: NSLocalizedString("Refresh", comment: ""), style: .destructive){ _ in
+                     if UserDefaults.standard.sidejitenable {
+                        var SJSURL = ""
+                        if UserDefaults.standard.textInputSideJITServerurl ?? "" == "" {
+                           SJSURL = "http://sidejitserver._http._tcp.local:8080"
                         } else {
-                            // Do nothing with data or response
+                           SJSURL = UserDefaults.standard.textInputSideJITServerurl ?? ""
+                        }  // replace with your URL
+                        let combinedString2 = SJSURL + "/re/"
+                        
+                        guard let url = URL(string: combinedString2) else {
+                           print("Invalid URL")
+                           return
                         }
-                    }
-
-                    task.resume()
-                }
-            })
-            alertController.addAction(.cancel)
-            //Fix crash on iPad
-            alertController.popoverPresentationController?.sourceView = self.tableView
-            alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-            self.present(alertController, animated: true)
-            self.tableView.deselectRow(at: indexPath, animated: true)
+                        
+                        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+                           if let error = error {
+                              print("Error: \(error)")
+                           } else {
+                              // Do nothing with data or response
+                           }
+                        }
+                        
+                        task.resume()
+                     }
+                  })
+                  
+                  alertController.addAction(.cancel)
+                  //Fix crash on iPad
+                  alertController.popoverPresentationController?.sourceView = self.tableView
+                  alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
+                  self.present(alertController, animated: true)
+                  self.tableView.deselectRow(at: indexPath, animated: true)
+               } else {
+                  let alertController = UIAlertController(
+                     title: NSLocalizedString("You are not on iOS 17+ This will not work", comment: ""),
+                     message: NSLocalizedString("This is meant for 'SideJITServer' and it only works on iOS 17+ ", comment: ""),
+                     preferredStyle: UIAlertController.Style.actionSheet)
+                  
+                  alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .destructive){ _ in
+                     print("Not on iOS 17")
+                  })
+                  
+                  alertController.addAction(.cancel)
+                  //Fix crash on iPad
+                  alertController.popoverPresentationController?.sourceView = self.tableView
+                  alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
+                  self.present(alertController, animated: true)
+                  self.tableView.deselectRow(at: indexPath, animated: true)
+               }
                 
             case .resetPairingFile:
                 let filename = "ALTPairingFile.mobiledevicepairing"
