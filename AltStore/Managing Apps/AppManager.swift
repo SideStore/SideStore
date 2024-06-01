@@ -709,7 +709,7 @@ extension AppManager
                              case .deviceNotFound:
                                  completionHandler(.failure(OperationError.unabletoconSideJITDevice))
                              case .other(let message):
-                                 print(message)
+                                 completionHandler(.failure(OperationError.SideJITIssue(error: message)))
                                  // handle other errors
                              }
                          case .success():
@@ -731,6 +731,7 @@ extension AppManager
                                    completionHandler(.failure(OperationError.unabletoconSideJITDevice))
                                case .other(let message):
                                    print(message)
+                                  completionHandler(.failure(OperationError.SideJITIssue(error: message)))
                                    // handle other errors
                                }
                            case .success():

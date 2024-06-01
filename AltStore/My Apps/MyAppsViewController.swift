@@ -1405,7 +1405,7 @@ private extension MyAppsViewController
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                          getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
+                          getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { issue in
                              DispatchQueue.main.async {
                                 if let issues = issue {
                                    if issues == "invalidurl" {
@@ -1421,18 +1421,30 @@ private extension MyAppsViewController
                                       toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    } else {
-                                      // let toastView = ToastView(error:)
-                                      // toastView.show(in: self)
+                                      let toastView = ToastView(error: OperationError.SideJITIssue(error: issues))
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    }
                                 } else {
+                                   let content = UNMutableNotificationContent()
+                                   content.title = "JIT Successfully Enabled"
+                                   content.subtitle = "JIT Enabled For \(installedApp.name)"
+                                   content.sound = UNNotificationSound.default
                                    
+                                   // show this notification five seconds from now
+                                   let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                                   
+                                   // choose a random identifier
+                                   let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
+                                   
+                                   // add our notification request
+                                   UNUserNotificationCenter.current().add(request)
                                 }
                              }
                           }
                     } else {
                        if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
-                          self.getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { issue in
+                          self.getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl, installedappname: installedApp.name) { issue in
                              DispatchQueue.main.async {
                                 if let issues = issue {
                                    if issues == "invalidurl" {
@@ -1448,10 +1460,24 @@ private extension MyAppsViewController
                                       toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    } else {
-                                      // let toastView = ToastView(error: NSLocalizedString(issues, comment: ""))
-                                      // toastView.show(in: self)
+                                      let toastView = ToastView(error: OperationError.SideJITIssue(error: issues))
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    }
+                                } else {
+                                   let content = UNMutableNotificationContent()
+                                   content.title = "JIT Successfully Enabled"
+                                   content.subtitle = "JIT Enabled For \(installedApp.name)"
+                                   content.sound = UNNotificationSound.default
+                                   
+                                   // show this notification five seconds from now
+                                   let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                                   
+                                   // choose a random identifier
+                                   let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
+                                   
+                                   // add our notification request
+                                   UNUserNotificationCenter.current().add(request)
                                 }
                              }
                           }
@@ -1519,7 +1545,7 @@ private extension MyAppsViewController
     }
     
     
-   func getrequest(from installedApp: String, IP ipadress: String, completion: @escaping (String?) -> Void) {
+   func getrequest(from installedApp: String, IP ipadress: String, installedappname: String, completion: @escaping (String?) -> Void) {
             var serverUrl = ipadress ?? ""
             let serverUdid: String = fetch_udid()?.toString() ?? ""
             let appname = installedApp
@@ -1543,21 +1569,8 @@ private extension MyAppsViewController
 
            if let data = data {
               if let dataString = String(data: data, encoding: .utf8) {
-                 datastrings
-                 if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedApp)'!" {
-                    let content = UNMutableNotificationContent()
-                    content.title = "JIT Successfully Enabled"
-                    content.subtitle = "JIT Enabled For \(installedApp)"
-                    content.sound = UNNotificationSound.default
-                    
-                    // show this notification five seconds from now
-                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-                    
-                    // choose a random identifier
-                    let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
-                    
-                    // add our notification request
-                    UNUserNotificationCenter.current().add(request)
+                 if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedappname)'!" {
+                    completion(nil)
                  } else {
                     datastrings = dataString
                     return
@@ -1577,6 +1590,8 @@ private extension MyAppsViewController
                      UNUserNotificationCenter.current().add(request)
                      */
                  }
+              } else {
+                 datastrings = "Unable to Extract Text from SideJITServer"
               }
            }
         }.resume()
