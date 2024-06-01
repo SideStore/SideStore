@@ -698,7 +698,7 @@ extension AppManager
                let SideJITON = UserDefaults.standard.sidejitenable
                if SideJITON {
                   if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                     getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { result in
+                     getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { result in
                          switch result {
                          case .failure(let error):
                              switch error {
@@ -719,7 +719,7 @@ extension AppManager
 
                   } else {
                      if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
-                        getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { result in
+                        getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl, installedappname: installedApp.name) { result in
                            switch result {
                            case .failure(let error):
                                switch error {
@@ -757,7 +757,7 @@ extension AppManager
     }
    
     
-   func getrequest(from installedApp: String, IP ipadress: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
+   func getrequest(from installedApp: String, IP ipadress: String, installedappname: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
             var serverUrl = ipadress ?? ""
             let serverUdid: String = fetch_udid()?.toString() ?? ""
             let appname = installedApp

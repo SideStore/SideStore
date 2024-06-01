@@ -49,9 +49,9 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                    if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080")
+                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name)
                    } else {
-                       getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "")
+                       getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "", installedappname: installedApp.name)
                   }
                 }
                 return
@@ -74,7 +74,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                 return nil
             }
         
-            func getrequest(from installedApp: String, IP ipadress: String) -> String? {
+            func getrequest(from installedApp: String, IP ipadress: String, installedappname: String) -> String? {
                     let serverUrl = ipadress ?? ""
                     let serverUdid: String = fetch_udid()?.toString() ?? ""
                     let appname = installedApp
