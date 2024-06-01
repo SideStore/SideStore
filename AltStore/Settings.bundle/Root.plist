@@ -94,14 +94,6 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Deprecated</string>
-			<key>FooterText</key>
-			<string>Only use this if you have an older version of SideJITServer and you know what your doing.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 			<key>Title</key>
 			<string>SideJITServer IP</string>
