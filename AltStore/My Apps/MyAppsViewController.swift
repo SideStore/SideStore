@@ -1402,6 +1402,8 @@ private extension MyAppsViewController
            let sideJITenabled = UserDefaults.standard.sidejitenable
            
             if sideJITenabled {
+               let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
+               toastView.show(in: self)
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
@@ -1576,7 +1578,7 @@ private extension MyAppsViewController
               }
            }
         }.resume()
-       completion(nil)
+        completion(nil)
         return
     }
 }
