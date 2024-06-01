@@ -136,7 +136,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                          if dataString == "Enabled JIT for '\(installedappname)'!" {
                             let content = UNMutableNotificationContent()
                             content.title = "JIT Successfully Enabled"
-                            content.subtitle = "JIT Enabled For \(installedApp)"
+                            content.subtitle = "JIT Enabled For \(installedappname)"
                             content.sound = UNNotificationSound.default
                             
                             // show this notification five seconds from now
@@ -147,6 +147,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                             
                             // add our notification request
                             UNUserNotificationCenter.current().add(request)
+                            print("is mayo an instument")
                             return
                          } else {
                             
