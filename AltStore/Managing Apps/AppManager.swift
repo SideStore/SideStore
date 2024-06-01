@@ -693,59 +693,7 @@ extension AppManager
             {
                 var installedApp: InstalledApp?
             }
-        
-            /*
-            if #available(iOS 17, *) {
-               let SideJITON = UserDefaults.standard.sidejitenable
-               if SideJITON {
-                  if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                     getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { result in
-                         switch result {
-                         case .failure(let error):
-                             switch error {
-                             case .invalidURL:
-                                 completionHandler(.failure(OperationError.unabletoconnectSideJIT))
-                             case .errorConnecting:
-                                 completionHandler(.failure(OperationError.unabletoconnectSideJIT))
-                             case .deviceNotFound:
-                                 completionHandler(.failure(OperationError.unabletoconSideJITDevice))
-                             case .other(let message):
-                                 completionHandler(.failure(OperationError.SideJITIssue(error: message)))
-                                 // handle other errors
-                             }
-                         case .success():
-                            print("it worked les goooo")
-                         }
-                     }
-
-                  } else {
-                     if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
-                        getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl, installedappname: installedApp.name) { result in
-                           switch result {
-                           case .failure(let error):
-                               switch error {
-                               case .invalidURL:
-                                   completionHandler(.failure(OperationError.unabletoconnectSideJIT))
-                               case .errorConnecting:
-                                   completionHandler(.failure(OperationError.unabletoconnectSideJIT))
-                               case .deviceNotFound:
-                                   completionHandler(.failure(OperationError.unabletoconSideJITDevice))
-                               case .other(let message):
-                                   print(message)
-                                  completionHandler(.failure(OperationError.SideJITIssue(error: message)))
-                                   // handle other errors
-                               }
-                           case .success():
-                              print("it worked les goooo")
-                           }
-                       }
-                     }
-                  }
-               }
-               return
-            }
-            */
-       
+      
             let context = Context()
             context.installedApp = installedApp
             
