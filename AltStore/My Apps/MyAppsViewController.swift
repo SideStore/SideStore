@@ -1402,34 +1402,34 @@ private extension MyAppsViewController
            let sideJITenabled = UserDefaults.standard.sidejitenable
            
             if sideJITenabled {
-               let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
-               toastView.show(in: self)
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                       DispatchQueue.main.async {
                           self.getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
-                             if let issues = issue {
-                                if issues == "invalidurl" {
-                                   let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
-                                   toastView.show(in: self)
-                                   return
-                                } else if issues == "errorconnecting" {
-                                   let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
-                                   toastView.show(in: self)
-                                   return
-                                } else if issues == "Could not find device!" {
-                                   let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
-                                   toastView.show(in: self)
-                                   return
+                             DispatchQueue.main.async {
+                                if let issues = issue {
+                                   if issues == "invalidurl" {
+                                      let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
+                                      return
+                                   } else if issues == "errorconnecting" {
+                                      let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
+                                      return
+                                   } else if issues == "Could not find device!" {
+                                      let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
+                                      return
+                                   } else {
+                                      // let toastView = ToastView(error:)
+                                      // toastView.show(in: self)
+                                      return
+                                   }
                                 } else {
-                                   // let toastView = ToastView(error:)
-                                   // toastView.show(in: self)
-                                   return
+                                   
                                 }
                              }
                           }
-                       }
                     } else {
                        if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
                           DispatchQueue.main.async {
@@ -1437,15 +1437,15 @@ private extension MyAppsViewController
                                 if let issues = issue {
                                    if issues == "invalidurl" {
                                       let toastView = ToastView(error: OperationError.wrongIP)
-                                      toastView.show(in: self)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    } else if issues == "errorconnecting" {
                                       let toastView = ToastView(error: OperationError.unabletoconnectSideJIT)
-                                      toastView.show(in: self)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    } else if issues == "Could not find device!" {
                                       let toastView = ToastView(error: OperationError.unabletoconSideJITDevice)
-                                      toastView.show(in: self)
+                                      toastView.show(in: self.navigationController?.view ?? self.view)
                                       return
                                    } else {
                                       // let toastView = ToastView(error: NSLocalizedString(issues, comment: ""))
@@ -1524,6 +1524,7 @@ private extension MyAppsViewController
             let serverUdid: String = fetch_udid()?.toString() ?? ""
             let appname = installedApp
             let serveradress2 = serverUdid + "/" + appname
+            var datastrings = ""
         
         
             var combinedString = "\(serverUrl)" + "/" + serveradress2 + "/"
@@ -1539,9 +1540,10 @@ private extension MyAppsViewController
                 completion("errorconnecting")
                 return
             }
-            
+
            if let data = data {
               if let dataString = String(data: data, encoding: .utf8) {
+                 datastrings
                  if let dataString2 = String(data: data, encoding: .utf8), dataString == "Enabled JIT for '\(installedApp)'!" {
                     let content = UNMutableNotificationContent()
                     content.title = "JIT Successfully Enabled"
@@ -1557,7 +1559,7 @@ private extension MyAppsViewController
                     // add our notification request
                     UNUserNotificationCenter.current().add(request)
                  } else {
-                    completion(dataString)
+                    datastrings = dataString
                     return
                     /*
                      let content = UNMutableNotificationContent()
@@ -1578,7 +1580,9 @@ private extension MyAppsViewController
               }
            }
         }.resume()
-        completion(nil)
+      if !datastrings.isEmpty {
+         completion(datastrings)
+      }
         return
     }
 }
