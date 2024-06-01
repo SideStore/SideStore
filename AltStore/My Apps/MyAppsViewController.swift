@@ -1405,7 +1405,7 @@ private extension MyAppsViewController
                 if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
                     print("\(bundleIdentifier)")
                     if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                          self.getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
+                          getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080") { issue in
                              DispatchQueue.main.async {
                                 if let issues = issue {
                                    if issues == "invalidurl" {
@@ -1432,8 +1432,8 @@ private extension MyAppsViewController
                           }
                     } else {
                        if let sidejitserverurl = UserDefaults.standard.textInputSideJITServerurl {
-                          DispatchQueue.main.async {
-                             self.getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { issue in
+                          self.getrequest(from: installedApp.resignedBundleIdentifier, IP: sidejitserverurl) { issue in
+                             DispatchQueue.main.async {
                                 if let issues = issue {
                                    if issues == "invalidurl" {
                                       let toastView = ToastView(error: OperationError.wrongIP)
