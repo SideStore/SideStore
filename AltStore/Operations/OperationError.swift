@@ -72,7 +72,7 @@ enum OperationError: LocalizedError
         case .provisioningError(let result, let message): return String(format: NSLocalizedString("An error occurred when provisioning: %@%@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), result, message != nil ? (" (" + message! + ")") : "")
         case .anisetteV3Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), message)
         case .cacheClearError(let errors): return String(format: NSLocalizedString("An error occurred while clearing cache: %@", comment: ""), errors.joined(separator: "\n"))
-        case .SideJITIssue(let errors): return NSLocalizedString("SideJITServer Error: \(errors)", comment: "")
+        case .SideJITIssue(let errors): return NSLocalizedString("SideJITServer Error: =\(errors)", comment: "")
         }
     }
     

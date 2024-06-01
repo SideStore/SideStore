@@ -46,8 +46,6 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
         if #available(iOS 17, *) {
             let sideJITenabled = UserDefaults.standard.sidejitenable
             if sideJITenabled {
-                if let bundleIdentifier = (getBundleIdentifier(from: "\(installedApp)")) {
-                    print("\(bundleIdentifier)")
                    if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
                       getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { result in
                           switch result {
@@ -87,7 +85,6 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                              }
                          case .success():
                             self.finish(.success(()))
-                         }
                      }
                   }
                 }
@@ -95,20 +92,6 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
             } else {
                 let toastView = ToastView(error: OperationError.tooNewError)
                 print("beans")
-            }
-            
-            func getBundleIdentifier(from installedApp: String) -> String? {
-                // Get the bundle ID
-                let pattern = "BundleIdentifier = \"(.*?)\""
-                let regex = try? NSRegularExpression(pattern: pattern)
-                let range = NSRange(location: 0, length: installedApp.utf16.count)
-                if let match = regex?.firstMatch(in: installedApp, options: [], range: range) {
-                    let range = match.range(at: 1)
-                    if let swiftRange = Range(range, in: installedApp) {
-                        return String(installedApp[swiftRange])
-                    }
-                }
-                return nil
             }
         
            func getrequest(from installedApp: String, IP ipadress: String, installedappname: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
