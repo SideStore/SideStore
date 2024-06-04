@@ -1350,16 +1350,17 @@ private extension MyAppsViewController
     @available(iOS 14, *)
     func enableJIT(for installedApp: InstalledApp)
     {
-        if #available(iOS 17, *) {
+        if #available(iOS 17, *), !UserDefaults.standard.sidejitenable {
             let toastView = ToastView(error: OperationError.tooNewError)
             toastView.show(in: self)
             return
         }
-        if !minimuxer.ready() {
+        if #unavailable(iOS 17), !minimuxer.ready() {
             let toastView = ToastView(error: MinimuxerError.NoConnection)
             toastView.show(in: self)
             return
         }
+        
         AppManager.shared.enableJIT(for: installedApp) { result in
             DispatchQueue.main.async {
                 switch result
