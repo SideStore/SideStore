@@ -55,7 +55,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
             let sideJITenabled = UserDefaults.standard.sidejitenable
             if sideJITenabled {
                    if UserDefaults.standard.textInputSideJITServerurl?.isEmpty != nil {
-                      getrequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedappname: installedApp.name) { result in
+                       getRequest(from: installedApp.resignedBundleIdentifier, IP: "http://sidejitserver._http._tcp.local:8080", installedAppName: installedApp.name) { result in
                           switch result {
                           case .failure(let error):
                              switch error {
@@ -76,7 +76,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                           }
                       }
                    } else {
-                      getrequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "", installedappname: installedApp.name) { result in
+                       getRequest(from: installedApp.resignedBundleIdentifier, IP: UserDefaults.standard.textInputSideJITServerurl ?? "", installedAppName: installedApp.name) { result in
                          switch result {
                          case .failure(let error):
                              switch error {
@@ -98,81 +98,47 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                   }
                 }
                 return
-            } else {
-                let toastView = ToastView(error: OperationError.tooNewError)
-                print("beans")
             }
         
-            func getrequest(from installedApp: String, IP ipadress: String, installedappname: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
-                guard let serverUdid: String = fetch_udid()?.toString() else {
+            func getRequest(from installedApp: String, IP ipAddress: String, installedAppName: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
+                guard let serverUdid = fetch_udid()?.toString() else {
                     print("Invalid UDID")
-                    completion(.failure(.other("Failed to get UDID Please Reset your pairing file")))
+                    completion(.failure(.other("Failed to get UDID. Please reset your pairing file.")))
                     return
                 }
-                
-                let appid = installedApp
-                let serveradress2 = serverUdid + "/" + appid
-                var combinedString = "\(ipadress)" + "/" + serveradress2 + "/"
-            
-                if ipadress.hasSuffix("/") {
-                    var combinedString = "\(ipadress)" + serveradress2 + "/"
-                }
-                
-                guard let url = URL(string: combinedString) else {
-                    print("Invalid URL: " + combinedString)
+
+                let serverAddress = "\(serverUdid)/\(installedApp)"
+                let combinedString = ipAddress.hasSuffix("/") ? "\(ipAddress)\(serverAddress)/" : "\(ipAddress)/\(serverAddress)/"
+
+                guard let url = URL(string: combinedString), url.absoluteString.hasPrefix("http"), !url.absoluteString.contains("\\s") else {
+                    print("Invalid URL: \(combinedString)")
                     completion(.failure(.invalidURL))
                     return
                 }
-                
-                if !url.absoluteString.hasPrefix("http") {
-                    print("Invalid URL: " + combinedString)
-                    completion(.failure(.invalidURL))
-                    return
-                }
-                
-                
-                if url.absoluteString.contains("\\s") {
-                    print("Invalid URL: " + combinedString)
-                    completion(.failure(.invalidURL))
-                    return
-                }
-                
-                
+
                 URLSession.shared.dataTask(with: url) { data, _, error in
                     if let error = error {
                         print("Error fetching data: \(error.localizedDescription)")
                         completion(.failure(.errorConnecting))
                         return
                     }
-                    
-                    if let data = data {
-                        if let dataString = String(data: data, encoding: .utf8) {
-                            if dataString == "Enabled JIT for '\(installedappname)'!" {
-                                let content = UNMutableNotificationContent()
-                                content.title = "JIT Successfully Enabled"
-                                content.subtitle = "JIT Enabled For \(installedappname)"
-                                content.sound = UNNotificationSound.default
-                                
-                                // show this notification five seconds from now
-                                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-                                
-                                // choose a random identifier
-                                let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
-                                
-                                // add our notification request
-                                UNUserNotificationCenter.current().add(request)
-                                print("is mayo an instument")
-                                return
-                            } else {
-                                switch dataString {
-                                case "Could not find device!":
-                                    completion(.failure(.deviceNotFound))
-                                default:
-                                    completion(.failure(.other(dataString)))
-                                }
-                                return
-                            }
-                        }
+
+                    guard let data = data, let dataString = String(data: data, encoding: .utf8) else { return }
+
+                    if dataString == "Enabled JIT for '\(installedAppName)'!" {
+                        let content = UNMutableNotificationContent()
+                        content.title = "JIT Successfully Enabled"
+                        content.subtitle = "JIT Enabled For \(installedAppName)"
+                        content.sound = UNNotificationSound.default
+
+                        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                        let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
+
+                        UNUserNotificationCenter.current().add(request)
+                        print("is mayo an instrument")
+                    } else {
+                        let errorType: SideJITServerErrorType = dataString == "Could not find device!" ? .deviceNotFound : .other(dataString)
+                        completion(.failure(errorType))
                     }
                 }.resume()
             }
