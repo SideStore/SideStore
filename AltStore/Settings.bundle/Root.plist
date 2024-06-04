@@ -72,6 +72,40 @@
 			<key>KeyboardType</key>
 			<string>URL</string>
 		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>SideJITServer</string>
+			<key>FooterText</key>
+			<string>If you disable the toggle then the app will not be able to access and use SideJITServer on iOS 17+ &quot;SideJITServer IP&quot; is not needed but is reccomended for stability.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Enable SideJIT Support</string>
+			<key>Key</key>
+			<string>sidejitenable</string>
+			<key>DefaultValue</key>
+			<false/>
+			<key>FooterText</key>
+			<string>chicken</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+			<key>Title</key>
+			<string>SideJITServer IP</string>
+			<key>Key</key>
+			<string>textInputSideJITServerurl</string>
+			<key>AutocapitalizationType</key>
+			<string>None</string>
+			<key>AutocorrectionType</key>
+			<string>No</string>
+			<key>KeyboardType</key>
+			<string>URL</string>
+		</dict>
 	</array>
 </dict>
 </plist>

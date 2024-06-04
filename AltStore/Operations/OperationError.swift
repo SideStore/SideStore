@@ -15,6 +15,11 @@ enum OperationError: LocalizedError
     static let domain = OperationError.unknown._domain
     
     case unknown
+    case unabletoconnectSideJIT
+    case unabletoconSideJITDevice
+    case wrongIP
+    case SideJITIssue(error: String)
+    case refreshsidejit
     case unknownResult
     case cancelled
     case timedOut
@@ -58,11 +63,16 @@ enum OperationError: LocalizedError
         case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be found.", comment: "")
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs.", comment: "")
         case .noWiFi: return NSLocalizedString("You do not appear to be connected to WiFi!\nSideStore will never be able to install or refresh applications without WiFi.", comment: "")
+        case .unabletoconnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer Please check that you are on the Same Wi-Fi and your Firewall has been set correctly", comment: "")
+        case .unabletoconSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice Please make sure you have paired your Device by doing 'SideJITServer -y' or try Refreshing SideJITServer from Settings", comment: "")
+        case .wrongIP: return NSLocalizedString("Incorrect SideJITServer IP Please make sure that you are on the Samw Wifi as SideJITServer", comment: "")
+        case .refreshsidejit: return NSLocalizedString("Unable to find App Please try Refreshing SideJITServer from Settings", comment: "")
         case .tooNewError: return NSLocalizedString("iOS 17 has changed how JIT is enabled therefore SideStore cannot enable it at this time, sorry for any inconvenience.\nWe will let everyone know once we have a solution!", comment: "")
         case .anisetteV1Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: ""), message)
         case .provisioningError(let result, let message): return String(format: NSLocalizedString("An error occurred when provisioning: %@%@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), result, message != nil ? (" (" + message! + ")") : "")
         case .anisetteV3Error(let message): return String(format: NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: ""), message)
         case .cacheClearError(let errors): return String(format: NSLocalizedString("An error occurred while clearing cache: %@", comment: ""), errors.joined(separator: "\n"))
+        case .SideJITIssue(let errors): return NSLocalizedString("SideJITServer Error: \(errors)", comment: "")
         }
     }
     
