@@ -67,6 +67,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         func askfornetwork() {
+        
             // Create a network operation at launch with a dummy address
             let url = URL(string: "http://192.0.2.0")! // This is a reserved IP address for documentation and is not likely to respond.
             let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
