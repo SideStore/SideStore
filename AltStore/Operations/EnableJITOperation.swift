@@ -53,11 +53,11 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
         guard let installedApp = self.context.installedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
         if #available(iOS 17, *) {
             let sideJITenabled = UserDefaults.standard.sidejitenable
-            let sideJITip = UserDefaults.standard.textInputSideJITServerurl ?? ""
+            let SideJITIP = UserDefaults.standard.textInputSideJITServerurl ?? ""
             
             if sideJITenabled {
                 installedApp.managedObjectContext?.perform {
-                    getRequest(from: installedApp.resignedBundleIdentifier, IP: sideJITip, installedAppName: installedApp.name) { result in
+                    EnableJITSideJITServer(serverurl: SideJITIP, installedapp: installedApp) { result in
                         switch result {
                         case .failure(let error):
                             switch error {
@@ -100,48 +100,46 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
     }
 }
 
-func getRequest(from installedApp: String, IP ipAddress: String, installedAppName: String, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
-    guard let serverUdid = fetch_udid()?.toString() else {
-        completion(.failure(.other("Failed to get UDID. Please reset your pairing file.")))
+func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
+    guard let udid = fetch_udid()?.toString() else {
+        completion(.failure(.other("Unable to get UDID")))
         return
     }
-
-    let serverAddress = "\(serverUdid)/\(installedApp)"
-    var combinedString = ipAddress.hasSuffix("/") ? "\(ipAddress)\(serverAddress)/" : "\(ipAddress)/\(serverAddress)/"
-
-    if ipAddress.isEmpty {
-      combinedString = "http://sidejitserver._http._tcp.local:8080/\(serverAddress)/"
-    }
     
-    guard let url = URL(string: combinedString) else {
+    if !serverurl.hasPrefix("http") {
         completion(.failure(.invalidURL))
         return
     }
+    
+    let fullurl = serverurl + "/\(udid)/" + installedapp.resignedBundleIdentifier
+    
+    let url = URL(string: fullurl)!
+    
+    let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+        if let error = error {
+            completion(.failure(.errorConnecting))
+            return
+        }
+        
+        guard let data = data, let datastring = String(data: data, encoding: .utf8) else { return }
+        
+        if datastring == "Enabled JIT for '\(installedapp.name)'" {
+            let content = UNMutableNotificationContent()
+            content.title = "JIT Successfully Enabled"
+            content.subtitle = "JIT Enabled For \(installedapp.name)"
+            content.sound = UNNotificationSound.default
 
-    let taskQueue = DispatchQueue(label: "com.SideStore.SideJITServer", attributes: .concurrent)
-    taskQueue.async {
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            if let error = error {
-                completion(.failure(.errorConnecting))
-                return
-            }
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+            let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
 
-            guard let data = data, let dataString = String(data: data, encoding: .utf8) else { return }
-
-            if dataString == "Enabled JIT for '\(installedAppName)'!" {
-                let content = UNMutableNotificationContent()
-                content.title = "JIT Successfully Enabled"
-                content.subtitle = "JIT Enabled For \(installedAppName)"
-                content.sound = UNNotificationSound.default
-
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-                let request = UNNotificationRequest(identifier: "EnabledJIT", content: content, trigger: nil)
-
-                UNUserNotificationCenter.current().add(request)
-            } else {
-                let errorType: SideJITServerErrorType = dataString == "Could not find device!" ? .deviceNotFound : .other(dataString)
-                completion(.failure(errorType))
-            }
-        }.resume()
+            UNUserNotificationCenter.current().add(request)
+            completion(.success(()))
+        } else {
+            let errorType: SideJITServerErrorType = datastring == "Could not find device!" ? .deviceNotFound : .other(datastring)
+            completion(.failure(errorType))
+        }
+        print(String(data: data, encoding: .utf8)!)
     }
+    
+    task.resume()
 }
