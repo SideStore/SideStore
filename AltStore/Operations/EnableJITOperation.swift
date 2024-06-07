@@ -70,7 +70,6 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                             case .other(let message):
                                 print(message)
                                 self.finish(.failure(OperationError.SideJITIssue(error: message)))
-                                // handle other errors
                             }
                         case .success():
                             self.finish(.success(()))
@@ -100,6 +99,7 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
     }
 }
 
+@available(iOS 17, *)
 func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, completion: @escaping (Result<Void, SideJITServerErrorType>) -> Void) {
     guard let udid = fetch_udid()?.toString() else {
         completion(.failure(.other("Unable to get UDID")))
@@ -144,7 +144,6 @@ func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, compl
             let errorType: SideJITServerErrorType = datastring == "Could not find device!" ? .deviceNotFound : .other(datastring)
             completion(.failure(errorType))
         }
-        // print(String(data: data, encoding: .utf8)!)
     }
     
     task.resume()
