@@ -596,17 +596,14 @@ extension SettingsViewController
                    alertController.addAction(UIAlertAction(title: NSLocalizedString("Refresh", comment: ""), style: .destructive){ _ in
                       if UserDefaults.standard.sidejitenable {
                          var SJSURL = ""
-                         if UserDefaults.standard.textInputSideJITServerurl ?? "" == "" {
+                          if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
                             SJSURL = "http://sidejitserver._http._tcp.local:8080"
                          } else {
                             SJSURL = UserDefaults.standard.textInputSideJITServerurl ?? ""
                          }  // replace with your URL
-                         let combinedString2 = SJSURL + "/re/"
-
-                         guard let url = URL(string: combinedString2) else {
-                            print("Invalid URL")
-                            return
-                         }
+                        
+                          
+                         let url = URL(string: SJSURL + "/re/")!
 
                          let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
                             if let error = error {

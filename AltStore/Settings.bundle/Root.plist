@@ -78,7 +78,7 @@
 			<key>Title</key>
 			<string>SideJITServer</string>
 			<key>FooterText</key>
-			<string>If you disable the toggle then the app will not be able to access and use SideJITServer on iOS 17+ &quot;SideJITServer IP&quot; is not needed but is reccomended for stability.</string>
+			<string>If you disable the toggle then the app will not be able to access and use SideJITServer on iOS 17+. &quot;SideJITServer IP&quot; is not needed but is reccomended for stability.</string>
 		</dict>
 		<dict>
 			<key>Type</key>

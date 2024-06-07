@@ -106,12 +106,18 @@ func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, compl
         return
     }
     
-    if !serverurl.hasPrefix("http") {
+    var SJSURL = serverurl
+    
+     if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
+      SJSURL = "http://sidejitserver._http._tcp.local:8080"
+     }
+    
+    if !SJSURL.hasPrefix("http") {
         completion(.failure(.invalidURL))
         return
     }
     
-    let fullurl = serverurl + "/\(udid)/" + installedapp.resignedBundleIdentifier
+    let fullurl = SJSURL + "/\(udid)/" + installedapp.resignedBundleIdentifier
     
     let url = URL(string: fullurl)!
     
@@ -138,7 +144,7 @@ func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, compl
             let errorType: SideJITServerErrorType = datastring == "Could not find device!" ? .deviceNotFound : .other(datastring)
             completion(.failure(errorType))
         }
-        print(String(data: data, encoding: .utf8)!)
+        // print(String(data: data, encoding: .utf8)!)
     }
     
     task.resume()

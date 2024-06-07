@@ -67,9 +67,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         func askfornetwork() {
-        
+            let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
+            
+            var SJSURL = address
+            
+            if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
+              SJSURL = "http://sidejitserver._http._tcp.local:8080"
+            }
+            
             // Create a network operation at launch with a dummy address
-            let url = URL(string: "http://192.0.2.0")! // This is a reserved IP address for documentation and is not likely to respond.
+            let url = URL(string: "\(SJSURL)/re/")! // This is a reserved IP address for documentation and is not likely to respond.
             let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
                 print(data)
             }
