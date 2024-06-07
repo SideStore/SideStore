@@ -54,9 +54,9 @@ extension SettingsViewController
         case sendFeedback
         case refreshAttempts
         case errorLog
+        case refreshSideJITServer
         case clearCache
         case resetPairingFile
-        case refreshSideJITServer
         case resetAdiPb
         case advancedSettings
     
@@ -584,8 +584,6 @@ extension SettingsViewController
                     toastView.show(in: self)
                 }
                 
-            case .clearCache: self.clearCache()
-                
             case .refreshSideJITServer:
                 if #available(iOS 17, *) {
                    let alertController = UIAlertController(
@@ -641,6 +639,9 @@ extension SettingsViewController
                    self.tableView.deselectRow(at: indexPath, animated: true)
                 }
 
+                
+            case .clearCache: self.clearCache()
+                
             case .resetPairingFile:
                 let filename = "ALTPairingFile.mobiledevicepairing"
                 let fm = FileManager.default
