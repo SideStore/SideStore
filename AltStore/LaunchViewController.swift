@@ -49,6 +49,43 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        if #available(iOS 17, *), !UserDefaults.standard.sidejitenable {
+            DispatchQueue.global().async {
+                self.isSideJITServerDetected() { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success():
+                            let dialogMessage = UIAlertController(title: "SideJITServer Detected", message: "Would you like to enable SideJITServer", preferredStyle: .alert)
+                            
+                            // Create OK button with action handler
+                            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                                UserDefaults.standard.sidejitenable = true
+                            })
+                            
+                            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+                            //Add OK button to a dialog message
+                            dialogMessage.addAction(ok)
+                            dialogMessage.addAction(cancel)
+                            
+                            // Present Alert to
+                            self.present(dialogMessage, animated: true, completion: nil)
+                        case .failure(_):
+                            print("Cannot find sideJITServer")
+                        }
+                    }
+                }
+            }
+        }
+        
+        if #available(iOS 17, *), UserDefaults.standard.sidejitenable {
+            DispatchQueue.global().async {
+                self.askfornetwork()
+            }
+            print("SideJITServer Enabled")
+        }
+        
+        
+        
         #if !targetEnvironment(simulator)
         start_em_proxy(bind_addr: Consts.Proxy.serverURL)
         
@@ -58,6 +95,46 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         }
         start_minimuxer_threads(pf)
         #endif
+    }
+    
+    func askfornetwork() {
+        let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
+        
+        var SJSURL = address
+        
+        if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
+          SJSURL = "http://sidejitserver._http._tcp.local:8080"
+        }
+        
+        // Create a network operation at launch to Refresh SideJITServer
+        let url = URL(string: "\(SJSURL)/re/")!
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            print(data)
+        }
+        task.resume()
+    }
+    
+    func isSideJITServerDetected(completion: @escaping (Result<Void, Error>) -> Void) {
+        let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
+        
+        var SJSURL = address
+        
+        if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
+          SJSURL = "http://sidejitserver._http._tcp.local:8080"
+        }
+        
+        // Create a network operation at launch to Refresh SideJITServer
+        let url = URL(string: SJSURL)!
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("No SideJITServer on Network")
+                completion(.failure(error))
+                return
+            }
+            completion(.success(()))
+        }
+        task.resume()
+        return
     }
     
     func fetchPairingFile() -> String? {

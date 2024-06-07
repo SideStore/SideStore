@@ -61,27 +61,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Register default settings before doing anything else.
         UserDefaults.registerDefaults()
         
-        if #available(iOS 17, *), UserDefaults.standard.sidejitenable {
-            askfornetwork()
-            print("SideJITServer Enabled")
-        }
-        
-        func askfornetwork() {
-            let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
-            
-            var SJSURL = address
-            
-            if (UserDefaults.standard.textInputSideJITServerurl ?? "").isEmpty {
-              SJSURL = "http://sidejitserver._http._tcp.local:8080"
-            }
-            
-            // Create a network operation at launch to Refresh SideJITServer
-            let url = URL(string: "\(SJSURL)/re/")!
-            let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-                print(data)
-            }
-            task.resume()
-        }
         
         
         DatabaseManager.shared.start { (error) in
