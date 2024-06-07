@@ -129,7 +129,7 @@ func EnableJITSideJITServer(serverurl: String, installedapp: InstalledApp, compl
         
         guard let data = data, let datastring = String(data: data, encoding: .utf8) else { return }
         
-        if datastring == "Enabled JIT for '\(installedapp.name)'" {
+        if datastring == "Enabled JIT for '\(installedapp.name)'!" {
             let content = UNMutableNotificationContent()
             content.title = "JIT Successfully Enabled"
             content.subtitle = "JIT Enabled For \(installedapp.name)"
