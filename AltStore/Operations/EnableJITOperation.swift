@@ -68,8 +68,15 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                             case .deviceNotFound:
                                 self.finish(.failure(OperationError.unabletoconSideJITDevice))
                             case .other(let message):
-                                print(message)
-                                self.finish(.failure(OperationError.SideJITIssue(error: message)))
+                                if let startRange = message.range(of: "<p>"),
+                                   let endRange = message.range(of: "</p>", range: startRange.upperBound..<message.endIndex) {
+                                    let pContent = message[startRange.upperBound..<endRange.lowerBound]
+                                    self.finish(.failure(OperationError.SideJITIssue(error: String(pContent))))
+                                    print(message + " + " + String(pContent))
+                                } else {
+                                    print(message)
+                                    self.finish(.failure(OperationError.SideJITIssue(error: message)))
+                                }
                             }
                         case .success():
                             self.finish(.success(()))
