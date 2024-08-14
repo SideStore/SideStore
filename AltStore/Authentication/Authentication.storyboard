@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,8 +13,8 @@
         <scene sceneID="lNR-II-WoW">
             <objects>
                 <navigationController storyboardIdentifier="navigationController" id="ZTo-53-dSL" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" largeTitles="YES" id="Aej-RF-PfV" customClass="NavigationBar" customModule="AltStore" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" largeTitles="YES" id="Aej-RF-PfV" customClass="NavigationBar" customModule="SideStore" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" name="SettingsBackground"/>
@@ -36,19 +36,19 @@
         <!--Authentication View Controller-->
         <scene sceneID="OCd-xc-Ms7">
             <objects>
-                <viewController storyboardIdentifier="authenticationViewController" id="yO1-iT-7NP" customClass="AuthenticationViewController" customModule="AltStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="authenticationViewController" id="yO1-iT-7NP" customClass="AuthenticationViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mjy-4S-hyH">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oyW-Fd-ojD" userLabel="Sizing View">
-                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" indicatorStyle="white" keyboardDismissMode="onDrag" translatesAutoresizingMaskIntoConstraints="NO" id="WXx-hX-AXv">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wp-qG-f0Z">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="YmX-7v-pxh">
                                                 <rect key="frame" x="16" y="6" width="343" height="359.5"/>
@@ -57,7 +57,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="343" height="67.5"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to SideStore." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="EI2-V3-zQZ">
-                                                                <rect key="frame" x="0.0" y="0.0" width="332" height="41"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="343" height="41"/>
                                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -179,7 +179,7 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="250" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="DBk-rT-ZE8">
-                                                <rect key="frame" x="16" y="518.5" width="343" height="96.5"/>
+                                                <rect key="frame" x="16" y="498.5" width="343" height="96.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Why do we need this?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p9U-0q-Kn8">
                                                         <rect key="frame" x="0.0" y="0.0" width="343" height="20.5"/>
@@ -198,6 +198,10 @@
                                             </stackView>
                                         </subviews>
                                         <constraints>
+                                            <constraint firstItem="DBk-rT-ZE8" firstAttribute="leading" secondItem="2wp-qG-f0Z" secondAttribute="leadingMargin" id="5AT-nV-ZP9"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="DBk-rT-ZE8" secondAttribute="bottom" id="HgY-oY-8KM"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="DBk-rT-ZE8" secondAttribute="trailing" id="VCf-bW-2K4"/>
+                                            <constraint firstItem="YmX-7v-pxh" firstAttribute="top" secondItem="2wp-qG-f0Z" secondAttribute="top" constant="6" id="iUr-Nd-tkt"/>
                                             <constraint firstItem="DBk-rT-ZE8" firstAttribute="top" relation="greaterThanOrEqual" secondItem="YmX-7v-pxh" secondAttribute="bottom" constant="8" symbolic="YES" id="zTU-eY-DWd"/>
                                         </constraints>
                                     </view>
@@ -215,19 +219,15 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="WXx-hX-AXv" secondAttribute="bottom" id="0jL-Ky-ju6"/>
                             <constraint firstAttribute="leadingMargin" secondItem="YmX-7v-pxh" secondAttribute="leading" id="2PO-lG-dmB"/>
-                            <constraint firstItem="DBk-rT-ZE8" firstAttribute="leading" secondItem="2wp-qG-f0Z" secondAttribute="leadingMargin" id="5AT-nV-ZP9"/>
                             <constraint firstItem="oyW-Fd-ojD" firstAttribute="top" secondItem="zMn-DV-fpy" secondAttribute="top" id="730-db-ukB"/>
-                            <constraint firstItem="2wp-qG-f0Z" firstAttribute="bottomMargin" secondItem="DBk-rT-ZE8" secondAttribute="bottom" id="HgY-oY-8KM"/>
                             <constraint firstItem="zMn-DV-fpy" firstAttribute="trailing" secondItem="oyW-Fd-ojD" secondAttribute="trailing" id="KGE-CN-SWf"/>
                             <constraint firstItem="WXx-hX-AXv" firstAttribute="top" secondItem="mjy-4S-hyH" secondAttribute="top" id="LPQ-bF-ic0"/>
                             <constraint firstItem="zMn-DV-fpy" firstAttribute="trailing" secondItem="WXx-hX-AXv" secondAttribute="trailing" id="MG7-A6-pKp"/>
                             <constraint firstAttribute="trailingMargin" secondItem="YmX-7v-pxh" secondAttribute="trailing" id="O4T-nu-o3e"/>
                             <constraint firstItem="zMn-DV-fpy" firstAttribute="bottom" secondItem="oyW-Fd-ojD" secondAttribute="bottom" id="PuX-ab-cEq"/>
                             <constraint firstItem="oyW-Fd-ojD" firstAttribute="leading" secondItem="zMn-DV-fpy" secondAttribute="leading" id="SzC-gC-Nvi"/>
-                            <constraint firstItem="2wp-qG-f0Z" firstAttribute="trailingMargin" secondItem="DBk-rT-ZE8" secondAttribute="trailing" id="VCf-bW-2K4"/>
                             <constraint firstItem="WXx-hX-AXv" firstAttribute="leading" secondItem="zMn-DV-fpy" secondAttribute="leading" id="d08-zF-5X6"/>
                             <constraint firstItem="2wp-qG-f0Z" firstAttribute="height" secondItem="oyW-Fd-ojD" secondAttribute="height" id="dFN-pw-TWt"/>
-                            <constraint firstItem="YmX-7v-pxh" firstAttribute="top" secondItem="2wp-qG-f0Z" secondAttribute="top" constant="6" id="iUr-Nd-tkt"/>
                             <constraint firstItem="2wp-qG-f0Z" firstAttribute="width" secondItem="oyW-Fd-ojD" secondAttribute="width" id="rYO-GN-0Lk"/>
                         </constraints>
                     </view>
@@ -258,13 +258,13 @@
         <!--How it works-->
         <scene sceneID="dMt-EA-SGy">
             <objects>
-                <viewController storyboardIdentifier="instructionsViewController" hidesBottomBarWhenPushed="YES" id="aFi-fb-W0B" customClass="InstructionsViewController" customModule="AltStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="instructionsViewController" hidesBottomBarWhenPushed="YES" id="aFi-fb-W0B" customClass="InstructionsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" id="Otz-hn-WGS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="bp6-55-IG2">
-                                <rect key="frame" x="0.0" y="44" width="375" height="564"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="544"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="FjP-tm-w7K">
                                         <rect key="frame" x="16" y="35" width="343" height="95.5"/>
@@ -298,7 +298,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="LpI-Jt-SzX">
-                                        <rect key="frame" x="16" y="168" width="343" height="95.5"/>
+                                        <rect key="frame" x="16" y="161" width="343" height="95.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0LW-eE-qHa">
                                                 <rect key="frame" x="0.0" y="0.0" width="59" height="95.5"/>
@@ -310,7 +310,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="dMu-eg-gIO">
-                                                <rect key="frame" x="79" y="17" width="264" height="61.5"/>
+                                                <rect key="frame" x="79" y="17.5" width="264" height="60.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connect to Wi-Fi and VPN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="esj-pD-D4A">
                                                         <rect key="frame" x="0.0" y="0.0" width="264" height="20.5"/>
@@ -319,7 +319,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable SideStore VPN in Wireguard and be able to use Sidestore on the go." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4rk-ge-FSj">
-                                                        <rect key="frame" x="0.0" y="25.5" width="264" height="36"/>
+                                                        <rect key="frame" x="0.0" y="25.5" width="264" height="35"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <color key="textColor" white="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -329,7 +329,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="tfb-ja-9UC">
-                                        <rect key="frame" x="16" y="300.5" width="343" height="95.5"/>
+                                        <rect key="frame" x="16" y="287.5" width="343" height="95.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nVr-El-Csi">
                                                 <rect key="frame" x="0.0" y="0.0" width="59" height="95.5"/>
@@ -341,7 +341,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="z6Y-zi-teL">
-                                                <rect key="frame" x="79" y="16" width="264" height="64"/>
+                                                <rect key="frame" x="79" y="15.5" width="264" height="64"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Download Apps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="JeJ-bk-UCA">
                                                         <rect key="frame" x="0.0" y="0.0" width="264" height="20.5"/>
@@ -360,7 +360,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="X3r-G1-vf2">
-                                        <rect key="frame" x="16" y="433.5" width="343" height="95.5"/>
+                                        <rect key="frame" x="16" y="413.5" width="343" height="95.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i2U-NL-plG">
                                                 <rect key="frame" x="0.0" y="0.0" width="59" height="95.5"/>
@@ -434,7 +434,7 @@
         <!--Refresh AltStore-->
         <scene sceneID="9Vh-dM-OqX">
             <objects>
-                <viewController storyboardIdentifier="refreshAltStoreViewController" id="aoK-yE-UVT" customClass="RefreshAltStoreViewController" customModule="AltStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="refreshAltStoreViewController" id="aoK-yE-UVT" customClass="RefreshAltStoreViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" id="R83-kV-365">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -445,7 +445,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="tDQ-ao-1Jg">
                                 <rect key="frame" x="16" y="570" width="343" height="89"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcg-hT-tDe" customClass="PillButton" customModule="AltStore" customModuleProvider="target">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcg-hT-tDe" customClass="PillButton" customModule="SideStore" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="51"/>
                                         <color key="backgroundColor" name="SettingsHighlighted"/>
                                         <constraints>
@@ -493,12 +493,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Chr-7g-qEw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2967" y="736"/>
+            <point key="canvasLocation" x="3025" y="734"/>
         </scene>
         <!--Select a Team-->
         <scene sceneID="ioQ-WB-CLJ">
             <objects>
-                <viewController storyboardIdentifier="selectTeamViewController" hidesBottomBarWhenPushed="YES" id="kOD-4P-a6L" customClass="SelectTeamViewController" customModule="AltStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="selectTeamViewController" hidesBottomBarWhenPushed="YES" id="kOD-4P-a6L" customClass="SelectTeamViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="fWW-kX-ifH">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -506,11 +506,11 @@
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="separatorColor" white="1" alpha="0.25" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="TeamCell" textLabel="6ip-34-gmM" detailTextLabel="knk-Wf-PKf" style="IBUITableViewCellStyleSubtitle" id="qeQ-eb-2SC" customClass="InsetGroupTableViewCell" customModule="AltStore" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="TeamCell" textLabel="6ip-34-gmM" detailTextLabel="knk-Wf-PKf" style="IBUITableViewCellStyleSubtitle" id="qeQ-eb-2SC" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="375" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qeQ-eb-2SC" id="bT4-Fc-u6I">
-                                    <rect key="frame" x="0.0" y="0.0" width="334" height="60"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="334.5" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Team 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6ip-34-gmM">
@@ -550,20 +550,19 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yH5-jU-aez" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1401" y="734"/>
-
+            <point key="canvasLocation" x="2114" y="734"/>
         </scene>
-</scenes>
-<color key="tintColor" name="Primary"/>
-<resources>
-    <namedColor name="Primary">
-        <color red="0.0040000001899898052" green="0.50199997425079346" blue="0.51800000667572021" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-    </namedColor>
+    </scenes>
+    <color key="tintColor" name="Primary"/>
+    <resources>
+        <namedColor name="Primary">
+            <color red="0.64313725490196083" green="0.019607843137254902" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="SettingsBackground">
-            <color red="0.0039215686274509803" green="0.50196078431372548" blue="0.51764705882352946" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.45098039215686275" green="0.015686274509803921" blue="0.68627450980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="SettingsHighlighted">
-            <color red="0.0080000003799796104" green="0.32199999690055847" blue="0.40400001406669617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.38823529411764707" green="0.011764705882352941" blue="0.58823529411764708" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
