@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 import UserNotifications
 import MobileCoreServices
 import Intents
@@ -43,7 +44,7 @@ final class AppManager
     static let shared = AppManager()
     
     private(set) var updatePatronsResult: Result<Void, Error>?
-    
+        
     private let operationQueue = OperationQueue()
     private let serialOperationQueue = OperationQueue()
 
@@ -1014,7 +1015,7 @@ private extension AppManager
         return group
     }
     
-    func removeAppExtensions(from application: ALTApplication, _ presentingViewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
+    func removeAppExtensions(from application: ALTApplication, extensions: Set<ALTApplication>, _ presentingViewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     {
         guard !application.appExtensions.isEmpty else { return completion(.success(())) }
         
@@ -1029,7 +1030,7 @@ private extension AppManager
             firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to creating 10 App IDs per week.", comment: "")
         }
         
-        let message = firstSentence + " " + NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit?", comment: "")
+        let message = firstSentence + " " + NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit? There are \(extensions.count) Extensions", comment: "")
         
         let alertController = UIAlertController(title: NSLocalizedString("App Contains Extensions", comment: ""), message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { (action) in
@@ -1052,6 +1053,43 @@ private extension AppManager
             {
                 completion(.failure(error))
             }
+        })
+        
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Choose App Extensions", comment: ""), style: .default) { (action) in
+            let popoverContentController = AppExtensionViewHostingController(extensions: extensions) { (selection) in
+                do
+                {
+                    for appExtension in selection
+                    {
+                        print("Deleting extension \(appExtension.bundleIdentifier)")
+                        
+                        try FileManager.default.removeItem(at: appExtension.fileURL)
+                    }
+                    completion(.success(()))
+                }
+                catch
+                {
+                    completion(.failure(error))
+                }
+                return nil
+            }
+            
+            let suiview = popoverContentController.view!
+            suiview.translatesAutoresizingMaskIntoConstraints = false
+            
+            popoverContentController.modalPresentationStyle = .popover
+            
+            if let popoverPresentationController = popoverContentController.popoverPresentationController {
+                popoverPresentationController.sourceView = presentingViewController.view
+                popoverPresentationController.sourceRect = CGRect(x: 50, y: 50, width: 4, height: 4)
+                popoverPresentationController.delegate = popoverContentController
+                
+                DispatchQueue.main.async {
+                    presentingViewController.present(popoverContentController, animated: true)
+                }
+            }
+            
+
         })
         
         DispatchQueue.main.async {
@@ -1140,13 +1178,18 @@ private extension AppManager
                 {
                     throw error
                 }
+
+                guard case .install = appOperation else {
+                    operation.finish()
+                    return
+                }
                 
                 guard let extensions = context.app?.appExtensions else { throw OperationError.invalidParameters }
                 
                 guard let app = context.app, let presentingViewController = context.authenticatedContext.presentingViewController else { throw OperationError.invalidParameters }
                 
                 
-                self?.removeAppExtensions(from: app, presentingViewController) { result in
+                self?.removeAppExtensions(from: app, extensions: extensions, presentingViewController) { result in
                     switch result {
                     case .success(): break
                     case .failure(let error): context.error = error

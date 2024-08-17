@@ -1084,7 +1084,7 @@ private extension MyAppsViewController
             message = NSLocalizedString("This will also erase all backup data for this app.", comment: "")
         }
 
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(.cancel)
         alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: ""), style: .destructive, handler: { (action) in
             AppManager.shared.remove(installedApp) { (result) in
