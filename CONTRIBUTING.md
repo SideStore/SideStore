@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to SideStore! SideStore is a community driven project, and it's made possible by people like you.
 
-By contributing to this Project (SideStore), you agree to the Developer's Certificate of Origin found in [AGREEMENT.md](AGREEMENT.md). Any contributions to this project after the addition of the Developer's Certificate of Origin are subject to its policy.
+By contributing to this Project (SideStore), you agree to the Developer's Certificate of Origin found in [CERTIFICATE-OF-ORIGIN.md](CERTIFICATE-OF-ORIGIN.md). Any contributions to this project after the addition of the Developer's Certificate of Origin are subject to its policy.
 
 There are many ways to contribute to SideStore, so if you aren't a developer, there are still many other ways you can help out:
 
