@@ -29,6 +29,13 @@ class AnisetteViewModel: ObservableObject {
     @Published var source: String = "https://servers.sidestore.io/servers.json"
     @Published var servers: [Server] = []
     
+    init() {
+        // using the custom Anisette list
+        if !UserDefaults.standard.menuAnisetteList.isEmpty {
+            self.source = UserDefaults.standard.menuAnisetteList
+        }
+    }
+    
     func getListOfServers() {
         guard let url = URL(string: source) else { return }
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -55,6 +62,7 @@ struct AnisetteServers: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel: AnisetteViewModel = AnisetteViewModel()
     @State var selected: String? = nil
+    @State private var showingConfirmation = false
     var errorCallback: () -> ()
 
     var body: some View {
@@ -136,9 +144,13 @@ struct AnisetteServers: View {
                         SUIButton(action: {
                             presentationMode.wrappedValue.dismiss()
                         }) {
-                            Text("Back")
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
+                            HStack{
+                                Spacer()
+                                Text("Back")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(PlainButtonStyle())
                         .padding()
@@ -149,26 +161,25 @@ struct AnisetteServers: View {
                         SUIButton(action: {
                             viewModel.getListOfServers()
                         }) {
-                            Text("Refresh Servers")
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
+                            HStack{
+                                Spacer()
+                                Text("Refresh Servers")
+                                    .fontWeight(.semibold)
+                                    .frame(maxWidth: .infinity)
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(PlainButtonStyle())
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 10).fill(Color.accentColor))
                         .foregroundColor(.white)
                         .shadow(color: Color.accentColor.opacity(0.4), radius: 10, x: 0, y: 5)
+                        
                     }
 
                     SUIButton(action: {
-                        #if !DEBUG
-                        if Keychain.shared.adiPb != nil {
-                            Keychain.shared.adiPb = nil
-                        }
-                        #endif
-                        print("Cleared adi.pb from keychain")
-                        errorCallback()
-                        presentationMode.wrappedValue.dismiss()
+                        showingConfirmation = true
                     }) {
                         Text("Reset adi.pb")
                             .fontWeight(.semibold)
@@ -179,6 +190,25 @@ struct AnisetteServers: View {
                     .background(RoundedRectangle(cornerRadius: 10).fill(Color.red))
                     .foregroundColor(.white)
                     .shadow(color: Color.red.opacity(0.4), radius: 10, x: 0, y: 5)
+                    .alert(isPresented: $showingConfirmation) {
+                        Alert(
+                            title: Text("Reset adi.pb"),
+                            message: Text("are you sure to clear the adi.pb from keychain？"),
+                            primaryButton: .default(Text("do it")) {
+                                #if !DEBUG
+                                if Keychain.shared.adiPb != nil {
+                                    Keychain.shared.adiPb = nil
+                                }
+                                #endif
+                                print("Cleared adi.pb from keychain")
+                                errorCallback()
+                                presentationMode.wrappedValue.dismiss()
+                            },
+                            secondaryButton: .cancel(Text("cancel")) {
+                                print("canceled")
+                            }
+                        )
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
