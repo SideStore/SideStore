@@ -160,7 +160,6 @@ struct AnisetteServers: View {
 
                         SUIButton(action: {
                             viewModel.getListOfServers()
-                            
                         }) {
                             HStack{
                                 Spacer()
@@ -170,7 +169,6 @@ struct AnisetteServers: View {
                                 Spacer()
                             }
                             .contentShape(Rectangle())
-                            
                         }
                         .buttonStyle(PlainButtonStyle())
                         .padding()
@@ -181,9 +179,7 @@ struct AnisetteServers: View {
                     }
 
                     SUIButton(action: {
-                        
                         showingConfirmation = true
-                        
                     }) {
                         Text("Reset adi.pb")
                             .fontWeight(.semibold)
