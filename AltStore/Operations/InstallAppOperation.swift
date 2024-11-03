@@ -112,6 +112,22 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             }
             
             installedApp.appExtensions = installedExtensions
+
+            // Remove stale "PlugIns" (Extensions) from currently installed App
+            if let installedAppExns = ALTApplication(fileURL: installedApp.fileURL)?.appExtensions {
+                let currentAppExns = Set(installedApp.appExtensions).map{ $0.bundleIdentifier }
+                let staleAppExns = installedAppExns.filter{ !currentAppExns.contains($0.bundleIdentifier) }
+                
+                for staleAppExn in staleAppExns {
+                    do {
+                        try FileManager.default.removeItem(at: staleAppExn.fileURL)
+                        print("InstallAppOperation.appExtensions: removed stale app-extension: \(staleAppExn.fileURL)")
+                    } catch {
+                        print("InstallAppOperation.appExtensions processing error Error: \(error)")
+                    }
+                }
+            }
+            
             
             self.context.beginInstallationHandler?(installedApp)
             
