@@ -1044,6 +1044,7 @@ private extension AppManager
             {
                 for appExtension in application.appExtensions
                 {
+                    print("Deleting extension \(appExtension.bundleIdentifier)")
                     try FileManager.default.removeItem(at: appExtension.fileURL)
                 }
                 
@@ -1416,6 +1417,24 @@ private extension AppManager
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
         
+        
+        let validateAppExtensionsOperation = RSTAsyncBlockOperation {(op) in
+            
+            //App-Extensions: Ensure DB data and disk state must match
+            let dbAppEx: Set<InstalledExtension> = app.appExtensions
+            let diskAppEx: Set<ALTApplication> = context.app!.appExtensions
+            let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
+            let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }
+                
+            let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
+            print("AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)")
+            print("AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))")
+            if(!isMatching){
+                completionHandler(.failure(OperationError.invalidParameters))
+            }
+            op.finish()
+        }
+        
         /* Fetch Provisioning Profiles */
         let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
         fetchProvisioningProfilesOperation.resultHandler = { (result) in
@@ -1426,6 +1445,8 @@ private extension AppManager
             }
         }
         progress.addChild(fetchProvisioningProfilesOperation.progress, withPendingUnitCount: 60)
+        fetchProvisioningProfilesOperation.addDependency(validateAppExtensionsOperation)
+        
         
         /* Refresh */
         let refreshAppOperation = RefreshAppOperation(context: context)
@@ -1459,7 +1480,7 @@ private extension AppManager
         progress.addChild(refreshAppOperation.progress, withPendingUnitCount: 40)
         refreshAppOperation.addDependency(fetchProvisioningProfilesOperation)
         
-        let operations = [fetchProvisioningProfilesOperation, refreshAppOperation]
+        let operations = [validateAppExtensionsOperation, fetchProvisioningProfilesOperation, refreshAppOperation]
         group.add(operations)
         self.run(operations, context: group.context)
 
