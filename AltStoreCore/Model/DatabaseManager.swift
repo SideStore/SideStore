@@ -407,7 +407,10 @@ private extension DatabaseManager
                 // Migrate apps
                 if FileManager.default.fileExists(atPath: previousAppsDirectoryURL.path, isDirectory: nil)
                 {
-                    _ = try FileManager.default.replaceItemAt(appsDirectoryURL, withItemAt: previousAppsDirectoryURL)
+                    if(previousAppsDirectoryURL.path != appsDirectoryURL.path)
+                    {
+                        _ = try FileManager.default.replaceItemAt(appsDirectoryURL, withItemAt: previousAppsDirectoryURL)
+                    }
                 }
                 
                 finish(.success(()))
