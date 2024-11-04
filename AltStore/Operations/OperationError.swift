@@ -35,6 +35,7 @@ extension OperationError
         case noSources
         case openAppFailed//(name: String)
         case missingAppGroup
+        case refreshAppFailed
 
         // Connection
         case noWiFi = 1200
@@ -107,6 +108,10 @@ extension OperationError
         OperationError(code: .anisetteV3Error, failureReason: message)
     }
 
+    static func refreshAppFailed(message: String) -> OperationError {
+        OperationError(code: .refreshAppFailed, failureReason: message)
+    }
+
 }
 
 
@@ -176,6 +181,11 @@ struct OperationError: ALTLocalizedError {
         case .anisetteV3Error: return NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
         case .cacheClearError: return NSLocalizedString("An error occurred while clearing cache: %@", comment: "")
         case .SideJITIssue: return NSLocalizedString("An error occurred while using SideJIT: %@", comment: "")
+            
+        case .refreshAppFailed:
+            let message = self._failureReason ?? ""
+            return String(format: NSLocalizedString("Unable to refresh App\n%@", comment: ""), message)
+
         }
     }
     

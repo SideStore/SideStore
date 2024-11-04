@@ -1427,10 +1427,11 @@ private extension AppManager
             let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }
                 
             let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
-            print("AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)")
-            print("AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))")
+            let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
+                           + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
+            print(errMessage)
             if(!isMatching){
-                completionHandler(.failure(OperationError.invalidParameters))
+                completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
             }
             op.finish()
         }
