@@ -48,7 +48,9 @@ class BackupAppOperation: ResultOperation<Void>
         {
             if let error = self.context.error { throw error }
             
-            guard let installedApp = self.context.installedApp, let context = installedApp.managedObjectContext else { throw OperationError.invalidParameters }
+            guard let installedApp = self.context.installedApp, let context = installedApp.managedObjectContext else {
+                throw OperationError.invalidParameters("BackupAppOperation.main: self.context.installedApp or installedApp.managedObjectContext is nil")
+            }
             context.perform {
                 do
                 {

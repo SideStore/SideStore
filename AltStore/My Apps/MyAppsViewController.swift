@@ -791,7 +791,9 @@ private extension MyAppsViewController
                     throw error
                 }
                 
-                guard let fileURL = context.fileURL else { throw OperationError.invalidParameters }
+                guard let fileURL = context.fileURL else {
+                    throw OperationError.invalidParameters("MyAppsViewController.sideloadApp.unzipAppOperation: context.fileURL is nil")
+                }
                 defer {
                     try? FileManager.default.removeItem(at: fileURL)
                 }
@@ -825,7 +827,9 @@ private extension MyAppsViewController
                     throw error
                 }
                 
-                guard let application = context.application else { throw OperationError.invalidParameters }
+                guard let application = context.application else {
+                    throw OperationError.invalidParameters("MyAppsViewController.sideloadApp.installAppOperation: context.application is nil")
+                }
                 
                 let group = AppManager.shared.install(application, presentingViewController: self) { (result) in
                     switch result

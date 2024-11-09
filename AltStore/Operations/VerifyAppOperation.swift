@@ -117,7 +117,9 @@ final class VerifyAppOperation: ResultOperation<Void>
                 throw error
             }
             
-            guard let app = self.context.app else { throw OperationError.invalidParameters }
+            guard let app = self.context.app else {
+                throw OperationError.invalidParameters("VerifyAppOperation.main: self.context.app is nil")
+            }
             
             if !["ny.litritt.ignited", "com.litritt.ignited"].contains(where: { $0 == app.bundleIdentifier }) {
                 guard app.bundleIdentifier == self.context.bundleIdentifier else {

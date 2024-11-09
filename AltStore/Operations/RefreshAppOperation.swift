@@ -37,7 +37,10 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
         {
             if let error = self.context.error { return self.finish(.failure(error)) }
             
-            guard let profiles = self.context.provisioningProfiles else { return self.finish(.failure(OperationError.invalidParameters)) }
+            guard let profiles = self.context.provisioningProfiles else {
+                return self.finish(.failure(OperationError.invalidParameters("RefreshAppOperation.main: self.context.provisioningProfiles is nil")))
+            }
+            
             guard let app = self.context.app else { return self.finish(.failure(OperationError(.appNotFound(name: nil)))) }
 
             for p in profiles {

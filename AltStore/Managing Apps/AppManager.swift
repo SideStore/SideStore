@@ -1185,9 +1185,15 @@ private extension AppManager
                     return
                 }
 */
-                guard let extensions = context.app?.appExtensions else { throw OperationError.invalidParameters }
+                guard let extensions = context.app?.appExtensions else {
+                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app?.appExtensions is nil")
+                }
                 
-                guard let app = context.app, let presentingViewController = context.authenticatedContext.presentingViewController else { throw OperationError.invalidParameters }
+                guard let app = context.app,
+                      let presentingViewController = context.authenticatedContext.presentingViewController
+                else {
+                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app or context.authenticatedContext.presentingViewController is nil")
+                }
                 
                 
                 self?.removeAppExtensions(from: app, extensions: extensions, presentingViewController) { result in
@@ -1253,13 +1259,20 @@ private extension AppManager
                     throw error
                 }
                 
-                guard let profiles = context.provisioningProfiles else { throw OperationError.invalidParameters }
+                guard let profiles = context.provisioningProfiles else {
+                    throw OperationError.invalidParameters("AppManager._install.deactivateAppsOperation: context.provisioningProfiles is nil")
+                }
                 if !profiles.contains(where: { $1.isFreeProvisioningProfile == true }) {
                     operation.finish()
                     return
                 }
                                 
-                guard let app = context.app, let presentingViewController = context.authenticatedContext.presentingViewController else { throw OperationError.invalidParameters }
+                guard
+                    let app = context.app,
+                    let presentingViewController = context.authenticatedContext.presentingViewController
+                else {
+                    throw OperationError.invalidParameters("AppManager._install.deactivateAppsOperation: self.context.app or context.authenticatedContext.presentingViewController is nil")
+                }
                 
                 self?.deactivateApps(for: app, presentingViewController: presentingViewController) { result in
                     switch result
@@ -1298,7 +1311,9 @@ private extension AppManager
                     throw error
                 }
                 
-                guard let app = context.app else { throw OperationError.invalidParameters }
+                guard let app = context.app else {
+                    throw OperationError.invalidParameters("AppManager._install.patchAppOperation: context.app is nil")
+                }
                 
                 guard let isUntetherRequired = app.bundle.infoDictionary?[Bundle.Info.untetherRequired] as? Bool,
                       let minimumiOSVersionString = app.bundle.infoDictionary?[Bundle.Info.untetherMinimumiOSVersion] as? String,

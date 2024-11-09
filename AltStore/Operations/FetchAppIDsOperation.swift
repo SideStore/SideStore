@@ -39,7 +39,9 @@ final class FetchAppIDsOperation: ResultOperation<([AppID], NSManagedObjectConte
         guard
             let team = self.context.team,
             let session = self.context.session
-        else { return self.finish(.failure(OperationError.invalidParameters)) }
+        else {
+            return self.finish(.failure(OperationError.invalidParameters("FetchAppIDsOperation.main: self.context.team or self.context.session is nil")))
+        }
                 
         ALTAppleAPI.shared.fetchAppIDs(for: team, session: session) { (appIDs, error) in
             self.managedObjectContext.perform {

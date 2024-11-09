@@ -33,7 +33,9 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
             return
         }
         
-        guard let installedApp = self.context.installedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
+        guard let installedApp = self.context.installedApp else {
+            return self.finish(.failure(OperationError.invalidParameters("RemoveAppOperation.main: self.context.installedApp is nil")))
+        }
         
         installedApp.managedObjectContext?.perform {
             let resignedBundleIdentifier = installedApp.resignedBundleIdentifier

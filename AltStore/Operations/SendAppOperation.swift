@@ -36,7 +36,9 @@ final class SendAppOperation: ResultOperation<()>
             return self.finish(.failure(error))
         }
         
-        guard let resignedApp = self.context.resignedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
+        guard let resignedApp = self.context.resignedApp else {
+            return self.finish(.failure(OperationError.invalidParameters("SendAppOperation.main: self.resignedApp is nil")))
+        }
         
         // self.context.resignedApp.fileURL points to the app bundle, but we want the .ipa.
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL)

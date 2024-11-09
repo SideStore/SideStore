@@ -43,7 +43,9 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             let certificate = self.context.certificate,
             let resignedApp = self.context.resignedApp,
             let provisioningProfiles = self.context.provisioningProfiles
-        else { return self.finish(.failure(OperationError.invalidParameters)) }
+        else {
+            return self.finish(.failure(OperationError.invalidParameters("InstallAppOperation.main: self.context.certificate or self.context.resignedApp or self.context.provisioningProfiles is nil")))
+        }
         
         let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         backgroundContext.perform {

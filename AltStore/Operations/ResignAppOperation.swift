@@ -42,7 +42,12 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
             let profiles = self.context.provisioningProfiles,
             let team = self.context.team,
             let certificate = self.context.certificate
-        else { return self.finish(.failure(OperationError.invalidParameters)) }
+        else {
+            return self.finish(.failure(OperationError.invalidParameters("ResignAppOperation.main: " +
+                                                                         "self.context.team or " +
+                                                                         "self.context.provisioningProfiles or" +
+                                                                         "self.context.certificate is nil")))
+        }
         
         // Prepare app bundle
         let prepareAppProgress = Progress.discreteProgress(totalUnitCount: 2)

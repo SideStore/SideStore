@@ -56,7 +56,6 @@ extension OperationError
     static let notAuthenticated: OperationError = .init(code: .notAuthenticated)
     static let unknownUDID: OperationError = .init(code: .unknownUDID)
     static let invalidApp: OperationError = .init(code: .invalidApp)
-    static let invalidParameters: OperationError = .init(code: .invalidParameters)
     static let noSources: OperationError = .init(code: .noSources)
     static let missingAppGroup: OperationError = .init(code: .missingAppGroup)
 
@@ -112,6 +111,9 @@ extension OperationError
         OperationError(code: .refreshAppFailed, failureReason: message)
     }
 
+    static func invalidParameters(_ message: String? = nil) -> OperationError {
+        OperationError(code: .invalidParameters, failureReason: message)
+    }
 }
 
 
@@ -160,7 +162,6 @@ struct OperationError: ALTLocalizedError {
         case .notAuthenticated: return NSLocalizedString("You are not signed in.", comment: "")
         case .unknownUDID: return NSLocalizedString("SideStore could not determine this device's UDID.", comment: "")
         case .invalidApp: return NSLocalizedString("The app is in an invalid format.", comment: "")
-        case .invalidParameters: return NSLocalizedString("Invalid parameters.", comment: "")
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs within a 7 day period.", comment: "")
         case .noSources: return NSLocalizedString("There are no SideStore sources.", comment: "")
         case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be accessed.", comment: "")
@@ -186,7 +187,11 @@ struct OperationError: ALTLocalizedError {
             let message = self._failureReason ?? ""
             return String(format: NSLocalizedString("Unable to refresh App\n%@", comment: ""), message)
 
+        case .invalidParameters:
+            let message = self._failureReason.map { ": \n\($0)" } ?? "."
+            return String(format: NSLocalizedString("Invalid parameters%@", comment: ""), message)
         }
+        
     }
     
     var recoverySuggestion: String? {

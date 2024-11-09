@@ -35,7 +35,9 @@ final class RemoveAppBackupOperation: ResultOperation<Void>
             return
         }
         
-        guard let installedApp = self.context.installedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
+        guard let installedApp = self.context.installedApp else {
+            return self.finish(.failure(OperationError.invalidParameters("RemoveAppBackupOperation.main: self.context.installedApp is nil")))
+        }
         installedApp.managedObjectContext?.perform {
             guard let backupDirectoryURL = FileManager.default.backupDirectoryURL(for: installedApp) else { return self.finish(.failure(OperationError.missingAppGroup)) }
             

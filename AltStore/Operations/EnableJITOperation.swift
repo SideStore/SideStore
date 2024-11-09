@@ -50,7 +50,9 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
             return
         }
         
-        guard let installedApp = self.context.installedApp else { return self.finish(.failure(OperationError.invalidParameters)) }
+        guard let installedApp = self.context.installedApp else {
+            return self.finish(.failure(OperationError.invalidParameters("EnableJITOperation.main: self.context.installedApp is nil")))
+        }
         if #available(iOS 17, *) {
             let sideJITenabled = UserDefaults.standard.sidejitenable
             let SideJITIP = UserDefaults.standard.textInputSideJITServerurl ?? ""
