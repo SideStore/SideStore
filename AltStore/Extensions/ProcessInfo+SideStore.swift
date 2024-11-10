@@ -90,7 +90,7 @@ extension ProcessInfo {
         else if operatingSystemVersion >= OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 0),
                 let currentBuild = BuildVersion(operatingSystemBuild),
                 let targetBuild  = BuildVersion("22B5054e") {
-            currentBuild > targetBuild
+            currentBuild >= targetBuild
         } else { false }
     }
 }
