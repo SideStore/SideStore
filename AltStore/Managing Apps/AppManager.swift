@@ -1015,8 +1015,42 @@ private extension AppManager
         return group
     }
     
-    func removeAppExtensions(from application: ALTApplication, extensions: Set<ALTApplication>, _ presentingViewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
+    func removeAppExtensions(from application: ALTApplication, existingApp: InstalledApp?, extensions: Set<ALTApplication>, _ presentingViewController: UIViewController?, completion: @escaping (Result<Void, Error>) -> Void)
     {
+            
+        //App-Extensions: Ensure existing app's extensions and currently installing app's extensions must match
+        let existingAppEx: Set<InstalledExtension> = existingApp?.appExtensions ?? Set()
+        let currentAppEx: Set<ALTApplication> = application.appExtensions
+        
+        let currentAppExNames  = currentAppEx.map{ appEx in appEx.bundleIdentifier}
+        let existingAppExNames = existingAppEx.map{ appEx in appEx.bundleIdentifier}
+
+        let excessExtensions = currentAppEx.filter{
+            !(existingAppExNames.contains($0.bundleIdentifier))
+        }
+        
+        let isMatching = (currentAppEx.count == existingAppEx.count) && excessExtensions.isEmpty
+        let diagnosticsMsg = "AppManager.removeAppExtensions: App Extensions in existingApp and currentApp are matching: \(isMatching)\n"
+                           + "AppManager.removeAppExtensions: existingAppEx: \(existingAppExNames); currentAppEx: \(String(describing: currentAppExNames))\n"
+        print(diagnosticsMsg)
+     
+        // if background mode, then remove only the excess extensions
+        guard let presentingViewController: UIViewController = presentingViewController else {
+            // perform silent extensions cleanup for those that aren't already present in existing app
+            print("\n    Performing background mode Extensions removal    \n")
+            print("AppManager.removeAppExtensions: Excess Extensions: \(excessExtensions)")
+            
+            do {
+                for appExtension in excessExtensions {
+                    print("Deleting extension \(appExtension.bundleIdentifier)")
+                    try FileManager.default.removeItem(at: appExtension.fileURL)
+                }
+                return completion(.success(()))
+            } catch {
+                return completion(.failure(error))
+            }
+        }
+     
         guard !application.appExtensions.isEmpty else { return completion(.success(())) }
         
         let firstSentence: String
@@ -1189,14 +1223,16 @@ private extension AppManager
                     throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app?.appExtensions is nil")
                 }
                 
-                guard let app = context.app,
-                      let presentingViewController = context.authenticatedContext.presentingViewController
-                else {
-                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app or context.authenticatedContext.presentingViewController is nil")
+                guard let currentApp = context.app else {
+                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app is nil")
                 }
                 
                 
-                self?.removeAppExtensions(from: app, extensions: extensions, presentingViewController) { result in
+                self?.removeAppExtensions(from: currentApp,
+                                          existingApp: app as? InstalledApp,
+                                          extensions: extensions,
+                                          context.authenticatedContext.presentingViewController
+                ) { result in
                     switch result {
                     case .success(): break
                     case .failure(let error): context.error = error
