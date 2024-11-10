@@ -240,8 +240,10 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             
             do
             {
-                try FileManager.default.removeItem(at: fileURL)
-                print("Removed refreshed IPA")
+                if(FileManager.default.fileExists(atPath: fileURL.path)){
+                    try FileManager.default.removeItem(at: fileURL)
+                    print("Removed refreshed IPA")
+                }
             }
             catch
             {
