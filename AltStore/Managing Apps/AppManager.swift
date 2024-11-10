@@ -1207,7 +1207,7 @@ private extension AppManager
             }
             catch
             {
-                group.context.error = error
+                context.error = error
                 operation.finish()
             }
         }
