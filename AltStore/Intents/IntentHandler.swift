@@ -118,8 +118,9 @@ private extension IntentHandler
             {
                 // Queue response in case refreshing finishes after confirm() but before handle().
                 self.queuedResponses[intent] = response
-                
-                UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                DispatchQueue.main.async {
+                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                }
             }
         }
     }
