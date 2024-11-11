@@ -82,6 +82,7 @@ struct ComplicationView: View
         }
         .gaugeStyle(.accessoryCircularCapacity)
         .unredacted()
+        .widgetBackground(Color.clear)
     }
 }
 

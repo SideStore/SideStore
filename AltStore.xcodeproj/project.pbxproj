@@ -60,6 +60,7 @@
 		99F87D0529D8B4E200B40039 /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */; };
 		99F87D1829D8E4C900B40039 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */; };
 		99F87D1929D8E4C900B40039 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F87D1729D8E4C900B40039 /* minimuxer.swift */; };
+		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
 		B3146ED2284F581E00BBC3FD /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3146ECD284F580500BBC3FD /* Roxas.framework */; };
 		B33FFBA8295F8E98002259E6 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F894295F7F9B002B1159 /* libfragmentzip.a */; };
 		B33FFBAA295F8F78002259E6 /* preboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBA9295F8F78002259E6 /* preboard.c */; };
@@ -559,6 +560,7 @@
 		9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "minimuxer-helpers.swift"; path = "Dependencies/minimuxer/minimuxer-helpers.swift"; sourceTree = SOURCE_ROOT; };
 		99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Dependencies/minimuxer/SwiftBridgeCore.swift; sourceTree = SOURCE_ROOT; };
 		99F87D1729D8E4C900B40039 /* minimuxer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = minimuxer.swift; path = Dependencies/minimuxer/minimuxer.swift; sourceTree = SOURCE_ROOT; };
+		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
 		B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Roxas.xcodeproj; path = Dependencies/Roxas/Roxas.xcodeproj; sourceTree = "<group>"; };
 		B33FFBA9295F8F78002259E6 /* preboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = preboard.c; path = src/preboard.c; sourceTree = "<group>"; };
 		B33FFBAB295F8F98002259E6 /* companion_proxy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = companion_proxy.c; path = src/companion_proxy.c; sourceTree = "<group>"; };
@@ -1006,6 +1008,14 @@
 				99F87D1729D8E4C900B40039 /* minimuxer.swift */,
 			);
 			name = Generated;
+			sourceTree = "<group>";
+		};
+		A800F6FE2CE28DE300208744 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A800F7032CE28E2F00208744 /* View+AltWidget.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		B3146EC7284F580500BBC3FD /* Products */ = {
@@ -1465,6 +1475,7 @@
 		BF98916C250AABF3002ACF50 /* AltWidget */ = {
 			isa = PBXGroup;
 			children = (
+				A800F6FE2CE28DE300208744 /* Extensions */,
 				BF8B17F0250AC62400F8157F /* AltWidgetExtension.entitlements */,
 				BF98917D250AAC4F002ACF50 /* AltWidget.swift */,
 				BF42345825101C1D006D1EB2 /* WidgetView.swift */,
@@ -2489,6 +2500,7 @@
 				BF42345A25101C35006D1EB2 /* WidgetView.swift in Sources */,
 				D55E163728776CB700A627A1 /* ComplicationView.swift in Sources */,
 				BF98917F250AAC4F002ACF50 /* AltWidget.swift in Sources */,
+				A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
