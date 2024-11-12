@@ -1,0 +1,114 @@
+{
+  "originHash" : "ee46302f91cbb62c5234c36750d40856658e961e191f5536cf4fe74d10fc2c94",
+  "pins" : [
+    {
+      "identity" : "altsign",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/AltSign",
+      "state" : {
+        "branch" : "master",
+        "revision" : "cc6189f0f7cd8e5bd24943af9322e0ff9420e9f4"
+      }
+    },
+    {
+      "identity" : "appcenter-sdk-apple",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
+      "state" : {
+        "revision" : "b2dc99cfedead0bad4e6573d86c5228c89cff332",
+        "version" : "4.4.3"
+      }
+    },
+    {
+      "identity" : "imobiledevice.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/iMobileDevice.swift",
+      "state" : {
+        "revision" : "74e481106dd155c0cd21bca6795fd9fe5f751654",
+        "version" : "1.0.5"
+      }
+    },
+    {
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "state" : {
+        "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
+        "version" : "4.2.2"
+      }
+    },
+    {
+      "identity" : "launchatlogin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/LaunchAtLogin.git",
+      "state" : {
+        "revision" : "e8171b3e38a2816f579f58f3dac1522aa39efe41",
+        "version" : "4.2.0"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke.git",
+      "state" : {
+        "revision" : "9318d02a8a6d20af56505c9673261c1fd3b3aebe",
+        "version" : "7.6.3"
+      }
+    },
+    {
+      "identity" : "openssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/OpenSSL",
+      "state" : {
+        "revision" : "8cb1d641ab5ebce2cd7cf31c93baef07bed672d4",
+        "version" : "1.1.2301"
+      }
+    },
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/PLCrashReporter.git",
+      "state" : {
+        "revision" : "81cdec2b3827feb03286cb297f4c501a8eb98df1",
+        "version" : "1.10.2"
+      }
+    },
+    {
+      "identity" : "semanticversion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftPackageIndex/SemanticVersion.git",
+      "state" : {
+        "revision" : "ea8eea9d89842a29af1b8e6c7677f1c86e72fa42",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle.git",
+      "state" : {
+        "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
+        "version" : "2.6.4"
+      }
+    },
+    {
+      "identity" : "starscream",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/daltoniam/Starscream.git",
+      "state" : {
+        "revision" : "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
+        "version" : "4.0.8"
+      }
+    },
+    {
+      "identity" : "stprivilegedtask",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/STPrivilegedTask.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "10a9150ef32d444af326beba76356ae9af95a3e7"
+      }
+    }
+  ],
+  "version" : 3
+}
