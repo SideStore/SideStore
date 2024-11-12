@@ -19,7 +19,6 @@ archive.xcarchive
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
-AltStore.xcodeproj/project.xcworkspace/xcshareddata/swiftpm 
 ## Other
 *.xccheckout
 *.moved-aside
