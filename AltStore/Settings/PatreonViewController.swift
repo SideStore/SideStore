@@ -184,7 +184,7 @@ private extension PatreonViewController
     
     @objc func openTwitterURL(_ sender: UIButton)
     {
-        let twitterURL = URL(string: "https://twitter.com/SideStore_io")!
+        let twitterURL = URL(string: "https://twitter.com/sidestoreio")!
         
         let safariViewController = SFSafariViewController(url: twitterURL)
         safariViewController.preferredControlTintColor = self.view.tintColor
