@@ -587,8 +587,8 @@ extension SettingsViewController
             let row = CreditsRow.allCases[indexPath.row]
             switch row
             {
-            case .developer: self.openTwitter(username: "sidestore_io")
-            case .operations: self.openTwitter(username: "sidestore_io")
+            case .developer: self.openTwitter(username: "sidestoreio")
+            case .operations: self.openTwitter(username: "sidestoreio")
             case .designer: self.openTwitter(username: "lit_ritt")
             case .softwareLicenses: break
             }
