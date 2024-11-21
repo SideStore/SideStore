@@ -619,24 +619,24 @@ extension SettingsViewController
                 })
                 
                 // Option 3: Mail
-//                alertController.addAction(UIAlertAction(title: "Send Email", style: .default) { _ in
-//                    if MFMailComposeViewController.canSendMail() {
-//                        let mailViewController = MFMailComposeViewController()
-//                        mailViewController.mailComposeDelegate = self
-//                        mailViewController.setToRecipients(["support@sidestore.io"])
-//
-//                        if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-//                            mailViewController.setSubject("SideStore Beta \(version) Feedback")
-//                        } else {
-//                            mailViewController.setSubject("SideStore Beta Feedback")
-//                        }
-//
-//                       self.present(mailViewController, animated: true, completion: nil)
-//                  } else {
-//                      let toastView = ToastView(text: NSLocalizedString("Cannot Send Mail", comment: ""), detailText: nil)
-//                      toastView.show(in: self)
-//                }
-//            })
+                alertController.addAction(UIAlertAction(title: "Send Email", style: .default) { _ in
+                    if MFMailComposeViewController.canSendMail() {
+                        let mailViewController = MFMailComposeViewController()
+                        mailViewController.mailComposeDelegate = self
+                        mailViewController.setToRecipients(["support@sidestore.io"])
+
+                        if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+                            mailViewController.setSubject("SideStore Beta \(version) Feedback")
+                        } else {
+                            mailViewController.setSubject("SideStore Beta Feedback")
+                        }
+
+                       self.present(mailViewController, animated: true, completion: nil)
+                  } else {
+                      let toastView = ToastView(text: NSLocalizedString("Cannot Send Mail", comment: ""), detailText: nil)
+                      toastView.show(in: self)
+                }
+            })
                 
                 // Cancel action
                 alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
