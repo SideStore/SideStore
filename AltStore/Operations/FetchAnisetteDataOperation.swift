@@ -45,16 +45,90 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
             return
         }
         
-        self.url = URL(string: UserDefaults.standard.menuAnisetteURL)
-        print("Anisette URL: \(self.url!.absoluteString)")
         
-        if let identifier = Keychain.shared.identifier,
-           let adiPb = Keychain.shared.adiPb {
-            fetchAnisetteV3(identifier, adiPb)
-        } else {
-            provision()
+        getAnisetteServerUrl{ url, error in
+            guard let urlString = url else {
+                self.finish(.failure(error!))
+                return
+            }
+
+            // set as preferred
+            UserDefaults.standard.menuAnisetteURL = urlString
+            let url = URL(string: urlString)
+            self.url = url
+            print("Anisette URL: \(self.url!.absoluteString)")
+
+            if let identifier = Keychain.shared.identifier,
+               let adiPb = Keychain.shared.adiPb {
+                self.fetchAnisetteV3(identifier, adiPb)
+            } else {
+                self.provision()
+            }
         }
     }
+    
+
+    func getAnisetteServerUrl(completion: @escaping (String?, Error?) -> Void) {
+        let serverUrls = UserDefaults.standard.menuAnisetteServersList
+        tryNextServer(from: serverUrls, currentIndex: 0, completion: completion)
+    }
+
+    private func tryNextServer(from serverUrls: [String], currentIndex: Int, completion: @escaping (String?, Error?) -> Void) {
+        // Check if all URLs have been exhausted
+        guard currentIndex < serverUrls.count else {
+            let error = NSError(domain: "AnisetteError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid server found."])
+            completion(nil, error)
+            return
+        }
+
+        let currentServerUrlString = serverUrls[currentIndex]
+        guard let url = URL(string: currentServerUrlString) else {
+            // Invalid URL, skip to next
+            print("Skipping invalid URL: \(currentServerUrlString)")
+            tryNextServer(from: serverUrls, currentIndex: currentIndex + 1, completion: completion)
+            return
+        }
+
+        // Attempt to ping the current URL
+        pingServer(url) { success, error in
+            if success {
+                // If the server is reachable, return the URL
+                print("Found working server: \(url.absoluteString)")
+                completion(url.absoluteString, nil)
+            } else {
+                // If not, try the next URL
+                print("Failed to reach server: \(url.absoluteString), trying next server.")
+                self.tryNextServer(from: serverUrls, currentIndex: currentIndex + 1, completion: completion)
+            }
+        }
+    }
+
+    func pingServer(_ url: URL, completion: @escaping (Bool, Error?) -> Void) {
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10 // Timeout after 10 seconds
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                completion(false, error)
+                return
+            }
+            
+            let httpResponse = response as? HTTPURLResponse
+            let statusCode = httpResponse?.statusCode
+            
+            guard let statusCode = statusCode,
+                  (200...299).contains(statusCode) else {
+                let serverError = OperationError.anisetteV3Error(message: "Server unreachable or invalid response: \(String(describing: statusCode ?? nil))")
+                completion(false, serverError)
+                return
+            }
+            
+            completion(true, nil)
+        }
+        
+        task.resume()
+    }
+    
     
     // MARK: - COMMON
     

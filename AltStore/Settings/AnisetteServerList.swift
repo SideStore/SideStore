@@ -48,6 +48,8 @@ class AnisetteViewModel: ObservableObject {
                     let servers = try decoder.decode(AnisetteServerData.self, from: data)
                     DispatchQueue.main.async {
                         self.servers = servers.servers
+                        // store server addresses as list
+                        UserDefaults.standard.menuAnisetteServersList = servers.servers.map(\.self.address)
                     }
                 } catch {
                     // Handle decoding error

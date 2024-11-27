@@ -28,6 +28,7 @@ public extension UserDefaults
     @NSManaged var customAnisetteURL: String?
     @NSManaged var menuAnisetteURL: String
     @NSManaged var menuAnisetteList: String
+    @NSManaged var menuAnisetteServersList: [String]
     @NSManaged var preferredServerID: String?
     
     @NSManaged var isBackgroundRefreshEnabled: Bool
