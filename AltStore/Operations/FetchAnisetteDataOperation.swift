@@ -45,8 +45,10 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
             return
         }
         
+        // TODO: Pass in proper view context to show the Toast messages
+        let viewContext = context.presentingViewController
         
-        getAnisetteServerUrl{ url, error in
+        getAnisetteServerUrl(viewContext){ url, error in
             guard let urlString = url else {
                 self.finish(.failure(error!))
                 return
@@ -68,7 +70,7 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
     }
     
 
-    func getAnisetteServerUrl(completion: @escaping (String?, Error?) -> Void) {
+    func getAnisetteServerUrl(_ viewContext: UIViewController?, completion: @escaping (String?, Error?) -> Void) {
         var serverUrls = UserDefaults.standard.menuAnisetteServersList
         let currentServer = UserDefaults.standard.menuAnisetteURL
 
@@ -78,10 +80,22 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
             serverUrls.insert(currentServer, at: 0)
         }
         
-        tryNextServer(from: serverUrls, currentIndex: 0, completion: completion)
+        tryNextServer(from: serverUrls, viewContext, currentIndex: 0, completion: completion)
+    }
+    
+    private func showToast(viewContext: UIViewController?, message: String){
+        if let viewContext = viewContext{
+            let error = OperationError.anisetteV1Error(message: message)
+            let toastView = ToastView(error: error)
+//            toastView.textLabel.textColor = .altPrimary
+//            toastView.detailTextLabel.textColor = .altPrimary
+            DispatchQueue.main.async {
+                toastView.show(in: viewContext)
+            }
+        }
     }
 
-    private func tryNextServer(from serverUrls: [String], currentIndex: Int, completion: @escaping (String?, Error?) -> Void) {
+    private func tryNextServer(from serverUrls: [String], _ viewContext: UIViewController?,currentIndex: Int, completion: @escaping (String?, Error?) -> Void) {
         // Check if all URLs have been exhausted
         guard currentIndex < serverUrls.count else {
             let error = NSError(domain: "AnisetteError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid server found."])
@@ -92,8 +106,10 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
         let currentServerUrlString = serverUrls[currentIndex]
         guard let url = URL(string: currentServerUrlString) else {
             // Invalid URL, skip to next
-            print("Skipping invalid URL: \(currentServerUrlString)")
-            tryNextServer(from: serverUrls, currentIndex: currentIndex + 1, completion: completion)
+            let errmsg = "Skipping invalid URL: \(currentServerUrlString)"
+            print(errmsg)
+            showToast(viewContext: viewContext, message: errmsg)
+            tryNextServer(from: serverUrls, viewContext, currentIndex: currentIndex + 1, completion: completion)
             return
         }
 
@@ -101,12 +117,19 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
         pingServer(url) { success, error in
             if success {
                 // If the server is reachable, return the URL
-                print("Found working server: \(url.absoluteString)")
+                let okmsg = "Found working server: \(url.absoluteString)"
+                print(okmsg)
+                if(currentIndex > 0){
+                    // notify user if available server is different the user-specified one
+                    self.showToast(viewContext: viewContext, message: okmsg)
+                }
                 completion(url.absoluteString, nil)
             } else {
                 // If not, try the next URL
-                print("Failed to reach server: \(url.absoluteString), trying next server.")
-                self.tryNextServer(from: serverUrls, currentIndex: currentIndex + 1, completion: completion)
+                let errmsg = "Failed to reach server: \(url.absoluteString), trying next server."
+                print(errmsg)
+                self.showToast(viewContext: viewContext, message: errmsg)
+                self.tryNextServer(from: serverUrls, viewContext, currentIndex: currentIndex + 1, completion: completion)
             }
         }
     }
