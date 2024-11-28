@@ -1468,16 +1468,15 @@ private extension AppManager
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
         
-        
-        let validateAppExtensionsOperation = RSTAsyncBlockOperation {(op) in
+        //App-Extensions: Ensure DB data and disk state must match
+        let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
+        let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
+        let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
+        let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
+        let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
+
+        let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
             
-            //App-Extensions: Ensure DB data and disk state must match
-            let dbAppEx: Set<InstalledExtension> = app.appExtensions
-            let diskAppEx: Set<ALTApplication> = context.app!.appExtensions
-            let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
-            let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }
-                
-            let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
             let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
                            + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
             print(errMessage)
