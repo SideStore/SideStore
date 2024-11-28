@@ -69,7 +69,15 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
     
 
     func getAnisetteServerUrl(completion: @escaping (String?, Error?) -> Void) {
-        let serverUrls = UserDefaults.standard.menuAnisetteServersList
+        var serverUrls = UserDefaults.standard.menuAnisetteServersList
+        let currentServer = UserDefaults.standard.menuAnisetteURL
+
+        // Prioritize the current server by moving it to the top of the list
+        if let currentServerIndex = serverUrls.firstIndex(of: currentServer) {
+            serverUrls.remove(at: currentServerIndex)
+            serverUrls.insert(currentServer, at: 0)
+        }
+        
         tryNextServer(from: serverUrls, currentIndex: 0, completion: completion)
     }
 
