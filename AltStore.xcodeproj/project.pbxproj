@@ -47,29 +47,32 @@
 		0EE7FDCB2BE8D12B00D1E390 /* ALTLocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE7FDC32BE8BC7900D1E390 /* ALTLocalizedError.swift */; };
 		0EE7FDCD2BE9124400D1E390 /* ErrorDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE7FDCC2BE9124400D1E390 /* ErrorDetailsViewController.swift */; };
 		19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19104DB42909C06D00C49C7B /* EmotionalDamage.swift */; };
-		19104DBC2909C4E500C49C7B /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
-		191E5FB4290A5DA0001A3B7C /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		3D9D12C92BFBC6DBF27A29DF /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9932E27A2170D2226ABFA4B6 /* Pods_AltStoreCore.framework */; };
 		946A01BDDC0C453B8AA95668 /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941BDBA6EC0212BC1DCBA3F9 /* Pods_SideStore.framework */; };
-		99F87D0529D8B4E200B40039 /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */; };
-		99F87D1829D8E4C900B40039 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */; };
-		99F87D1929D8E4C900B40039 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F87D1729D8E4C900B40039 /* minimuxer.swift */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
+		A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */; };
+		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
+		A809F6A82D04DA1900F0F0F3 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */; };
+		A809F6A92D04DA1900F0F0F3 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
+		A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A5432F2D04F0C100D72399 /* libfragmentzip.a */; };
 		A8A74EEC2D03F55C001B5CFD /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A8A74EEB2D03F55C001B5CFD /* AltSign-Static */; };
+		A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */; };
+		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
+		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
+		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
+		A8F8389B2D048FBE00ED425D /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838972D048F2300ED425D /* AppCenter.xcframework */; };
+		A8F8389C2D048FC800ED425D /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */; };
+		A8F8389D2D048FD400ED425D /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */; };
 		A8FD915E2D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
 		A8FD915F2D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
 		A8FD91602D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
-		A8FD91652D046FE900322782 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 191E5FDB290AFA5C001A3B7C /* OpenSSL */; };
 		A8FD917B2D0472DD00322782 /* DeprecatedAPIs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD917A2D0472DD00322782 /* DeprecatedAPIs.swift */; };
-		B3146ED2284F581E00BBC3FD /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3146ECD284F580500BBC3FD /* Roxas.framework */; };
-		B33FFBA8295F8E98002259E6 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F894295F7F9B002B1159 /* libfragmentzip.a */; };
+		A8FD917C2D0478D200322782 /* VerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CF56812A0D83F9006D93E2 /* VerificationError.swift */; };
 		B33FFBAA295F8F78002259E6 /* preboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBA9295F8F78002259E6 /* preboard.c */; };
 		B33FFBAC295F8F98002259E6 /* companion_proxy.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBAB295F8F98002259E6 /* companion_proxy.c */; };
-		B343F858295F6331002B1159 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F84C295F6321002B1159 /* libminimuxer_static.a */; };
-		B343F859295F6335002B1159 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F853295F6323002B1159 /* libem_proxy_static.a */; };
 		B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F86C295F759E002B1159 /* libresolv.tbd */; };
 		B343F87C295F7C5D002B1159 /* opack.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F872295F7C5C002B1159 /* opack.c */; };
 		B343F87D295F7C5D002B1159 /* cbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F873295F7C5C002B1159 /* cbuf.c */; };
@@ -416,84 +419,56 @@
 			remoteGlobalIDString = 191E5FAA290A5D92001A3B7C;
 			remoteInfo = minimuxer;
 		};
-		B3146ECC284F580500BBC3FD /* PBXContainerItemProxy */ = {
+		A809F68D2D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BFADAFF819AE7BB70050CF31;
-			remoteInfo = Roxas;
-		};
-		B3146ECE284F580500BBC3FD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BF8624801BB742E700C12EEE;
-			remoteInfo = RoxasTV;
-		};
-		B3146ED0284F580500BBC3FD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BFADB00319AE7BB80050CF31;
-			remoteInfo = RoxasTests;
-		};
-		B343F84B295F6321002B1159 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
+			containerPortal = A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA609C732349C7AAD9FA67C4;
 			remoteInfo = "minimuxer-staticlib";
 		};
-		B343F852295F6323002B1159 /* PBXContainerItemProxy */ = {
+		A809F6932D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA60C44C93D7916DE57E6EBD;
 			remoteInfo = "em_proxy-staticlib";
 		};
-		B343F854295F6323002B1159 /* PBXContainerItemProxy */ = {
+		A809F6952D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA60058A9FBE4D17AF51A7D5;
 			remoteInfo = "run-bin";
 		};
-		B343F86E295F76FD002B1159 /* PBXContainerItemProxy */ = {
+		A809F6A02D04D7CB00F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
+			containerPortal = A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = CA609C732349A560B9642892;
 			remoteInfo = "minimuxer-staticlib";
 		};
-		B343F870295F7704002B1159 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CA60C44C93D7A30E3695DD59;
-			remoteInfo = "em_proxy-staticlib";
-		};
-		B343F88D295F7F9B002B1159 /* PBXContainerItemProxy */ = {
+		A8A543282D04F0C100D72399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 87B8C3401E0E9C37002F817D;
 			remoteInfo = "fragmentzip-cli-macOS";
 		};
-		B343F88F295F7F9B002B1159 /* PBXContainerItemProxy */ = {
+		A8A5432A2D04F0C100D72399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = B315FDB02866CCF8002E243C;
 			remoteInfo = "fragmentzip-cli-iOS";
 		};
-		B343F891295F7F9B002B1159 /* PBXContainerItemProxy */ = {
+		A8A5432C2D04F0C100D72399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = B315FDB52866CD91002E243C;
 			remoteInfo = "fragmentzip-macOS";
 		};
-		B343F893295F7F9B002B1159 /* PBXContainerItemProxy */ = {
+		A8A5432E2D04F0C100D72399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 			proxyType = 2;
@@ -602,19 +577,25 @@
 		6D1CADCE97AF931337C66730 /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
 		941BDBA6EC0212BC1DCBA3F9 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9932E27A2170D2226ABFA4B6 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "minimuxer-helpers.swift"; path = "Dependencies/minimuxer/minimuxer-helpers.swift"; sourceTree = SOURCE_ROOT; };
-		99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Dependencies/minimuxer/SwiftBridgeCore.swift; sourceTree = SOURCE_ROOT; };
-		99F87D1729D8E4C900B40039 /* minimuxer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = minimuxer.swift; path = Dependencies/minimuxer/minimuxer.swift; sourceTree = SOURCE_ROOT; };
 		9ACEAECC253184BCA8E3E068 /* Pods-SideStore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.release.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.release.xcconfig"; sourceTree = "<group>"; };
 		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
+		A809F6A22D04DA1900F0F0F3 /* minimuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minimuxer.h; sourceTree = "<group>"; };
+		A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = minimuxer.swift; sourceTree = "<group>"; };
+		A809F6A42D04DA1900F0F0F3 /* minimuxer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "minimuxer-Bridging-Header.h"; sourceTree = "<group>"; };
+		A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "minimuxer-helpers.swift"; sourceTree = "<group>"; };
+		A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
+		A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
+		A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minimuxer.xcodeproj; sourceTree = "<group>"; };
+		A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterCrashes.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenterCrashes.xcframework"; sourceTree = "<group>"; };
+		A8F838972D048F2300ED425D /* AppCenter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenter.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenter.xcframework"; sourceTree = "<group>"; };
+		A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterAnalytics.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenterAnalytics.xcframework"; sourceTree = "<group>"; };
 		A8FD915B2D046EF100322782 /* ProcessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessError.swift; sourceTree = "<group>"; };
 		A8FD915D2D046F5200322782 /* UserInfoValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoValue.swift; sourceTree = "<group>"; };
 		A8FD917A2D0472DD00322782 /* DeprecatedAPIs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeprecatedAPIs.swift; sourceTree = "<group>"; };
-		B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Roxas.xcodeproj; path = Dependencies/Roxas/Roxas.xcodeproj; sourceTree = "<group>"; };
 		B33FFBA9295F8F78002259E6 /* preboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = preboard.c; path = src/preboard.c; sourceTree = "<group>"; };
 		B33FFBAB295F8F98002259E6 /* companion_proxy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = companion_proxy.c; path = src/companion_proxy.c; sourceTree = "<group>"; };
-		B343F847295F6321002B1159 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = minimuxer.xcodeproj; path = Dependencies/minimuxer.xcodeproj; sourceTree = SOURCE_ROOT; };
-		B343F84D295F6323002B1159 /* em_proxy.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = em_proxy.xcodeproj; path = Dependencies/em_proxy.xcodeproj; sourceTree = SOURCE_ROOT; };
+		B343F84D295F6323002B1159 /* em_proxy.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = em_proxy.xcodeproj; path = SideStore/em_proxy.xcodeproj; sourceTree = SOURCE_ROOT; };
 		B343F86C295F759E002B1159 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libresolv.tbd; sourceTree = DEVELOPER_DIR; };
 		B343F872295F7C5C002B1159 /* opack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opack.c; sourceTree = "<group>"; };
 		B343F873295F7C5C002B1159 /* cbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbuf.c; sourceTree = "<group>"; };
@@ -625,7 +606,7 @@
 		B343F879295F7C5D002B1159 /* thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thread.c; sourceTree = "<group>"; };
 		B343F87A295F7C5D002B1159 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		B343F87B295F7C5D002B1159 /* tlv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tlv.c; sourceTree = "<group>"; };
-		B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfragmentzip.xcodeproj; path = Dependencies/libfragmentzip/libfragmentzip.xcodeproj; sourceTree = "<group>"; };
+		B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfragmentzip.xcodeproj; path = libfragmentzip/libfragmentzip.xcodeproj; sourceTree = "<group>"; };
 		B376FE3D29258C8900E18883 /* OSLog+SideStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OSLog+SideStore.swift"; sourceTree = "<group>"; };
 		B39F16122918D7C5002E9404 /* Consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consts.swift; sourceTree = "<group>"; };
 		B39F16142918D7DA002E9404 /* Consts+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Consts+Proxy.swift"; sourceTree = "<group>"; };
@@ -994,8 +975,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */,
 				B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */,
-				B343F859295F6335002B1159 /* libem_proxy_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1003,7 +984,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B343F858295F6331002B1159 /* libminimuxer_static.a in Frameworks */,
+				A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1011,15 +992,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8FD91652D046FE900322782 /* OpenSSL in Frameworks */,
 				BF088D382501A833008082D9 /* OpenSSL.xcframework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BF18BFE424857D7900DD5981 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1054,10 +1027,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B33FFBA8295F8E98002259E6 /* libfragmentzip.a in Frameworks */,
-				191E5FB4290A5DA0001A3B7C /* libminimuxer.a in Frameworks */,
-				19104DBC2909C4E500C49C7B /* libEmotionalDamage.a in Frameworks */,
-				B3146ED2284F581E00BBC3FD /* Roxas.framework in Frameworks */,
+				A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */,
+				A8F8389B2D048FBE00ED425D /* AppCenter.xcframework in Frameworks */,
+				A8F8389C2D048FC800ED425D /* AppCenterAnalytics.xcframework in Frameworks */,
+				A8F8389D2D048FD400ED425D /* AppCenterCrashes.xcframework in Frameworks */,
+				A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */,
+				A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */,
+				A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */,
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
 				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
@@ -1090,16 +1066,6 @@
 			path = EmotionalDamage;
 			sourceTree = "<group>";
 		};
-		191E5FAC290A5D92001A3B7C /* minimuxer */ = {
-			isa = PBXGroup;
-			children = (
-				9961EC2D29BE9F2E00AF2C6F /* minimuxer-helpers.swift */,
-				99F87D1429D8E3F100B40039 /* Generated */,
-				B343F847295F6321002B1159 /* minimuxer.xcodeproj */,
-			);
-			path = minimuxer;
-			sourceTree = "<group>";
-		};
 		191E5FF4290B2663001A3B7C /* libimobiledevice-glue */ = {
 			isa = PBXGroup;
 			children = (
@@ -1117,15 +1083,6 @@
 			path = "libimobiledevice-glue/src";
 			sourceTree = "<group>";
 		};
-		99F87D1429D8E3F100B40039 /* Generated */ = {
-			isa = PBXGroup;
-			children = (
-				99F87D1629D8E4C900B40039 /* SwiftBridgeCore.swift */,
-				99F87D1729D8E4C900B40039 /* minimuxer.swift */,
-			);
-			name = Generated;
-			sourceTree = "<group>";
-		};
 		A800F6FE2CE28DE300208744 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1134,49 +1091,66 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		B3146EC7284F580500BBC3FD /* Products */ = {
+		A809F68A2D04D71200F0F0F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3146ECD284F580500BBC3FD /* Roxas.framework */,
-				B3146ECF284F580500BBC3FD /* Roxas.framework */,
-				B3146ED1284F580500BBC3FD /* RoxasTests.xctest */,
+				A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B33FFB8F295F8CF2002259E6 /* Recovered References */ = {
+		A809F68F2D04D71200F0F0F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
-		B343F848295F6321002B1159 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B343F84C295F6321002B1159 /* libminimuxer_static.a */,
+				A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */,
+				A809F6962D04D71200F0F0F3 /* run */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B343F84E295F6323002B1159 /* Products */ = {
+		A8A543222D04F0C100D72399 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B343F853295F6323002B1159 /* libem_proxy_static.a */,
-				B343F855295F6323002B1159 /* run */,
+				A8A543292D04F0C100D72399 /* libfragmentzip */,
+				A8A5432B2D04F0C100D72399 /* libfragmentzip */,
+				A8A5432D2D04F0C100D72399 /* libfragmentzip.a */,
+				A8A5432F2D04F0C100D72399 /* libfragmentzip.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B343F887295F7F9B002B1159 /* Products */ = {
+		A8F66C072D04C025009689E6 /* SideStore */ = {
 			isa = PBXGroup;
 			children = (
-				B343F88E295F7F9B002B1159 /* libfragmentzip */,
-				B343F890295F7F9B002B1159 /* libfragmentzip */,
-				B343F892295F7F9B002B1159 /* libfragmentzip.a */,
-				B343F894295F7F9B002B1159 /* libfragmentzip.a */,
+				A8F66C5C2D04D433009689E6 /* minimuxer */,
+				A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */,
+				A8F66C412D04D433009689E6 /* em_proxy */,
+				B343F84D295F6323002B1159 /* em_proxy.xcodeproj */,
+				19104DB32909C06D00C49C7B /* EmotionalDamage */,
+				B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */,
 			);
-			name = Products;
+			path = SideStore;
+			sourceTree = "<group>";
+		};
+		A8F66C412D04D433009689E6 /* em_proxy */ = {
+			isa = PBXGroup;
+			children = (
+				A8F66C3C2D04D433009689E6 /* em_proxy.h */,
+			);
+			path = em_proxy;
+			sourceTree = "<group>";
+		};
+		A8F66C5C2D04D433009689E6 /* minimuxer */ = {
+			isa = PBXGroup;
+			children = (
+				A809F6A22D04DA1900F0F0F3 /* minimuxer.h */,
+				A809F6A42D04DA1900F0F0F3 /* minimuxer-Bridging-Header.h */,
+				A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */,
+				A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */,
+				A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */,
+				A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */,
+			);
+			path = minimuxer;
 			sourceTree = "<group>";
 		};
 		B39F16112918D7B5002E9404 /* Consts */ = {
@@ -1686,20 +1660,16 @@
 		BFD247612284B9A500981D42 = {
 			isa = PBXGroup;
 			children = (
+				A8F66C072D04C025009689E6 /* SideStore */,
 				BFD2476C2284B9A500981D42 /* AltStore */,
 				BF66EE7F2501AE50007EE018 /* AltStoreCore */,
 				BF1E315122A0616100370A3C /* Shared */,
 				BF45872C2298D31600BD7491 /* libimobiledevice */,
 				BF58047C246A28F7008AE704 /* AltBackup */,
 				BF98916C250AABF3002ACF50 /* AltWidget */,
-				19104DB32909C06D00C49C7B /* EmotionalDamage */,
-				191E5FAC290A5D92001A3B7C /* minimuxer */,
-				B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */,
 				D586D39928EF58B0000E101F /* AltTests */,
 				BFD247852284BB3300981D42 /* Frameworks */,
-				B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */,
 				BFD2476B2284B9A500981D42 /* Products */,
-				B33FFB8F295F8CF2002259E6 /* Recovered References */,
 				C2B79346E83FCBDE76D501CB /* Pods */,
 				B3C39607284F4C8400DA9E2F /* Build.xcconfig */,
 				B3C39606284F4C8400DA9E2F /* CodeSigning.xcconfig */,
@@ -1763,6 +1733,9 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A8F838972D048F2300ED425D /* AppCenter.xcframework */,
+				A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */,
+				A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */,
 				B343F86C295F759E002B1159 /* libresolv.tbd */,
 				D537C85A2AA95066009A1E08 /* libcorecrypto.tbd */,
 				D533E8B62727841800A9B5DD /* libAppleArchive.tbd */,
@@ -2177,7 +2150,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B343F871295F7704002B1159 /* PBXTargetDependency */,
 			);
 			name = EmotionalDamage;
 			productName = EmotionalDamage;
@@ -2194,7 +2166,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B343F86F295F76FD002B1159 /* PBXTargetDependency */,
+				A809F6A12D04D7CB00F0F0F3 /* PBXTargetDependency */,
 			);
 			name = minimuxer;
 			productName = minimuxer;
@@ -2216,7 +2188,6 @@
 			);
 			name = libimobiledevice;
 			packageProductDependencies = (
-				191E5FDB290AFA5C001A3B7C /* OpenSSL */,
 			);
 			productName = libimobiledevice;
 			productReference = BF45872B2298D31600BD7491 /* libimobiledevice.a */;
@@ -2322,10 +2293,6 @@
 					191E5FAA290A5D92001A3B7C = {
 						CreatedOnToolsVersion = 14.0;
 					};
-					BF18BFE624857D7900DD5981 = {
-						CreatedOnToolsVersion = 11.5;
-						LastSwiftMigration = 1150;
-					};
 					BF45872A2298D31600BD7491 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
@@ -2371,20 +2338,16 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = B343F84E295F6323002B1159 /* Products */;
+					ProductGroup = A809F68F2D04D71200F0F0F3 /* Products */;
 					ProjectRef = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
 				},
 				{
-					ProductGroup = B343F887295F7F9B002B1159 /* Products */;
+					ProductGroup = A8A543222D04F0C100D72399 /* Products */;
 					ProjectRef = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 				},
 				{
-					ProductGroup = B343F848295F6321002B1159 /* Products */;
-					ProjectRef = B343F847295F6321002B1159 /* minimuxer.xcodeproj */;
-				},
-				{
-					ProductGroup = B3146EC7284F580500BBC3FD /* Products */;
-					ProjectRef = B3146EC6284F580500BBC3FD /* Roxas.xcodeproj */;
+					ProductGroup = A809F68A2D04D71200F0F0F3 /* Products */;
+					ProjectRef = A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2401,74 +2364,53 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3146ECD284F580500BBC3FD /* Roxas.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Roxas.framework;
-			remoteRef = B3146ECC284F580500BBC3FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3146ECF284F580500BBC3FD /* Roxas.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Roxas.framework;
-			remoteRef = B3146ECE284F580500BBC3FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3146ED1284F580500BBC3FD /* RoxasTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RoxasTests.xctest;
-			remoteRef = B3146ED0284F580500BBC3FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B343F84C295F6321002B1159 /* libminimuxer_static.a */ = {
+		A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libminimuxer_static.a;
-			remoteRef = B343F84B295F6321002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A809F68D2D04D71200F0F0F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F853295F6323002B1159 /* libem_proxy_static.a */ = {
+		A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libem_proxy_static.a;
-			remoteRef = B343F852295F6323002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A809F6932D04D71200F0F0F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F855295F6323002B1159 /* run */ = {
+		A809F6962D04D71200F0F0F3 /* run */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = run;
-			remoteRef = B343F854295F6323002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A809F6952D04D71200F0F0F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F88E295F7F9B002B1159 /* libfragmentzip */ = {
+		A8A543292D04F0C100D72399 /* libfragmentzip */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = libfragmentzip;
-			remoteRef = B343F88D295F7F9B002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A8A543282D04F0C100D72399 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F890295F7F9B002B1159 /* libfragmentzip */ = {
+		A8A5432B2D04F0C100D72399 /* libfragmentzip */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = libfragmentzip;
-			remoteRef = B343F88F295F7F9B002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A8A5432A2D04F0C100D72399 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F892295F7F9B002B1159 /* libfragmentzip.a */ = {
+		A8A5432D2D04F0C100D72399 /* libfragmentzip.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libfragmentzip.a;
-			remoteRef = B343F891295F7F9B002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A8A5432C2D04F0C100D72399 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B343F894295F7F9B002B1159 /* libfragmentzip.a */ = {
+		A8A5432F2D04F0C100D72399 /* libfragmentzip.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libfragmentzip.a;
-			remoteRef = B343F893295F7F9B002B1159 /* PBXContainerItemProxy */;
+			remoteRef = A8A5432E2D04F0C100D72399 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2563,11 +2505,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"./Dependencies/minimuxer/minimuxer-helpers.swift",
+				"./SideStore/minimuxer/minimuxer-helpers.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "bash ./Dependencies/fetch-prebuilt.sh minimuxer\n";
+			shellScript = "bash ./SideStore/fetch-prebuilt.sh minimuxer\n";
 		};
 		D2B5A659F6DE631B5733E84A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2886,6 +2828,7 @@
 				BFE00A202503097F00EB4D0C /* INInteraction+AltStore.swift in Sources */,
 				BFDB6A0B22AAEDB7007EA6D6 /* Operation.swift in Sources */,
 				BF770E6722BD57C4002A40FE /* BackgroundTaskManager.swift in Sources */,
+				A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */,
 				BF44EEFC246B4550002A52F2 /* RemoveAppOperation.swift in Sources */,
 				BF3D64B022E8D4B800E9056B /* AppContentViewControllerCells.swift in Sources */,
 				BFC57A6E2416FC5D00EB891E /* InstalledAppsCollectionHeaderView.swift in Sources */,
@@ -2914,7 +2857,6 @@
 				BF08858522DE7EC800DE9F1E /* UpdateCollectionViewCell.swift in Sources */,
 				BF770E5822BC3D0F002A40FE /* RefreshGroup.swift in Sources */,
 				19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */,
-				99F87D0529D8B4E200B40039 /* minimuxer-helpers.swift in Sources */,
 				0E13E5862CC8F55900E9C0DF /* ProcessInfo+SideStore.swift in Sources */,
 				D59162AB29BA60A9005CBF47 /* SourceHeaderView.swift in Sources */,
 				BF18B0F122E25DF9005C4CF5 /* ToastView.swift in Sources */,
@@ -2986,17 +2928,11 @@
 		};
 		191E5FDA290AFA49001A3B7C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 191E5FD9290AFA49001A3B7C /* OpenSSL */;
 		};
-		B343F86F295F76FD002B1159 /* PBXTargetDependency */ = {
+		A809F6A12D04D7CB00F0F0F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "minimuxer-staticlib";
-			targetProxy = B343F86E295F76FD002B1159 /* PBXContainerItemProxy */;
-		};
-		B343F871295F7704002B1159 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "em_proxy-staticlib";
-			targetProxy = B343F870295F7704002B1159 /* PBXContainerItemProxy */;
+			targetProxy = A809F6A02D04D7CB00F0F0F3 /* PBXContainerItemProxy */;
 		};
 		BF66EE842501AE50007EE018 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3051,18 +2987,18 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 4FW3Q8784L;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/em_proxy",
+					"$(PROJECT_DIR)/SideStore/em_proxy",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = Dependencies/em_proxy/em_proxy.h;
+				SWIFT_OBJC_BRIDGING_HEADER = SideStore/em_proxy/em_proxy.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
@@ -3081,13 +3017,13 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/em_proxy",
+					"$(PROJECT_DIR)/SideStore/em_proxy",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = Dependencies/em_proxy/em_proxy.h;
+				SWIFT_OBJC_BRIDGING_HEADER = SideStore/em_proxy/em_proxy.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
@@ -3107,13 +3043,13 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/minimuxer",
+					"$(PROJECT_DIR)/SideStore/minimuxer",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = "Dependencies/minimuxer/minimuxer-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "SideStore/minimuxer/minimuxer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3130,7 +3066,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/minimuxer",
+					"$(PROJECT_DIR)/SideStore/minimuxer",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3706,14 +3642,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4879A9602861049C00FC1BBD /* XCRemoteSwiftPackageReference "OpenSSL" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/OpenSSL";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 1.1.180;
-			};
-		};
 		A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftPackageIndex/SemanticVersion";
@@ -3741,16 +3669,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		191E5FD9290AFA49001A3B7C /* OpenSSL */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4879A9602861049C00FC1BBD /* XCRemoteSwiftPackageReference "OpenSSL" */;
-			productName = OpenSSL;
-		};
-		191E5FDB290AFA5C001A3B7C /* OpenSSL */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4879A9602861049C00FC1BBD /* XCRemoteSwiftPackageReference "OpenSSL" */;
-			productName = OpenSSL;
-		};
 		A82067C32D03E0DE00645C0D /* SemanticVersion */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
@@ -3776,13 +3694,13 @@
 				D5CA0C4C280E242500469595 /* AltStore 10.xcdatamodel */,
 				BFBF33142526754700B7B8C9 /* AltStore 9.xcdatamodel */,
 				BFF7EC4C25081E9300BDE521 /* AltStore 8.xcdatamodel */,
-				BF66EEB82501AECA007EE018 /* AltStore 3.xcdatamodel */,
-				BF66EEB92501AECA007EE018 /* AltStore.xcdatamodel */,
+				BF66EEBC2501AECA007EE018 /* AltStore 7.xcdatamodel */,
 				BF66EEBA2501AECA007EE018 /* AltStore 6.xcdatamodel */,
 				BF66EEBB2501AECA007EE018 /* AltStore 5.xcdatamodel */,
-				BF66EEBC2501AECA007EE018 /* AltStore 7.xcdatamodel */,
-				BF66EEBD2501AECA007EE018 /* AltStore 2.xcdatamodel */,
 				BF66EEBE2501AECA007EE018 /* AltStore 4.xcdatamodel */,
+				BF66EEB82501AECA007EE018 /* AltStore 3.xcdatamodel */,
+				BF66EEBD2501AECA007EE018 /* AltStore 2.xcdatamodel */,
+				BF66EEB92501AECA007EE018 /* AltStore.xcdatamodel */,
 			);
 			currentVersion = D51E83802B86926B0092FC61 /* AltStore 17.xcdatamodel */;
 			path = AltStore.xcdatamodeld;

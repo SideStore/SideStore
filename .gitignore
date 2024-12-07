@@ -44,7 +44,11 @@ SideStore.ipa
 *.dSYM
 
 Dependencies/.*-prebuilt-fetch-*
-Dependencies/minimuxer/*
-Dependencies/em_proxy/*
+SideStore/minimuxer/*
+SideStore/em_proxy/*
 !Dependencies/**/.gitkeep
 .nightly-build-num
+
+## em_proxy and minimuxer biaries
+**/.last-prebuilt-fetch-em_proxy
+**/.last-prebuilt-fetch-minimuxer

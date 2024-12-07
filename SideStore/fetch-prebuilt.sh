@@ -62,7 +62,7 @@ check_for_update() {
         echo
         echo "Last commit: $LAST_COMMIT"
         echo "Latest commit: $LATEST_COMMIT"
-    
+
         NOT_UPTODATE=false
         if [[ "$LAST_COMMIT" != "$LATEST_COMMIT" ]]; then
             echo "Found update on the remote: https://api.github.com/repos/SideStore/$1/releases/latest"

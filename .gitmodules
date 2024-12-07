@@ -16,11 +16,21 @@
 [submodule "Dependencies/libimobiledevice-glue"]
 	path = Dependencies/libimobiledevice-glue
 	url = https://github.com/libimobiledevice/libimobiledevice-glue
-[submodule "Dependencies/libfragmentzip"]
-	path = Dependencies/libfragmentzip
-	url = https://github.com/SideStore/libfragmentzip.git
-
 [submodule "AltSign"]
 	path = Dependencies/AltSign
 	url = https://github.com/rileytestut/AltSign.git
 	branch = marketplace
+
+#sidestore dependencies
+[submodule "minimuxer"]
+	path = SideStore/minimuxer
+	url = https://github.com/SideStore/minimuxer
+	branch = master
+[submodule "em_proxy"]
+	path = SideStore/em_proxy
+	url = https://github.com/SideStore/em_proxy
+	branch = master
+[submodule "libfragmentzip"]
+	path = SideStore/libfragmentzip
+	url = https://github.com/SideStore/libfragmentzip
+	branch = master
