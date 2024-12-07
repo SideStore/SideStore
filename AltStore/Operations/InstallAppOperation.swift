@@ -46,9 +46,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
         else {
             return self.finish(.failure(OperationError.invalidParameters("InstallAppOperation.main: self.context.certificate or self.context.resignedApp or self.context.provisioningProfiles is nil")))
         }
-        
-        Logger.sideload.notice("Installing resigned app \(resignedApp.bundleIdentifier, privacy: .public)...")
-        
+
         @Managed var appVersion = self.context.appVersion
         let storeBuildVersion = $appVersion.buildVersion
         
@@ -257,7 +255,6 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             catch
             {
                 print("Failed to remove refreshed .ipa: \(error)")
-                Logger.sideload.error("Failed to remove refreshed .ipa: \(error.localizedDescription, privacy: .public)")
             }
         }
         
@@ -267,43 +264,6 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
 
 private extension InstallAppOperation
 {
-    func receive(from connection: ServerConnection, completionHandler: @escaping (Result<Void, Error>) -> Void)
-    {
-        connection.receiveResponse() { (result) in
-            do
-            {
-                let response = try result.get()
-                                
-                switch response
-                {
-                case .installationProgress(let response):
-                    Logger.sideload.debug("Installing \(self.context.resignedApp?.bundleIdentifier ?? self.context.bundleIdentifier, privacy: .public)... \((response.progress * 100).rounded())%")
-                    
-                    if response.progress == 1.0
-                    {
-                        self.progress.completedUnitCount = self.progress.totalUnitCount
-                        completionHandler(.success(()))
-                    }
-                    else
-                    {
-                        self.progress.completedUnitCount = Int64(response.progress * 100)
-                        self.receive(from: connection, completionHandler: completionHandler)
-                    }
-                    
-                case .error(let response):
-                    completionHandler(.failure(response.error))
-                    
-                default:
-                    completionHandler(.failure(ALTServerError(.unknownRequest)))
-                }
-            }
-            catch
-            {
-                completionHandler(.failure(ALTServerError(error)))
-            }
-        }
-    }
-    
     func cleanUp()
     {
         guard !self.didCleanUp else { return }
@@ -315,7 +275,7 @@ private extension InstallAppOperation
         }
         catch
         {
-            Logger.sideload.error("Failed to remove temporary directory: \(error.localizedDescription, privacy: .public)")
+            print("Failed to remove temporary directory.", error)
         }
     }
 }

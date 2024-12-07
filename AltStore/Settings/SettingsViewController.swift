@@ -97,7 +97,6 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
     
     @IBOutlet private var refreshSideJITServer: UILabel!
-    @IBOutlet private var enforceThreeAppLimitSwitch: UISwitch!
     @IBOutlet private var disableResponseCachingSwitch: UISwitch!
     
     @IBOutlet private var mastodonButton: UIButton!
@@ -133,7 +132,8 @@ final class SettingsViewController: UITableViewController
         debugModeGestureRecognizer.direction = .up
         debugModeGestureRecognizer.numberOfTouchesRequired = 3
         self.tableView.addGestureRecognizer(debugModeGestureRecognizer)
-        
+
+        var versionString: String = ""
         if let installedApp = InstalledApp.fetchAltStore(in: DatabaseManager.shared.viewContext)
         {
             #if BETA
@@ -247,7 +247,6 @@ private extension SettingsViewController
         self.backgroundRefreshSwitch.isOn = UserDefaults.standard.isBackgroundRefreshEnabled
         self.noIdleTimeoutSwitch.isOn = UserDefaults.standard.isIdleTimeoutDisableEnabled
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
-        self.enforceThreeAppLimitSwitch.isOn = !UserDefaults.standard.ignoreActiveAppsLimit
         self.disableResponseCachingSwitch.isOn = UserDefaults.standard.responseCachingDisabled
         
         if self.isViewLoaded
@@ -421,6 +420,10 @@ private extension SettingsViewController
     
     @IBAction func toggleDisableAppLimit(_ sender: UISwitch) {
         UserDefaults.standard.isAppLimitDisabled = sender.isOn
+        if UserDefaults.standard.activeAppsLimit != nil
+        {
+            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+        }
     }
     
     @IBAction func toggleIsBackgroundRefreshEnabled(_ sender: UISwitch)
@@ -431,16 +434,6 @@ private extension SettingsViewController
     @IBAction func toggleNoIdleTimeoutEnabled(_ sender: UISwitch)
     {
         UserDefaults.standard.isIdleTimeoutDisableEnabled = sender.isOn
-    }
-    
-    @IBAction func toggleEnforceThreeAppLimit(_ sender: UISwitch)
-    {
-        UserDefaults.standard.ignoreActiveAppsLimit = !sender.isOn
-        
-        if UserDefaults.standard.activeAppsLimit != nil
-        {
-            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
-        }
     }
     
     @IBAction func toggleDisableResponseCaching(_ sender: UISwitch)

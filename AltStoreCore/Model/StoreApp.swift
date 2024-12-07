@@ -190,7 +190,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                 permission.sourceID = self.sourceIdentifier ?? ""
             }
             
-            for screenshot in self.allScreenshots
+            for screenshot in self.screenshots
             {
                 screenshot.sourceID = self.sourceIdentifier ?? ""
             }
@@ -282,8 +282,6 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case developerName
         case localizedDescription
         case iconURL
-        case screenshotURLs
-        case downloadURL
         case platformURLs
         case screenshots
         case tintColor
@@ -606,7 +604,7 @@ public extension StoreApp
     func screenshots(for deviceType: ALTDeviceType) -> [AppScreenshot]
     {
         //TODO: Support multiple device types
-        let filteredScreenshots = self.allScreenshots.filter { $0.deviceType == deviceType }
+        let filteredScreenshots = self.screenshots.filter { $0.deviceType == deviceType }
         return filteredScreenshots
     }
     
@@ -626,7 +624,7 @@ public extension StoreApp
         let preferredScreenshots = self.screenshots(for: deviceType)
         guard !preferredScreenshots.isEmpty else {
             // There are no screenshots for deviceType, so return _all_ screenshots instead.
-            return self.allScreenshots
+            return self.screenshots
         }
         
         return preferredScreenshots

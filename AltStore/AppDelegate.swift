@@ -63,7 +63,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.setTintColor()
         self.prepareImageCache()
-        
+
+        // TODO: @mahee96: find if we need to start em_proxy as in altstore?
+        // start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+
         SecureValueTransformer.register()        
         
         if UserDefaults.standard.firstLaunch == nil
@@ -86,7 +89,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication)
     {
         // Make sure to update SceneDelegate.sceneDidEnterBackground() as well.
-                        
+        // TODO: @mahee96: find if we need to stop em_proxy as in altstore?
+        // stop_em_proxy()
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
         let midnightOneMonthAgo = Calendar.current.startOfDay(for: oneMonthAgo)
@@ -104,6 +108,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         AppManager.shared.update()
         start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+
+        PatreonAPI.shared.refreshPatreonAccount()
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool

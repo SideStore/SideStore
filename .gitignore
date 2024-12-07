@@ -5,11 +5,13 @@
 # Xcode
 #
 
+## CocoaPods
 Pods/
 
 ## Build generated
 build/
 DerivedData
+
 archive.xcarchive
 ## Various settings
 *.pbxuser
@@ -21,6 +23,7 @@ archive.xcarchive
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
+
 ## Other
 *.xccheckout
 *.moved-aside

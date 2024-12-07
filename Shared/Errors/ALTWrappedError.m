@@ -30,6 +30,7 @@
             _wrappedError = [error copy];
         }
     }
+
     return self;
 }
 

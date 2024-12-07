@@ -356,11 +356,11 @@ open class MergePolicy: RSTRelationshipPreservingMergePolicy
                         // Screenshots
                         if let sortedScreenshotIDs = sortedScreenshotIDsByGlobalAppID[globallyUniqueID],
                            let sortedScreenshotIDsArray = sortedScreenshotIDs.array as? [String],
-                           case let databaseScreenshotIDs = databaseObject.allScreenshots.map({ $0.screenshotID }),
+                           case let databaseScreenshotIDs = databaseObject.screenshots.map({ $0.screenshotID }),
                            databaseScreenshotIDs != sortedScreenshotIDsArray
                         {
                             // Screenshot order is incorrect, so attempt to fix by re-sorting.
-                            let fixedScreenshots = databaseObject.allScreenshots.sorted { (screenshotA, screenshotB) in
+                            let fixedScreenshots = databaseObject.screenshots.sorted { (screenshotA, screenshotB) in
                                 let indexA = sortedScreenshotIDs.index(of: screenshotA.screenshotID)
                                 let indexB = sortedScreenshotIDs.index(of: screenshotB.screenshotID)
                                 return indexA < indexB

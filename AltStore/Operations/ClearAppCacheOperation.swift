@@ -8,7 +8,7 @@
 
 import Foundation
 import AltStoreCore
-/*
+
 
 import Nuke
 
@@ -41,7 +41,7 @@ struct BatchError: ALTLocalizedError
         return message
     }
 }
-*/
+
 @objc(ClearAppCacheOperation)
 class ClearAppCacheOperation: ResultOperation<Void>
 {

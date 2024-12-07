@@ -76,13 +76,13 @@ final class AboutPatreonHeaderView: UICollectionReusableView
         self.textView.layer.cornerRadius = 20
         self.textView.textContainer.lineFragmentPadding = 0
         
-        for imageView in [self.rileyImageView, self.shaneImageView].compactMap({ $0 })
+        for imageView in [self.rileyImageView!, self.shaneImageView!]
         {
             imageView.clipsToBounds = true
             imageView.layer.cornerRadius = imageView.bounds.midY
         }
         
-        for button in [self.supportButton, self.accountButton, self.twitterButton, self.instagramButton].compactMap({ $0 })
+        for button in [self.supportButton!, self.accountButton!]
         {
             button.clipsToBounds = true
             button.layer.cornerRadius = 16

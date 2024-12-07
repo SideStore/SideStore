@@ -1,6 +1,6 @@
 inhibit_all_warnings!
 
-target 'AltStore' do
+target 'SideStore' do
   platform :ios, '14.0'
 
   use_frameworks!
@@ -8,17 +8,7 @@ target 'AltStore' do
   # Pods for AltStore
   pod 'Nuke', '~> 10.0'
   pod 'AppCenter', '~> 5.0'
-
-end
-
-target 'AltServer' do
-  platform :macos, '11'
-
-  use_frameworks!
-
-  # Pods for AltServer
-  pod 'STPrivilegedTask', :git => 'https://github.com/rileytestut/STPrivilegedTask.git'
-  pod 'Sparkle', '~> 2.3'
+  pod 'Starscream', '~> 4.0.0'
 
 end
 
@@ -27,8 +17,12 @@ target 'AltStoreCore' do
 
   use_frameworks!
 
-  # Pods for AltServer
+  # Pods for AltStoreCore
   pod 'KeychainAccess', '~> 4.2.0'
+  # pod 'SemanticVersion', '~> 0.3.5'
+  # Add the Swift Package using the repository URL
+  # pod 'SemanticVersion', :git => 'https://github.com/SwiftPackageIndex/SemanticVersion.git', :tag => '0.4.0'
+
 
 end
 

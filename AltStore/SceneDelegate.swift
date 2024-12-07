@@ -44,7 +44,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
         
         PatreonAPI.shared.refreshPatreonAccount()
     }
-    
+
     func sceneDidEnterBackground(_ scene: UIScene)
     {
         // Called as the scene transitions from the foreground to the background.
@@ -54,7 +54,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
         guard UIApplication.shared.applicationState == .background else { return }
         
         // Make sure to update AppDelegate.applicationDidEnterBackground() as well.
-                
+
+        // TODO: @mahee96: find if we need to stop em_proxy as in altstore?
+        // stop_em_proxy()
+
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
         let midnightOneMonthAgo = Calendar.current.startOfDay(for: oneMonthAgo)

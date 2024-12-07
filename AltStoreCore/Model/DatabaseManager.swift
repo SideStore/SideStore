@@ -53,6 +53,7 @@ public class DatabaseManager
     private let coordinatorQueue = OperationQueue()
     
     private var ignoreWillMigrateDatabaseNotification = false
+
     private init()
     {
         self.persistentContainer = PersistentContainer(name: "AltStore", bundle: Bundle(for: DatabaseManager.self))
@@ -108,6 +109,7 @@ public extension DatabaseManager
                 self.ignoreWillMigrateDatabaseNotification = true
                 CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), .willMigrateDatabase, nil, nil, true)
             }
+
             self.migrateDatabaseToAppGroupIfNeeded { (result) in
                 switch result
                 {

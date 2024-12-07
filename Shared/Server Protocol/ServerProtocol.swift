@@ -201,6 +201,7 @@ public struct ErrorResponse: ServerMessageProtocol
     public var identifier = "ErrorResponse"
     
     public var error: ALTServerError {
+        // Must be ALTServerError
         return self.serverError.map { ALTServerError($0.error) } ?? ALTServerError(self.errorCode)
     }
     private var serverError: CodableError?

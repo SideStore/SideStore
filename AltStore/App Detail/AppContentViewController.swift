@@ -29,7 +29,7 @@ final class AppContentViewController: UITableViewController
 {
     var app: StoreApp!
     
-    private lazy var screenshotsDataSource = self.makeScreenshotsDataSource()
+//     private lazy var screenshotsDataSource = self.makeScreenshotsDataSource()
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
@@ -186,7 +186,7 @@ extension AppContentViewController
         switch Row.allCases[indexPath.row]
         {
         case .screenshots:
-            guard !self.app.allScreenshots.isEmpty else { return 0.0 }
+            guard !self.app.screenshots.isEmpty else { return 0.0 }
             return UITableView.automaticDimension
             
         case .permissions:

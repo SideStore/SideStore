@@ -19,3 +19,8 @@
 [submodule "Dependencies/libfragmentzip"]
 	path = Dependencies/libfragmentzip
 	url = https://github.com/SideStore/libfragmentzip.git
+
+[submodule "AltSign"]
+	path = Dependencies/AltSign
+	url = https://github.com/rileytestut/AltSign.git
+	branch = marketplace

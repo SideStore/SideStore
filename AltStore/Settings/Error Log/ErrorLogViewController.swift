@@ -17,7 +17,7 @@ import Nuke
 
 import QuickLook
 
-final class ErrorLogViewController: UITableViewController
+final class ErrorLogViewController: UITableViewController, QLPreviewControllerDelegate
 {
     private lazy var dataSource = self.makeDataSource()
     private var expandedErrorIDs = Set<NSManagedObjectID>()
@@ -28,6 +28,7 @@ final class ErrorLogViewController: UITableViewController
             self.updateButtonInteractivity()
         }
     }
+
     private lazy var timeFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .none
@@ -126,11 +127,18 @@ private extension ErrorLogViewController
             ])
 
                 cell.menuButton.menu = menu
-                cell.menuButton.showsMenuAsPrimaryAction = self.isScrolling ? false : true
-                cell.selectionStyle = .none
-            } else {
-                cell.menuButton.isUserInteractionEnabled = false
+
+            if self.isScrolling
+            {
+                cell.menuButton.showsMenuAsPrimaryAction = false
             }
+            else
+            {
+                cell.menuButton.showsMenuAsPrimaryAction = true
+            }
+
+                cell.selectionStyle = .none
+
             // Include errorDescriptionTextView's text in cell summary.
             cell.accessibilityLabel = [cell.errorFailureLabel.text, cell.dateLabel.text, cell.errorCodeLabel.text, cell.errorDescriptionTextView.text].compactMap { $0 }.joined(separator: ". ")
             
@@ -429,38 +437,45 @@ extension ErrorLogViewController
     {
         for case let cell as ErrorLogTableViewCell in self.tableView.visibleCells
         {
-            cell.menuButton.showsMenuAsPrimaryAction = self.isScrolling ? false : true
+            if self.isScrolling
+            {
+                cell.menuButton.showsMenuAsPrimaryAction = false
+            }
+            else
+            {
+                cell.menuButton.showsMenuAsPrimaryAction = true
+            }
         }
     }
 }
 
-extension ErrorLogViewController: QLPreviewControllerDataSource, QLPreviewControllerDelegate
-{
-    func numberOfPreviewItems(in controller: QLPreviewController) -> Int
-    {
-        return 1
-    }
-    
-    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem
-    {
-        return (_exportedLogURL as? NSURL) ?? NSURL()
-    }
-    
-    func previewControllerDidDismiss(_ controller: QLPreviewController)
-    {
-        guard let exportedLogURL = _exportedLogURL else { return }
-        
-        let parentDirectory = exportedLogURL.deletingLastPathComponent()
-        
-        do
-        {
-            try FileManager.default.removeItem(at: parentDirectory)
-        }
-        catch
-        {
-            Logger.main.error("Failed to remove temporary log directory \(parentDirectory.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
-        }
-        
-        _exportedLogURL = nil
-    }
-}
+//extension ErrorLogViewController: QLPreviewControllerDataSource, QLPreviewControllerDelegate
+//{
+//    func numberOfPreviewItems(in controller: QLPreviewController) -> Int
+//    {
+//        return 1
+//    }
+//    
+//    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem
+//    {
+//        return (_exportedLogURL as? NSURL) ?? NSURL()
+//    }
+//    
+//    func previewControllerDidDismiss(_ controller: QLPreviewController)
+//    {
+//        guard let exportedLogURL = _exportedLogURL else { return }
+//        
+//        let parentDirectory = exportedLogURL.deletingLastPathComponent()
+//        
+//        do
+//        {
+//            try FileManager.default.removeItem(at: parentDirectory)
+//        }
+//        catch
+//        {
+//            Logger.main.error("Failed to remove temporary log directory \(parentDirectory.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
+//        }
+//        
+//        _exportedLogURL = nil
+//    }
+//}

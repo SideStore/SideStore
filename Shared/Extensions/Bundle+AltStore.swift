@@ -17,6 +17,7 @@ public extension Bundle
         public static let certificateID = "ALTCertificateID"
         public static let appGroups = "ALTAppGroups"
         public static let altBundleID = "ALTBundleIdentifier"
+
         public static let orgbundleIdentifier =  "com.SideStore"
         public static let appbundleIdentifier =  orgbundleIdentifier + ".SideStore"
         public static let devicePairingString = "ALTPairingFile"

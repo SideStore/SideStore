@@ -462,7 +462,7 @@ public extension Source
         let source = Source(context: context)
         source.name = "SideStore Offical"
         source.identifier = Source.altStoreIdentifier
-        source.sourceURL = Source.altStoreSourceURL
+        try! source.setSourceURL(Source.altStoreSourceURL)
         
         return source
     }

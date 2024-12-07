@@ -360,7 +360,9 @@ private extension NewsViewController
                 {
                 case .failure(OperationError.cancelled): break // Ignore
                 case .failure(let error):
-                    ToastView(error: error, opensLog: true).show(in: self)
+                    let toastView = ToastView(error: error)
+                    toastView.opensErrorLog = true
+                    toastView.show(in: self)
 
                 case .success: print("Installed app:", storeApp.bundleIdentifier)
                 }

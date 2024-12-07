@@ -63,15 +63,16 @@ extension InstalledApp: AppProtocol
     }
 }
 
-extension AppVersion: AppProtocol {
+extension AppVersion: AppProtocol
+{
     public var name: String {
         return self.app?.name ?? self.bundleIdentifier
     }
-
+    
     public var bundleIdentifier: String {
         return self.appBundleID
     }
-
+    
     public var url: URL? {
         return self.downloadURL
     }

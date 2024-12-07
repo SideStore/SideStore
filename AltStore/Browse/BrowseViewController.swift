@@ -296,7 +296,6 @@ private extension BrowseViewController
     
     func updateDataSource()
     {
-        self.dataSource.predicate = nil
         let fetchRequest = self.makeFetchRequest()
         
         let context = self.source?.managedObjectContext ?? DatabaseManager.shared.viewContext

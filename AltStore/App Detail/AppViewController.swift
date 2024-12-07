@@ -207,7 +207,21 @@ final class AppViewController: UIViewController
             self._shouldResetLayout = false
         }
                 
-        let statusBarHeight = (self.view.window ?? self.presentedViewController?.view.window)?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        let statusBarHeight: Double
+
+        if let navigationController, navigationController.presentingViewController != nil, navigationController.modalPresentationStyle != .fullScreen
+        {
+            statusBarHeight = 20
+        }
+        else if let statusBarManager = (self.view.window ?? self.presentedViewController?.view.window)?.windowScene?.statusBarManager
+        {
+            statusBarHeight = statusBarManager.statusBarFrame.height
+        }
+        else
+        {
+            statusBarHeight = 0
+        }
+
         let cornerRadius = self.contentViewControllerShadowView.layer.cornerRadius
         
         let inset = 12 as CGFloat
@@ -562,8 +576,6 @@ extension AppViewController
                 }
                 
                 DispatchQueue.main.async {
-                    let toastView = ToastView(error: error, opensLog: true)
-                    toastView.show(in: self)
                     self.bannerView.button.progress = nil
                     self.navigationBarDownloadButton.progress = nil
                     self.update()

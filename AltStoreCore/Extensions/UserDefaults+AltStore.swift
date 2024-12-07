@@ -82,8 +82,6 @@ public extension UserDefaults
     }
     @NSManaged @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber?
     
-    @NSManaged var ignoreActiveAppsLimit: Bool
-    
     // Including "MacDirtyCow" in name triggers false positives with malware detectors 🤷‍♂️
     @NSManaged var isCowExploitSupported: Bool
     
@@ -129,8 +127,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.requiresAppGroupMigration): true,
             #keyPath(UserDefaults.menuAnisetteList): "https://servers.sidestore.io/servers.json",
             #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io",
-            #keyPath(UserDefaults.ignoreActiveAppsLimit): false,
-            #keyPath(UserDefaults.isMacDirtyCowSupported): isMacDirtyCowSupported
+            #keyPath(UserDefaults.isCowExploitSupported): isMacDirtyCowSupported,
             #keyPath(UserDefaults.permissionCheckingDisabled): permissionCheckingDisabled,
             #keyPath(UserDefaults._preferredAppSorting): preferredAppSorting.rawValue,
         ] as [String: Any]
@@ -140,8 +137,8 @@ public extension UserDefaults
         
         if !isMacDirtyCowSupported
         {
-            // Disable ignoreActiveAppsLimit if running iOS version that doesn't support MacDirtyCow.
-            UserDefaults.standard.ignoreActiveAppsLimit = false
+            // Disable isAppLimitDisabled if running iOS version that doesn't support MacDirtyCow.
+            UserDefaults.standard.isAppLimitDisabled = false
         }
         
         #if !BETA

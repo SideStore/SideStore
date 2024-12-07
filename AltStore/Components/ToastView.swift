@@ -16,10 +16,13 @@ extension TimeInterval
     static let longToastViewDuration = 8.0
 }
 
-final class ToastView: RSTToastView
+extension ToastView
 {
     static let openErrorLogNotification = Notification.Name("ALTOpenErrorLogNotification")
+}
 
+class ToastView: RSTToastView
+{
     var preferredDuration: TimeInterval
 
     var opensErrorLog: Bool = false
@@ -72,6 +75,7 @@ final class ToastView: RSTToastView
             error.domain == AltServerErrorDomain && error.code == ALTServerError.Code.underlyingError.rawValue
         {
             // Treat underlyingError as the primary error, but keep localized title + failure.
+
             let nsError = error as NSError
             error = unwrappedUnderlyingError as NSError
 
@@ -137,12 +141,6 @@ final class ToastView: RSTToastView
     override func show(in view: UIView)
     {
         self.show(in: view, duration: self.preferredDuration)
-    }
-
-    @objc
-    func showErrorLog() {
-        guard self.opensErrorLog else { return }
-        NotificationCenter.default.post(name: ToastView.openErrorLogNotification, object: self)
     }
 }
 

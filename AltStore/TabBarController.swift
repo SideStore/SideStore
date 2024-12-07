@@ -136,7 +136,9 @@ private extension TabBarController
     {
         self.selectedIndex = Tab.myApps.rawValue
     }
-    @objc func openErrorLog(_: Notification){
+
+    @objc func openErrorLog(_ notification: Notification)
+    {
         self.selectedIndex = Tab.settings.rawValue
     }
 }

@@ -75,8 +75,8 @@ public extension ALTLocalizedError
         var userInfo: [String: Any?] = [
             NSLocalizedFailureErrorKey: self.errorFailure,
             ALTLocalizedTitleErrorKey: self.errorTitle,
-//            ALTSourceFileErrorKey: self.sourceFile, // TODO: Figure out where these come from
-//            ALTSourceLineErrorKey: self.sourceLine,
+            ALTSourceFileErrorKey: self.sourceFile,
+           ALTSourceLineErrorKey: self.sourceLine,
         ]
         
         userInfo.merge(self.userInfoValues) { (_, new) in new }

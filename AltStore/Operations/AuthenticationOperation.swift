@@ -244,14 +244,23 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 {
                     team.isActiveTeam = false
                 }
-                
+
                 let activeAppsMinimumVersion = OperatingSystemVersion(majorVersion: 13, minorVersion: 3, patchVersion: 1)
-                if team.type == .free, !UserDefaults.standard.isAppLimitDisabled, ProcessInfo().sparseRestorePatched {
-                    UserDefaults.standard.activeAppsLimit = ALTActiveAppsLimit
-                } else if UserDefaults.standard.isAppLimitDisabled, !ProcessInfo().sparseRestorePatched {
-                    UserDefaults.standard.activeAppsLimit = 10
-                } else {
-                    UserDefaults.standard.activeAppsLimit = nil
+
+                let isMinimumVersionMatching = ProcessInfo.processInfo.isOperatingSystemAtLeast(activeAppsMinimumVersion)
+                let isSparseRestorePatched   = ProcessInfo().sparseRestorePatched
+                let isAppLimitDisabled       = UserDefaults.standard.isAppLimitDisabled
+
+                UserDefaults.standard.activeAppsLimit = nil
+                // TODO: @mahee96: is the minimum ver match for ios 13.3.1 check required?
+                //                 if so what is the app limit? As nil app limit specifies unlimited apps?!
+                if team.type == .free//, isMinimumVersionMatching 
+                {
+                    if (!isAppLimitDisabled && isSparseRestorePatched) ||
+                        (isAppLimitDisabled && !isSparseRestorePatched)
+                    {
+                         UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+                    }
                 }
                 
                 // Save
@@ -620,6 +629,8 @@ private extension AuthenticationOperation
                 }
                 else
                 {
+                    // We don't have private keys for any of the certificates,
+                    // so we need to revoke one and create a new one.
                     replaceCertificate(from: certificates)
                 }
             }

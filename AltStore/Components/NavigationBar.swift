@@ -10,7 +10,7 @@ import UIKit
 
 import Roxas
 
-final class NavigationBar: UINavigationBar
+class NavigationBarAppearance: UINavigationBarAppearance
 {
     // We sometimes need to ignore user interaction so
     // we can tap items underneath the navigation bar.

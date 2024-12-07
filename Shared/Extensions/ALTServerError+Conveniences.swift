@@ -25,6 +25,7 @@ public extension ALTServerError
             // because it'll still be accessible via error.underlyingError.underlyingError.
             var userInfo = error.userInfo
             userInfo[NSUnderlyingErrorKey] = error
+            
             self = ALTServerError(.underlyingError, userInfo: userInfo)
         }
     }

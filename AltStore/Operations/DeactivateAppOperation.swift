@@ -31,7 +31,11 @@ final class DeactivateAppOperation: ResultOperation<InstalledApp>
     {
         super.main()
         
-        if let error = self.context.error { return self.finish(.failure(error)) }
+        if let error = self.context.error
+        {
+            self.finish(.failure(error))
+            return
+        }
         
         DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
             let installedApp = context.object(with: self.app.objectID) as! InstalledApp

@@ -30,7 +30,9 @@ extension AppManager
                 } else if self.errors.count == 1 {
                     guard let source = self.errors.keys.first else { return }
                     localizedTitle = String(format: NSLocalizedString("Failed to refresh Source '%@'", comment: ""), source.name)
-                } else {
+                }
+                else
+                {
                     localizedTitle = String(format: NSLocalizedString("Failed to refresh %@ Sources", comment: ""), NSNumber(value: self.errors.count))
                 }
             }
@@ -42,7 +44,9 @@ extension AppManager
                 return error.localizedDescription
             } else if let error = self.errors.values.first, self.errors.count == 1 {
                 return error.localizedDescription
-            } else {
+            }
+            else
+            {
                 var localizedDescription: String?
                 
                 self.managedObjectContext?.performAndWait {

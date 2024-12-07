@@ -15,17 +15,12 @@ extension OperationError
 {
     enum Code: Int, ALTErrorCode, CaseIterable {
         typealias Error = OperationError
-
+        
         // General
         case unknown = 1000
         case unknownResult = 1001
-        // case cancelled = 1002
+        case cancelled = 1002
         case timedOut = 1003
-        case unableToConnectSideJIT
-        case unableToRespondSideJITDevice
-        case wrongSideJITIP
-        case SideJITIssue // (error: String)
-        case refreshsidejit        
         case notAuthenticated = 1004
         case appNotFound = 1005
         case unknownUDID = 1006
@@ -35,18 +30,11 @@ extension OperationError
         case noSources = 1010
         case openAppFailed = 1011
         case missingAppGroup = 1012
-        case refreshAppFailed
-
-        // Connection
-        case noWiFi = 1200
-        case tooNewError
-        case anisetteV1Error//(message: String)
-        case provisioningError//(result: String, message: String?)
-        case anisetteV3Error//(message: String)
-
-        case cacheClearError//(errors: [String])
         case forbidden = 1013
         case sourceNotAdded = 1014
+
+
+        // Connection
         
         /* Connection */
         case serverNotFound = 1200
@@ -56,6 +44,20 @@ extension OperationError
         /* Pledges */
         case pledgeRequired = 1401
         case pledgeInactive = 1402
+
+        /* SideStore Only */
+        case unableToConnectSideJIT
+        case unableToRespondSideJITDevice
+        case wrongSideJITIP
+        case SideJITIssue // (error: String)
+        case refreshsidejit
+        case refreshAppFailed
+        case tooNewError
+        case anisetteV1Error//(message: String)
+        case provisioningError//(result: String, message: String?)
+        case anisetteV3Error//(message: String)
+        case cacheClearError//(errors: [String])
+        case noWiFi
     }
     
     static var cancelled: CancellationError { CancellationError() }
@@ -70,13 +72,13 @@ extension OperationError
     static let invalidApp: OperationError = .init(code: .invalidApp)
     static let noSources: OperationError = .init(code: .noSources)
     static let missingAppGroup: OperationError = .init(code: .missingAppGroup)
-
+    
     static let noWiFi: OperationError = .init(code: .noWiFi)
     static let tooNewError: OperationError = .init(code: .tooNewError)
     static let provisioningError: OperationError = .init(code: .provisioningError)
     static let anisetteV1Error: OperationError = .init(code: .anisetteV1Error)
     static let anisetteV3Error: OperationError = .init(code: .anisetteV3Error)
-
+    
     static let cacheClearError: OperationError = .init(code: .cacheClearError)
 
     static func unknown(failureReason: String? = nil, file: String = #fileID, line: UInt = #line) -> OperationError {
@@ -126,6 +128,7 @@ extension OperationError
 
     static func invalidParameters(_ message: String? = nil) -> OperationError {
         OperationError(code: .invalidParameters, failureReason: message)
+    }
     
     static func forbidden(failureReason: String? = nil, file: String = #fileID, line: UInt = #line) -> OperationError {
         OperationError(code: .forbidden, failureReason: failureReason, sourceFile: file, sourceLine: line)
@@ -168,8 +171,8 @@ struct OperationError: ALTLocalizedError {
     private var _failureReason: String?
 
     private init(code: Code, failureReason: String? = nil,
-                 appName: String? = nil, requiredAppIDs: Int? = nil, availableAppIDs: Int? = nil,
-                 expirationDate: Date? = nil, sourceFile: String? = nil, sourceLine: UInt? = nil){
+                 appName: String? = nil, sourceName: String? = nil, requiredAppIDs: Int? = nil,
+                 availableAppIDs: Int? = nil, expirationDate: Date? = nil, sourceFile: String? = nil, sourceLine: UInt? = nil){
         self.code = code
         self._failureReason = failureReason
 
@@ -245,7 +248,6 @@ struct OperationError: ALTLocalizedError {
         }
         
     }
-    private var _failureReason: String?
     
     var recoverySuggestion: String? {
         switch self.code

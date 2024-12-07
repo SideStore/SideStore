@@ -14,7 +14,13 @@ import AppCenter
 import AppCenterAnalytics
 import AppCenterCrashes
 
+#if DEBUG
 private let appCenterAppSecret = "73532d3e-e573-4693-99a4-9f85840bbb44"
+#elseif RELEASE
+private let appCenterAppSecret = "73532d3e-e573-4693-99a4-9f85840bbb44"
+#else
+private let appCenterAppSecret = "73532d3e-e573-4693-99a4-9f85840bbb44"
+#endif
 
 extension AnalyticsManager
 {

@@ -8,12 +8,6 @@
 
 #import "NSError+ALTServerError.h"
 
-#if TARGET_OS_OSX
-#import "AltServer-Swift.h"
-#else
-#import "AltStoreCore/AltStoreCore-Swift.h"
-#endif
-
 #if ALTJIT
 #import "AltJIT-Swift.h"
 @import AltSign;
@@ -26,9 +20,8 @@
 #endif
 
 NSErrorDomain const AltServerErrorDomain = @"AltServer.ServerError";
-NSErrorDomain const AltServerInstallationErrorDomain = @"AltServer.InstallationError";
+NSErrorDomain const AltServerInstallationErrorDomain = @"Apple.InstallationError";
 NSErrorDomain const AltServerConnectionErrorDomain = @"AltServer.ConnectionError";
-
 
 NSErrorUserInfoKey const ALTUnderlyingErrorDomainErrorKey = @"underlyingErrorDomain";
 NSErrorUserInfoKey const ALTUnderlyingErrorCodeErrorKey = @"underlyingErrorCode";
@@ -219,7 +212,7 @@ NSErrorUserInfoKey const ALTNSCodingPathKey = @"NSCodingPath";
             if (underlyingError != nil) {
                 return underlyingError.localizedFailureReason ?: underlyingError.localizedDescription;
             }
-            return NSLocalizedString(@"An error occured while installing the app.", @"");
+            return NSLocalizedString(@"An error occurred while installing the app.", @"");
         }
 
         case ALTServerErrorMaximumFreeAppLimitReached:
@@ -289,7 +282,9 @@ NSErrorUserInfoKey const ALTNSCodingPathKey = @"NSCodingPath";
             if (underlyingError.localizedRecoverySuggestion != nil){
                 return underlyingError.localizedRecoverySuggestion;
             }
-			// If there is no underlying error found, fall through to AltServerErrorDeviceNotFound
+
+            // If there is no underlying error, fall through to ALTServerErrorDeviceNotFound.
+            // return nil;
         }
         case ALTServerErrorDeviceNotFound:
             return NSLocalizedString(@"Make sure you have trusted this device with your computer and Wi-Fi sync is enabled.", @"");

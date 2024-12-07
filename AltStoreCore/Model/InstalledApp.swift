@@ -15,7 +15,7 @@ import SemanticVersion
 extension InstalledApp
 {
     public static var freeAccountActiveAppsLimit: Int {
-        if UserDefaults.standard.ignoreActiveAppsLimit
+        if UserDefaults.standard.isAppLimitDisabled
         {
             // MacDirtyCow exploit allows users to remove 3-app limit, so return 10 to match App ID limit per-week.
             // Don't return nil because that implies there is no limit, which isn't quite true due to App ID limit.
@@ -159,15 +159,17 @@ public extension InstalledApp
     
     func loadIcon(completion: @escaping (Result<UIImage?, Error>) -> Void)
     {
-        if self.bundleIdentifier == StoreApp.altstoreAppID, let iconName = UIApplication.alt_shared?.alternateIconName
-        {
-            // Use alternate app icon for AltStore, if one is chosen.
-            
-            let image = UIImage(named: iconName)
-            completion(.success(image))
-            
-            return
-        }
+        // TODO: @mahee96: Fix this later (reason: alternateIcon is not available for appEx)
+//        if self.bundleIdentifier == StoreApp.altstoreAppID,
+//           let iconName = UIApplication.alt_shared?.alternateIconName
+//        {
+//            // Use alternate app icon for AltStore, if one is chosen.
+//            
+//            let image = UIImage(named: iconName)
+//            completion(.success(image))
+//            
+//            return
+//        }
         
         let hasAlternateIcon = self.hasAlternateIcon
         let alternateIconURL = self.alternateIconURL
@@ -211,30 +213,34 @@ public extension InstalledApp
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
         
-        let predicateFormat = [
-            // isActive && storeApp != nil && latestSupportedVersion != nil
-            "%K == YES AND %K != nil AND %K != nil",
+        // let predicateFormat = [
+        //     // isActive && storeApp != nil && latestSupportedVersion != nil
+        //     "%K == YES AND %K != nil AND %K != nil",
             
-            "AND",
+        //     "AND",
             
-            // latestSupportedVersion.version != installedApp.version || latestSupportedVersion.buildVersion != installedApp.storeBuildVersion
-            //
-            // We have to also check !(latestSupportedVersion.buildVersion == '' && installedApp.storeBuildVersion == nil)
-            // because latestSupportedVersion.buildVersion stores an empty string for nil, while installedApp.storeBuildVersion uses NULL.
-            "(%K != %K OR (%K != %K AND NOT (%K == '' AND %K == nil)))",
+        //     // latestSupportedVersion.version != installedApp.version || latestSupportedVersion.buildVersion != installedApp.storeBuildVersion
+        //     //
+        //     // We have to also check !(latestSupportedVersion.buildVersion == '' && installedApp.storeBuildVersion == nil)
+        //     // because latestSupportedVersion.buildVersion stores an empty string for nil, while installedApp.storeBuildVersion uses NULL.
+        //     "(%K != %K OR (%K != %K AND NOT (%K == '' AND %K == nil)))",
             
-            "AND",
+        //     "AND",
             
-            // !isPledgeRequired || isPledged
-            "(%K == NO OR %K == YES)"
-        ].joined(separator: " ")
+        //     // !isPledgeRequired || isPledged
+        //     "(%K == NO OR %K == YES)"
+        // ].joined(separator: " ")
         
-        fetchRequest.predicate = NSPredicate(format: predicateFormat,
-                                             #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.latestSupportedVersion),
-                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion.version), #keyPath(InstalledApp.version),
-                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
-                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
-                                             #keyPath(InstalledApp.storeApp.isPledgeRequired), #keyPath(InstalledApp.storeApp.isPledged))
+        // fetchRequest.predicate = NSPredicate(format: predicateFormat,
+        //                                      #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.latestSupportedVersion),
+        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion.version), #keyPath(InstalledApp.version),
+        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+        //                                      #keyPath(InstalledApp.storeApp.isPledgeRequired), #keyPath(InstalledApp.storeApp.isPledged))
+
+        fetchRequest.predicate = NSPredicate(format: "%K == YES AND %K == YES",
+                                                     #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.hasUpdate))
+
         return fetchRequest
     }
     

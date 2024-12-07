@@ -214,7 +214,7 @@ private extension BackgroundRefreshAppsOperation
             do
             {
                 let results = try result.get()
-                shouldPresentAlert = false
+                shouldPresentAlert = !results.isEmpty
                 
                 for (_, result) in results
                 {
@@ -242,6 +242,8 @@ private extension BackgroundRefreshAppsOperation
                 
                 content.title = NSLocalizedString("Failed to Refresh Apps", comment: "")
                 content.body = error.localizedDescription
+
+                shouldPresentAlert = true
             }
 
             if shouldPresentAlert

@@ -16,7 +16,7 @@ extension VerificationError
         typealias Error = VerificationError
         
         // Legacy
-        // case privateEntitlements = 0
+//        case privateEntitlements = 0
         
         case mismatchedBundleIdentifiers = 1
         case iOSVersionNotSupported = 2
@@ -28,7 +28,11 @@ extension VerificationError
         case undeclaredPermissions = 6
         case addedPermissions = 7
     }
-    
+
+//    static func privateEntitlements(_ entitlements: [String: Any], app: ALTApplication) -> VerificationError {
+//        VerificationError(code: .privateEntitlements, app: app, entitlements: entitlements)
+//    }
+
     static func mismatchedBundleIdentifiers(sourceBundleID: String, app: ALTApplication) -> VerificationError {
         VerificationError(code: .mismatchedBundleIdentifiers, app: app, sourceBundleID: sourceBundleID)
     }
@@ -108,6 +112,10 @@ struct VerificationError: ALTLocalizedError
     var errorFailureReason: String {
         switch self.code
         {
+//        case .privateEntitlements:
+//            let appName = self.$app.name ?? NSLocalizedString("The app", comment: "")
+//            return String(formatted: "“%@” requires private permissions.", appName)
+
         case .mismatchedBundleIdentifiers:
             if let appBundleID = self.$app.bundleIdentifier, let bundleID = self.sourceBundleID
             {

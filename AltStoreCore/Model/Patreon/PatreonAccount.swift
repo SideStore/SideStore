@@ -45,7 +45,8 @@ public class PatreonAccount: NSManagedObject, Fetchable
 //        {
 //            self.isPatron = false
 //        }
-        self.isPatron = true
+//        self.isPatron = true
+        self.isAltStorePatron = true
     }
 }
 

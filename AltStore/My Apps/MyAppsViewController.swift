@@ -356,11 +356,11 @@ private extension MyAppsViewController
             formatter.maximumUnitCount = 1
             
             
-            
-            cell.bannerView.button.setTitle(formatter.string(from: currentDate, to: installedApp.expirationDate)?.uppercased(), for: .normal)
+            let timeInterval = formatter.string(from: currentDate, to: installedApp.expirationDate)
+            cell.bannerView.button.setTitle(timeInterval?.uppercased(), for: .normal)
             
             cell.bannerView.button.isIndicatingActivity = false
-            cell.bannerView.configure(for: installedApp, action: .custom(numberOfDaysText.uppercased()))
+            cell.bannerView.configure(for: installedApp, action: .custom((timeInterval?.uppercased())!))
             
             cell.bannerView.iconImageView.isIndicatingActivity = true
             
@@ -387,7 +387,7 @@ private extension MyAppsViewController
                 cell.bannerView.button.alpha = 1.0
             }
             
-            cell.bannerView.accessibilityLabel? += ". " + String(format: NSLocalizedString("Expires in %@", comment: ""), numberOfDaysText)
+            cell.bannerView.accessibilityLabel? += ". " + String(format: NSLocalizedString("Expires in %@", comment: ""), timeInterval!)
             
             // Make sure refresh button is correct size.
             cell.layoutIfNeeded()
@@ -529,11 +529,10 @@ private extension MyAppsViewController
             print("[ALTLog] Failed to fetch updates:", error)
         }
         
-        if let patreonAccount = DatabaseManager.shared.patreonAccount(), patreonAccount.isPatron, PatreonAPI.shared.isAuthenticated
+        if let patreonAccount = DatabaseManager.shared.patreonAccount(), patreonAccount.isAltStorePatron, PatreonAPI.shared.isAuthenticated
         {
             self.dataSource.predicate = nil
-        
-        
+        }
     }
 }
 
@@ -1023,7 +1022,7 @@ private extension MyAppsViewController
         {
             message = NSLocalizedString("Non-developer Apple IDs are limited to 3 apps. Inactive apps are backed up and uninstalled so they don't count towards your total, but will be reinstalled with all their data when activated again.", comment: "")
             
-            if UserDefaults.standard.ignoreActiveAppsLimit
+            if UserDefaults.standard.isAppLimitDisabled
             {
                 message += "\n\n"
                 message += NSLocalizedString("If you're using the MacDirtyCow exploit to remove the 3-app limit, you can install up to 10 apps and app extensions instead.", comment: "")

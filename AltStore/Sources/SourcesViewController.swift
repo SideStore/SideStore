@@ -13,26 +13,26 @@ import AltStoreCore
 import Roxas
 import Nuke
 
-struct SourceError: ALTLocalizedError
-{
-    enum Code: Int, ALTErrorCode
-    {
-        typealias Error = SourceError
-        case unsupported
-    }
-    
-    var code: Code
-    var errorTitle: String?
-    var errorFailure: String?
-    @Managed var source: Source
-    
-    var errorFailureReason: String {
-        switch self.code
-        {
-        case .unsupported: return String(format: NSLocalizedString("The source “%@” is not supported by this version of SideStore.", comment: ""), self.$source.name)
-        }
-    }
-}
+//struct SourceError: ALTLocalizedError
+//{
+//    enum Code: Int, ALTErrorCode
+//    {
+//        typealias Error = SourceError
+//        case unsupported
+//    }
+//    
+//    var code: Code
+//    var errorTitle: String?
+//    var errorFailure: String?
+//    @Managed var source: Source
+//    
+//    var errorFailureReason: String {
+//        switch self.code
+//        {
+//        case .unsupported: return String(format: NSLocalizedString("The source “%@” is not supported by this version of SideStore.", comment: ""), self.$source.name)
+//        }
+//    }
+//}
 
 @objc(SourcesFooterView)
 private final class SourcesFooterView: TextCollectionReusableView
@@ -454,14 +454,14 @@ private extension SourcesViewController
                 completionHandler?(false)
                 
                 let dispatchGroup = DispatchGroup()
-                
+
                 var sourcesByURL = [URL: Source]()
                 var fetchError: Error?
-                
+
                 for sourceURL in featuredSourceURLs
                 {
                     dispatchGroup.enter()
-                    
+
                     AppManager.shared.fetchSource(sourceURL: sourceURL, managedObjectContext: context) { result in
                         // Serialize access to sourcesByURL.
                         context.performAndWait {
@@ -470,12 +470,12 @@ private extension SourcesViewController
                             case .failure(let error): fetchError = error
                             case .success(let source): sourcesByURL[source.sourceURL] = source
                             }
-                            
+
                             dispatchGroup.leave()
                         }
                     }
                 }
-                
+
                 dispatchGroup.notify(queue: .main) {
                     if let error = fetchError
                     {
@@ -547,98 +547,6 @@ extension SourcesViewController
         let source = self.dataSource.item(at: indexPath)
         self.showSourceDetails(for: source)
     }
-    
-    // override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView
-    // {
-    //     let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kind, for: indexPath) as! UICollectionViewListCell
-        
-    //     var configuation = UIListContentConfiguration.cell()
-    //     configuation.text = NSLocalizedString("Sources control what apps are available to download through AltStore.", comment: "")
-    //     configuation.textProperties.color = .secondaryLabel
-    //     configuation.textProperties.alignment = .natural
-        
-    //     headerView.contentConfiguration = configuation
-        
-    //     switch kind
-    //     {
-    //     case UICollectionView.elementKindSectionHeader:
-    //         switch Section.allCases[indexPath.section]
-    //         {
-    //         case .added:
-    //             headerView.textLabel.text = NSLocalizedString("Sources control what apps are available to download through SideStore.", comment: "")
-    //             headerView.textLabel.font = UIFont.preferredFont(forTextStyle: .callout)
-    //             headerView.textLabel.textAlignment = .natural
-                
-    //             headerView.topLayoutConstraint.constant = 14
-    //             headerView.bottomLayoutConstraint.constant = 30
-                
-    //         case .trusted:
-    //             switch self.fetchTrustedSourcesResult
-    //             {
-    //             case .failure: headerView.textLabel.text = NSLocalizedString("Error Loading Trusted Sources", comment: "")
-    //             case .success, .none: headerView.textLabel.text = NSLocalizedString("Trusted Sources", comment: "")
-    //             }
-                
-    //             let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .callout).withSymbolicTraits(.traitBold)!
-    //             headerView.textLabel.font = UIFont(descriptor: descriptor, size: 0)
-    //             headerView.textLabel.textAlignment = .center
-                
-    //             headerView.topLayoutConstraint.constant = 54
-    //             headerView.bottomLayoutConstraint.constant = 15
-    //         }
-            
-    //     case UICollectionView.elementKindSectionFooter:
-    //         let footerView = headerView as! SourcesFooterView
-    //         let font = UIFont.preferredFont(forTextStyle: .subheadline)
-            
-    //         switch self.fetchTrustedSourcesResult
-    //         {
-    //         case .failure(let error):
-    //             footerView.textView.font = font
-    //             footerView.textView.text = error.localizedDescription
-                
-    //             footerView.activityIndicatorView.stopAnimating()
-    //             footerView.topLayoutConstraint.constant = 0
-    //             footerView.textView.textAlignment = .center
-                
-    //         case .success, .none:
-    //             footerView.textView.delegate = self
-                
-    //             let attributedText = NSMutableAttributedString(
-    //                 string: NSLocalizedString("SideStore has reviewed these sources to make sure they meet our safety standards.", comment: ""),
-    //                 attributes: [.font: font, .foregroundColor: UIColor.gray]
-    //             )
-    //             //attributedText.mutableString.append(" ")
-                
-    //             //let boldedFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
-    //             //let openPatreonURL = URL(string: "https://SideStore.io/")!
-                
-    //             // let joinPatreonText = NSAttributedString(
-    //                 // string: NSLocalizedString("", comment: ""),
-    //                 // attributes: [.font: boldedFont, .link: openPatreonURL, .underlineColor: UIColor.clear]
-    //             //)
-    //             //attributedText.append(joinPatreonText)
-                
-    //             footerView.textView.attributedText = attributedText
-    //             footerView.textView.textAlignment = .natural
-                
-    //             if self.fetchTrustedSourcesResult != nil
-    //             {
-    //                 footerView.activityIndicatorView.stopAnimating()
-    //                 footerView.topLayoutConstraint.constant = 20
-    //             }
-    //             else
-    //             {
-    //                 footerView.activityIndicatorView.startAnimating()
-    //                 footerView.topLayoutConstraint.constant = 0
-    //             }
-    //         }
-            
-    //     default: break
-    //     }
-                
-    //     return headerView
-    // }
 }
 
 extension SourcesViewController: NSFetchedResultsControllerDelegate
