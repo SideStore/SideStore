@@ -19,7 +19,7 @@ extension OperationError
         // General
         case unknown = 1000
         case unknownResult = 1001
-        case cancelled = 1002
+//        case cancelled = 1002
         case timedOut = 1003
         case notAuthenticated = 1004
         case appNotFound = 1005
@@ -200,7 +200,6 @@ struct OperationError: ALTLocalizedError {
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs within a 7 day period.", comment: "")
         case .noSources: return NSLocalizedString("There are no SideStore sources.", comment: "")
         case .missingAppGroup: return NSLocalizedString("SideStore's shared app group could not be accessed.", comment: "")
-        case .invalidParameters: return NSLocalizedString("Invalid parameters.", comment: "")
         case .forbidden:
             guard let failureReason = self._failureReason else { return NSLocalizedString("The operation is forbidden.", comment: "") }
             return failureReason

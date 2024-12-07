@@ -348,26 +348,26 @@ private extension SourcesViewController
 {
     func handleAddSourceDeepLink()
     {
-        let alertController = UIAlertController(title: NSLocalizedString("Add Source", comment: ""), message: nil, preferredStyle: .alert)
-        alertController.addTextField { (textField) in
-            textField.placeholder = "https://apps.sidestore.io"
-            textField.textContentType = .URL
-        }
-        alertController.addAction(.cancel)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Add", comment: ""), style: .default) { (action) in
-            guard let text = alertController.textFields![0].text else { return }
-            guard var sourceURL = URL(string: text) else { return }
-            if sourceURL.scheme == nil {
-                guard let httpsSourceURL = URL(string: "https://" + text) else { return }
-                sourceURL = httpsSourceURL
-            }
-            
-            self.navigationItem.leftBarButtonItem?.isIndicatingActivity = true
-            
-            self.addSource(url: sourceURL) { _ in
-                self.navigationItem.leftBarButtonItem?.isIndicatingActivity = false
-            }
-        })
+//        let alertController = UIAlertController(title: NSLocalizedString("Add Source", comment: ""), message: nil, preferredStyle: .alert)
+//        alertController.addTextField { (textField) in
+//            textField.placeholder = "https://apps.sidestore.io"
+//            textField.textContentType = .URL
+//        }
+//        alertController.addAction(.cancel)
+//        alertController.addAction(UIAlertAction(title: NSLocalizedString("Add", comment: ""), style: .default) { (action) in
+//            guard let text = alertController.textFields![0].text else { return }
+//            guard var sourceURL = URL(string: text) else { return }
+//            if sourceURL.scheme == nil {
+//                guard let httpsSourceURL = URL(string: "https://" + text) else { return }
+//                sourceURL = httpsSourceURL
+//            }
+//            
+//            self.navigationItem.leftBarButtonItem?.isIndicatingActivity = true
+//            
+//            self.addSource(url: sourceURL) { _ in
+//                self.navigationItem.leftBarButtonItem?.isIndicatingActivity = false
+//            }
+//        })
         guard let url = self.deepLinkSourceURL, self.view.window != nil else { return }
         
         // Only handle deep link once.
@@ -453,39 +453,39 @@ private extension SourcesViewController
             {
                 completionHandler?(false)
                 
-                let dispatchGroup = DispatchGroup()
-
-                var sourcesByURL = [URL: Source]()
-                var fetchError: Error?
-
-                for sourceURL in featuredSourceURLs
-                {
-                    dispatchGroup.enter()
-
-                    AppManager.shared.fetchSource(sourceURL: sourceURL, managedObjectContext: context) { result in
-                        // Serialize access to sourcesByURL.
-                        context.performAndWait {
-                            switch result
-                            {
-                            case .failure(let error): fetchError = error
-                            case .success(let source): sourcesByURL[source.sourceURL] = source
-                            }
-
-                            dispatchGroup.leave()
-                        }
-                    }
-                }
-
-                dispatchGroup.notify(queue: .main) {
-                    if let error = fetchError
-                    {
-                        print(error)
-                        // 1 error doesn't mean all trusted sources failed to load! Riley, why did you do this???????
-//                        finish(.failure(error))
-                    }
-                    let sources = featuredSourceURLs.compactMap { sourcesByURL[$0] }
-                    finish(.success(sources))
-                }
+//                let dispatchGroup = DispatchGroup()
+//
+//                var sourcesByURL = [URL: Source]()
+//                var fetchError: Error?
+//
+//                for sourceURL in featuredSourceURLs
+//                {
+//                    dispatchGroup.enter()
+//
+//                    AppManager.shared.fetchSource(sourceURL: sourceURL, managedObjectContext: context) { result in
+//                        // Serialize access to sourcesByURL.
+//                        context.performAndWait {
+//                            switch result
+//                            {
+//                            case .failure(let error): fetchError = error
+//                            case .success(let source): sourcesByURL[source.sourceURL] = source
+//                            }
+//
+//                            dispatchGroup.leave()
+//                        }
+//                    }
+//                }
+//
+//                dispatchGroup.notify(queue: .main) {
+//                    if let error = fetchError
+//                    {
+//                        print(error)
+//                        // 1 error doesn't mean all trusted sources failed to load! Riley, why did you do this???????
+////                        finish(.failure(error))
+//                    }
+//                    let sources = featuredSourceURLs.compactMap { sourcesByURL[$0] }
+//                    finish(.success(sources))
+//                }
                 self.present(error)
             }
         }

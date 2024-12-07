@@ -133,7 +133,7 @@ private extension VerifyAppOperation
     func verifyPermissions(of app: ALTApplication, @AsyncManaged match appVersion: AppVersion) async throws
     {
         guard self.permissionsMode != .none else { return }
-        guard let storeApp = await $appVersion.app else { throw OperationError.invalidParameters }
+        guard let storeApp = await $appVersion.app else { throw OperationError.invalidParameters("verifyPermissions requires storeApp to be non-nil") }
         
         // Verify source permissions match first.
         let allPermissions = try await self.verifyPermissions(of: app, match: storeApp)

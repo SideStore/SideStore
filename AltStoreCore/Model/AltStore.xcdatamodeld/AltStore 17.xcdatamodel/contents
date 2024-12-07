@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23D56" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24B91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Account" representedClassName="Account" syncable="YES">
         <attribute name="appleID" attributeType="String"/>
         <attribute name="firstName" attributeType="String"/>
@@ -88,6 +88,7 @@
         <attribute name="certificateSerialNumber" optional="YES" attributeType="String"/>
         <attribute name="expirationDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="hasAlternateIcon" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="hasUpdate" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="installedDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isRefreshing" transient="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
