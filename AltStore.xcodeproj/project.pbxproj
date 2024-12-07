@@ -3497,7 +3497,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/libfragmentzip",
+					"$(PROJECT_DIR)/SideStore/libfragmentzip",
 					"$(PROJECT_DIR)/Dependencies/libcurl",
 				);
 				LLVM_LTO = YES_THIN;
@@ -3540,7 +3540,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/libfragmentzip",
+					"$(PROJECT_DIR)/SideStore/libfragmentzip",
 					"$(PROJECT_DIR)/Dependencies/libcurl",
 				);
 				LLVM_LTO = YES_THIN;
