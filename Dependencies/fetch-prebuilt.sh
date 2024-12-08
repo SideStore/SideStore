@@ -57,7 +57,7 @@ check_for_update() {
             echo
             wget -O "$1/lib$1-sim.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1-sim.a"
             if [[ "$1" != "minimuxer" ]]; then
-                wget -O "$1/lib$1.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1.a"
+                wget -O "$1/lib$1-ios.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1.a"
                 wget -O "$1/$1.h" "https://github.com/SideStore/$1/releases/latest/download/$1.h"
                 echo
             else
