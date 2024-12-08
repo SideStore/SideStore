@@ -25,3 +25,6 @@ PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_PREFIX).SideStore.$(DEVELOPMENT_
 EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
 APP_GROUP_IDENTIFIER        = $(PRODUCT_BUNDLE_IDENTIFIER)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
+
+// Suppress noise from os activity in xcode console log for release builds
+DEBUG_ACTIVITY_MODE = disable
