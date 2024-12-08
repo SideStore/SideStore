@@ -23,7 +23,7 @@
 			outputFiles = (
 				"$(OBJECT_FILE_DIR)/$(CARGO_XCODE_TARGET_ARCH)-$(EXECUTABLE_NAME)",
 			);
-			script = "# generated with cargo-xcode 1.5.0\n# modified to use prebuilt binaries\n\nset -eu;\n\nBUILT_SRC=\"./em_proxy/$LIB_FILE_NAME.a\"\nln -f -- \"$BUILT_SRC\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" || cp \"$BUILT_SRC\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\necho \"$BUILT_SRC -> $TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n\n# xcode generates dep file, but for its own path, so append our rename to it\n#DEP_FILE_SRC=\"minimuxer/target/${CARGO_XCODE_TARGET_TRIPLE}/release/${CARGO_XCODE_CARGO_DEP_FILE_NAME}\"\n#if [ -f \"$DEP_FILE_SRC\" ]; then\n#    DEP_FILE_DST=\"${DERIVED_FILE_DIR}/${CARGO_XCODE_TARGET_ARCH}-${EXECUTABLE_NAME}.d\"\n#    cp -f \"$DEP_FILE_SRC\" \"$DEP_FILE_DST\"\n#    echo >> \"$DEP_FILE_DST\" \"$SCRIPT_OUTPUT_FILE_0: $BUILT_SRC\"\n#fi\n\n# lipo script needs to know all the platform-specific files that have been built\n# archs is in the file name, so that paths don't stay around after archs change\n# must match input for LipoScript\n#FILE_LIST=\"${DERIVED_FILE_DIR}/${ARCHS}-${EXECUTABLE_NAME}.xcfilelist\"\n#touch \"$FILE_LIST\"\n#if ! egrep -q \"$SCRIPT_OUTPUT_FILE_0\" \"$FILE_LIST\" ; then\n#    echo >> \"$FILE_LIST\" \"$SCRIPT_OUTPUT_FILE_0\"\n#fi\n";
+			script = "# generated with cargo-xcode 1.5.0\n# modified to use prebuilt binaries\n\nset -eu;\n\nBUILT_SRC=\"./em_proxy/$LIB_FILE_NAME.a\"\necho Generating Static lib: $BUILT_SRC\nln -f -- \"$BUILT_SRC\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" || cp \"$BUILT_SRC\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\necho \"$BUILT_SRC -> $TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n\n# xcode generates dep file, but for its own path, so append our rename to it\n#DEP_FILE_SRC=\"minimuxer/target/${CARGO_XCODE_TARGET_TRIPLE}/release/${CARGO_XCODE_CARGO_DEP_FILE_NAME}\"\n#if [ -f \"$DEP_FILE_SRC\" ]; then\n#    DEP_FILE_DST=\"${DERIVED_FILE_DIR}/${CARGO_XCODE_TARGET_ARCH}-${EXECUTABLE_NAME}.d\"\n#    cp -f \"$DEP_FILE_SRC\" \"$DEP_FILE_DST\"\n#    echo >> \"$DEP_FILE_DST\" \"$SCRIPT_OUTPUT_FILE_0: $BUILT_SRC\"\n#fi\n\n# lipo script needs to know all the platform-specific files that have been built\n# archs is in the file name, so that paths don't stay around after archs change\n# must match input for LipoScript\n#FILE_LIST=\"${DERIVED_FILE_DIR}/${ARCHS}-${EXECUTABLE_NAME}.xcfilelist\"\n#touch \"$FILE_LIST\"\n#if ! egrep -q \"$SCRIPT_OUTPUT_FILE_0\" \"$FILE_LIST\" ; then\n#    echo >> \"$FILE_LIST\" \"$SCRIPT_OUTPUT_FILE_0\"\n#fi\n";
 		};
 /* End PBXBuildRule section */
 
@@ -223,7 +223,7 @@
 				INSTALL_MODE_FLAG = "";
 				INSTALL_OWNER = "";
 				LIB_FILE_NAME = "";
-				"LIB_FILE_NAME[sdk=iphoneos*]" = libem_proxy;
+				"LIB_FILE_NAME[sdk=iphoneos*]" = "libem_proxy-ios";
 				"LIB_FILE_NAME[sdk=iphonesimulator*]" = "libem_proxy-sim";
 				PRODUCT_NAME = em_proxy_static;
 				SKIP_INSTALL = YES;
@@ -299,7 +299,7 @@
 				INSTALL_MODE_FLAG = "";
 				INSTALL_OWNER = "";
 				LIB_FILE_NAME = "";
-				"LIB_FILE_NAME[sdk=iphoneos*]" = libem_proxy;
+				"LIB_FILE_NAME[sdk=iphoneos*]" = "libem_proxy-ios";
 				"LIB_FILE_NAME[sdk=iphonesimulator*]" = "libem_proxy-sim";
 				PRODUCT_NAME = em_proxy_static;
 				SKIP_INSTALL = YES;
