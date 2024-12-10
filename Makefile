@@ -158,7 +158,7 @@ test:
 
 build:
 	@xcodebuild -project AltStore.xcodeproj \
-				-scheme AltStore \
+				-scheme SideStore \
 				-sdk iphoneos \
 				archive -archivePath ./archive \
 				CODE_SIGNING_REQUIRED=NO \
