@@ -19,7 +19,7 @@ class AddSourceTextFieldCell: UICollectionViewCell
     {
         self.textField = UITextField(frame: frame)
         self.textField.translatesAutoresizingMaskIntoConstraints = false
-        self.textField.placeholder = "apps.altstore.io"
+        self.textField.placeholder = "apps.sidestore.io"
         self.textField.textContentType = .URL
         self.textField.keyboardType = .URL
         self.textField.returnKeyType = .done

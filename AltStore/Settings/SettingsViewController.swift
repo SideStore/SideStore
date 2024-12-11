@@ -309,7 +309,7 @@ private extension SettingsViewController
             }
             else
             {
-                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Personalize your AltStore experience by choosing an alternate app icon.", comment: "")
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Personalize your SideStore experience by choosing an alternate app icon.", comment: "")
             }
             
             
@@ -552,22 +552,22 @@ private extension SettingsViewController
     
     @IBAction func followAltStoreMastodon()
     {
-        self.openMastodon(username: "@altstore@fosstodon.org")
+        self.openMastodon(username: "@sidestoreio@fosstodon.org")
     }
     
     @IBAction func followAltStoreThreads()
     {
-        self.openThreads(username: "altstoreio")
+        self.openThreads(username: "sidestore.io")
     }
     
     @IBAction func followAltStoreTwitter()
     {
-        self.openTwitter(username: "altstoreio")
+        self.openTwitter(username: "sidestoreio")
     }
     
     @IBAction func followAltStoreGitHub()
     {
-        let safariURL = URL(string: "https://github.com/altstoreio")!
+        let safariURL = URL(string: "https://github.com/SideStore")!
         UIApplication.shared.open(safariURL, options: [:])
     }
 }
@@ -782,7 +782,7 @@ extension SettingsViewController
                 
                 // Option 2: Discord
                 alertController.addAction(UIAlertAction(title: "Discord", style: .default) { _ in
-                    if let discordURL = URL(string: "https://discord.gg/sidestore-949183273383395328") {
+                    if let discordURL = URL(string: "https://discord.gg/sidestore") {
                         let safariViewController = SFSafariViewController(url: discordURL)
                         safariViewController.preferredControlTintColor = .altPrimary
                         self.present(safariViewController, animated: true, completion: nil)
