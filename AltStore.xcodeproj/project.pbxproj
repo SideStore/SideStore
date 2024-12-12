@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		03F06CD52942C27E001C4D68 /* Bundle+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1E314122A05D4C00370A3C /* Bundle+AltStore.swift */; };
-		043F66F7ED2A7F6D1C7D5AFC /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555322EC002A17742BB05CB5 /* Pods_AltStoreCore.framework */; };
 		0E05025C2BEC947000879B5C /* String+SideStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E05025B2BEC947000879B5C /* String+SideStore.swift */; };
 		0E13E5862CC8F55900E9C0DF /* ProcessInfo+SideStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E13E5852CC8F55900E9C0DF /* ProcessInfo+SideStore.swift */; };
 		0E1A1F912AE36A9700364CAD /* bytearray.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E1A1F902AE36A9600364CAD /* bytearray.c */; };
@@ -49,6 +48,7 @@
 		0EE7FDCD2BE9124400D1E390 /* ErrorDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE7FDCC2BE9124400D1E390 /* ErrorDetailsViewController.swift */; };
 		19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19104DB42909C06D00C49C7B /* EmotionalDamage.swift */; };
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
+		551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
 		A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */; };
 		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
@@ -273,7 +273,6 @@
 		BFC84A4D2421A19100853474 /* SourcesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC84A4C2421A19100853474 /* SourcesViewController.swift */; };
 		BFCB9207250AB2120057B44E /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFCB9206250AB2120057B44E /* Colors.xcassets */; };
 		BFCCB51A245E3401001853EA /* VerifyAppOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCCB519245E3401001853EA /* VerifyAppOperation.swift */; };
-		BFCF8E4A4067433E51FB0427 /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D341B8E7825862E2941592C0 /* Pods_SideStore.framework */; };
 		BFD2476E2284B9A500981D42 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD2476D2284B9A500981D42 /* AppDelegate.swift */; };
 		BFD247752284B9A500981D42 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD247732284B9A500981D42 /* Main.storyboard */; };
 		BFD247772284B9A700981D42 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFD247762284B9A700981D42 /* Assets.xcassets */; };
@@ -311,6 +310,7 @@
 		BFF0B69A2322D7D0007A79E1 /* UIScreen+CompactHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0B6992322D7D0007A79E1 /* UIScreen+CompactHeight.swift */; };
 		BFF435D8255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF435D7255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift */; };
 		BFF615A82510042B00484D3B /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
+		D1943BFD9E94656DAC803C45 /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */; };
 		D50107EC2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50107EB2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift */; };
 		D5084CCC2B1EA80100C02160 /* FeaturedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5084CCB2B1EA80100C02160 /* FeaturedComponents.swift */; };
 		D513F6162A12CE4E0061EAA1 /* SourceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D571ADCD2A02FA7400B24B63 /* SourceError.swift */; };
@@ -571,10 +571,11 @@
 		19104DB42909C06D00C49C7B /* EmotionalDamage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionalDamage.swift; sourceTree = "<group>"; };
 		191E5FAB290A5D92001A3B7C /* libminimuxer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminimuxer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTeamViewController.swift; sourceTree = "<group>"; };
-		2B1E0A6A6742A1CFFF497C58 /* Pods-SideStore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.release.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.release.xcconfig"; sourceTree = "<group>"; };
-		46D9208C3825950D4F1A2D03 /* Pods-AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.debug.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.debug.xcconfig"; sourceTree = "<group>"; };
-		555322EC002A17742BB05CB5 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		95B88A121F6E959483F88410 /* Pods-SideStore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.debug.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"; sourceTree = "<group>"; };
+		32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.debug.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"; sourceTree = "<group>"; };
+		37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.debug.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.debug.xcconfig"; sourceTree = "<group>"; };
+		5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
 		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
 		A809F6A22D04DA1900F0F0F3 /* minimuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minimuxer.h; sourceTree = "<group>"; };
 		A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = minimuxer.swift; sourceTree = "<group>"; };
@@ -858,8 +859,7 @@
 		BFF767CB2489AB5C0097E58C /* ALTServerError+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ALTServerError+Conveniences.swift"; sourceTree = "<group>"; };
 		BFF767CD2489ABE90097E58C /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
 		BFF7EC4C25081E9300BDE521 /* AltStore 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 8.xcdatamodel"; sourceTree = "<group>"; };
-		C19141888CA51B1BFE9EE427 /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
-		D341B8E7825862E2941592C0 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0ED2BA78F87A9001A13E715 /* Pods-SideStore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.release.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.release.xcconfig"; sourceTree = "<group>"; };
 		D50107EB2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSourceTextFieldCell.swift; sourceTree = "<group>"; };
 		D5084CCB2B1EA80100C02160 /* FeaturedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedComponents.swift; sourceTree = "<group>"; };
 		D5144BA72B8684EF00738A5C /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
@@ -1008,8 +1008,8 @@
 			files = (
 				A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */,
 				A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */,
-				043F66F7ED2A7F6D1C7D5AFC /* Pods_AltStoreCore.framework in Frameworks */,
 				A81177012D0B3C6C00D6C122 /* AltSign-Static in Frameworks */,
+				551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1036,7 +1036,7 @@
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
 				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
 				BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */,
-				BFCF8E4A4067433E51FB0427 /* Pods_SideStore.framework in Frameworks */,
+				D1943BFD9E94656DAC803C45 /* Pods_SideStore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1741,8 +1741,8 @@
 				BF4588872298DD3F00BD7491 /* libxml2.tbd */,
 				BF088D322501A4FF008082D9 /* OpenSSL.xcframework */,
 				BFD247862284BB3B00981D42 /* Roxas.framework */,
-				555322EC002A17742BB05CB5 /* Pods_AltStoreCore.framework */,
-				D341B8E7825862E2941592C0 /* Pods_SideStore.framework */,
+				707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */,
+				5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1935,10 +1935,10 @@
 		C2B79346E83FCBDE76D501CB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				46D9208C3825950D4F1A2D03 /* Pods-AltStoreCore.debug.xcconfig */,
-				C19141888CA51B1BFE9EE427 /* Pods-AltStoreCore.release.xcconfig */,
-				95B88A121F6E959483F88410 /* Pods-SideStore.debug.xcconfig */,
-				2B1E0A6A6742A1CFFF497C58 /* Pods-SideStore.release.xcconfig */,
+				37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */,
+				7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */,
+				32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */,
+				C0ED2BA78F87A9001A13E715 /* Pods-SideStore.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -2209,7 +2209,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BF66EE892501AE50007EE018 /* Build configuration list for PBXNativeTarget "AltStoreCore" */;
 			buildPhases = (
-				0CB1FF5E798E7639208EA36F /* [CP] Check Pods Manifest.lock */,
+				AEDB4E9409D2CEE1EA126980 /* [CP] Check Pods Manifest.lock */,
 				BF66EE792501AE50007EE018 /* Headers */,
 				BF66EE7A2501AE50007EE018 /* Sources */,
 				BF66EE7B2501AE50007EE018 /* Frameworks */,
@@ -2250,14 +2250,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFD2477E2284B9A700981D42 /* Build configuration list for PBXNativeTarget "SideStore" */;
 			buildPhases = (
-				395F0816F85B2B393F66FB2E /* [CP] Check Pods Manifest.lock */,
+				B0FAA6617CB97872E78D84CA /* [CP] Check Pods Manifest.lock */,
 				99F87D0629D8B51400B40039 /* ShellScript */,
 				BFD247662284B9A500981D42 /* Sources */,
 				BFD247672284B9A500981D42 /* Frameworks */,
 				BFD247682284B9A500981D42 /* Resources */,
 				BF088D2B2501A087008082D9 /* Embed Frameworks */,
 				BF98917B250AABF4002ACF50 /* Embed Foundation Extensions */,
-				3CE7B9D4B56258F37C584783 /* [CP] Embed Pods Frameworks */,
+				A5CC24EB35C79F0C13DAE403 /* [CP] Embed Pods Frameworks */,
+				884B4E831D26F2E18AF7916C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2469,7 +2470,59 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0CB1FF5E798E7639208EA36F /* [CP] Check Pods Manifest.lock */ = {
+		884B4E831D26F2E18AF7916C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		99F87D0629D8B51400B40039 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"./SideStore/minimuxer/minimuxer-helpers.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash ./SideStore/fetch-prebuilt.sh minimuxer\n";
+		};
+		A5CC24EB35C79F0C13DAE403 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AEDB4E9409D2CEE1EA126980 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2491,7 +2544,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		395F0816F85B2B393F66FB2E /* [CP] Check Pods Manifest.lock */ = {
+		B0FAA6617CB97872E78D84CA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2512,41 +2565,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		3CE7B9D4B56258F37C584783 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		99F87D0629D8B51400B40039 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"./SideStore/minimuxer/minimuxer-helpers.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bash ./SideStore/fetch-prebuilt.sh minimuxer\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3193,7 +3211,7 @@
 		};
 		BF66EE872501AE50007EE018 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 46D9208C3825950D4F1A2D03 /* Pods-AltStoreCore.debug.xcconfig */;
+			baseConfigurationReference = 37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3231,7 +3249,7 @@
 		};
 		BF66EE882501AE50007EE018 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C19141888CA51B1BFE9EE427 /* Pods-AltStoreCore.release.xcconfig */;
+			baseConfigurationReference = 7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3475,7 +3493,7 @@
 		};
 		BFD2477F2284B9A700981D42 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 95B88A121F6E959483F88410 /* Pods-SideStore.debug.xcconfig */;
+			baseConfigurationReference = 32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3518,7 +3536,7 @@
 		};
 		BFD247802284B9A700981D42 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B1E0A6A6742A1CFFF497C58 /* Pods-SideStore.release.xcconfig */;
+			baseConfigurationReference = C0ED2BA78F87A9001A13E715 /* Pods-SideStore.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

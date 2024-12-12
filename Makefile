@@ -157,7 +157,7 @@ test:
 ## -- Building --
 
 build:
-	@xcodebuild -project AltStore.xcodeproj \
+	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
 				-sdk iphoneos \
 				archive -archivePath ./archive \

@@ -1,0 +1,150 @@
+name: Altstore 2.0 rebase build
+on:
+  push:
+    branches:
+      - rebase-2.0-wip
+
+jobs:
+  build:
+    name: Build and upload SideStore 0.5.6-rebase
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-14'
+            version: '15.4'
+
+    runs-on: ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: brew install ldid
+
+      - name: Cache .rebase-build-num
+        uses: actions/cache@v4
+        with:
+          path: .rebase-build-num
+          key: rebase-build-num
+
+      - name: Increase rebase build number and set as version
+        run: bash .github/workflows/increase-rebase-build-num.sh
+
+      - name: Get version
+        id: version
+        run: echo "version=$(grep MARKETING_VERSION Build.xcconfig | sed -e "s/MARKETING_VERSION = //g")" >> $GITHUB_OUTPUT
+
+      - name: Echo version
+        run: echo "${{ steps.version.outputs.version }}"
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: ${{ matrix.version }}
+
+      - name: Cache Build
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-
+
+      - name: Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-${{ hashFiles('Podfile') }}
+          # restore-keys: |         # commented out to strictly check cache for this particular podfile
+          #   pods-cache-
+          
+      - name: Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }} 
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-
+
+      - name: Install CocoaPods
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true'}}
+        id: pods-install
+        run: |
+          pod install
+
+      - name: Save Pods to Cache
+        id: save-pods
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-${{ hashFiles('Podfile') }}
+    
+      - name: List Files and derived data
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+          
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists    
+          echo ""
+          
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists    
+          echo ""
+          
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists    
+          echo ""
+          
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists    
+          echo ""
+  
+      - name: Build SideStore
+        run: make build | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Fakesign app
+        run: make fakesign
+
+      - name: Convert to IPA
+        run: make ipa
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -u +'%c')" >> $GITHUB_OUTPUT
+
+      - name: Get current date in AltStore date form
+        id: date_altstore
+        run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Add version to IPA file name
+        run: mv SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
+
+      - name: Upload SideStore.ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}.ipa
+          path: SideStore-${{ steps.version.outputs.version }}.ipa
+
+      - name: Upload *.dSYM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}-dSYM
+          path: ./*.dSYM/
