@@ -40,8 +40,10 @@ extension SettingsViewController
         static var allCases: [AppRefreshRow] {
             var c: [AppRefreshRow] = [.backgroundRefresh, .noIdleTimeout]
             guard #available(iOS 14, *) else { return c }
-            if !ProcessInfo().sparseRestorePatched { c.append(.disableAppLimit) }
             c.append(.addToSiri)
+
+            // conditional entries go at the last to preserve ordering
+            if !ProcessInfo().sparseRestorePatched { c.append(.disableAppLimit) }
             return c
         }
     }
