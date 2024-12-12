@@ -13,7 +13,7 @@ PODS:
 
 DEPENDENCIES:
   - AppCenter (~> 5.0)
-  - KeychainAccess (~> 4.2.0)
+  - KeychainAccess (~> 4.2.2)
   - Nuke (~> 10.0)
   - Starscream (~> 4.0.0)
 
@@ -30,6 +30,6 @@ SPEC CHECKSUMS:
   Nuke: 279f17a599fd1c83cf51de5e0e1f2db143a287b0
   Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
 
-PODFILE CHECKSUM: a8db3d0bf5da636c63e459c1ca0453c0937e1c1d
+PODFILE CHECKSUM: 550f7e9ecab6885272733fa3aa43c47a32e4e10f
 
 COCOAPODS: 1.16.2

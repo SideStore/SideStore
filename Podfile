@@ -18,7 +18,7 @@ target 'AltStoreCore' do
   use_frameworks!
 
   # Pods for AltStoreCore
-  pod 'KeychainAccess', '~> 4.2.0'
+  pod 'KeychainAccess', '~> 4.2.2'
   # pod 'SemanticVersion', '~> 0.3.5'
   # Add the Swift Package using the repository URL
   # pod 'SemanticVersion', :git => 'https://github.com/SwiftPackageIndex/SemanticVersion.git', :tag => '0.4.0'
