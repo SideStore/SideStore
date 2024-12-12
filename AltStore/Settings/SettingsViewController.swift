@@ -40,7 +40,7 @@ extension SettingsViewController
         case disableAppLimit
         
         static var allCases: [AppRefreshRow] {
-            var c: [AppRefreshRow] = [.backgroundRefresh, .noIdleTimeout, .addToSiri]
+            var c: [AppRefreshRow] = [.backgroundRefresh, .noIdleTimeout]
             guard #available(iOS 14, *) else { return c }
             c.append(.addToSiri)
 
