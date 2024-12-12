@@ -1,3 +1,15 @@
+#-------------------------------
+# When changing url/branch in this .gitmodules file,
+#   Always ensure you run:
+# 1. `git submodule sync --recursive`
+# 2. `git submodule update --init --remote --recursive <sub_module_path>`
+# 3. IF for some reason, the update doesn't fetch from updated URL try the following:
+#    a. Either stage or unstage the .gitmodules file fully, ie (don't have it partially staged and partial changes as unstaged)
+#    b. Ensure git used is LATEST VERSION [wasted few hours due to this :( ]
+# 4. To restore to the commit that is marked by the submodule commit tracker file, simply issue `update --recursive` without --remote
+#    `git submodule update --init --recursive <sub_module_path>`
+#-------------------------------
+
 [submodule "Dependencies/Roxas"]
 	path = Dependencies/Roxas
 	url = https://github.com/rileytestut/Roxas.git
@@ -19,7 +31,9 @@
 [submodule "Dependencies/AltSign"]
 	path = Dependencies/AltSign
 	url = https://github.com/rileytestut/AltSign.git
+	# url = https://github.com/SideStore/AltSign.git
 	branch = marketplace
+	# branch = master
 
 #sidestore dependencies
 [submodule "SideStore/minimuxer"]
@@ -34,3 +48,4 @@
 	path = SideStore/libfragmentzip
 	url = https://github.com/SideStore/libfragmentzip
 	branch = master
+
