@@ -56,6 +56,8 @@
 		A809F6A92D04DA1900F0F0F3 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
+		A8856F772D0B330E008AED1E /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A8856F762D0B330E008AED1E /* AppCenterAnalytics */; };
+		A8856F792D0B330E008AED1E /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = A8856F782D0B330E008AED1E /* AppCenterCrashes */; };
 		A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8945AA52D059B6100D86CBE /* Roxas.framework */; };
 		A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A5432F2D04F0C100D72399 /* libfragmentzip.a */; };
 		A8A74EEC2D03F55C001B5CFD /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A8A74EEB2D03F55C001B5CFD /* AltSign-Static */; };
@@ -63,9 +65,6 @@
 		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
 		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
-		A8F8389B2D048FBE00ED425D /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838972D048F2300ED425D /* AppCenter.xcframework */; };
-		A8F8389C2D048FC800ED425D /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */; };
-		A8F8389D2D048FD400ED425D /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */; };
 		A8FD915E2D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
 		A8FD915F2D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
 		A8FD91602D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
@@ -1031,13 +1030,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */,
-				A8F8389B2D048FBE00ED425D /* AppCenter.xcframework in Frameworks */,
-				A8F8389C2D048FC800ED425D /* AppCenterAnalytics.xcframework in Frameworks */,
-				A8F8389D2D048FD400ED425D /* AppCenterCrashes.xcframework in Frameworks */,
+				A8856F792D0B330E008AED1E /* AppCenterCrashes in Frameworks */,
 				A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */,
 				A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */,
 				A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */,
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
+				A8856F772D0B330E008AED1E /* AppCenterAnalytics in Frameworks */,
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
 				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
 				BF088D332501A4FF008082D9 /* OpenSSL.xcframework in Frameworks */,
@@ -2334,6 +2332,7 @@
 				D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 				D5FB7A2C2AA2859400EF863D /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */,
+				A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 			);
 			productRefGroup = BFD2476B2284B9A500981D42 /* Products */;
 			projectDirPath = "";
@@ -3650,6 +3649,14 @@
 				minimumVersion = 0.4.0;
 			};
 		};
+		A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.5;
+			};
+		};
 		D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
@@ -3673,6 +3680,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
 			productName = SemanticVersion;
+		};
+		A8856F762D0B330E008AED1E /* AppCenterAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
+			productName = AppCenterAnalytics;
+		};
+		A8856F782D0B330E008AED1E /* AppCenterCrashes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
+			productName = AppCenterCrashes;
 		};
 		A8A74EEB2D03F55C001B5CFD /* AltSign-Static */ = {
 			isa = XCSwiftPackageProductDependency;
