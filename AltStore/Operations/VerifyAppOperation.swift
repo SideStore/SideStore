@@ -126,7 +126,8 @@ private extension VerifyAppOperation
         
         if let buildVersion
         {
-            guard buildVersion == app.buildVersion else { throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app) }
+            // @mahee96: requires altsign-marketplace branch release or equivalent
+//            guard buildVersion == app.buildVersion else { throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app) }
         }
     }
     

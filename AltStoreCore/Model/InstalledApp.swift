@@ -140,7 +140,8 @@ public extension InstalledApp
         
         self.resignedBundleIdentifier = resignedApp.bundleIdentifier
         self.version = resignedApp.version
-        self.buildVersion = resignedApp.buildVersion
+        // @mahee96: requires altsign-marketplace branch release or equivalent
+//        self.buildVersion = resignedApp.buildVersion
         self.storeBuildVersion = storeBuildVersion
         
         self.certificateSerialNumber = certificateSerialNumber
