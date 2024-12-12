@@ -31,11 +31,10 @@ extension SettingsViewController
     fileprivate enum AppRefreshRow: Int, CaseIterable
     {
         case backgroundRefresh
-        case noIdleTimeout
-        case disableAppLimit
-        
+        case noIdleTimeout        
         @available(iOS 14, *)
         case addToSiri
+        case disableAppLimit
         
         static var allCases: [AppRefreshRow] {
             var c: [AppRefreshRow] = [.backgroundRefresh, .noIdleTimeout]
@@ -495,6 +494,13 @@ extension SettingsViewController
             {
                 cell.style = .single
             }
+        }
+        
+        if let cell = cell as? InsetGroupTableViewCell,
+               indexPath.section == Section.appRefresh.rawValue,
+               indexPath.row == AppRefreshRow.allCases.count-1      // last row
+        {
+            cell.setValue(3, forKey: "style")
         }
         
         
