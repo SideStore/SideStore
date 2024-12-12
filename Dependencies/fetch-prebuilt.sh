@@ -44,16 +44,36 @@ check_for_update() {
     LAST_FETCH=`cat .last-prebuilt-fetch-$1 | perl -n -e '/([0-9]*),([^ ]*)$/ && print $1'`
     LAST_COMMIT=`cat .last-prebuilt-fetch-$1 | perl -n -e '/([0-9]*),([^ ]*)$/ && print $2'`
 
-    # fetch if last fetch was over 1 hour ago
-    if [[ $LAST_FETCH -lt $(expr $(date +%s) - 3600) ]] || [[ "$2" == "force" ]]; then
+    # Check if required library files exist
+    FORCE_DOWNLOAD=false
+    if [ ! -f "$1/lib$1-sim.a" ] || [ ! -f "$1/lib$1-ios.a" ]; then
+        echo "Required libraries missing for $1, forcing download..."
+        FORCE_DOWNLOAD=true
+    fi
+
+    # Download if:
+    # 1. Libraries are missing (FORCE_DOWNLOAD), or
+    # 2. Last fetch was over 1 hour ago, or
+    # 3. Force flag was passed
+    if [ "$FORCE_DOWNLOAD" = true ] || [[ $LAST_FETCH -lt $(expr $(date +%s) - 3600) ]] || [[ "$2" == "force" ]]; then
         echo "Checking $1 for update"
         echo
         LATEST_COMMIT=`curl https://api.github.com/repos/SideStore/$1/releases/latest | perl -n -e '/Commit: https:\\/\\/github\\.com\\/[^\\/]*\\/[^\\/]*\\/commit\\/([^"]*)/ && print $1'`
         echo
         echo "Last commit: $LAST_COMMIT"
         echo "Latest commit: $LATEST_COMMIT"
+    
+        NOT_UPTODATE=false
         if [[ "$LAST_COMMIT" != "$LATEST_COMMIT" ]]; then
-            echo "Found update, downloading binaries"
+            echo "Found update on the remote: https://api.github.com/repos/SideStore/$1/releases/latest"
+            NOT_UPTODATE=true
+        fi
+
+        # Download if:
+        # 1. Libraries are missing (FORCE_DOWNLOAD), or
+        # 2. New commit is available
+        if [ "$FORCE_DOWNLOAD" = true ] || [ "$NOT_UPTODATE" = true ] ;then
+            echo "downloading binaries"
             echo
             wget -O "$1/lib$1-sim.a" "https://github.com/SideStore/$1/releases/latest/download/lib$1-sim.a"
             if [[ "$1" != "minimuxer" ]]; then
