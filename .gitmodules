@@ -28,12 +28,12 @@
 [submodule "Dependencies/libimobiledevice-glue"]
 	path = Dependencies/libimobiledevice-glue
 	url = https://github.com/libimobiledevice/libimobiledevice-glue
-[submodule "Dependencies/AltSign"]
-	path = Dependencies/AltSign
-	url = https://github.com/rileytestut/AltSign.git
-	# url = https://github.com/SideStore/AltSign.git
-	branch = marketplace
-	# branch = master
+# [submodule "Dependencies/AltSign"]
+# 	path = Dependencies/AltSign
+# 	url = https://github.com/rileytestut/AltSign.git
+# 	# url = https://github.com/SideStore/AltSign.git
+# 	branch = marketplace
+# 	# branch = master
 
 #sidestore dependencies
 [submodule "SideStore/minimuxer"]
