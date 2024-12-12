@@ -15,7 +15,7 @@
             <objects>
                 <tableViewController id="aMk-Xp-UL8" customClass="SettingsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="static" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="MuO-1I-cKW">
-                        <rect key="frame" x="0.0" y="0.0" width="375" />
+                        <rect key="frame" x="0.0" y="0.22" width="375" />
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" name="SettingsBackground"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
