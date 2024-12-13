@@ -50,6 +50,8 @@
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
+		A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */; };
+		A805C3CE2D0C316A00E76BDD /* Pods_SideStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */; };
 		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
 		A809F6A82D04DA1900F0F0F3 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */; };
@@ -59,8 +61,6 @@
 		A81177052D0B3C9800D6C122 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = A81177042D0B3C9800D6C122 /* OpenSSL */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
-		A8856F772D0B330E008AED1E /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A8856F762D0B330E008AED1E /* AppCenterAnalytics */; };
-		A8856F792D0B330E008AED1E /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = A8856F782D0B330E008AED1E /* AppCenterCrashes */; };
 		A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8945AA52D059B6100D86CBE /* Roxas.framework */; };
 		A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A5432F2D04F0C100D72399 /* libfragmentzip.a */; };
 		A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */; };
@@ -310,7 +310,6 @@
 		BFF0B69A2322D7D0007A79E1 /* UIScreen+CompactHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0B6992322D7D0007A79E1 /* UIScreen+CompactHeight.swift */; };
 		BFF435D8255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF435D7255CBDAB00DD724F /* ALTApplication+AltStoreApp.swift */; };
 		BFF615A82510042B00484D3B /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
-		D1943BFD9E94656DAC803C45 /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */; };
 		D50107EC2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50107EB2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift */; };
 		D5084CCC2B1EA80100C02160 /* FeaturedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5084CCB2B1EA80100C02160 /* FeaturedComponents.swift */; };
 		D513F6162A12CE4E0061EAA1 /* SourceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D571ADCD2A02FA7400B24B63 /* SourceError.swift */; };
@@ -505,6 +504,7 @@
 			files = (
 				BF1614F2250822F100767AEA /* Roxas.framework in Embed Frameworks */,
 				BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */,
+				A805C3CE2D0C316A00E76BDD /* Pods_SideStore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,18 +577,17 @@
 		707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
 		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
+		A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A809F6A22D04DA1900F0F0F3 /* minimuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minimuxer.h; sourceTree = "<group>"; };
 		A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = minimuxer.swift; sourceTree = "<group>"; };
 		A809F6A42D04DA1900F0F0F3 /* minimuxer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "minimuxer-Bridging-Header.h"; sourceTree = "<group>"; };
 		A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "minimuxer-helpers.swift"; sourceTree = "<group>"; };
 		A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
 		A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		A8475FBB2D0C2E8A00E35975 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
 		A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minimuxer.xcodeproj; sourceTree = "<group>"; };
-		A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterCrashes.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenterCrashes.xcframework"; sourceTree = "<group>"; };
-		A8F838972D048F2300ED425D /* AppCenter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenter.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenter.xcframework"; sourceTree = "<group>"; };
-		A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterAnalytics.xcframework; path = "Pods/AppCenter/AppCenter-SDK-Apple/AppCenterAnalytics.xcframework"; sourceTree = "<group>"; };
 		A8FD915B2D046EF100322782 /* ProcessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessError.swift; sourceTree = "<group>"; };
 		A8FD915D2D046F5200322782 /* UserInfoValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoValue.swift; sourceTree = "<group>"; };
 		A8FD917A2D0472DD00322782 /* DeprecatedAPIs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeprecatedAPIs.swift; sourceTree = "<group>"; };
@@ -1026,17 +1025,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */,
-				A8856F792D0B330E008AED1E /* AppCenterCrashes in Frameworks */,
+				A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */,
 				A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */,
 				A81177052D0B3C9800D6C122 /* OpenSSL in Frameworks */,
 				A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */,
 				A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */,
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
-				A8856F772D0B330E008AED1E /* AppCenterAnalytics in Frameworks */,
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
 				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
 				BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */,
-				D1943BFD9E94656DAC803C45 /* Pods_SideStore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1730,10 +1727,9 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */,
+				A8475FBB2D0C2E8A00E35975 /* Pods_SideStore.framework */,
 				A8945AA52D059B6100D86CBE /* Roxas.framework */,
-				A8F838972D048F2300ED425D /* AppCenter.xcframework */,
-				A8F838992D048F2300ED425D /* AppCenterAnalytics.xcframework */,
-				A8F838952D048EF500ED425D /* AppCenterCrashes.xcframework */,
 				B343F86C295F759E002B1159 /* libresolv.tbd */,
 				D537C85A2AA95066009A1E08 /* libcorecrypto.tbd */,
 				D533E8B62727841800A9B5DD /* libAppleArchive.tbd */,
@@ -2329,7 +2325,6 @@
 				D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 				D5FB7A2C2AA2859400EF863D /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */,
-				A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				A81176FC2D0B3BAB00D6C122 /* XCRemoteSwiftPackageReference "OpenSSL" */,
 				A81176FF2D0B3C6C00D6C122 /* XCRemoteSwiftPackageReference "AltSign" */,
 			);
@@ -2997,7 +2992,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
@@ -3007,7 +3002,10 @@
 					"$(PROJECT_DIR)/SideStore/em_proxy",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -3024,7 +3022,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3033,7 +3031,10 @@
 					"$(PROJECT_DIR)/SideStore/em_proxy",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = SideStore/em_proxy/em_proxy.h;
@@ -3049,7 +3050,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
@@ -3058,7 +3059,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/minimuxer",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -3073,7 +3077,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3081,7 +3085,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/minimuxer",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SideStore/minimuxer/minimuxer-Bridging-Header.h";
@@ -3215,7 +3222,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -3253,7 +3260,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -3293,7 +3300,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_ENTITLEMENTS = AltWidget/AltWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3328,7 +3335,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CODE_SIGN_ENTITLEMENTS = AltWidget/AltWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3495,7 +3502,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -3521,7 +3528,7 @@
 				);
 				LLVM_LTO = YES_THIN;
 				MARKETING_VERSION = 0.6.0;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3538,7 +3545,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C0ED2BA78F87A9001A13E715 /* Pods-SideStore.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -3565,7 +3572,7 @@
 				);
 				LLVM_LTO = YES_THIN;
 				MARKETING_VERSION = 0.6.0;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3681,14 +3688,6 @@
 				minimumVersion = 0.4.0;
 			};
 		};
-		A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.5;
-			};
-		};
 		D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
@@ -3727,16 +3726,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
 			productName = SemanticVersion;
-		};
-		A8856F762D0B330E008AED1E /* AppCenterAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
-			productName = AppCenterAnalytics;
-		};
-		A8856F782D0B330E008AED1E /* AppCenterCrashes */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A8856F752D0B330E008AED1E /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
-			productName = AppCenterCrashes;
 		};
 /* End XCSwiftPackageProductDependency section */
 

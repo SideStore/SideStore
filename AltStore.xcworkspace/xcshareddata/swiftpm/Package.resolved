@@ -1,5 +1,5 @@
 {
-  "originHash" : "651c08f9bde24d0e177b7785a44f17381beebf0b9ce92a0daa33f260f8bfae84",
+  "originHash" : "d4ebc66ecfc31403c535bbf42bc574de156baa2101538a80571fb3c1e8d89701",
   "pins" : [
     {
       "identity" : "altsign",
@@ -8,15 +8,6 @@
       "state" : {
         "branch" : "master",
         "revision" : "74c9572a3be4c3faeccc835334b7b9af0a7a8d16"
-      }
-    },
-    {
-      "identity" : "appcenter-sdk-apple",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/microsoft/appcenter-sdk-apple",
-      "state" : {
-        "revision" : "ab54f758243f282d290b33027e8aac910d3d859a",
-        "version" : "5.0.5"
       }
     },
     {
@@ -44,15 +35,6 @@
       "state" : {
         "revision" : "8cb1d641ab5ebce2cd7cf31c93baef07bed672d4",
         "version" : "1.1.2301"
-      }
-    },
-    {
-      "identity" : "plcrashreporter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/microsoft/PLCrashReporter.git",
-      "state" : {
-        "revision" : "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
-        "version" : "1.11.2"
       }
     },
     {
