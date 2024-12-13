@@ -11,7 +11,6 @@
 		0E05025C2BEC947000879B5C /* String+SideStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E05025B2BEC947000879B5C /* String+SideStore.swift */; };
 		0E13E5862CC8F55900E9C0DF /* ProcessInfo+SideStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E13E5852CC8F55900E9C0DF /* ProcessInfo+SideStore.swift */; };
 		0E1A1F912AE36A9700364CAD /* bytearray.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E1A1F902AE36A9600364CAD /* bytearray.c */; };
-		0E764E172ADFF5740043DD4E /* AltBackup.ipa in Resources */ = {isa = PBXBuildFile; fileRef = 0E764E162ADFF5740043DD4E /* AltBackup.ipa */; };
 		0EA1665B2ADFE0D2003015C1 /* out-limd.c in Sources */ = {isa = PBXBuildFile; fileRef = 0EA166472ADFE0D1003015C1 /* out-limd.c */; };
 		0EA1665C2ADFE0D2003015C1 /* out-default.c in Sources */ = {isa = PBXBuildFile; fileRef = 0EA166522ADFE0D2003015C1 /* out-default.c */; };
 		0EA1665D2ADFE0D2003015C1 /* out-plutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 0EA166552ADFE0D2003015C1 /* out-plutil.c */; };
@@ -65,7 +64,7 @@
 		A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A5432F2D04F0C100D72399 /* libfragmentzip.a */; };
 		A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */; };
 		A8D484D02D0CCA8A002C691D /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A8D484CF2D0CCA8A002C691D /* AltSign-Static */; };
-		A8D484D42D0CCAC4002C691D /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = A8D484D32D0CCAC4002C691D /* OpenSSL */; };
+		A8D484D82D0CD306002C691D /* AltBackup.ipa in Resources */ = {isa = PBXBuildFile; fileRef = A8D484D72D0CD306002C691D /* AltBackup.ipa */; };
 		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
 		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
@@ -536,7 +535,6 @@
 		0E05025B2BEC947000879B5C /* String+SideStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+SideStore.swift"; sourceTree = "<group>"; };
 		0E13E5852CC8F55900E9C0DF /* ProcessInfo+SideStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+SideStore.swift"; sourceTree = "<group>"; };
 		0E1A1F902AE36A9600364CAD /* bytearray.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bytearray.c; path = src/bytearray.c; sourceTree = "<group>"; };
-		0E764E162ADFF5740043DD4E /* AltBackup.ipa */ = {isa = PBXFileReference; lastKnownFileType = file; name = AltBackup.ipa; path = AltStore/Resources/AltBackup.ipa; sourceTree = SOURCE_ROOT; };
 		0EA166412ADFE0D1003015C1 /* jplist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jplist.c; path = Dependencies/libplist/src/jplist.c; sourceTree = SOURCE_ROOT; };
 		0EA166422ADFE0D1003015C1 /* Date.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Date.cpp; path = Dependencies/libplist/src/Date.cpp; sourceTree = SOURCE_ROOT; };
 		0EA166432ADFE0D1003015C1 /* Data.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Data.cpp; path = Dependencies/libplist/src/Data.cpp; sourceTree = SOURCE_ROOT; };
@@ -582,7 +580,6 @@
 		19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTeamViewController.swift; sourceTree = "<group>"; };
 		32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.debug.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"; sourceTree = "<group>"; };
 		37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.debug.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
 		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
@@ -593,8 +590,8 @@
 		A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "minimuxer-helpers.swift"; sourceTree = "<group>"; };
 		A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
 		A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
-		A8475FBB2D0C2E8A00E35975 /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8D484D72D0CD306002C691D /* AltBackup.ipa */ = {isa = PBXFileReference; lastKnownFileType = file; path = AltBackup.ipa; sourceTree = "<group>"; };
 		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
 		A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minimuxer.xcodeproj; sourceTree = "<group>"; };
 		A8FD915B2D046EF100322782 /* ProcessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessError.swift; sourceTree = "<group>"; };
@@ -629,7 +626,6 @@
 		BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshAttemptsViewController.swift; sourceTree = "<group>"; };
 		BF08858222DE795100DE9F1E /* MyAppsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAppsViewController.swift; sourceTree = "<group>"; };
 		BF08858422DE7EC800DE9F1E /* UpdateCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCollectionViewCell.swift; sourceTree = "<group>"; };
-		BF088D322501A4FF008082D9 /* OpenSSL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = Dependencies/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
 		BF0C4EBC22A1BD8B009A2DD7 /* AppManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		BF0DCA652433BDF500E3A595 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		BF18B0F022E25DF9005C4CF5 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
@@ -708,7 +704,6 @@
 		BF45882C2298D3C000BD7491 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = Dependencies/libimobiledevice/common/debug.h; sourceTree = SOURCE_ROOT; };
 		BF4588302298D3C000BD7491 /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = debug.c; path = Dependencies/libimobiledevice/common/debug.c; sourceTree = SOURCE_ROOT; };
 		BF4588422298D40000BD7491 /* libusbmuxd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libusbmuxd.c; path = Dependencies/libusbmuxd/src/libusbmuxd.c; sourceTree = SOURCE_ROOT; };
-		BF4588872298DD3F00BD7491 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
 		BF4B78FD24B3D1DB008AB4AC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		BF56D2AB23DF8E170006506D /* FetchAppIDsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchAppIDsOperation.swift; sourceTree = "<group>"; };
 		BF56D2AE23DF9E310006506D /* AppIDsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIDsViewController.swift; sourceTree = "<group>"; };
@@ -891,7 +886,6 @@
 		D533E8B82727B61400A9B5DD /* fragmentzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fragmentzip.h; sourceTree = "<group>"; };
 		D533E8BB2727BBEE00A9B5DD /* libfragmentzip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfragmentzip.a; path = Dependencies/fragmentzip/libfragmentzip.a; sourceTree = SOURCE_ROOT; };
 		D533E8BD2727BBF800A9B5DD /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = Dependencies/libcurl/libcurl.a; sourceTree = SOURCE_ROOT; };
-		D537C85A2AA95066009A1E08 /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/lib/system/libcorecrypto.tbd; sourceTree = DEVELOPER_DIR; };
 		D5390C3B2AC3A43900D17E62 /* AddSourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSourceViewController.swift; sourceTree = "<group>"; };
 		D53D84012A2158FC00543C3B /* Permissions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Permissions.plist; sourceTree = "<group>"; };
 		D54058B82A1D6269008CCC58 /* AppPermissionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPermissionProtocol.swift; sourceTree = "<group>"; };
@@ -1006,7 +1000,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8D484D42D0CCAC4002C691D /* OpenSSL in Frameworks */,
 				BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */,
 				A8D484D02D0CCA8A002C691D /* AltSign-Static in Frameworks */,
 			);
@@ -1738,18 +1731,13 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */,
-				A8475FBB2D0C2E8A00E35975 /* Pods_SideStore.framework */,
-				A8945AA52D059B6100D86CBE /* Roxas.framework */,
 				B343F86C295F759E002B1159 /* libresolv.tbd */,
-				D537C85A2AA95066009A1E08 /* libcorecrypto.tbd */,
 				D533E8B62727841800A9B5DD /* libAppleArchive.tbd */,
 				BF580497246A3D19008AE704 /* UIKit.framework */,
-				BF4588872298DD3F00BD7491 /* libxml2.tbd */,
-				BF088D322501A4FF008082D9 /* OpenSSL.xcframework */,
 				BFD247862284BB3B00981D42 /* Roxas.framework */,
+				A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */,
+				A8945AA52D059B6100D86CBE /* Roxas.framework */,
 				707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */,
-				5DCE2A19A7C2907575E49B81 /* Pods_SideStore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1789,7 +1777,7 @@
 		BFD247962284D7C100981D42 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0E764E162ADFF5740043DD4E /* AltBackup.ipa */,
+				A8D484D72D0CD306002C691D /* AltBackup.ipa */,
 				BFD247762284B9A700981D42 /* Assets.xcassets */,
 				D5144BA72B8684EF00738A5C /* Icons.xcassets */,
 				D56D21412B7D9C41007641C5 /* AltIcons.plist */,
@@ -2462,12 +2450,12 @@
 				D57DF638271E32F000677701 /* PatchApp.storyboard in Resources */,
 				BFD2477A2284B9A700981D42 /* LaunchScreen.storyboard in Resources */,
 				D56D21422B7D9C41007641C5 /* AltIcons.plist in Resources */,
+				A8D484D82D0CD306002C691D /* AltBackup.ipa in Resources */,
 				BF770E6922BD57DD002A40FE /* Silence.m4a in Resources */,
 				BFD247772284B9A700981D42 /* Assets.xcassets in Resources */,
 				BFF0B6922321A305007A79E1 /* AboutPatreonHeaderView.xib in Resources */,
 				BFB6B22423187A3D0022A802 /* NewsCollectionViewCell.xib in Resources */,
 				BFD247752284B9A500981D42 /* Main.storyboard in Resources */,
-				0E764E172ADFF5740043DD4E /* AltBackup.ipa in Resources */,
 				BFE6073C231AE1E7002B0E8E /* SettingsHeaderFooterView.xib in Resources */,
 				BF29012F2318F6B100D88A45 /* AppBannerView.xib in Resources */,
 				BFE6325A22A83BEB00F30809 /* Authentication.storyboard in Resources */,
@@ -2546,7 +2534,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\necho \"Build directory: $BUILD_DIR\"\necho \"Configuration build directory: $CONFIGURATION_BUILD_DIR\"\n\n# exit 0\n\n# Define the path to your Makefile\nMAKEFILE_PATH=\"${PROJECT_DIR}/\"\n\n# Navigate to the directory containing the Makefile\ncd \"$MAKEFILE_PATH\" || exit 1\n\n# Run the make target 'ipa-altbackup'\nmake -B ipa-altbackup\n\n# Ensure that the ipa-altbackup process finishes before continuing\nif [ $? -ne 0 ]; then\n    echo \"Error: ipa-altbackup failed\"\n    exit 1\nelse\n    echo \"ipa-altbackup completed successfully\"\nfi\n# Type a script or drag a script file from your workspace to insert its path.\n";
+			shellScript = "#!/bin/sh\n\necho \"Build directory: $BUILD_DIR\"\necho \"Configuration build directory: $CONFIGURATION_BUILD_DIR\"\n\nexit 0\n\n# Define the path to your Makefile\nMAKEFILE_PATH=\"${PROJECT_DIR}/\"\n\n# Navigate to the directory containing the Makefile\ncd \"$MAKEFILE_PATH\" || exit 1\n\n# Run the make target 'ipa-altbackup'\nmake -B ipa-altbackup\n\n# Ensure that the ipa-altbackup process finishes before continuing\nif [ $? -ne 0 ]; then\n    echo \"Error: ipa-altbackup failed\"\n    exit 1\nelse\n    echo \"ipa-altbackup completed successfully\"\nfi\n# Type a script or drag a script file from your workspace to insert its path.\n";
 		};
 		AEDB4E9409D2CEE1EA126980 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3773,11 +3761,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A81176FF2D0B3C6C00D6C122 /* XCRemoteSwiftPackageReference "AltSign" */;
 			productName = "AltSign-Static";
-		};
-		A8D484D32D0CCAC4002C691D /* OpenSSL */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A81176FC2D0B3BAB00D6C122 /* XCRemoteSwiftPackageReference "OpenSSL" */;
-			productName = OpenSSL;
 		};
 /* End XCSwiftPackageProductDependency section */
 
