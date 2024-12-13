@@ -58,8 +58,8 @@ public extension ALTLocalizedError
 {
     var errorCode: Int { self.code.rawValue }
     var errorDescription: String? {
-        guard (self as NSError).localizedFailure == nil else {
-            // Error has localizedFailure, so return nil to construct localizedDescription from it + localizedFailureReason.
+        guard (self as NSError).localizedFailureReason == nil else {
+            // Error has localizedFailureReason, so return nil to construct localizedDescription from it + localizedFailureReason.
             return nil
         }
 
@@ -85,7 +85,7 @@ public extension ALTLocalizedError
     }
 
     var description: String {
-        let description = "\(self.localizedErrorCode) “\(self.localizedDescription)”"
+        let description = "\(self.errorCode) “\(self.localizedDescription)”"
         return description
     }
 }
