@@ -155,6 +155,10 @@ private extension DownloadAppOperation
         }
     }
     
+    func printWithTid(_ msg: String){
+        print("DownloadAppOperation: Thread: \(Thread.current.name ?? Thread.current.description) - " + msg)
+    }
+    
     func download(@Managed _ app: AppProtocol)
     {
         guard let sourceURL = self.sourceURL else {
@@ -223,11 +227,13 @@ private extension DownloadAppOperation
                     {
                         // Patreon app
                         fileURL = try await downloadPatreonApp(from: sourceURL)
+                        self.printWithTid("downloadPatreonApp: completed at \(fileURL.path)")
                     }
                     else
                     {
                         // Regular app
                         fileURL = try await downloadFile(from: sourceURL)
+                        self.printWithTid("downloadFile: completed at \(fileURL.path)")
                     }
                     
                     defer {
@@ -238,7 +244,9 @@ private extension DownloadAppOperation
                     }
                     
                     var isDirectory: ObjCBool = false
-                    guard FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory) else { throw OperationError.appNotFound(name: self.appName) }
+                    guard FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory) else {
+                        throw OperationError.appNotFound(name: self.appName)
+                    }
                     
                     try FileManager.default.createDirectory(at: self.temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
                     
@@ -265,6 +273,17 @@ private extension DownloadAppOperation
                     }
                     
                     guard let application = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }
+
+                    // perform cleanup of the temp files
+                    if(FileManager.default.fileExists(atPath: fileURL.path)){
+                        self.printWithTid("Removing downloaded temp file at: \(fileURL.path)")
+                        do{
+                            try FileManager.default.removeItem(at: fileURL)
+                        } catch{
+                            self.printWithTid("Removing downloaded temp error: \(error)")
+                        }
+                    }
+
                     completionHandler(.success(application))
                 }
                 catch
@@ -287,17 +306,20 @@ private extension DownloadAppOperation
                         }
                         
                         let (fileURL, _) = try Result((fileURL, response), error).get()
-                        try? FileManager.default.removeItem(at: fileURL)
                         continuation.resume(returning: fileURL)
+                    
+//                        self.printWithTid("downloadtask completed: fileURL: \(fileURL) URL: \(downloadURL)")
                     }
                     catch
                     {
+//                        self.printWithTid("downloadtask Error: \(error) URL:\(downloadURL)")
                         continuation.resume(throwing: error)
                     }
                 }
                 self.progress.addChild(downloadTask.progress, withPendingUnitCount: 3)
                 
                 downloadTask.resume()
+                self.printWithTid("download started: \(downloadURL)")
             }
         }
         
