@@ -28,3 +28,6 @@ ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
 
 // Suppress noise from os activity in xcode console log for release builds
 DEBUG_ACTIVITY_MODE = disable
+
+// Mute warnings about duplicate classes in AuthKit and AuthUIKit
+DEBUG_DUPLICATE_CLASSES = NO

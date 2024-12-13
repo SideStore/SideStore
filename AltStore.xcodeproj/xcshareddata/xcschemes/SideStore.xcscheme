@@ -87,6 +87,11 @@
             value = "$(DEBUG_ACTIVITY_MODE)"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "OBJC_DEBUG_DUPLICATE_CLASSES"
+            value = "$(DEBUG_DUPLICATE_CLASSES)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
