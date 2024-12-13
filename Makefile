@@ -220,12 +220,12 @@ copy-altbackup:
 # 	@echo ""
 	
 # ipa-altbackup: fakesign-altbackup
-ipa-altbackup:
+ipa-altbackup: copy-altbackup
 	@echo "  Creating IPA for AltBackup"
 	@rm -rf build/altbackup.xcarchive/Payload
 	@mkdir -p build/altbackup.xcarchive/Payload/AltBackup.app
-	@chmod -R 777 build/altbackup.xcarchive/Payload/AltBackup.app || true
-	@cp -R $(ALT_APP) build/altbackup.xcarchive/Payload
+	@#### @chmod -R 777 build/altbackup.xcarchive/Payload/AltBackup.app || true
+	@cp -R "$(CONFIGURATION_BUILD_DIR)/AltBackup.app" build/altbackup.xcarchive/Payload
 	@cd build/altbackup.xcarchive && zip -r ../../build/AltBackup.ipa Payload
 	@cp build/AltBackup.ipa AltStore/Resources
 	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
