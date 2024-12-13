@@ -37,6 +37,12 @@ class ResultOperation<ResultType>: Operation
             let error = nsError.withLocalizedFailure(localizedFailure)
             result = .failure(error)
         }
+        
+        // diagnostics logging
+        let resultStatus = String(describing: result).prefix("success".count).uppercased()
+        print("\n  ====> OPERATION: `\(type(of: self))` completed with: \(resultStatus) <====\n\n" +
+              "    Result: \(result)\n")
+
         self.resultHandler?(result)
 
         super.finish()
