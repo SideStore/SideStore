@@ -13,9 +13,9 @@ import AltStoreCore
 private extension URL
 {
     #if STAGING
-    static let sources = URL(string: "https://f000.backblazeb2.com/file/altstore-staging/altstore/sources.json")!
+    static let sources = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/trustedapps.json")!
     #else
-    static let sources = URL(string: "https://cdn.altstore.io/file/altstore/altstore/sources.json")!
+    static let sources = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/trustedapps.json")!
     #endif
 }
 
