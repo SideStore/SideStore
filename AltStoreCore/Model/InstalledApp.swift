@@ -140,7 +140,7 @@ public extension InstalledApp
         
         self.resignedBundleIdentifier = resignedApp.bundleIdentifier
         self.version = resignedApp.version
-        // @mahee96: requires altsign-marketplace branch release or equivalent
+        // TODO: @mahee96: requires altsign-marketplace branch release or equivalent
 //        self.buildVersion = resignedApp.buildVersion
         self.storeBuildVersion = storeBuildVersion
         

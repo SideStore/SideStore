@@ -159,8 +159,8 @@ final class FetchSourceOperation: ResultOperation<Source>
                             userInfo[NSDebugDescriptionErrorKey] = pathDescription
                         }
                         
-                        // @mahee96: Need to account for invalid/missing json fields error
-                        //           and show meaningful message to user instead of just showing decoder error
+                        // TODO: @mahee96: Need to account for invalid/missing json fields error
+                        //                 and show meaningful message to user instead of just showing decoder error
                         throw NSError(domain: nsError.domain, code: nsError.code, userInfo: userInfo)
                     }
                     
