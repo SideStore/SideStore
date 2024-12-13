@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "sources": [
+  "trusted": [
     {
       "identifier": "io.sidestore.example"
     },
