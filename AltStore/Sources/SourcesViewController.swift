@@ -13,27 +13,6 @@ import AltStoreCore
 import Roxas
 import Nuke
 
-//struct SourceError: ALTLocalizedError
-//{
-//    enum Code: Int, ALTErrorCode
-//    {
-//        typealias Error = SourceError
-//        case unsupported
-//    }
-//    
-//    var code: Code
-//    var errorTitle: String?
-//    var errorFailure: String?
-//    @Managed var source: Source
-//    
-//    var errorFailureReason: String {
-//        switch self.code
-//        {
-//        case .unsupported: return String(format: NSLocalizedString("The source “%@” is not supported by this version of SideStore.", comment: ""), self.$source.name)
-//        }
-//    }
-//}
-
 @objc(SourcesFooterView)
 private final class SourcesFooterView: TextCollectionReusableView
 {
@@ -43,8 +22,8 @@ private final class SourcesFooterView: TextCollectionReusableView
 
 private extension UIAction.Identifier
 {
-    static let showDetails = UIAction.Identifier("io.altstore.showDetails")
-    static let showError = UIAction.Identifier("io.altstore.showError")
+    static let showDetails = UIAction.Identifier("io.sidestore.showDetails")
+    static let showError = UIAction.Identifier("io.sidestore.showError")
 }
 
 final class SourcesViewController: UICollectionViewController
@@ -364,7 +343,7 @@ private extension SourcesViewController
                 case .failure(OperationError.cancelled): break
                     
                 case .failure(var error as SourceError):
-                    let title = String(format: NSLocalizedString("“%@” could not be added to AltStore.", comment: ""), error.$source.name)
+                    let title = String(format: NSLocalizedString("“%@” could not be added to SideStore.", comment: ""), error.$source.name)
                     error.errorTitle = title
                     self.present(error)
                     
@@ -382,6 +361,10 @@ private extension SourcesViewController
                 // Use @Managed before calling perform() to keep
                 // strong reference to source.managedObjectContext.
                 @Managed var source = try result.get()
+                                
+                #if !BETA
+                guard let trustedSourceIDs = UserDefaults.shared.trustedSourceIDs, trustedSourceIDs.contains(source.identifier) else { throw SourceError(code: .unsupported, source: source) }
+                #endif
                 
                 DispatchQueue.main.async {
                     self.showSourceDetails(for: source)
@@ -432,40 +415,6 @@ private extension SourcesViewController
             catch
             {
                 completionHandler?(false)
-                
-//                let dispatchGroup = DispatchGroup()
-//
-//                var sourcesByURL = [URL: Source]()
-//                var fetchError: Error?
-//
-//                for sourceURL in featuredSourceURLs
-//                {
-//                    dispatchGroup.enter()
-//
-//                    AppManager.shared.fetchSource(sourceURL: sourceURL, managedObjectContext: context) { result in
-//                        // Serialize access to sourcesByURL.
-//                        context.performAndWait {
-//                            switch result
-//                            {
-//                            case .failure(let error): fetchError = error
-//                            case .success(let source): sourcesByURL[source.sourceURL] = source
-//                            }
-//
-//                            dispatchGroup.leave()
-//                        }
-//                    }
-//                }
-//
-//                dispatchGroup.notify(queue: .main) {
-//                    if let error = fetchError
-//                    {
-//                        print(error)
-//                        // 1 error doesn't mean all trusted sources failed to load! Riley, why did you do this???????
-////                        finish(.failure(error))
-//                    }
-//                    let sources = featuredSourceURLs.compactMap { sourcesByURL[$0] }
-//                    finish(.success(sources))
-//                }
                 self.present(error)
             }
         }

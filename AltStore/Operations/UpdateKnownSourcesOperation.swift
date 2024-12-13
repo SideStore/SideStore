@@ -74,6 +74,10 @@ class UpdateKnownSourcesOperation: ResultOperation<([KnownSource], [KnownSource]
                 UserDefaults.shared.recommendedSources = sources.trusted
                 UserDefaults.shared.blockedSources = sources.blocked
                 
+                // Cache trusted source IDs.
+                UserDefaults.shared.trustedSourceIDs = sources.trusted.map { $0.identifier }
+                
+                
                 self.finish(.success(sources))
             }
             catch
