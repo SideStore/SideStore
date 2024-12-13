@@ -213,7 +213,9 @@ extension AppManager
         authenticationOperation.resultHandler = { (result) in
             switch result
             {
-            case .failure(let error): context.error = error
+            case .failure(let error): 
+                context.error = error
+                completionHandler(.failure(error))
             case .success: break
             }
             
@@ -324,6 +326,7 @@ extension AppManager
             do
             {
                 _ = LoggedError(error: sanitizedError, app: app, operation: operation, context: context)
+                print("AppManager.log(): error:\(sanitizedError) app:\(app.bundleIdentifier) operation:\(operation)")
                 try context.save()
             }
             catch let saveError
@@ -955,7 +958,9 @@ extension AppManager
         patchAppOperation.resultHandler = { [weak patchAppOperation] (result) in
             switch result
             {
-            case .failure(let error): context.error = error
+            case .failure(let error):
+                context.error = error
+                completionHandler(.failure(error))
             case .success:
                 // Kinda hacky that we're calling patchAppOperation's progressHandler manually, but YOLO.
                 patchAppOperation?.progressHandler?(installationProgress, NSLocalizedString("Patching placeholder app...", comment: ""))
@@ -966,7 +971,9 @@ extension AppManager
         sendAppOperation.resultHandler = { (result) in
             switch result
             {
-            case .failure(let error): context.error = error
+            case .failure(let error):
+                context.error = error
+                completionHandler(.failure(error))
             case .success(_): print("App sent over AFC")
             }
         }
@@ -1460,6 +1467,7 @@ private extension AppManager
             catch
             {
                 context.error = error
+                completionHandler(.failure(error))
             }
         }
         verifyOperation.addDependency(downloadOperation)
@@ -1487,7 +1495,7 @@ private extension AppManager
                     throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app is nil")
                 }
                 
-                
+                                
                 self?.removeAppExtensions(from: currentApp,
                                           existingApp: app as? InstalledApp,
                                           extensions: extensions,
@@ -1722,7 +1730,21 @@ private extension AppManager
         progress.addChild(installOperation.progress, withPendingUnitCount: 30)
         installOperation.addDependency(sendAppOperation)
         
-        var operations = [verifyPledgeOperation, downloadOperation, verifyOperation, deactivateAppsOperation, patchAppOperation, refreshAnisetteDataOperation, fetchProvisioningProfilesOperation, resignAppOperation, sendAppOperation, installOperation].compactMap { $0 }
+        // Operations picked for request
+        var operations = [
+            verifyPledgeOperation,
+            downloadOperation,
+            verifyOperation,
+            removeAppExtensionsOperation,
+            deactivateAppsOperation,
+            patchAppOperation,
+            refreshAnisetteDataOperation,
+            fetchProvisioningProfilesOperation,
+            resignAppOperation,
+            sendAppOperation,
+            installOperation
+        ].compactMap { $0 }
+        
         group.add(operations)
         
         if let storeApp = downloadingApp.storeApp, storeApp.isPledgeRequired
