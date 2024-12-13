@@ -126,13 +126,15 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
 
     override func finish(_ result: Result<ALTApplication, Error>)
     {
-        do
-        {
-            try FileManager.default.removeItem(at: self.temporaryDirectory)
-        }
-        catch
-        {
-            print("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory).", error)
+        if(FileManager.default.fileExists(atPath: self.temporaryDirectory.path)){
+            do
+            {
+                try FileManager.default.removeItem(at: self.temporaryDirectory)
+            }
+            catch
+            {
+                print("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory).", error)
+            }
         }
 
         super.finish(result)
@@ -155,53 +157,53 @@ private extension DownloadAppOperation
     
     func download(@Managed _ app: AppProtocol)
     {
-        guard let sourceURL = self.sourceURL else { return self.finish(.failure(OperationError.appNotFound(name: self.appName)))
-            
-            if let appVersion = app as? AppVersion
+        guard let sourceURL = self.sourceURL else {
+            return self.finish(.failure(OperationError.appNotFound(name: self.appName)))
+        }
+        if let appVersion = app as? AppVersion
+        {
+            // All downloads go through this path, and `app` is
+            // always an AppVersion if downloading from a source,
+            // so context.appVersion != nil means downloading from source.
+            self.context.appVersion = appVersion
+        }
+        downloadIPA(from: sourceURL) { result in
+            do
             {
-                // All downloads go through this path, and `app` is
-                // always an AppVersion if downloading from a source,
-                // so context.appVersion != nil means downloading from source.
-                self.context.appVersion = appVersion
-            }
-            downloadIPA(from: sourceURL!) { result in
-                do
+                let application = try result.get()
+                
+                if self.context.bundleIdentifier == StoreApp.dolphinAppID, self.context.bundleIdentifier != application.bundleIdentifier
                 {
-                    let application = try result.get()
-                    
-                    if self.context.bundleIdentifier == StoreApp.dolphinAppID, self.context.bundleIdentifier != application.bundleIdentifier
+                    if var infoPlist = NSDictionary(contentsOf: application.bundle.infoPlistURL) as? [String: Any]
                     {
-                        if var infoPlist = NSDictionary(contentsOf: application.bundle.infoPlistURL) as? [String: Any]
-                        {
-                            // Manually update the app's bundle identifier to match the one specified in the source.
-                            // This allows people who previously installed the app to still update and refresh normally.
-                            infoPlist[kCFBundleIdentifierKey as String] = StoreApp.dolphinAppID
-                            (infoPlist as NSDictionary).write(to: application.bundle.infoPlistURL, atomically: true)
-                        }
-                    }
-                    
-                    self.downloadDependencies(for: application) { result in
-                        do
-                        {
-                            _ = try result.get()
-                            
-                            try FileManager.default.copyItem(at: application.fileURL, to: self.destinationURL, shouldReplace: true)
-                            
-                            guard let copiedApplication = ALTApplication(fileURL: self.destinationURL) else { throw OperationError.invalidApp }
-                            self.finish(.success(copiedApplication))
-                            
-                            self.progress.completedUnitCount += 1
-                        }
-                        catch
-                        {
-                            self.finish(.failure(error))
-                        }
+                        // Manually update the app's bundle identifier to match the one specified in the source.
+                        // This allows people who previously installed the app to still update and refresh normally.
+                        infoPlist[kCFBundleIdentifierKey as String] = StoreApp.dolphinAppID
+                        (infoPlist as NSDictionary).write(to: application.bundle.infoPlistURL, atomically: true)
                     }
                 }
-                catch
-                {
-                    self.finish(.failure(error))
+                
+                self.downloadDependencies(for: application) { result in
+                    do
+                    {
+                        _ = try result.get()
+                        
+                        try FileManager.default.copyItem(at: application.fileURL, to: self.destinationURL, shouldReplace: true)
+                        
+                        guard let copiedApplication = ALTApplication(fileURL: self.destinationURL) else { throw OperationError.invalidApp }
+                        self.finish(.success(copiedApplication))
+                        
+                        self.progress.completedUnitCount += 1
+                    }
+                    catch
+                    {
+                        self.finish(.failure(error))
+                    }
                 }
+            }
+            catch
+            {
+                self.finish(.failure(error))
             }
         }
         
@@ -229,7 +231,7 @@ private extension DownloadAppOperation
                     }
                     
                     defer {
-                        if !sourceURL.isFileURL
+                        if !sourceURL.isFileURL && FileManager.default.fileExists(atPath: fileURL.path)
                         {
                             try? FileManager.default.removeItem(at: fileURL)
                         }
