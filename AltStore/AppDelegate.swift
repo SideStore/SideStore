@@ -44,8 +44,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         // Override point for customization after application launch.
-        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.MigrationDebug")
-        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.SQLDebug")
+//        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.MigrationDebug")
+//        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.SQLDebug")
 
         // Register default settings before doing anything else.
         UserDefaults.registerDefaults()
@@ -164,7 +164,7 @@ private extension AppDelegate
         let pipeline = ImagePipeline { configuration in
             do
             {
-                let dataCache = try DataCache(name: "io.altstore.Nuke")
+                let dataCache = try DataCache(name: "io.sidestore.Nuke")
                 dataCache.sizeLimit = 512 * 1024 * 1024 // 512MB
                 
                 configuration.dataCache = dataCache

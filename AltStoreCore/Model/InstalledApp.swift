@@ -405,7 +405,7 @@ public extension InstalledApp
     
     class func installedAppUTI(forBundleIdentifier bundleIdentifier: String) -> String
     {
-        let installedAppUTI = "io.altstore.Installed." + bundleIdentifier
+        let installedAppUTI = "io.sidestore.Installed." + bundleIdentifier
         return installedAppUTI
     }
     

@@ -14,7 +14,7 @@ import AltStoreCore
 @available(iOS 14, *)
 final class IntentHandler: NSObject, RefreshAllIntentHandling
 {
-    private let queue = DispatchQueue(label: "io.altstore.IntentHandler")
+    private let queue = DispatchQueue(label: "io.sidestore.IntentHandler")
     
     private var completionHandlers = [RefreshAllIntent: (RefreshAllIntentResponse) -> Void]()
     private var queuedResponses = [RefreshAllIntent: RefreshAllIntentResponse]()

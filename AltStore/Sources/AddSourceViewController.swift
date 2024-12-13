@@ -16,7 +16,7 @@ import Nuke
 
 private extension UIAction.Identifier
 {
-    static let addSource = UIAction.Identifier("io.altstore.AddSource")
+    static let addSource = UIAction.Identifier("io.sidestore.AddSource")
 }
 
 private typealias SourcePreviewResult = (sourceURL: URL, result: Result<Managed<Source>, Error>)

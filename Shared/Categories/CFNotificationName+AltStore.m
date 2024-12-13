@@ -8,6 +8,6 @@
 
 #import "CFNotificationName+AltStore.h"
 
-CFNotificationName const ALTWiredServerConnectionAvailableRequest = CFSTR("io.altstore.Request.WiredServerConnectionAvailable");
-CFNotificationName const ALTWiredServerConnectionAvailableResponse = CFSTR("io.altstore.Response.WiredServerConnectionAvailable");
-CFNotificationName const ALTWiredServerConnectionStartRequest = CFSTR("io.altstore.Request.WiredServerConnectionStart");
+CFNotificationName const ALTWiredServerConnectionAvailableRequest = CFSTR("io.sidestore.Request.WiredServerConnectionAvailable");
+CFNotificationName const ALTWiredServerConnectionAvailableResponse = CFSTR("io.sidestore.Response.WiredServerConnectionAvailable");
+CFNotificationName const ALTWiredServerConnectionStartRequest = CFSTR("io.sidestore.Request.WiredServerConnectionStart");

@@ -47,7 +47,7 @@ public class DatabaseManager
     public private(set) var isStarted = false
     
     private var startCompletionHandlers = [(Error?) -> Void]()
-    private let dispatchQueue = DispatchQueue(label: "io.altstore.DatabaseManager")
+    private let dispatchQueue = DispatchQueue(label: "io.sidestore.DatabaseManager")
     
     private let coordinator = NSFileCoordinator()
     private let coordinatorQueue = OperationQueue()

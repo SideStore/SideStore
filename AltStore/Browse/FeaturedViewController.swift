@@ -15,8 +15,8 @@ import Nuke
 
 extension UIAction.Identifier
 {
-    fileprivate static let showAllApps = Self("io.altstore.ShowAllApps")
-    fileprivate static let showSourceDetails = Self("io.altstore.ShowSourceDetails")
+    fileprivate static let showAllApps = Self("io.sidestore.ShowAllApps")
+    fileprivate static let showSourceDetails = Self("io.sidestore.ShowSourceDetails")
 }
 
 extension FeaturedViewController

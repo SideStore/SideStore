@@ -15,7 +15,7 @@ import Roxas
 
 extension UIApplication
 {
-    static let didChangeAppIconNotification = Notification.Name("io.altstore.AppManager.didChangeAppIcon")
+    static let didChangeAppIconNotification = Notification.Name("io.sidestore.AppManager.didChangeAppIcon")
 }
 
 private final class AltIcon: Decodable

@@ -10,10 +10,10 @@ import UIKit
 
 extension AppDelegate
 {
-    static let startBackupNotification = Notification.Name("io.altstore.StartBackup")
-    static let startRestoreNotification = Notification.Name("io.altstore.StartRestore")
+    static let startBackupNotification = Notification.Name("io.sidestore.StartBackup")
+    static let startRestoreNotification = Notification.Name("io.sidestore.StartRestore")
     
-    static let operationDidFinishNotification = Notification.Name("io.altstore.BackupOperationFinished")
+    static let operationDidFinishNotification = Notification.Name("io.sidestore.BackupOperationFinished")
     
     static let operationResultKey = "result"
 }

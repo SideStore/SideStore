@@ -16,8 +16,8 @@ import Foundation
 
 extension XPCConnection
 {
-    public static let unc0verMachServiceName = "cy:io.altstore.altdaemon"
-    public static let odysseyMachServiceName = "lh:io.altstore.altdaemon"
+    public static let unc0verMachServiceName = "cy:io.sidestore.altdaemon"
+    public static let odysseyMachServiceName = "lh:io.sidestore.altdaemon"
     
     public static let machServiceNames = [unc0verMachServiceName, odysseyMachServiceName]
 }
@@ -26,7 +26,7 @@ public class XPCConnection: NSObject, Connection
 {
     public let xpcConnection: NSXPCConnection
     
-    private let queue = DispatchQueue(label: "io.altstore.XPCConnection")
+    private let queue = DispatchQueue(label: "io.sidestore.XPCConnection")
     private let dispatchGroup = DispatchGroup()
     private var semaphore: DispatchSemaphore?
     private var buffer = Data(capacity: 1024)

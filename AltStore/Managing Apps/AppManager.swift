@@ -22,11 +22,11 @@ import Roxas
 
 extension AppManager
 {
-    static let didFetchSourceNotification = Notification.Name("io.altstore.AppManager.didFetchSource")
-    static let didUpdatePatronsNotification = Notification.Name("io.altstore.AppManager.didUpdatePatrons")
-    static let didAddSourceNotification = Notification.Name("io.altstore.AppManager.didAddSource")
-    static let didRemoveSourceNotification = Notification.Name("io.altstore.AppManager.didRemoveSource")
-    static let willInstallAppFromNewSourceNotification = Notification.Name("io.altstore.AppManager.willInstallAppFromNewSource")
+    static let didFetchSourceNotification = Notification.Name("io.sidestore.AppManager.didFetchSource")
+    static let didUpdatePatronsNotification = Notification.Name("io.sidestore.AppManager.didUpdatePatrons")
+    static let didAddSourceNotification = Notification.Name("io.sidestore.AppManager.didAddSource")
+    static let didRemoveSourceNotification = Notification.Name("io.sidestore.AppManager.didRemoveSource")
+    static let willInstallAppFromNewSourceNotification = Notification.Name("io.sidestore.AppManager.willInstallAppFromNewSource")
     
     static let expirationWarningNotificationID = "altstore-expiration-warning"
     static let enableJITResultNotificationID = "altstore-enable-jit"
