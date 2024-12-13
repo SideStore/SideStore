@@ -64,6 +64,8 @@
 		A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8945AA52D059B6100D86CBE /* Roxas.framework */; };
 		A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A5432F2D04F0C100D72399 /* libfragmentzip.a */; };
 		A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */; };
+		A8D484D02D0CCA8A002C691D /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A8D484CF2D0CCA8A002C691D /* AltSign-Static */; };
+		A8D484D42D0CCAC4002C691D /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = A8D484D32D0CCAC4002C691D /* OpenSSL */; };
 		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
 		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
@@ -471,6 +473,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = B315FDCE2866CDD3002E243C;
 			remoteInfo = "fragmentzip-iOS";
+		};
+		A8E00D3D2D0C95B5000DD2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD247622284B9A500981D42 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF58047A246A28F7008AE704;
+			remoteInfo = AltBackup;
 		};
 		BF66EE832501AE50007EE018 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -997,7 +1006,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8D484D42D0CCAC4002C691D /* OpenSSL in Frameworks */,
 				BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */,
+				A8D484D02D0CCA8A002C691D /* AltSign-Static in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2250,6 +2261,7 @@
 				99F87D0629D8B51400B40039 /* ShellScript */,
 				BFD247662284B9A500981D42 /* Sources */,
 				BFD247672284B9A500981D42 /* Frameworks */,
+				A8E00D3F2D0C9C6D000DD2C7 /* Run Script */,
 				BFD247682284B9A500981D42 /* Resources */,
 				BF088D2B2501A087008082D9 /* Embed Frameworks */,
 				BF98917B250AABF4002ACF50 /* Embed Foundation Extensions */,
@@ -2259,6 +2271,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A8E00D3E2D0C95B5000DD2C7 /* PBXTargetDependency */,
 				191E5FB3290A5D9B001A3B7C /* PBXTargetDependency */,
 				19104DBA2909C0F200C49C7B /* PBXTargetDependency */,
 				BF66EE842501AE50007EE018 /* PBXTargetDependency */,
@@ -2516,6 +2529,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		A8E00D3F2D0C9C6D000DD2C7 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n\necho \"Build directory: $BUILD_DIR\"\necho \"Configuration build directory: $CONFIGURATION_BUILD_DIR\"\n\n# exit 0\n\n# Define the path to your Makefile\nMAKEFILE_PATH=\"${PROJECT_DIR}/\"\n\n# Navigate to the directory containing the Makefile\ncd \"$MAKEFILE_PATH\" || exit 1\n\n# Run the make target 'ipa-altbackup'\nmake -B ipa-altbackup\n\n# Ensure that the ipa-altbackup process finishes before continuing\nif [ $? -ne 0 ]; then\n    echo \"Error: ipa-altbackup failed\"\n    exit 1\nelse\n    echo \"ipa-altbackup completed successfully\"\nfi\n# Type a script or drag a script file from your workspace to insert its path.\n";
 		};
 		AEDB4E9409D2CEE1EA126980 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2942,6 +2973,11 @@
 			name = "minimuxer-staticlib";
 			targetProxy = A809F6A02D04D7CB00F0F0F3 /* PBXContainerItemProxy */;
 		};
+		A8E00D3E2D0C95B5000DD2C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF58047A246A28F7008AE704 /* AltBackup */;
+			targetProxy = A8E00D3D2D0C95B5000DD2C7 /* PBXContainerItemProxy */;
+		};
 		BF66EE842501AE50007EE018 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BF66EE7D2501AE50007EE018 /* AltStoreCore */;
@@ -3182,9 +3218,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = AltBackup/AltBackup.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = AltBackup/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3203,13 +3241,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = AltBackup/AltBackup.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = AltBackup/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.SideStore.SideStore.AltBackup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3726,6 +3768,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
 			productName = SemanticVersion;
+		};
+		A8D484CF2D0CCA8A002C691D /* AltSign-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A81176FF2D0B3C6C00D6C122 /* XCRemoteSwiftPackageReference "AltSign" */;
+			productName = "AltSign-Static";
+		};
+		A8D484D32D0CCAC4002C691D /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A81176FC2D0B3BAB00D6C122 /* XCRemoteSwiftPackageReference "OpenSSL" */;
+			productName = OpenSSL;
 		};
 /* End XCSwiftPackageProductDependency section */
 

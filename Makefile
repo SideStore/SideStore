@@ -179,3 +179,53 @@ ipa:
 	cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
 	zip -r SideStore.ipa Payload
 
+# Global Variables
+CONFIGURATION_BUILD_DIR ?= # Ensure this is set by the environment or passed as an argument
+ALT_APP = build/altbackup.xcarchive/Products/Applications/AltBackup.app
+ALT_APP_DSYM = build/altbackup.xcarchive/dSYMs/AltBackup.app.dSYM
+
+copy-altbackup:
+	@echo "  Copying AltBackup.app from '$(CONFIGURATION_BUILD_DIR)/AltBackup.app'"
+	@if [ ! -d "$(CONFIGURATION_BUILD_DIR)/AltBackup.app" ]; then \
+		echo "Error: AltBackup.app not found in '$(CONFIGURATION_BUILD_DIR)'"; \
+		echo '       Environment variable CONFIGURATION_BUILD_DIR = $(CONFIGURATION_BUILD_DIR)'; \
+		echo '       Please set it to valid build artifacts directory'; \
+		echo ''; \
+		exit 1; \
+	fi
+	
+	@echo "  Copying AltBackup.dSYM from '$(CONFIGURATION_BUILD_DIR)/AltBackup.app.dSYM'"
+	@if [ ! -d "$(CONFIGURATION_BUILD_DIR)/AltBackup.app.dSYM" ]; then \
+		echo "Error: AltBackup.dSYM not found in '$(CONFIGURATION_BUILD_DIR)'"; \
+		echo '       Environment variable CONFIGURATION_BUILD_DIR = $(CONFIGURATION_BUILD_DIR)'; \
+		echo '       Please set it to valid build artifacts directory'; \
+		echo ''; \
+		exit 1; \
+	fi
+	
+	@# If the artifacts are found, copy them to the target locations
+	@rm -rf $(ALT_APP)
+	@rm -rf $(ALT_APP_DSYM)
+	@mkdir -p $(ALT_APP)
+	@mkdir -p $(ALT_APP_DSYM)
+	@cp -R "$(CONFIGURATION_BUILD_DIR)/AltBackup.app" "$(ALT_APP)/.."
+	@cp -R "$(CONFIGURATION_BUILD_DIR)/AltBackup.app.dSYM" "$(ALT_APP_DSYM)/.."
+	@echo ""
+
+# fakesign-altbackup: copy-altbackup
+# 	@echo "  Adding homebrew binaries to path and invoke ldid"
+# 	@export PATH="/usr/local/bin:/opt/homebrew/bin:$$PATH"; \
+# 	ldid -SAltBackup/Resources/ReleaseEntitlements.plist $(ALT_APP)
+# 	@echo "  fakesign completed"
+# 	@echo ""
+	
+# ipa-altbackup: fakesign-altbackup
+ipa-altbackup:
+	@echo "  Creating IPA for AltBackup"
+	@rm -rf build/altbackup.xcarchive/Payload
+	@mkdir -p build/altbackup.xcarchive/Payload/AltBackup.app
+	@chmod -R 777 build/altbackup.xcarchive/Payload/AltBackup.app || true
+	@cp -R $(ALT_APP) build/altbackup.xcarchive/Payload
+	@cd build/altbackup.xcarchive && zip -r ../../build/AltBackup.ipa Payload
+	@cp build/AltBackup.ipa AltStore/Resources
+	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
