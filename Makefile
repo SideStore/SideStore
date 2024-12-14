@@ -182,11 +182,15 @@ ipa:
 # Global Variables
 
 # Ensure this is set by the environment or passed as an argument
+CONFIGURATION_BUILD_DIR ?= # this is the path to your main app (possibly in derived-data unless changed manually)
 CODESIGNING_FOLDER_PATH ?= # this is the path to your main app (possibly in derived-data unless changed manually)
 
-APP_PATH 			:= "$(CODESIGNING_FOLDER_PATH)"
-APP_PATH 			:= $(if $(APP_PATH),$(APP_PATH),$(CONFIGURATION_BUILD_DIR))
-VAR_USED			:= $(if $(CODESIGNING_FOLDER_PATH),"CODESIGNING_FOLDER_PATH","CONFIGURATION_BUILD_DIR")
+# CONFIGURATION_BUILD_DIR = # this is the path to your main app (possibly in derived-data unless changed manually)
+# CODESIGNING_FOLDER_PATH = # this is the path to your main app (possibly in derived-data unless changed manually)
+
+ROOT_DIR 			:= $(CONFIGURATION_BUILD_DIR)
+ROOT_DIR 			:= $(if $(ROOT_DIR),$(ROOT_DIR),$(CODESIGNING_FOLDER_PATH)/..)
+VAR_USED			:= $(if $(CONFIGURATION_BUILD_DIR),"CONFIGURATION_BUILD_DIR","CODESIGNING_FOLDER_PATH")
 
 TARGET_BUILD_DIR 	:= build
 TARGET_ARCHIVE_DIR 	:= altbackup.xcarchive
@@ -195,17 +199,33 @@ TARGET_DSYM_NAME 	:= AltBackup.app.dSYM
 TARGET_IPA_NAME 	:= AltBackup.ipa
 
 
-ALT_APP_SRC_PARENT 	:= $(shell readlink -f "$(APP_PATH)/..")
-ALT_APP_SRC 		:= $(shell readlink -f "$(ALT_APP_SRC_PARENT)/$(TARGET_NAME)")
-ALT_APP_DSYM_SRC 	:= $(shell readlink -f "$(ALT_APP_SRC_PARENT)/$(TARGET_DSYM_NAME)")
+ALT_APP_SRC_PARENT 	:= $(shell readlink -f "$(ROOT_DIR)")
+ALT_APP_SRC 		:= $(ALT_APP_SRC_PARENT)/$(TARGET_NAME)
+ALT_APP_DSYM_SRC 	:= $(ALT_APP_SRC_PARENT)/$(TARGET_DSYM_NAME)
 ALT_APP_DST_ARCHIVE := "$(TARGET_BUILD_DIR)/$(TARGET_ARCHIVE_DIR)"
 ALT_APP_DST 		:= "$(ALT_APP_DST_ARCHIVE)/Products/Applications/$(TARGET_NAME)"
 ALT_APP_DSYM_DST 	:= "$(ALT_APP_DST_ARCHIVE)/dSYMs/$(TARGET_DSYM_NAME)"
 ALT_APP_PAYLOAD_DST := "$(ALT_APP_DST_ARCHIVE)/Payload"
 ALT_APP_IPA_DST 	:= "$(TARGET_BUILD_DIR)/$(TARGET_IPA_NAME)"
 
-copy-altbackup:
-	@# @echo "  Copying archive data from '$(ALT_APP_SRC_PARENT)'"
+checkPaths:
+	@# Check if ALT_APP_SRC_PARENT is empty, abort if true
+	@if [ -z "$(ALT_APP_SRC_PARENT)" ]; then \
+		echo "Error: ALT_APP_SRC_PARENT is empty!"; \
+		echo "       Environment variable $$VAR_USED = $$APP_PATH"; \
+		echo "       Please set it to a valid build artifacts directory"; \
+		echo ""; \
+		exit 1; \
+	fi
+
+
+copy-altbackup: checkPaths
+	@echo ''
+	@echo "  CONFIGURATION_BUILD_DIR = '$(CONFIGURATION_BUILD_DIR)'"
+	@echo "  CODESIGNING_FOLDER_PATH = '$(CODESIGNING_FOLDER_PATH)'"
+	@echo "  Copying archive data from ALT_APP_SRC_PARENT = '$(ALT_APP_SRC_PARENT)'"
+	@echo ''
+
 	@bash -c '\
 		SOURCES=("$(ALT_APP_SRC)" "$(ALT_APP_DSYM_SRC)"); \
 		TARGETS=("$(ALT_APP_DST)" "$(ALT_APP_DSYM_DST)"); \
@@ -218,16 +238,20 @@ copy-altbackup:
 			\
 			echo "  Copying $$TGT_NAME from \"$$SRC\""; \
 			if [ ! -d "$$SRC" ]; then \
-				echo "Error: $$TGT_NAME not found in \"$$SRC\""; \
-				echo "       Environment variable $(VAR_USED) = $(APP_PATH)"; \
-				echo "       Please set it to a valid build artifacts directory"; \
-				echo ""; \
-				exit 1; \
+				echo "SRC=$$SRC ALT_APP_DSYM_SRC=$(ALT_APP_DSYM_SRC)"; \
+				if [ "$$SRC" == "$(ALT_APP_DSYM_SRC)" ]; then \
+					echo "Warning: $$TGT_NAME not found in \"$$SRC\" - IGNORED"; \
+					echo ""; \
+				else \
+					echo "Error: $$TGT_NAME not found in \"$$SRC\""; \
+					echo ""; \
+					exit 1; \
+				fi \
 			else \
-				echo "  Copied  $$TGT_NAME into TARGET = $$TGT"; \
 				rm -rf "$$TGT"; \
 				mkdir -p "$$TGT"; \
-				cp -R "$(ALT_APP_SRC_PARENT)/$$TGT_NAME" "$${TGT%/*}"; \
+				cp -R "$(ALT_APP_SRC_PARENT)/$(TGT_NAME)" "$$TGT"; \
+				echo "  Copied  $$TGT_NAME into TARGET = $$TGT"; \
 				echo ""; \
 			fi; \
 		done \
@@ -242,13 +266,14 @@ copy-altbackup:
 # 	@echo "  fakesign completed"
 # 	@echo ""
 	
-# ipa-altbackup: fakesign-altbackup
-ipa-altbackup: copy-altbackup
+# ipa-altbackup:
+ipa-altbackup: checkPaths copy-altbackup 
+# ipa-altbackup: checkPaths copy-altbackup fakesign-altbackup
 	@echo "  Creating IPA for AltBackup"
 	@rm -rf 	"$(ALT_APP_PAYLOAD_DST)"
 	@mkdir -p 	"$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
-	@#### @chmod -R 777 "$(ALT_APP_PAYLOAD_DST)" || true
-	@cp -R 		"$(ALT_APP_SRC)" "$(ALT_APP_PAYLOAD_DST)"
+	@echo " Copying from $(ALT_APP_SRC) into $(ALT_APP_PAYLOAD_DST)"
+	@cp -R -f	"$(ALT_APP_SRC)/" "$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
 	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload && popd
-	@cp "$(ALT_APP_IPA_DST)" AltStore/Resources
+	@cp	   -f	"$(ALT_APP_IPA_DST)" AltStore/Resources
 	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
