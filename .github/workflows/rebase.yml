@@ -118,8 +118,7 @@ jobs:
           echo ""
   
       - name: Build SideStore
-        # run: make build | xcpretty && exit ${PIPESTATUS[0]}
-        run: make build && exit ${PIPESTATUS[0]}
+        run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
         run: make fakesign
