@@ -393,7 +393,7 @@ private extension DatabaseManager
                     }
                     catch
                     {
-                        print("Failed to copy AltStore app bundle to its proper location.", error)
+                        print("Failed to copy SideStore app bundle to its proper location.", error)
                     }
                 }
             }

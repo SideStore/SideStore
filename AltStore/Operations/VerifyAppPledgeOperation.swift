@@ -151,7 +151,7 @@ private extension VerifyAppPledgeOperation
         
         Logger.sideload.debug("Patreon Auth cookie: \(authCookie.name)=\(authCookie.value)")
         
-        let message = NSLocalizedString("You're signed into Patreon but haven't connected your account with AltStore.\n\nPlease connect your account to download Patreon-exclusive apps.", comment: "")
+        let message = NSLocalizedString("You're signed into Patreon but haven't connected your account with SideStore.\n\nPlease connect your account to download Patreon-exclusive apps.", comment: "")
         let action = await UIAlertAction(title: NSLocalizedString("Connect Patreon Account", comment: ""), style: .default)
         
         do

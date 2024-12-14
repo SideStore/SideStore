@@ -196,7 +196,7 @@ extension ReviewPermissionsViewController
                 
             case .unknown:
                 configuration.text = NSLocalizedString("Additional Permissions", comment: "")
-                configuration.secondaryText = String(format: NSLocalizedString("These are permissions required by “%@” that AltStore does not recognize. Make sure you understand them before continuing.", comment: ""), self.app.name)
+                configuration.secondaryText = String(format: NSLocalizedString("These are permissions required by “%@” that SideStore does not recognize. Make sure you understand them before continuing.", comment: ""), self.app.name)
                 
             case .approve: break
             }

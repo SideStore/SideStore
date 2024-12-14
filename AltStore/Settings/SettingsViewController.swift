@@ -146,7 +146,7 @@ final class SettingsViewController: UITableViewController
             let localizedVersion = installedApp.version
             #endif
             
-            self.versionLabel.text = NSLocalizedString(String(format: "Version %@", localizedVersion), comment: "AltStore Version")
+            self.versionLabel.text = NSLocalizedString(String(format: "Version %@", localizedVersion), comment: "SideStore Version")
         }
         else if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         {
@@ -163,7 +163,7 @@ final class SettingsViewController: UITableViewController
                     versionString += " - \(!pair_test)"
                 }
             }
-            self.versionLabel.text = NSLocalizedString(String(format: "Version %@", version), comment: "AltStore Version")
+            self.versionLabel.text = NSLocalizedString(String(format: "Version %@", version), comment: "SideStore Version")
         }
         else
         {

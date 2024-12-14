@@ -206,7 +206,7 @@ struct OperationError: ALTLocalizedError {
             
         case .sourceNotAdded:
             let sourceName = self.sourceName.map { String(format: NSLocalizedString("The source “%@”", comment: ""), $0) } ?? NSLocalizedString("The source", comment: "")
-            return String(format: NSLocalizedString("%@ is not added to AltStore.", comment: ""), sourceName)
+            return String(format: NSLocalizedString("%@ is not added to SideStore.", comment: ""), sourceName)
 
         case .appNotFound:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
