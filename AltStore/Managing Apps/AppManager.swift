@@ -1391,6 +1391,10 @@ private extension AppManager
             group.beginInstallationHandler?(installedApp)
         }
         
+        // TODO: @mahee96: retire excessive completion handlers in the callback for each operation
+        //                 These spam the Error log since they don't prematurely flush the operation pipeline when an error occurs
+        //                 Need to investigate why premature flush isn't hapenning.
+        
         var downloadingApp = app
         
         if let installedApp = app as? InstalledApp
