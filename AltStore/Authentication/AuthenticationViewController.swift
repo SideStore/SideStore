@@ -31,6 +31,15 @@ final class AuthenticationViewController: UIViewController
     {
         super.viewDidLoad()
         
+        // fetch anisette servers asap when loading Auth Screen (if list is empty
+        if(UserDefaults.standard.menuAnisetteServersList.isEmpty){
+            Task{
+                await AnisetteViewModel.getListOfServers(
+                    serverSource: UserDefaults.standard.menuAnisetteList
+                )
+            }
+        }
+        
         self.signInButton.activityIndicatorView.style = .medium
         self.signInButton.activityIndicatorView.color = .white
         

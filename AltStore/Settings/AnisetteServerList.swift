@@ -36,32 +36,46 @@ class AnisetteViewModel: ObservableObject {
         }
     }
     
-    func getListOfServers() {
-        guard let url = URL(string: source) else { return }
+    func getDefaultListOfServers() {
+        // initiate fetch but do not wait in blocking manner
+        Task{
+            self.servers = await AnisetteViewModel.getListOfServers(serverSource: self.source)
+        }
+    }
+    
+    static func getListOfServers(serverSource: String) async -> [Server] {
+        var aniServers: [Server] = []
+
+        guard let url = URL(string: serverSource) else {
+            return aniServers
+        }
         
         // DO NOT use local cache when fetching anisette servers
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                return
-            }
-            if let data = data {
-                do {
-                    let decoder = Foundation.JSONDecoder()
-                    let servers = try decoder.decode(AnisetteServerData.self, from: data)
-                    DispatchQueue.main.async {
-                        self.servers = servers.servers
-                        // store server addresses as list
-                        UserDefaults.standard.menuAnisetteServersList = servers.servers.map(\.self.address)
+        return await withCheckedContinuation{(continuation: CheckedContinuation<[Server], Never>) in
+            // perform async operation with callback
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if error == nil, let data = data {
+                    do {
+                        let decoder = Foundation.JSONDecoder()
+                        let servers = try decoder.decode(AnisetteServerData.self, from: data)
+                        DispatchQueue.main.async {
+                            aniServers.append(contentsOf: servers.servers)
+                            // store server addresses as list
+                            UserDefaults.standard.menuAnisetteServersList = aniServers.map(\.self.address)
+                        }
+                    } catch {
+                        // Handle decoding error
+                        print("Failed to decode JSON: \(error)")
                     }
-                } catch {
-                    // Handle decoding error
-                    print("Failed to decode JSON: \(error)")
                 }
-            }
-        }.resume()
+
+                //unblock the continuation
+                continuation.resume(returning: aniServers)
+            }.resume()
+        }
     }
 }
 
@@ -77,7 +91,7 @@ struct AnisetteServers: View {
             Color(UIColor.systemBackground)
                 .ignoresSafeArea()
                 .onAppear {
-                    viewModel.getListOfServers()
+                    viewModel.getDefaultListOfServers()
                 }
             VStack {
                 if #available(iOS 16.0, *) {
@@ -144,7 +158,7 @@ struct AnisetteServers: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                         .onChange(of: viewModel.source) { newValue in
                             UserDefaults.standard.menuAnisetteList = newValue
-                            viewModel.getListOfServers()
+                            viewModel.getDefaultListOfServers()
                         }
 
                     HStack(spacing: 16) {
@@ -166,7 +180,7 @@ struct AnisetteServers: View {
                         .shadow(color: Color.accentColor.opacity(0.4), radius: 10, x: 0, y: 5)
 
                         SUIButton(action: {
-                            viewModel.getListOfServers()
+                            viewModel.getDefaultListOfServers()
                         }) {
                             HStack{
                                 Spacer()
