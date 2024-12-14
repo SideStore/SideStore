@@ -39,7 +39,12 @@ class AnisetteViewModel: ObservableObject {
     func getDefaultListOfServers() {
         // initiate fetch but do not wait in blocking manner
         Task{
-            self.servers = await AnisetteViewModel.getListOfServers(serverSource: self.source)
+            let anisetteServers = await AnisetteViewModel.getListOfServers(serverSource: self.source)
+            
+            // always update on main thread for Observables
+            DispatchQueue.main.async {
+                self.servers = anisetteServers
+            }
         }
     }
     
@@ -61,11 +66,9 @@ class AnisetteViewModel: ObservableObject {
                     do {
                         let decoder = Foundation.JSONDecoder()
                         let servers = try decoder.decode(AnisetteServerData.self, from: data)
-                        DispatchQueue.main.async {
-                            aniServers.append(contentsOf: servers.servers)
-                            // store server addresses as list
-                            UserDefaults.standard.menuAnisetteServersList = aniServers.map(\.self.address)
-                        }
+                        aniServers.append(contentsOf: servers.servers)
+                        // store server addresses as list
+                        UserDefaults.standard.menuAnisetteServersList = aniServers.map(\.self.address)
                     } catch {
                         // Handle decoding error
                         print("Failed to decode JSON: \(error)")
