@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and upload SideStore 0.5.6-rebase
+    name: Build and upload SideStore 0.6.0-rebase
     concurrency:
       group: ${{ github.ref }}
       cancel-in-progress: true
