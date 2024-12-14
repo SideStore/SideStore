@@ -133,6 +133,28 @@ jobs:
       - name: Get current date in AltStore date form
         id: date_altstore
         run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      
+      - name: Upload to nightly release
+        uses: IsaacShelton/update-existing-release@v1.3.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release: "Alpha"
+          tag: "alpha"
+          prerelease: true
+          files: SideStore.ipa
+          body: |
+              This is an ⚠️ **EXPERIMENTAL** ⚠️ alpha build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
+              
+              Alpha builds are **extremely experimental builds only meant to be used by developers and alpha testers. They often contain bugs and experimental features. Use at your own risk!**
+              
+              If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore Stable](https://github.com/${{ github.repository }}/releases?q=stable).
+              
+              ## Build Info
+              
+              Built at (UTC): `${{ steps.date.outputs.date }}`
+              Built at (UTC date): `${{ steps.date_altstore.outputs.date }}`
+              Commit SHA: `${{ github.sha }}`
+              Version: `${{ steps.version.outputs.version }}`
 
       - name: Add version to IPA file name
         run: mv SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
@@ -148,3 +170,4 @@ jobs:
         with:
           name: SideStore-${{ steps.version.outputs.version }}-dSYM
           path: ./*.dSYM/
+          
