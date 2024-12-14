@@ -131,7 +131,9 @@ class BackupController: NSObject
             guard
                 let altstoreAppGroup = Bundle.main.altstoreAppGroup,
                 let sharedDirectoryURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: altstoreAppGroup)
-            else { throw BackupError(.appGroupNotFound(nil), description: NSLocalizedString("Unable to create backup directory.", comment: "")) }
+            else {
+                throw BackupError(.appGroupNotFound(nil), description: NSLocalizedString("Unable to create backup directory.", comment: ""))
+            }
             
             let backupsDirectory = sharedDirectoryURL.appendingPathComponent("Backups")
             

@@ -162,7 +162,9 @@ private extension BackupAppOperation
                 self?.applicationWillReturnObserver.map { NotificationCenter.default.removeObserver($0) }
             }
 
-            guard let self = self, !self.isFinished else { return }
+            guard let self = self, !self.isFinished else {
+                return
+            }
             
             self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { [weak self] (timer) in
                 // Final delay to ensure we don't prematurely return failure

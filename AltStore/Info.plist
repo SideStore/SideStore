@@ -7,7 +7,6 @@
 	<key>ALTAppGroups</key>
 	<array>
 		<string>group.$(APP_GROUP_IDENTIFIER)</string>
-		<string>group.com.SideStore.SideStore</string>
 	</array>
 	<key>ALTDeviceID</key>
 	<string>00008120-001270DA119B401E</string>
@@ -63,10 +62,9 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>AltStore General</string>
+			<string>SideStore General</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>altstore</string>
 				<string>sidestore</string>
 			</array>
 		</dict>
@@ -74,10 +72,9 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>AltStore Backup</string>
+			<string>SideStore Backup</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>altstore-com.rileytestut.AltStore</string>
 				<string>sidestore-com.SideStore.SideStore</string>
 			</array>
 		</dict>
@@ -91,14 +88,8 @@
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>altstore-com.rileytestut.AltStore</string>
-		<string>altstore-com.rileytestut.AltStore.Beta</string>
-		<string>altstore-com.rileytestut.Delta</string>
-		<string>altstore-com.rileytestut.Delta.Beta</string>
-		<string>altstore-com.rileytestut.Delta.Lite</string>
-		<string>altstore-com.rileytestut.Delta.Lite.Beta</string>
-		<string>altstore-com.rileytestut.Clip</string>
-		<string>altstore-com.rileytestut.Clip.Beta</string>
+		<string>sidestore-com.SideStore.SideStore</string>
+		<string>sidestore-com.SideStore.SideStore.Beta</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -122,7 +113,7 @@
 	</array>
 	<key>OSLogPreferences</key>
 	<dict>
-		<key>com.rileytestut.AltStore</key>
+		<key>com.SideStore.SideStore</key>
 		<dict>
 			<key>AltJIT</key>
 			<dict>

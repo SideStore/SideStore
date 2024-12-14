@@ -28,8 +28,8 @@ extension AppManager
     static let didRemoveSourceNotification = Notification.Name("io.sidestore.AppManager.didRemoveSource")
     static let willInstallAppFromNewSourceNotification = Notification.Name("io.sidestore.AppManager.willInstallAppFromNewSource")
     
-    static let expirationWarningNotificationID = "altstore-expiration-warning"
-    static let enableJITResultNotificationID = "altstore-enable-jit"
+    static let expirationWarningNotificationID = "sidestore-expiration-warning"
+    static let enableJITResultNotificationID = "sidestore-enable-jit"
 }
 
 @available(iOS 13, *)

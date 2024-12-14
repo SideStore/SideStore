@@ -82,23 +82,25 @@ class ViewController: UIViewController
         self.activityIndicatorView.color = .altstoreText
         self.activityIndicatorView.startAnimating()
         
-        #if DEBUG
-        let button1 = UIButton(type: .system)
-        button1.setTitle("Backup", for: .normal)
-        button1.setTitleColor(.white, for: .normal)
-        button1.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-        button1.addTarget(self, action: #selector(ViewController.backup), for: .primaryActionTriggered)
-        
-        let button2 = UIButton(type: .system)
-        button2.setTitle("Restore", for: .normal)
-        button2.setTitleColor(.white, for: .normal)
-        button2.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-        button2.addTarget(self, action: #selector(ViewController.restore), for: .primaryActionTriggered)
-        
-        let arrangedSubviews = [self.textLabel!, self.detailTextLabel!, self.activityIndicatorView!, button1, button2]
-        #else
+        // TODO: @mahee96: Disabled this buttons which were present for debugging purpose.
+        //                 Can find something useful for these later, but these are not required by this backup/restore app
+//        #if DEBUG
+//        let button1 = UIButton(type: .system)
+//        button1.setTitle("Backup", for: .normal)
+//        button1.setTitleColor(.white, for: .normal)
+//        button1.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+//        button1.addTarget(self, action: #selector(ViewController.backup), for: .primaryActionTriggered)
+//        
+//        let button2 = UIButton(type: .system)
+//        button2.setTitle("Restore", for: .normal)
+//        button2.setTitleColor(.white, for: .normal)
+//        button2.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+//        button2.addTarget(self, action: #selector(ViewController.restore), for: .primaryActionTriggered)
+//        
+//        let arrangedSubviews = [self.textLabel!, self.detailTextLabel!, self.activityIndicatorView!, button1, button2]
+//        #else
         let arrangedSubviews = [self.textLabel!, self.detailTextLabel!, self.activityIndicatorView!]
-        #endif
+//        #endif
         
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -155,7 +157,8 @@ private extension ViewController
             self.textLabel.text = NSLocalizedString("Restoring app data…", comment: "")
             self.detailTextLabel.isHidden = true
             self.activityIndicatorView.startAnimating()
-            
+        
+        // TODO: @mahee96: This is pointless since, app going in bg/fg should still report its last operation properly
         case .none:
             self.textLabel.text = String(format: NSLocalizedString("%@ is inactive.", comment: ""),
                                          Bundle.main.appName ?? NSLocalizedString("App", comment: ""))
@@ -198,6 +201,9 @@ private extension ViewController
         }
     }
     
+    // TODO: @mahee96: This doesn't account cases where backup is too long and user switched to other apps
+    //                 Now the user has lost his progress since current operation was cancelled due to switch between FG and BG
+    //                 if this just the reset for enum such that UI stops showing progress circle, then this is fine!
     @objc func didEnterBackground(_ notification: Notification)
     {
         // Reset UI once we've left app (but not before).

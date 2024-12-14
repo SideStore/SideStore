@@ -88,14 +88,25 @@ private extension AppDelegate
     
     @objc func operationDidFinish(_ notification: Notification)
     {
-        defer { self.currentBackupReturnURL = nil }
+        defer {
+            self.currentBackupReturnURL = nil
+        }
         
+        // TODO: @mahee96: This doesn't account cases where backup is too long and user switched to other apps
+        //                 The check for self.currentBackupReturnURL when backup/restore was still in progress but app switched
+        //                 between FG/BG is improper, since it will ignore(eat up) the response(success/failure) to parent
+        //
+        //                 This leaves the backup/restore to show dummy animation forever
         guard
             let returnURL = self.currentBackupReturnURL,
             let result = notification.userInfo?[AppDelegate.operationResultKey] as? Result<Void, Error>
-        else { return }
+        else {
+            return      // This is bad (Needs fixing - never eat up response like this unless there is no context to post response to!)
+        }
                 
-        guard var components = URLComponents(url: returnURL, resolvingAgainstBaseURL: false) else { return }
+        guard var components = URLComponents(url: returnURL, resolvingAgainstBaseURL: false) else {
+            return      // This is ASSERTION Failure, ie RETURN URL needs to be valid. So ignoring (eating up) response is not the solution
+        }
         
         switch result
         {
@@ -112,6 +123,7 @@ private extension AppDelegate
         guard let responseURL = components.url else { return }
         
         DispatchQueue.main.async {
+            // Response to the caller/parent app is posted here (url is provided by caller in incoming query params)
             UIApplication.shared.open(responseURL, options: [:]) { (success) in
                 print("Sent response to app with success:", success)
             }

@@ -343,14 +343,18 @@ public extension InstalledApp
 
 public extension InstalledApp
 {
+    // TODO: @mahee96: Do NOT hardcode app's url scheme prefixes as in here
+    //       Need to get it dynamically from the Info.plist of other means
     var openAppURL: URL {
-        let openAppURL = URL(string: "altstore-" + self.bundleIdentifier + "://")!
+        let openAppURL = URL(string: "sidestore-" + self.bundleIdentifier + "://")!
         return openAppURL
     }
     
+    // TODO: @mahee96: Do NOT hardcode app's url scheme prefixes as in here
+    //       Need to get it dynamically from the Info.plist of other means
     class func openAppURL(for app: AppProtocol) -> URL
     {
-        let openAppURL = URL(string: "altstore-" + app.bundleIdentifier + "://")!
+        let openAppURL = URL(string: "sidestore-" + app.bundleIdentifier + "://")!
         return openAppURL
     }
     

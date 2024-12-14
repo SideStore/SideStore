@@ -28,10 +28,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>AltBackup General</string>
+			<string>SideBackup General</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>altbackup</string>
+				<string>sidebackup</string>
 			</array>
 		</dict>
 	</array>
