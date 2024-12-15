@@ -209,14 +209,19 @@ final class SettingsViewController: UITableViewController
     {
         super.viewWillAppear(animated)
         
+        // show nav bar if not shown already
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        
         self.update()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "anisetteServers" {
-            let controller = UIHostingController(rootView: AnisetteServers(selected: UserDefaults.standard.menuAnisetteURL, errorCallback: {
-                ToastView(text: "Cleared adi.pb!", detailText: "You will need to log back into Apple ID in SideStore.").show(in: self)
-            }))
+            let controller = segue.destination
+            
+            // disable bottom tab bar since 'back' button is already available
+//            controller.hidesBottomBarWhenPushed = true
+            
             self.show(controller, sender: nil)
         } else {
             super.prepare(for: segue, sender: sender)
@@ -944,10 +949,39 @@ extension SettingsViewController
                 self.tableView.deselectRow(at: indexPath, animated: true)
                 
             case .anisetteServers:
-                self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: UIHostingController(rootView: AnisetteServers(selected: "", errorCallback: {
-                    ToastView(text: "Reset adi.pb", detailText: "Buh").show(in: self)
-                }))), sender: nil)
-//                self.performSegue(withIdentifier: "anisetteServers", sender: nil)
+                
+                func handleRefreshResult(_ result: Result<Void, any Error>) {
+                    var message = "Servers list refreshed"
+                    var details: String? = nil
+                    var duration: TimeInterval = 1.0
+                                        
+                    switch result {
+                        case .success:
+                            // No additional action needed, default message is sufficient
+                            break
+                        case .failure(let error):
+                            message  = "Failed to refresh servers list"
+                            details  = String(describing: error)
+                            duration = 4.0
+                    }
+                    
+                    let toast = ToastView(text: message, detailText: details)
+                    toast.preferredDuration = duration
+                    toast.show(in: self)
+                }
+                
+                // Instantiate SwiftUI View inside UIHostingController
+                let anisetteServersView = AnisetteServersView(selected: UserDefaults.standard.menuAnisetteURL, errorCallback: {
+                    ToastView(text: "Cleared adi.pb!", detailText: "You will need to log back into Apple ID in SideStore.")
+                        .show(in: self)
+                }, refreshCallback: {result in
+                    handleRefreshResult(result)
+                })
+                
+                let anisetteServersController = UIHostingController(rootView: anisetteServersView)
+
+                self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: anisetteServersController), sender: nil)
+                
             case .advancedSettings:
                 // Create the URL that deep links to your app's custom settings.
                 if let url = URL(string: UIApplication.openSettingsURLString) {

@@ -36,65 +36,79 @@ class AnisetteViewModel: ObservableObject {
         }
     }
     
-    func getDefaultListOfServers() {
-        // initiate fetch but do not wait in blocking manner
-        Task{
-            let anisetteServers = await AnisetteViewModel.getListOfServers(serverSource: self.source)
-            
-            // always update on main thread for Observables
-            DispatchQueue.main.async {
+    @MainActor
+    func getCurrentListOfServers(_ completionHandler: @escaping (Result<Void, Error>) -> Void = {_ in }) {
+        // dispatch fetch operation but don't do a blocking wait for results
+        Task {
+            do {
+                let anisetteServers = try await AnisetteViewModel.getListOfServers(serverSource: self.source)
+                // Update UI-related state on the main thread
                 self.servers = anisetteServers
+                print("AnisetteViewModel: Server list refresh request completed for sourceURL: \(self.source)")
+                completionHandler(.success(()))
+            } catch {
+                print("AnisetteViewModel: Server list refresh request Failed for sourceURL: \(self.source) Error: \(error)")
+                completionHandler(.failure(error))
             }
         }
     }
     
-    static func getListOfServers(serverSource: String) async -> [Server] {
+    static func getListOfServers(serverSource: String) async throws -> [Server] {
         var aniServers: [Server] = []
 
         guard let url = URL(string: serverSource) else {
             return aniServers
         }
-        
+
         // DO NOT use local cache when fetching anisette servers
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        
-        return await withCheckedContinuation{(continuation: CheckedContinuation<[Server], Never>) in
-            // perform async operation with callback
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if error == nil, let data = data {
-                    do {
-                        let decoder = Foundation.JSONDecoder()
-                        let servers = try decoder.decode(AnisetteServerData.self, from: data)
-                        aniServers.append(contentsOf: servers.servers)
-                        // store server addresses as list
-                        UserDefaults.standard.menuAnisetteServersList = aniServers.map(\.self.address)
-                    } catch {
-                        // Handle decoding error
-                        print("Failed to decode JSON: \(error)")
-                    }
-                }
 
-                //unblock the continuation
-                continuation.resume(returning: aniServers)
-            }.resume()
+        do {
+            // Use async/await pattern here, avoiding CheckedContinuation directly
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            // Check if the response is valid and has a 2xx HTTP status code
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                // Handle non-2xx status codes
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                throw NSError(domain: "AnisetteViewModel: ServerError", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "Request failed with status code: \(statusCode)"])
+            }
+            
+            let decoder = Foundation.JSONDecoder()
+            let servers = try decoder.decode(AnisetteServerData.self, from: data)
+            print("AnisetteViewModel: JSON Decode successful for sourceURL: \(serverSource) servers: \(servers)")
+            aniServers.append(contentsOf: servers.servers)
+            // Store server addresses as list
+            UserDefaults.standard.menuAnisetteServersList = aniServers.map(\.address)
+            return aniServers
+        } catch {
+            if let urlError = error as? URLError {
+                print("AnisetteViewModel: URL Error: \(urlError.localizedDescription)")
+            } else if let decodingError = error as? DecodingError {
+                print("AnisetteViewModel: Failed to decode JSON: \(decodingError.localizedDescription)")
+            } else {
+                print("AnisetteViewModel: An unexpected error occurred: \(error.localizedDescription)")
+            }
+            throw error // Propagate the error
         }
     }
 }
 
-struct AnisetteServers: View {
+struct AnisetteServersView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel: AnisetteViewModel = AnisetteViewModel()
     @State var selected: String? = nil
     @State private var showingConfirmation = false
     var errorCallback: () -> ()
+    var refreshCallback: (Result<Void, any Error>) -> Void
 
     var body: some View {
         ZStack {
             Color(UIColor.systemBackground)
                 .ignoresSafeArea()
                 .onAppear {
-                    viewModel.getDefaultListOfServers()
+                    viewModel.getCurrentListOfServers(refreshCallback)
                 }
             VStack {
                 if #available(iOS 16.0, *) {
@@ -161,7 +175,8 @@ struct AnisetteServers: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                         .onChange(of: viewModel.source) { newValue in
                             UserDefaults.standard.menuAnisetteList = newValue
-                            viewModel.getDefaultListOfServers()
+//                            viewModel.getCurrentListOfServers(refreshCallback)        // don't spam
+                            viewModel.getCurrentListOfServers()
                         }
 
                     HStack(spacing: 16) {
@@ -183,7 +198,7 @@ struct AnisetteServers: View {
                         .shadow(color: Color.accentColor.opacity(0.4), radius: 10, x: 0, y: 5)
 
                         SUIButton(action: {
-                            viewModel.getDefaultListOfServers()
+                            viewModel.getCurrentListOfServers(refreshCallback)
                         }) {
                             HStack{
                                 Spacer()

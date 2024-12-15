@@ -34,9 +34,13 @@ final class AuthenticationViewController: UIViewController
         // fetch anisette servers asap when loading Auth Screen (if list is empty
         if(UserDefaults.standard.menuAnisetteServersList.isEmpty){
             Task{
-                await AnisetteViewModel.getListOfServers(
-                    serverSource: UserDefaults.standard.menuAnisetteList
-                )
+                let sourceURL = UserDefaults.standard.menuAnisetteList
+                do{
+                    _ = try await AnisetteViewModel.getListOfServers(serverSource: sourceURL)
+                    print("AuthenticationViewController: Server list refresh request completed for sourceURL: \(sourceURL)")
+                }catch{
+                    print("AuthenticationViewController: Server list refresh request Failed for sourceURL: \(sourceURL) Error: \(error)")
+                }
             }
         }
         
