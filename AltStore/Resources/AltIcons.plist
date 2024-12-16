@@ -6,6 +6,12 @@
 	<array>
 		<dict>
 			<key>name</key>
+			<string>Original</string>
+			<key>imageName</key>
+			<string>AppIcon</string>
+		</dict>
+		<dict>
+			<key>name</key>
 			<string>Sandy</string>
 			<key>imageName</key>
 			<string>Sandy</string>
