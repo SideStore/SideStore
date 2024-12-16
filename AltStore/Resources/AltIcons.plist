@@ -28,18 +28,6 @@
 			<key>imageName</key>
 			<string>Ocean</string>
 		</dict>
-		<dict>
-			<key>name</key>
-			<string>Delta</string>
-			<key>imageName</key>
-			<string>Delta</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Clip</string>
-			<key>imageName</key>
-			<string>Clip</string>
-		</dict>
 	</array>
 	<key>gradient</key>
 	<array>
