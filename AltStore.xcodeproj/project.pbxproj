@@ -50,7 +50,6 @@
 		551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
 		A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */; };
-		A805C3CE2D0C316A00E76BDD /* Pods_SideStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */; };
 		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
 		A809F6A82D04DA1900F0F0F3 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */; };
@@ -512,7 +511,6 @@
 			files = (
 				BF1614F2250822F100767AEA /* Roxas.framework in Embed Frameworks */,
 				BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */,
-				A805C3CE2D0C316A00E76BDD /* Pods_SideStore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2257,7 +2255,6 @@
 				BFD247682284B9A500981D42 /* Resources */,
 				BF088D2B2501A087008082D9 /* Embed Frameworks */,
 				BF98917B250AABF4002ACF50 /* Embed Foundation Extensions */,
-				A5CC24EB35C79F0C13DAE403 /* [CP] Embed Pods Frameworks */,
 				884B4E831D26F2E18AF7916C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -2504,23 +2501,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "bash ./SideStore/fetch-prebuilt.sh minimuxer\n";
-		};
-		A5CC24EB35C79F0C13DAE403 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideStore/Pods-SideStore-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		A8E00D3F2D0C9C6D000DD2C7 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
