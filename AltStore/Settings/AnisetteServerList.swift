@@ -201,11 +201,9 @@ struct AnisetteServersView: View {
                             viewModel.getCurrentListOfServers(refreshCallback)
                         }) {
                             HStack{
-                                Spacer()
                                 Text("Refresh Servers")
                                     .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                Spacer()
+                                    .frame(maxWidth: .infinity, alignment: .center)
                             }
                             .contentShape(Rectangle())
                         }
