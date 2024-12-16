@@ -44,17 +44,17 @@ extension AltAppIconsViewController
     private enum Section: String, CaseIterable, Decodable, CodingKeyRepresentable
     {
         case modern
-        case gradient
-        case recessed
-        case classic
+//        case gradient
+//        case recessed
+//        case classic
         
         var localizedName: String {
             switch self
             {
             case .modern: return NSLocalizedString("Modern", comment: "")
-            case .gradient: return NSLocalizedString("Gradient", comment: "")
-            case .recessed: return NSLocalizedString("Recessed", comment: "")
-            case .classic: return NSLocalizedString("Classic", comment: "")
+//            case .gradient: return NSLocalizedString("Gradient", comment: "")
+//            case .recessed: return NSLocalizedString("Recessed", comment: "")
+//            case .classic: return NSLocalizedString("Classic", comment: "")
             }
         }
     }
@@ -147,6 +147,7 @@ private extension AltAppIconsViewController
             config.textProperties.color = .label
             
             let image = UIImage(named: icon.imageName)
+//            let image = UIImage(systemName: "bag")
             config.image = image
             config.imageProperties.maximumSize = CGSize(width: imageWidth, height: imageWidth)
             config.imageProperties.cornerRadius = imageWidth / 5.0 // Copied from AppIconImageView

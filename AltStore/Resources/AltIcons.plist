@@ -6,108 +6,27 @@
 	<array>
 		<dict>
 			<key>name</key>
-			<string>AltStore</string>
+			<string>Sandy</string>
 			<key>imageName</key>
-			<string>AppIcon</string>
+			<string>Sandy</string>
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Evil AltStore</string>
+			<string>Winter</string>
 			<key>imageName</key>
-			<string>Evil</string>
+			<string>Winter</string>
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Sun</string>
+			<string>Sunny</string>
 			<key>imageName</key>
-			<string>Sun</string>
+			<string>Sunny</string>
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Ocean</string>
+			<string>Dark</string>
 			<key>imageName</key>
-			<string>Ocean</string>
-		</dict>
-	</array>
-	<key>gradient</key>
-	<array>
-		<dict>
-			<key>name</key>
-			<string>Beach</string>
-			<key>imageName</key>
-			<string>Beach</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Cotton Candy</string>
-			<key>imageName</key>
-			<string>Cotton Candy</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Sky</string>
-			<key>imageName</key>
-			<string>Sky</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Sunset</string>
-			<key>imageName</key>
-			<string>Sunset</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Watermelon</string>
-			<key>imageName</key>
-			<string>Watermelon</string>
-		</dict>
-	</array>
-	<key>recessed</key>
-	<array>
-		<dict>
-			<key>name</key>
-			<string>EU</string>
-			<key>imageName</key>
-			<string>EU</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Inverted</string>
-			<key>imageName</key>
-			<string>Inverted</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Lava</string>
-			<key>imageName</key>
-			<string>Lava</string>
-		</dict>
-	</array>
-	<key>classic</key>
-	<array>
-		<dict>
-			<key>name</key>
-			<string>Original</string>
-			<key>imageName</key>
-			<string>Original</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Flag</string>
-			<key>imageName</key>
-			<string>Flag</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Prototype</string>
-			<key>imageName</key>
-			<string>Prototype</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Inverted Prototype</string>
-			<key>imageName</key>
-			<string>Inverted Prototype</string>
+			<string>Dark</string>
 		</dict>
 	</array>
 </dict>
