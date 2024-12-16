@@ -1,0 +1,6 @@
+#include "Build.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_BUNDLE_IDENTIFIER).AltStoreCore
+
+// include cocoa pods config
+#include? "Pods/Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.debug.xcconfig"
