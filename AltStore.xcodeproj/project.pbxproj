@@ -3005,6 +3005,8 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/em_proxy",
@@ -3034,6 +3036,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/em_proxy",
@@ -3063,6 +3067,8 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/minimuxer",
@@ -3089,6 +3095,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/minimuxer",
@@ -3110,6 +3118,8 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -3138,6 +3148,8 @@
 					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/xcode\"",
 					"\"$(SRCROOT)/Dependencies/libimobiledevice-glue/include\"/**",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_NAME = imobiledevice;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -3149,6 +3161,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -3177,6 +3190,8 @@
 					"\"$(SRCROOT)/Dependencies/AltSign/Dependencies/libzip/xcode\"",
 					"\"$(SRCROOT)/Dependencies/libimobiledevice-glue/include\"/**",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_NAME = imobiledevice;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -3190,7 +3205,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = AltBackup/AltBackup.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = AltBackup/Info.plist;
@@ -3199,6 +3214,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -3222,6 +3239,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.SideStore.SideStore.AltBackup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3254,6 +3273,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LLVM_LTO = YES_THIN;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3292,6 +3313,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LLVM_LTO = YES_THIN;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3331,6 +3354,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3365,6 +3390,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3409,7 +3436,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				EAGER_LINKING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -3535,6 +3562,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/libfragmentzip",
@@ -3578,6 +3607,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LD_WARN_DUPLICATE_LIBRARIES = YES;
+				LD_WARN_UNUSED_DYLIBS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SideStore/libfragmentzip",
