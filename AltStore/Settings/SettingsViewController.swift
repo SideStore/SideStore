@@ -953,7 +953,7 @@ extension SettingsViewController
                 func handleRefreshResult(_ result: Result<Void, any Error>) {
                     var message = "Servers list refreshed"
                     var details: String? = nil
-                    var duration: TimeInterval = 1.0
+                    var duration: TimeInterval = 2.0
                                         
                     switch result {
                         case .success:
