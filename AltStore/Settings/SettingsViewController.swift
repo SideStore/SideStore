@@ -169,10 +169,9 @@ final class SettingsViewController: UITableViewController
         {
             self.versionLabel.text = nil
             versionString += "SideStore\t"
+            versionString += "\n\(Bundle.Info.appbundleIdentifier)"
+            self.versionLabel.text = NSLocalizedString(versionString, comment: "SideStore Version")
         }
-        versionString += "\n\(Bundle.Info.appbundleIdentifier)"
-
-        self.versionLabel.text = NSLocalizedString(versionString, comment: "SideStore Version")
         
         self.versionLabel.numberOfLines = 0
         self.versionLabel.lineBreakMode = .byWordWrapping
