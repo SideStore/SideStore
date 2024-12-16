@@ -1,7 +1,4 @@
 PODS:
-  - AppCenter (5.0.5):
-    - AppCenter/Analytics (= 5.0.5)
-    - AppCenter/Crashes (= 5.0.5)
   - AppCenter/Analytics (5.0.5):
     - AppCenter/Core
   - AppCenter/Core (5.0.5)
@@ -12,7 +9,8 @@ PODS:
   - Starscream (4.0.8)
 
 DEPENDENCIES:
-  - AppCenter (~> 5.0)
+  - AppCenter/Analytics (~> 5.0)
+  - AppCenter/Crashes (~> 5.0)
   - KeychainAccess (~> 4.2.2)
   - Nuke (~> 10.0)
   - Starscream (~> 4.0.0)
@@ -30,6 +28,6 @@ SPEC CHECKSUMS:
   Nuke: 279f17a599fd1c83cf51de5e0e1f2db143a287b0
   Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
 
-PODFILE CHECKSUM: 550f7e9ecab6885272733fa3aa43c47a32e4e10f
+PODFILE CHECKSUM: f9c1f336d322c38e4782b131346715aabba44837
 
 COCOAPODS: 1.16.2

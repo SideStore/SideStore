@@ -3,11 +3,12 @@ inhibit_all_warnings!
 target 'SideStore' do
   platform :ios, '14.0'
 
-  use_frameworks!
+  use_frameworks! :linkage => :static
 
   # Pods for AltStore
   pod 'Nuke', '~> 10.0'
-  pod 'AppCenter', '~> 5.0'
+  pod 'AppCenter/Analytics', '~> 5.0'
+  pod 'AppCenter/Crashes', '~> 5.0'
   pod 'Starscream', '~> 4.0.0'
 
 end
@@ -15,7 +16,7 @@ end
 target 'AltStoreCore' do
   platform :ios, '14.0'
 
-  use_frameworks!
+  use_frameworks! :linkage => :static
 
   # Pods for AltStoreCore
   pod 'KeychainAccess', '~> 4.2.2'
