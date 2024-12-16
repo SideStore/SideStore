@@ -138,7 +138,7 @@ private extension AppDetailWidgetView
 {
     func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
     {
-        let icon = icon ?? UIImage(named: "AltStore")!
+        let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
         
         let imageHeight = 60 as CGFloat
