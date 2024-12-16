@@ -3248,7 +3248,7 @@
 		};
 		BF66EE872501AE50007EE018 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */;
+			baseConfigurationReference = B3C3960E284F4F9100DA9E2F /* AltStoreCore.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3286,7 +3286,7 @@
 		};
 		BF66EE882501AE50007EE018 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */;
+			baseConfigurationReference = B3C3960E284F4F9100DA9E2F /* AltStoreCore.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3530,9 +3530,8 @@
 		};
 		BFD2477F2284B9A700981D42 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */;
+			baseConfigurationReference = B3C3960B284F4C9800DA9E2F /* AltStore.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -3573,9 +3572,8 @@
 		};
 		BFD247802284B9A700981D42 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C0ED2BA78F87A9001A13E715 /* Pods-SideStore.release.xcconfig */;
+			baseConfigurationReference = B3C3960B284F4C9800DA9E2F /* AltStore.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
