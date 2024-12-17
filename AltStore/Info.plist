@@ -81,6 +81,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>BuildRevision</key>
+	<string>$(BUILD_REVISION)</string>
 	<key>INIntentsSupported</key>
 	<array>
 		<string>RefreshAllIntent</string>

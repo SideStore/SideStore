@@ -157,32 +157,28 @@ test:
 ## -- Building --
 
 # Fetch the latest commit ID globally
-BETA_COMMIT_ID := $(if $(IS_BETA),$(shell git rev-parse --short HEAD), "NONE")
+ALPHA_COMMIT_ID := $(if $(IS_ALPHA),$(shell git rev-parse --short HEAD),)
 
-# Fetch the latest commit ID if IS_BETA is defined
-print_commit_id:
-	@echo ""
-	@if [ -n "$(IS_BETA)" ]; then \
-		echo "'IS_BETA' is defined. Fetched the latest commit ID from HEAD..."; \
-		echo "    Commit ID: $(BETA_COMMIT_ID)"; \
-	else \
-		echo "'IS_BETA' is not defined. Skipping commit ID fetch."; \
-	fi
-	@echo ""
-
-# Print release type based on the presence of BETA_COMMIT_ID
+# Print release type based on the presence of ALPHA_COMMIT_ID
 print_release_type:
-	@if [ -z "$(BETA_COMMIT_ID)" ]; then \
-		echo ">>>>>>>> This is now a STABLE release because BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
-		echo "    Using default CURRENT_PROJECT_VERSION from project.pbxproj."; \
+	@echo ""
+	@if [ -n "$(IS_ALPHA)" ]; then \
+		echo "'IS_ALPHA' is defined. Fetched the latest commit ID from HEAD..."; \
+		echo "    Commit ID: $(ALPHA_COMMIT_ID)"; \
+		echo ""; \
+		echo ">>>>>>>> This is now a ALPHA release for COMMIT_ID = '$(ALPHA_COMMIT_ID)' <<<<<<<<<"; \
+		echo "    Building with BUILD_REVISION = '$(ALPHA_COMMIT_ID)'"; \
 	else \
-		echo ">>>>>>>> This is now a BETA release for BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
-		echo "    Building with CURRENT_PROJECT_VERSION=$(BETA_COMMIT_ID)"; \
+		echo "'IS_ALPHA' is not defined. Skipping commit ID fetch."; \
+		echo ""; \
+		echo ">>>>>>>> This is now a STABLE release because IS_ALPHA was NOT SET <<<<<<<<<"; \
+		echo "    Building with BUILD_REVISION = '$(ALPHA_COMMIT_ID)'"; \
+		echo ""; \
 	fi
 	@echo ""
 
 # Build target with the print_commit_id dependency
-build: print_commit_id print_release_type
+build: print_release_type
 	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
 				-sdk iphoneos \
@@ -193,7 +189,7 @@ build: print_commit_id print_release_type
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
 				DWARF_DSYM_FOLDER_PATH="." \
-				CURRENT_PROJECT_VERSION=$(BETA_COMMIT_ID)
+				BUILD_REVISION=$(ALPHA_COMMIT_ID)
 
 fakesign:
 	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/

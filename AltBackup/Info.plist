@@ -35,6 +35,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>BuildRevision</key>
+	<string>$(BUILD_REVISION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>

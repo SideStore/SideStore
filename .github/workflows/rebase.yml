@@ -117,8 +117,8 @@ jobs:
           ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists    
           echo ""
 
-      - name: Set current build as BETA
-        run: echo "IS_BETA=1" >> $GITHUB_ENV
+      - name: Set current build as ALPHA
+        run: echo "IS_ALPHA=1" >> $GITHUB_ENV
         
       - name: Build SideStore
         run: make build | xcpretty && exit ${PIPESTATUS[0]}

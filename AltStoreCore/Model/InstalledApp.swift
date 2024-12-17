@@ -107,8 +107,8 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
             if(isBeta && !commitID.isEmpty){
                 let SHORT_COMMIT_LEN        = 7
                 let isCommitIDValid         = (commitID.count == SHORT_COMMIT_LEN)
-                let installedAppCommitID    = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String ?? ""
-//                let isBetaUpdateAvailable   = (installedAppCommitID.count == commitID.count) &&
+                let installedAppCommitID    = Bundle.main.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
+                // when installing beta build over stable build installedAppCommitID will be empty!
                 let isBetaUpdateAvailable   = (installedAppCommitID != commitID)
                 return isCommitIDValid && isBetaUpdateAvailable
             }
