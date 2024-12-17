@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>modern</key>
+	<key>classic</key>
 	<array>
 		<dict>
 			<key>name</key>
@@ -10,6 +10,33 @@
 			<key>imageName</key>
 			<string>AppIcon</string>
 		</dict>
+	</array>
+	<key>modern</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Blue</string>
+			<key>imageName</key>
+			<string>Blue</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Dark</string>
+			<key>imageName</key>
+			<string>Dark</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Honeydew</string>
+			<key>imageName</key>
+			<string>Honeydew</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Pride</string>
+			<key>imageName</key>
+			<string>Pride</string>
+		</dict>
 		<dict>
 			<key>name</key>
 			<string>Sandy</string>
@@ -18,21 +45,33 @@
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Winter</string>
+			<string>Sky</string>
 			<key>imageName</key>
-			<string>Winter</string>
+			<string>Sky</string>
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Sunny</string>
+			<string>Starburst</string>
 			<key>imageName</key>
-			<string>Sunny</string>
+			<string>Starburst</string>
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Dark</string>
+			<string>Storm</string>
 			<key>imageName</key>
-			<string>Dark</string>
+			<string>Storm</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Vista</string>
+			<key>imageName</key>
+			<string>Vista</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Winter</string>
+			<key>imageName</key>
+			<string>Winter</string>
 		</dict>
 	</array>
 </dict>
