@@ -129,9 +129,13 @@ private extension VerifyAppOperation
     {
         let (version, buildVersion) = await $appVersion.perform { ($0.version, $0.buildVersion) }
         
-        let downloadedIpaRevision = Bundle.init(url: app.fileURL)!.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
-        
-        guard version == app.version else { throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app) }
+        let downloadedIpaRevision = Bundle(url: app.fileURL)!.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
+        let sourceJsonIpaRevision = appVersion.revision
+
+        // if not beta but version matches, then accept it, else compare revisions between source and downloaded
+        if version != app.version || (appVersion.isBeta && downloadedIpaRevision != sourceJsonIpaRevision) {
+            throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app)
+        }
         
         if let buildVersion
         {

@@ -98,8 +98,8 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
             self._minOSVersion = try container.decodeIfPresent(String.self, forKey: .minOSVersion)
             self._maxOSVersion = try container.decodeIfPresent(String.self, forKey: .maxOSVersion)
 
-//            self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-//            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
+            self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
+            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
         }
         catch
         {

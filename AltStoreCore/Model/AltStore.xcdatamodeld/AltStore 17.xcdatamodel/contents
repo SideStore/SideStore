@@ -64,6 +64,7 @@
         <attribute name="buildVersion" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="downloadURL" attributeType="URI"/>
+        <attribute name="isBeta" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="localizedDescription" optional="YES" attributeType="String"/>
         <attribute name="maxOSVersion" optional="YES" attributeType="String"/>
         <attribute name="minOSVersion" optional="YES" attributeType="String"/>
