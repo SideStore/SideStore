@@ -62,12 +62,12 @@
     <entity name="AppVersion" representedClassName="AppVersion" syncable="YES">
         <attribute name="appBundleID" attributeType="String"/>
         <attribute name="buildVersion" optional="YES" attributeType="String"/>
-        <attribute name="commitID" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="downloadURL" attributeType="URI"/>
         <attribute name="localizedDescription" optional="YES" attributeType="String"/>
         <attribute name="maxOSVersion" optional="YES" attributeType="String"/>
         <attribute name="minOSVersion" optional="YES" attributeType="String"/>
+        <attribute name="revision" optional="YES" attributeType="String"/>
         <attribute name="sha256" optional="YES" attributeType="String"/>
         <attribute name="size" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sourceID" optional="YES" attributeType="String"/>
@@ -243,7 +243,6 @@
     <entity name="StoreApp" representedClassName="StoreApp" syncable="YES">
         <attribute name="bundleIdentifier" attributeType="String"/>
         <attribute name="category" optional="YES" attributeType="String"/>
-        <attribute name="commitID" optional="YES" attributeType="String"/>
         <attribute name="developerName" attributeType="String"/>
         <attribute name="downloadURL" attributeType="URI"/>
         <attribute name="featuredSortID" optional="YES" attributeType="String"/>
@@ -258,6 +257,7 @@
         <attribute name="pledgeAmount" optional="YES" attributeType="Decimal"/>
         <attribute name="pledgeCurrency" optional="YES" attributeType="String"/>
         <attribute name="prefersCustomPledge" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="revision" optional="YES" attributeType="String"/>
         <attribute name="screenshotURLs" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>
         <attribute name="size" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sortIndex" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>

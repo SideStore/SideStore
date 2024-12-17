@@ -46,8 +46,10 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
     
     @NSManaged public var appBundleID: String
     @NSManaged public var sourceID: String?
+   
+    // TODO: @mahee96: retire isBeta and use a string type to decode and store values as enum
     @NSManaged public var isBeta: Bool
-    @NSManaged public var commitID: String?
+    @NSManaged public var revision: String?
     
     /* Relationships */
     @NSManaged public private(set) var app: StoreApp?
@@ -70,7 +72,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
         case minOSVersion
         case maxOSVersion
         case isBeta
-        case commitID
+        case revision = "commitID"
     }
     
     public required init(from decoder: Decoder) throws
@@ -97,7 +99,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
             self._maxOSVersion = try container.decodeIfPresent(String.self, forKey: .maxOSVersion)
 
 //            self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-//            self.commitID = try container.decodeIfPresent(String.self, forKey: .commitID)
+//            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
         }
         catch
         {

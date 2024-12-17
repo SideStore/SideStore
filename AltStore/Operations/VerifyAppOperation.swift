@@ -129,6 +129,8 @@ private extension VerifyAppOperation
     {
         let (version, buildVersion) = await $appVersion.perform { ($0.version, $0.buildVersion) }
         
+        let downloadedIpaRevision = Bundle.init(url: app.fileURL)!.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
+        
         guard version == app.version else { throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app) }
         
         if let buildVersion

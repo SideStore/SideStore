@@ -150,8 +150,10 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     @NSManaged public private(set) var platformURLs: PlatformURLs?
 
     @NSManaged public private(set) var tintColor: UIColor?
+
+    // TODO: @mahee96: retire isBeta and use a string type to decode and store values as enum
     @NSManaged public private(set) var isBeta: Bool
-    @NSManaged public private(set) var commitID: String?
+    @NSManaged public private(set) var revision: String?
     
     // Required for Marketplace apps.
     @NSManaged public private(set) var marketplaceID: String?
@@ -290,7 +292,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case permissions = "appPermissions"
         case size
         case isBeta = "beta"
-        case commitID
+        case revision = "commitID"
         case versions
         case patreon
         case category
@@ -322,7 +324,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
             self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-            self.commitID = try container.decodeIfPresent(String.self, forKey: .commitID)
+            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
             
             var downloadURL = try container.decodeIfPresent(URL.self, forKey: .downloadURL)
             let platformURLs = try container.decodeIfPresent(PlatformURLs.self.self, forKey: .platformURLs)

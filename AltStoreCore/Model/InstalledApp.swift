@@ -102,15 +102,15 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
             //       so it doesn't matter if semantic version was bumped, because commit ID won't be same
             //       and we will accept this update
             
-            // storeApp.commitID is set in sources.json deployed at apps.json for the respective source
-            let commitID = storeApp.commitID ?? ""
-            if(isBeta && !commitID.isEmpty){
+            // storeApp.revision is set in sources.json deployed at apps.json for the respective source
+            let revision = storeApp.revision ?? ""
+            if(isBeta && !revision.isEmpty){
                 let SHORT_COMMIT_LEN        = 7
-                let isCommitIDValid         = (commitID.count == SHORT_COMMIT_LEN)
-                let installedAppCommitID    = Bundle.main.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
-                // when installing beta build over stable build installedAppCommitID will be empty!
-                let isBetaUpdateAvailable   = (installedAppCommitID != commitID)
-                return isCommitIDValid && isBetaUpdateAvailable
+                let isRevisionValid         = (revision.count == SHORT_COMMIT_LEN)
+                let installedAppRevision    = Bundle.main.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
+                // when installing beta build over stable build installedAppRevision will be empty!
+                let isBetaUpdateAvailable   = (installedAppRevision != revision)
+                return isRevisionValid && isBetaUpdateAvailable
             }
         }
         return false
