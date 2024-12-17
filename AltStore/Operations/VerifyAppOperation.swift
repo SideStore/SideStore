@@ -133,15 +133,20 @@ private extension VerifyAppOperation
         let sourceJsonIpaRevision = appVersion.revision
 
         // if not beta but version matches, then accept it, else compare revisions between source and downloaded
-        if version != app.version || (appVersion.isBeta && downloadedIpaRevision != sourceJsonIpaRevision) {
+        if version != app.version {
             throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app)
         }
-        
-        if let buildVersion
-        {
-            // TODO: @mahee96: requires altsign-marketplace branch release or equivalent
-//            guard buildVersion == app.buildVersion else { throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app) }
+        if (appVersion.isBeta && downloadedIpaRevision != sourceJsonIpaRevision) {
+            let sourceJsonIpaRevision = sourceJsonIpaRevision ?? "nil"
+            throw VerificationError.mismatchedVersion(app.version + " - " + downloadedIpaRevision,
+                                                      expectedVersion: version  + " - " + sourceJsonIpaRevision, app: app)
         }
+
+//        if let buildVersion
+//        {
+//            // TODO: @mahee96: requires altsign-marketplace branch release or equivalent
+//            guard buildVersion == app.buildVersion else { throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app) }
+//        }
     }
     
     func verifyPermissions(of app: ALTApplication, @AsyncManaged match appVersion: AppVersion) async throws
