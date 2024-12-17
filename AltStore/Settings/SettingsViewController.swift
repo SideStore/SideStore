@@ -71,9 +71,9 @@ extension SettingsViewController
         case refreshSideJITServer
         case resetPairingFile
         case anisetteServers
-        case advancedSettings
-    
         case responseCaching
+        case betaUpdates
+//        case advancedSettings
     }
 }
 
@@ -93,6 +93,7 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var backgroundRefreshSwitch: UISwitch!
     @IBOutlet private var noIdleTimeoutSwitch: UISwitch!
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
+    @IBOutlet private var isBetaUpdatesEnabled: UISwitch!
     
     @IBOutlet private var refreshSideJITServer: UILabel!
     @IBOutlet private var disableResponseCachingSwitch: UISwitch!
@@ -138,8 +139,7 @@ final class SettingsViewController: UITableViewController
             // Only show build version for BETA builds.
             let localizedVersion = if let bundleVersion = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String {
                 "\(installedApp.version) (\(bundleVersion))"
-            }
-            else {
+            } else {
                 installedApp.localizedVersion
             }
             #else
@@ -250,7 +250,8 @@ private extension SettingsViewController
         self.noIdleTimeoutSwitch.isOn = UserDefaults.standard.isIdleTimeoutDisableEnabled
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
         self.disableResponseCachingSwitch.isOn = UserDefaults.standard.responseCachingDisabled
-        
+        self.isBetaUpdatesEnabled.isOn = UserDefaults.standard.isBetaUpdatesEnabled
+
         if self.isViewLoaded
         {
             self.tableView.reloadData()
@@ -426,6 +427,11 @@ private extension SettingsViewController
         {
             UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
         }
+    }
+    
+    @IBAction func toggleEnableBetaUpdates(_ sender: UISwitch) {
+        // update it in database
+        UserDefaults.standard.isBetaUpdatesEnabled = sender.isOn
     }
     
     @IBAction func toggleIsBackgroundRefreshEnabled(_ sender: UISwitch)
@@ -981,15 +987,15 @@ extension SettingsViewController
 
                 self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: anisetteServersController), sender: nil)
                 
-            case .advancedSettings:
-                // Create the URL that deep links to your app's custom settings.
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    // Ask the system to open that URL.
-                    UIApplication.shared.open(url)
-                } else {
-                    ELOG("UIApplication.openSettingsURLString invalid")
-                }
-            case .refreshAttempts, .responseCaching: break
+//            case .advancedSettings:
+//                // Create the URL that deep links to your app's custom settings.
+//                if let url = URL(string: UIApplication.openSettingsURLString) {
+//                    // Ask the system to open that URL.
+//                    UIApplication.shared.open(url)
+//                } else {
+//                    ELOG("UIApplication.openSettingsURLString invalid")
+//                }
+            case .refreshAttempts, .responseCaching, .betaUpdates : break
 
             }
             

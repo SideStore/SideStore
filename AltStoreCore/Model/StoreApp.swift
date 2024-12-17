@@ -151,6 +151,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
 
     @NSManaged public private(set) var tintColor: UIColor?
     @NSManaged public private(set) var isBeta: Bool
+    @NSManaged public private(set) var commitID: String?
     
     // Required for Marketplace apps.
     @NSManaged public private(set) var marketplaceID: String?
@@ -289,6 +290,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case permissions = "appPermissions"
         case size
         case isBeta = "beta"
+        case commitID
         case versions
         case patreon
         case category
@@ -311,6 +313,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         do
         {
             let container = try decoder.container(keyedBy: CodingKeys.self)
+            
             self.name = try container.decode(String.self, forKey: .name)
             self.bundleIdentifier = try container.decode(String.self, forKey: .bundleIdentifier)
             self.developerName = try container.decode(String.self, forKey: .developerName)
@@ -319,6 +322,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
             self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
+            self.commitID = try container.decodeIfPresent(String.self, forKey: .commitID)
             
             var downloadURL = try container.decodeIfPresent(URL.self, forKey: .downloadURL)
             let platformURLs = try container.decodeIfPresent(PlatformURLs.self.self, forKey: .platformURLs)
