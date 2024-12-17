@@ -88,7 +88,11 @@ final class FetchSourceOperation: ResultOperation<Source>
             }
         }
         
-        let dataTask = self.session.dataTask(with: self.sourceURL) { (data, response, error) in
+
+        var request = URLRequest(url: self.sourceURL)
+        request.cachePolicy = .reloadIgnoringLocalCacheData     // don't use local caching
+
+        let dataTask = self.session.dataTask(with: request) { (data, response, error) in
             
             let childContext = DatabaseManager.shared.persistentContainer.newBackgroundContext(withParent: self.managedObjectContext)
             childContext.mergePolicy = NSOverwriteMergePolicy
