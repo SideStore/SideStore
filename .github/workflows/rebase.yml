@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - rebase-2.0-wip
-
+# permissions:
+  # contents: write
 jobs:
   build:
     name: Build and upload SideStore 0.6.0-rebase
@@ -33,6 +34,10 @@ jobs:
         with:
           path: .rebase-build-num
           key: rebase-build-num
+
+      - name: Get version
+        id: version-marketing
+        run: echo "VERSION_IPA=$(grep MARKETING_VERSION Build.xcconfig | sed -e "s/MARKETING_VERSION = //g")" >> $GITHUB_ENV
 
       - name: Increase rebase build number and set as version
         run: bash .github/workflows/increase-rebase-build-num.sh
@@ -137,7 +142,7 @@ jobs:
         id: date_altstore
         run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       
-      - name: Upload to nightly release
+      - name: Upload to alpha release
         uses: IsaacShelton/update-existing-release@v1.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -173,4 +178,78 @@ jobs:
         with:
           name: SideStore-${{ steps.version.outputs.version }}-dSYM
           path: ./*.dSYM/
+
+      - name: Get short commit hash
+        run: |
+          # SHORT_COMMIT="${{ github.sha }}"
+          SHORT_COMMIT=${GITHUB_SHA:0:7}
+          echo "Short commit hash: $SHORT_COMMIT"
+          echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_ENV          
+
+      - name: Get formatted date
+        run: |
+          FORMATTED_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "Formatted date: $FORMATTED_DATE"
+          echo "FORMATTED_DATE=$FORMATTED_DATE" >> $GITHUB_ENV          
+      
+      - name: Get size of IPA in bytes (macOS/Linux)
+        run: |
+          if [[ "$(uname)" == "Darwin" ]]; then
+            # macOS
+            IPA_SIZE=$(stat -f %z SideStore-${{ steps.version.outputs.version }}.ipa)
+          else
+            # Linux
+            IPA_SIZE=$(stat -c %s SideStore-${{ steps.version.outputs.version }}.ipa)
+          fi
+          echo "IPA size in bytes: $IPA_SIZE"
+          echo "IPA_SIZE=$IPA_SIZE" >> $GITHUB_ENV
+
+      - name: Compute SHA-256 of IPA
+        run: |
+          SHA256_HASH=$(shasum -a 256 SideStore-${{ steps.version.outputs.version }}.ipa | awk '{ print $1 }')
+          echo "SHA-256 Hash: $SHA256_HASH"
+          echo "SHA256_HASH=$SHA256_HASH" >> $GITHUB_ENV
+
+      - name: Set environment variables dynamically
+        run: |
+          echo "VERSION_IPA=$VERSION_IPA" >> $GITHUB_ENV
+          echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
+          echo "BETA=true" >> $GITHUB_ENV
+          echo "COMMIT_ID=$SHORT_COMMIT" >> $GITHUB_ENV
+          echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
+          echo "SHA256=$SHA256_HASH" >> $GITHUB_ENV
+          echo "LOCALIZED_DESCRIPTION=This is alpha release for revision: ${{ github.sha }}" >> $GITHUB_ENV
+          echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/alpha/SideStore.ipa" >> $GITHUB_ENV
+
+      - name: Publish to SideStore/apps-v2.json
+        uses: actions/checkout@v4
+        with:
+            # Repository name with owner. For example, actions/checkout
+            # Default: ${{ github.repository }}
+            repository: 'SideStore/apps-v2.json'
+            ref: 'main'
+            # token: ${{ github.token }}
+            token: ${{ secrets.APPS_DEPLOY_KEY }}
+            path: 'SideStore/apps-v2.json'
+      
+      - name: Publish to SideStore/apps-v2.json
+        run: |
+          # Copy and execute the update script
+          cp ./update_apps_json.sh SideStore/apps-v2.json/
+          pushd SideStore/apps-v2.json/
+  
+          # Configure Git user (committer details)
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
           
+          # Make the update script executable and run it
+          chmod +x ./update_apps_json.sh
+          ./update_apps_json.sh "./_includes/source.json"
+          
+          # Commit changes and push using SSH
+          git add ./_includes/source.json
+          git commit -m " - updated for $SHORT_COMMIT deployment" || echo "No changes to commit"
+
+          git status
+          git push origin HEAD:main
+          popd
