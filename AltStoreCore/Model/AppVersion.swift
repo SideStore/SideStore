@@ -46,6 +46,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
     
     @NSManaged public var appBundleID: String
     @NSManaged public var sourceID: String?
+    @NSManaged public var isBeta: Bool
     
     /* Relationships */
     @NSManaged public private(set) var app: StoreApp?
@@ -67,6 +68,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
         case sha256
         case minOSVersion
         case maxOSVersion
+        case isBeta
     }
     
     public required init(from decoder: Decoder) throws

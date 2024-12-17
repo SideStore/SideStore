@@ -83,6 +83,13 @@ final class VerifyAppOperation: ResultOperation<Void>
                 {
                     guard let ipaURL = self.context.ipaURL else { throw OperationError.appNotFound(name: app.name) }
                     
+                    
+                    // TODO: @mahee96: appVersion is instantiated source info as AppVersion incoming from source json
+                    //                 app is the instantiated ipa downloaded from the specified in the source json in temp dir
+                    //
+                    //                 For alpha and beta/nightly releases, the CFBundleShortVersionString which is the
+                    //                 $(MARKETING_VERSION) will be overriden with the commit id before invoking xcode build
+                    //
                     try await self.verifyHash(of: app, at: ipaURL, matches: appVersion)
                     try await self.verifyDownloadedVersion(of: app, matches: appVersion)
                     try await self.verifyPermissions(of: app, match: appVersion)
