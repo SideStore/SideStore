@@ -174,10 +174,10 @@ print_commit_id:
 print_release_type:
 	@if [ -z "$(BETA_COMMIT_ID)" ]; then \
 		echo ">>>>>>>> This is now a STABLE release because BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
-		echo "    Using default MARKETING_VERSION from project.pbxproj."; \
+		echo "    Using default CURRENT_PROJECT_VERSION from project.pbxproj."; \
 	else \
 		echo ">>>>>>>> This is now a BETA release for BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
-		echo "    Building with MARKETING_VERSION=$(BETA_COMMIT_ID)"; \
+		echo "    Building with CURRENT_PROJECT_VERSION=$(BETA_COMMIT_ID)"; \
 	fi
 	@echo ""
 
@@ -193,7 +193,7 @@ build: print_commit_id print_release_type
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
 				DWARF_DSYM_FOLDER_PATH="." \
-				MARKETING_VERSION=$(BETA_COMMIT_ID)
+				CURRENT_PROJECT_VERSION=$(BETA_COMMIT_ID)
 
 fakesign:
 	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
