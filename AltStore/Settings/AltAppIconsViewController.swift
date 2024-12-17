@@ -149,10 +149,10 @@ private extension AltAppIconsViewController
             // we have to do this hardcodded name hack for .appiconset
             // else one can supply the artifacts via .imageset
             let image: UIImage? =
-                UIImage(named: icon.imageName) ??
                 UIImage(named: "\(icon.imageName)76x76@2x~ipad") ??
-                UIImage(named: "\(icon.imageName)60x60@2x")
-            
+                UIImage(named: "\(icon.imageName)60x60@2x") ??
+                UIImage(named: icon.imageName)
+
             config.image = image
             config.imageProperties.maximumSize = CGSize(width: imageWidth, height: imageWidth)
             config.imageProperties.cornerRadius = imageWidth / 5.0 // Copied from AppIconImageView
