@@ -71,7 +71,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
         case sha256
         case minOSVersion
         case maxOSVersion
-        case isBeta
+        case isBeta = "beta"
         case revision = "commitID"
     }
     
