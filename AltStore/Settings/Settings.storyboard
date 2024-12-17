@@ -973,7 +973,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enable Beta Updates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2px-HD-0UT">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable Beta Updates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2px-HD-0UT">
                                                     <rect key="frame" x="30" y="15.5" width="215.5" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -988,7 +988,10 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="2px-HD-0UT" firstAttribute="centerY" secondItem="AtM-bL-8pS" secondAttribute="centerY" id="07r-jt-3rz"/>
+                                                <constraint firstItem="2px-HD-0UT" firstAttribute="leading" secondItem="AtM-bL-8pS" secondAttribute="leadingMargin" id="K2i-9G-bG8"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="e32-w4-5fk" secondAttribute="trailing" id="Wa7-m6-lcl"/>
+                                                <constraint firstItem="e32-w4-5fk" firstAttribute="centerY" secondItem="AtM-bL-8pS" secondAttribute="centerY" id="n7R-av-FBX"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
