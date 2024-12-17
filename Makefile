@@ -156,31 +156,33 @@ test:
 
 ## -- Building --
 
+# Fetch the latest commit ID globally
+BETA_COMMIT_ID := $(if $(IS_BETA),$(shell git rev-parse --short HEAD), "NONE")
+
 # Fetch the latest commit ID if IS_BETA is defined
-fetch_commit_id:
+print_commit_id:
 	@echo ""
-	@if [ -n "$$IS_BETA" ]; then \
-		echo "'IS_BETA' is defined. Fetching the latest commit ID from HEAD..."; \
-		export COMMIT_ID=$$(git rev-parse --short HEAD); \
-		echo "Commit ID: $$COMMIT_ID"; \
+	@if [ -n "$(IS_BETA)" ]; then \
+		echo "'IS_BETA' is defined. Fetched the latest commit ID from HEAD..."; \
+		echo "    Commit ID: $(BETA_COMMIT_ID)"; \
 	else \
 		echo "'IS_BETA' is not defined. Skipping commit ID fetch."; \
 	fi
 	@echo ""
 
-# Print release type based on the presence of COMMIT_ID
+# Print release type based on the presence of BETA_COMMIT_ID
 print_release_type:
-	@if [ -z "$$COMMIT_ID" ]; then \
-		echo ">>>>>>>> This is STABLE release <<<<<<<<<"; \
+	@if [ -z "$(BETA_COMMIT_ID)" ]; then \
+		echo ">>>>>>>> This is now a STABLE release because BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
 		echo "    Using default MARKETING_VERSION from project.pbxproj."; \
 	else \
-		echo ">>>>>>>> This is ALPHA/BETA release for commitID = $$COMMIT_ID <<<<<<<<<"; \
-		echo "    Building with MARKETING_VERSION=$$COMMIT_ID"; \
+		echo ">>>>>>>> This is now a BETA release for BETA_COMMIT_ID = $(BETA_COMMIT_ID) <<<<<<<<<"; \
+		echo "    Building with MARKETING_VERSION=$(BETA_COMMIT_ID)"; \
 	fi
 	@echo ""
 
-# Build target with the fetch_commit_id dependency
-build: fetch_commit_id print_release_type
+# Build target with the print_commit_id dependency
+build: print_commit_id print_release_type
 	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
 				-sdk iphoneos \
@@ -191,7 +193,7 @@ build: fetch_commit_id print_release_type
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
 				DWARF_DSYM_FOLDER_PATH="." \
-				MARKETING_VERSION=$$COMMIT_ID
+				MARKETING_VERSION=$(BETA_COMMIT_ID)
 
 fakesign:
 	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
