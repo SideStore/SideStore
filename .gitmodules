@@ -48,4 +48,8 @@
 	path = SideStore/libfragmentzip
 	url = https://github.com/SideStore/libfragmentzip
 	branch = master
+[submodule "SideStore/apps-v2.json"]
+	path = SideStore/apps-v2.json
+	url = https://github.com/SideStore/apps-v2.json
+	branch = main
 
