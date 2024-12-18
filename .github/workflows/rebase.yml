@@ -235,7 +235,6 @@ jobs:
       - name: Publish to SideStore/apps-v2.json
         run: |
           # Copy and execute the update script
-          cp ./update_apps_json.sh SideStore/apps-v2.json/
           pushd SideStore/apps-v2.json/
   
           # Configure Git user (committer details)
@@ -243,8 +242,7 @@ jobs:
           git config user.email "github-actions@github.com"
           
           # Make the update script executable and run it
-          chmod +x ./update_apps_json.sh
-          ./update_apps_json.sh "./_includes/source.json"
+          python3 ../../update_apps.py "./_includes/source.json"
           
           # Commit changes and push using SSH
           git add ./_includes/source.json
