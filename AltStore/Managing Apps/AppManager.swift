@@ -215,7 +215,6 @@ extension AppManager
             {
             case .failure(let error): 
                 context.error = error
-                completionHandler(.failure(error))
             case .success: break
             }
             
@@ -960,7 +959,6 @@ extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success:
                 // Kinda hacky that we're calling patchAppOperation's progressHandler manually, but YOLO.
                 patchAppOperation?.progressHandler?(installationProgress, NSLocalizedString("Patching placeholder app...", comment: ""))
@@ -1420,7 +1418,6 @@ private extension AppManager
                 {
                 case .failure(let error):
                     context.error = error
-                    completionHandler(.failure(error))
                 case .success: break
                 }
             }
@@ -1443,7 +1440,6 @@ private extension AppManager
             catch
             {
                 context.error = error
-                completionHandler(.failure(error))
             }
         }
         progress.addChild(downloadOperation.progress, withPendingUnitCount: 25)
@@ -1471,7 +1467,6 @@ private extension AppManager
             catch
             {
                 context.error = error
-                completionHandler(.failure(error))
             }
         }
         verifyOperation.addDependency(downloadOperation)
@@ -1530,7 +1525,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success(let anisetteData): group.context.session?.anisetteData = anisetteData
             }
         }
@@ -1545,7 +1539,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success(let provisioningProfiles):
                 context.provisioningProfiles = provisioningProfiles
                 print("PROVISIONING PROFILES \(context.provisioningProfiles)")
@@ -1685,7 +1678,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success(let resignedApp): context.resignedApp = resignedApp
             }
         }
@@ -1700,7 +1692,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success(_): print("App reported as installed")
             }
         }
@@ -1801,7 +1792,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success(let provisioningProfiles): context.provisioningProfiles = provisioningProfiles
             }
         }
@@ -1883,7 +1873,6 @@ private extension AppManager
             case .failure(let error):
                 restoreContext.error = error
                 appContext.error = error
-                completionHandler(.failure(error))
             }
         }
         restoreAppOperation.addDependency(installBackupAppOperation)
@@ -2007,7 +1996,6 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-                completionHandler(.failure(error))
             case .success: break
             }
         }
@@ -2063,7 +2051,6 @@ private extension AppManager
             case .failure(let error):
                 restoreContext.error = error
                 appContext.error = error
-                completionHandler(.failure(error))
             }
         }
         backupAppOperation.addDependency(installBackupAppOperation)
