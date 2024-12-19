@@ -84,7 +84,7 @@ jobs:
           key: pods-cache-
 
       - name: Install CocoaPods
-        if: ${{ steps.pods-restore.outputs.cache-hit != 'true'}}
+        # if: ${{ steps.pods-restore.outputs.cache-hit != 'true'}}
         id: pods-install
         run: |
           pod install
