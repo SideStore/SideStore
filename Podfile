@@ -1,7 +1,7 @@
 inhibit_all_warnings!
 
 target 'SideStore' do
-  platform :ios, '14.0'
+  platform :ios, '15.0'
 
   use_frameworks! :linkage => :static
 
@@ -14,7 +14,7 @@ target 'SideStore' do
 end
 
 target 'AltStoreCore' do
-  platform :ios, '14.0'
+  platform :ios, '15.0'
 
   use_frameworks! :linkage => :static
 
@@ -30,7 +30,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
     end
   end
