@@ -2071,8 +2071,9 @@ private extension AppManager
         installAppOperation.addDependency(backupAppOperation)
         progress.addChild(installAppProgress, withPendingUnitCount: 55)
         
-        group.add([installBackupAppOperation, backupAppOperation, installAppOperation])
-        self.run([installBackupAppOperation, installAppOperation, backupAppOperation], context: group.context)
+        let operations = [installBackupAppOperation, backupAppOperation, installAppOperation]
+        group.add(operations)
+        self.run(operations, context: group.context)
         
         return progress
     }
