@@ -141,6 +141,9 @@ jobs:
       - name: Get current date in AltStore date form
         id: date_altstore
         run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create dSYMs zip
+        run: zip -r -9 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs/*
       
       - name: Upload to alpha release
         uses: IsaacShelton/update-existing-release@v1.3.1
@@ -149,7 +152,7 @@ jobs:
           release: "Alpha"
           tag: "alpha"
           prerelease: true
-          files: SideStore.ipa
+          files: SideStore.ipa SideStore.dSYMs.zip
           body: |
               This is an ⚠️ **EXPERIMENTAL** ⚠️ alpha build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
               
