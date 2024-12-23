@@ -204,6 +204,13 @@ fakesign:
 	ldid -SAltStore/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/SideStore
 	ldid -SAltWidget/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
 
+	@unzip -q -o SideStore.xcarchive/Products/Applications/SideStore.app/AltBackup.ipa -d SideStore.xcarchive/Products/Applications/SideStore.app/
+	ldid -SAltBackup/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/Payload/AltBackup.app/AltBackup
+	@pushd "SideStore.xcarchive/Products/Applications/SideStore.app/" \
+	zip -r -9 ./AltBackup.ipa ./Payload \
+	popd > /dev/null
+	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
+
 ipa:
 	mkdir Payload
 	mkdir Payload/SideStore.app
