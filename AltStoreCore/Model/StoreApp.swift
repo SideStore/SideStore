@@ -290,7 +290,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions)
             {
                 //TODO: Throw error if there isn't at least one version.
-                if (versions.size == 0){
+                if (versions.count == 0){
                     throw DecodingError.dataCorruptedError(forKey: .versions, in: container, debugDescription: "At least one version is required in key: versions")
                 }
                 
