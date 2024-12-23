@@ -255,7 +255,22 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             } else if let downloadURL = downloadURL {
                 self._downloadURL = downloadURL
             } else {
+                if let version = try container.decode(String.self, forKey: .version){
+                    if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions){
+                        for ver in versions {
+                            if ver.version == version {
+                                self._downloadURL = ver.downloadURL
+                                downloadURL = ver.downloadURL // not sure if this is needed
+                            }
+                        }
+                        throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
+                    } else {
+                        throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
+                    }
+                    
+                } else {
                 throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
+                }
             }
             
             if let tintColorHex = try container.decodeIfPresent(String.self, forKey: .tintColor)
@@ -275,6 +290,9 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions)
             {
                 //TODO: Throw error if there isn't at least one version.
+                if (versions.size == 0){
+                    throw DecodingError.dataCorruptedError(forKey: .versions, in: container, debugDescription: "At least one version is required in key: versions")
+                }
                 
                 for version in versions
                 {
