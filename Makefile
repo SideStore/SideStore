@@ -178,28 +178,36 @@ print_release_type:
 	@echo ""
 
 # Build target with the print_commit_id dependency
+
+# NOTE: The build config was implicitly 'release' since it was set in AltStore.project
+#       under "use "Release" configuration for commandline builds" setting
+#		so I had just defined it explicitly.
+#
+#       However the scheme used is Debug Scheme, so it was deliberately 
+#       using scheme = Debug and config = Release (so I have kept it as-is) 
 build: print_release_type
 	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
 				-sdk iphoneos \
-				archive -archivePath ./archive \
+				-configuration release \
+				archive -archivePath ./SideStore \
 				CODE_SIGNING_REQUIRED=NO \
 				AD_HOC_CODE_SIGNING_ALLOWED=YES \
 				CODE_SIGNING_ALLOWED=NO \
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
-				DWARF_DSYM_FOLDER_PATH="." \
 				BUILD_REVISION=$(ALPHA_COMMIT_ID)
+#				DWARF_DSYM_FOLDER_PATH="."
 
 fakesign:
-	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-	ldid -SAltStore/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
-	ldid -SAltWidget/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
+	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
+	ldid -SAltStore/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/SideStore
+	ldid -SAltWidget/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
 
 ipa:
 	mkdir Payload
 	mkdir Payload/SideStore.app
-	cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
+	cp -R SideStore.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
 	zip -r SideStore.ipa Payload
 
 # Global Variables

@@ -12,7 +12,7 @@ Pods/
 build/
 DerivedData
 
-archive.xcarchive
+SideStore.xcarchive
 ## Various settings
 *.pbxuser
 !default.pbxuser
