@@ -300,3 +300,8 @@ ipa-altbackup: checkPaths copy-altbackup
 	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload && popd
 	@cp	   -f	"$(ALT_APP_IPA_DST)" AltStore/Resources
 	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
+
+clean:
+	@rm -rf *.xcarchive/
+	@rm -rf *.dSYM/
+	@rm -rf build/
