@@ -10,6 +10,11 @@ DEVELOPMENT_TEAM = XYZ0123456
 //   - com.myuniquename.provenance.topshelf
 ORG_IDENTIFIER = com.myuniquename
 
+// add team ID to bundle ID for debug builds since these will most likely be installed via Xcode
+// SideStore will expect the team ID to be at the end of the bundle ID, but this doesn't happen when we install via Xcode
+// we don't want to do this for release since those builds will most likely be installed via SideServer, which adds the team ID
+DEBUG_BUNDLE_ID_SUFFIX = .$(DEVELOPMENT_TEAM)
+
 // Set to YES if you have a valid paid Apple Developer account
 DEVELOPER_ACCOUNT_PAID = NO
 

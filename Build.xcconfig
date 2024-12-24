@@ -16,11 +16,8 @@ ORG_PREFIX = $(ORG_IDENTIFIER)
 PRODUCT_NAME = SideStore
 //PRODUCT_NAME[configuration=Debug] = Prov Debug
 
-PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).SideStore
-// add team ID to bundle ID for debug builds since these will most likely be installed via Xcode
-// SideStore will expect the team ID to be at the end of the bundle ID, but this doesn't happen when we install via Xcode
-// we don't want to do this for release since those builds will most likely be installed via SideServer, which adds the team ID
-PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_PREFIX).SideStore.$(DEVELOPMENT_TEAM)
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   =  $(ORG_PREFIX).SideStore$(DEBUG_BUNDLE_ID_SUFFIX)
+PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).SideStore
 
 EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
 APP_GROUP_IDENTIFIER        = $(PRODUCT_BUNDLE_IDENTIFIER)
