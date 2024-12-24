@@ -185,11 +185,13 @@ print_release_type:
 #
 #       However the scheme used is Debug Scheme, so it was deliberately 
 #       using scheme = Debug and config = Release (so I have kept it as-is) 
+BUILD_CONFIG := "Debug"				# switched to debug build-config to diagnose issue since debugger won't resolve breakpoints in release
+# BUILD_CONFIG := "Release"
 build: print_release_type
 	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
 				-sdk iphoneos \
-				-configuration release \
+				-configuration $(BUILD_CONFIG) \
 				archive -archivePath ./SideStore \
 				CODE_SIGNING_REQUIRED=NO \
 				AD_HOC_CODE_SIGNING_ALLOWED=YES \
@@ -212,10 +214,10 @@ fakesign:
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
 
 ipa:
-	mkdir Payload
-	mkdir Payload/SideStore.app
+	mkdir -p Payload/SideStore.app
 	cp -R SideStore.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
 	zip -r SideStore.ipa Payload
+	rm -rf Payload*/
 
 # Global Variables
 
@@ -319,4 +321,6 @@ ipa-altbackup: checkPaths copy-altbackup
 clean:
 	@rm -rf *.xcarchive/
 	@rm -rf *.dSYM/
+	@rm -rf *.ipa/
 	@rm -rf build/
+	@rm -rf Payload/
