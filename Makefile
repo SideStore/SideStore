@@ -322,6 +322,6 @@ ipa-altbackup: checkPaths copy-altbackup
 clean:
 	@rm -rf *.xcarchive/
 	@rm -rf *.dSYM/
-	@rm -rf *.ipa
+	@rm -rf SideStore.ipa
 	@rm -rf build/
 	@rm -rf Payload/
