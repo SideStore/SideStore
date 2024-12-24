@@ -1,6 +1,4 @@
-#include "Build.xcconfig"
-
-PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_BUNDLE_IDENTIFIER)
+#include "AltStore.xcconfig"
 
 // include cocoa pods config
 #include? "Pods/Target Support Files/Pods-SideStore/Pods-SideStore.release.xcconfig"
