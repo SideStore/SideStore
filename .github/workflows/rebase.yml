@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
           - os: 'macos-14'
-            version: '15.4'
+            version: '16.1'
 
     runs-on: ${{ matrix.os }}
     steps:
