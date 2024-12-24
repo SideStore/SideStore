@@ -56,3 +56,5 @@ SideStore/em_proxy/*
 
 # misc
 **/output.txt
+SideStore/.skip-prebuilt-fetch-minimuxer
+SideStore/.skip-prebuilt-fetch-em_proxy
