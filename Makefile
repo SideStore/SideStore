@@ -198,7 +198,8 @@ build: print_release_type
 				CODE_SIGNING_ALLOWED=NO \
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
-				BUILD_REVISION=$(ALPHA_COMMIT_ID)
+				BUILD_REVISION=$(ALPHA_COMMIT_ID) \
+				BUNDLE_ID_SUFFIX=
 #				DWARF_DSYM_FOLDER_PATH="."
 
 fakesign:
@@ -321,6 +322,6 @@ ipa-altbackup: checkPaths copy-altbackup
 clean:
 	@rm -rf *.xcarchive/
 	@rm -rf *.dSYM/
-	@rm -rf *.ipa/
+	@rm -rf *.ipa
 	@rm -rf build/
 	@rm -rf Payload/
