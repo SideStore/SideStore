@@ -1389,10 +1389,7 @@ private extension AppManager
             group.beginInstallationHandler?(installedApp)
         }
         
-        // TODO: @mahee96: retire excessive completion handlers in the callback for each operation
-        //                 These spam the Error log since they don't prematurely flush the operation pipeline when an error occurs
-        //                 Need to investigate why premature flush isn't hapenning.
-        
+
         var downloadingApp = app
         
         if let installedApp = app as? InstalledApp
@@ -1678,7 +1675,10 @@ private extension AppManager
             {
             case .failure(let error):
                 context.error = error
-            case .success(let resignedApp): context.resignedApp = resignedApp
+            case .success(let resignedApp):
+                context.resignedApp = resignedApp
+                
+                self.exportResginedAppsToDocsDir(resignedApp)
             }
         }
         resignAppOperation.addDependency(patchAppOperation)
@@ -1759,6 +1759,50 @@ private extension AppManager
         
         return progress
     }
+    
+    private func exportResginedAppsToDocsDir(_ resignedApp: ALTApplication)
+    {
+        
+        let sourceURL = resignedApp.fileURL
+        
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let resignedAppsURL = documentsURL.appendingPathComponent("ResignedApps")
+        // Create the ResignedApps subfolder if it doesn't exist
+        do {
+            if !FileManager.default.fileExists(atPath: resignedAppsURL.path) {
+                try FileManager.default.createDirectory(at: resignedAppsURL, withIntermediateDirectories: true, attributes: nil)
+            }
+        } catch {
+            print("Failed to create ResignedApps folder: \(error)")
+            return
+        }
+        
+//                let destinationURL = resignedAppsURL.appendingPathComponent(sourceURL.lastPathComponent)
+        let utis = Bundle(url: resignedApp.fileURL)?.infoDictionary?[Bundle.Info.exportedUTIs] as? [[String: Any]]
+        let isAltBackup = utis?.first?["UTTypeDescription"] as? String == "AltStore Backup App"
+        
+        let destPath = isAltBackup ? resignedApp.name + "-altbackup" : resignedApp.name
+        let destinationURL = resignedAppsURL.appendingPathComponent(destPath + ".app")
+        
+        // Delete the existing file if it exists
+        do {
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try FileManager.default.removeItem(at: destinationURL)
+            }
+        } catch {
+            print("Failed to delete existing file at destination: \(error)")
+            return
+        }
+        
+        // Copy the file to the ResignedApps folder
+        do {
+            try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
+            print("File copied to: \(destinationURL.path)")
+        } catch {
+            print("Failed to copy file: \(error)")
+        }
+    }
+    
     
     private func _refresh(_ app: InstalledApp, operation: AppOperation, group: RefreshGroup, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> Progress
     {

@@ -202,17 +202,21 @@ build: print_release_type
 				BUNDLE_ID_SUFFIX=
 #				DWARF_DSYM_FOLDER_PATH="."
 
-fakesign:
+fakesign-apps:
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
 	ldid -SAltStore/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/SideStore
 	ldid -SAltWidget/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
 
+fakesign-altbackup:	
 	@unzip -q -o SideStore.xcarchive/Products/Applications/SideStore.app/AltBackup.ipa -d SideStore.xcarchive/Products/Applications/SideStore.app/
 	ldid -SAltBackup/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/Payload/AltBackup.app/AltBackup
 	@pushd "SideStore.xcarchive/Products/Applications/SideStore.app/" \
 	zip -r -9 ./AltBackup.ipa ./Payload \
 	popd > /dev/null
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
+
+fakesign: fakesign-apps fakesign-altbackup				
+
 
 ipa:
 	mkdir -p Payload/SideStore.app
