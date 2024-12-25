@@ -208,19 +208,25 @@ fakesign-apps:
 	ldid -SAltWidget/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
 
 fakesign-altbackup:	
-	@unzip -q -o SideStore.xcarchive/Products/Applications/SideStore.app/AltBackup.ipa -d SideStore.xcarchive/Products/Applications/SideStore.app/
+	@echo ''
+	@echo "fake-signing altbackup even though it will get resigned, only to retain its entitlements (appGroups)"
+	unzip -q -o SideStore.xcarchive/Products/Applications/SideStore.app/AltBackup.ipa -d SideStore.xcarchive/Products/Applications/SideStore.app/
 	ldid -SAltBackup/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/Payload/AltBackup.app/AltBackup
-	@pushd "SideStore.xcarchive/Products/Applications/SideStore.app/" \
-	zip -r -9 ./AltBackup.ipa ./Payload \
-	popd > /dev/null
-	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
+	pushd "SideStore.xcarchive/Products/Applications/SideStore.app/"  > /dev/null; \
+	rm -f     AltBackup.ipa; \
+	zip -r AltBackup.ipa Payload; \
+	popd  > /dev/null
+	@rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
 
 fakesign: fakesign-apps fakesign-altbackup				
 
 
 ipa:
+	@echo ''
+	@echo "fake-signing sidestore"
 	mkdir -p Payload/SideStore.app
 	cp -R SideStore.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
+	rm -f     SideStore.ipa
 	zip -r SideStore.ipa Payload
 	rm -rf Payload*/
 
@@ -234,8 +240,8 @@ CODESIGNING_FOLDER_PATH ?= # this is the path to your main app (possibly in deri
 # CODESIGNING_FOLDER_PATH = # this is the path to your main app (possibly in derived-data unless changed manually)
 
 ROOT_DIR 			:= $(CONFIGURATION_BUILD_DIR)
-ROOT_DIR 			:= $(if $(ROOT_DIR),$(ROOT_DIR),$(CODESIGNING_FOLDER_PATH)/..)
-VAR_USED			:= $(if $(CONFIGURATION_BUILD_DIR),"CONFIGURATION_BUILD_DIR","CODESIGNING_FOLDER_PATH")
+ROOT_DIR 			:= $(if $(ROOT_DIR),$(ROOT_DIR),$(if $(CODESIGNING_FOLDER_PATH),$(CODESIGNING_FOLDER_PATH)/..,))
+VAR_USED			:= $(if $(CONFIGURATION_BUILD_DIR),"CONFIGURATION_BUILD_DIR",$(if $(CODESIGNING_FOLDER_PATH),"CODESIGNING_FOLDER_PATH","?"))
 
 TARGET_BUILD_DIR 	:= build
 TARGET_ARCHIVE_DIR 	:= altbackup.xcarchive
@@ -257,8 +263,9 @@ checkPaths:
 	@# Check if ALT_APP_SRC_PARENT is empty, abort if true
 	@if [ -z "$(ALT_APP_SRC_PARENT)" ]; then \
 		echo "Error: ALT_APP_SRC_PARENT is empty!"; \
-		echo "       Environment variable $$VAR_USED = $$APP_PATH"; \
-		echo "       Please set it to a valid build artifacts directory"; \
+		echo "       Environment variable $(VAR_USED) = $(APP_PATH)"; \
+		echo "       Environment variable CONFIGURATION_BUILD_DIR and CODESIGNING_FOLDER_PATH both are empty or not defined"; \
+		echo "       Please set CONFIGURATION_BUILD_DIR or CODESIGNING_FOLDER_PATH to a valid build artifacts directory"; \
 		echo ""; \
 		exit 1; \
 	fi
