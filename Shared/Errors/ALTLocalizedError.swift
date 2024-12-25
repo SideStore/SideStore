@@ -58,13 +58,8 @@ public extension ALTLocalizedError
 {
     var errorCode: Int { self.code.rawValue }
     var errorDescription: String? {
-        guard (self as NSError).localizedFailureReason == nil else {
-            // Error has localizedFailureReason, so return nil to construct localizedDescription from it + localizedFailureReason.
-            return nil
-        }
-
-        // Otherwise, return failureReason for localizedDescription to avoid system prepending "Operation Failed" message.
-        return self.failureReason
+        // Use errorFailure directly without relying on bridging to NSError
+        return self.errorFailure ?? self.failureReason
     }
 
     var failureReason: String? {
@@ -72,15 +67,13 @@ public extension ALTLocalizedError
     }
 
     var errorUserInfo: [String : Any] {
-        var userInfo: [String: Any?] = [
+        let userInfo: [String: Any?] = [
             NSLocalizedFailureErrorKey: self.errorFailure,
             ALTLocalizedTitleErrorKey: self.errorTitle,
             ALTSourceFileErrorKey: self.sourceFile,
-           ALTSourceLineErrorKey: self.sourceLine,
+            ALTSourceLineErrorKey: self.sourceLine,
         ]
-        
-        userInfo.merge(self.userInfoValues) { (_, new) in new }
-        
+
         return userInfo.compactMapValues { $0 }
     }
 
@@ -107,7 +100,7 @@ public extension ALTErrorCode
 {
     static var errorDomain: String {
         let typeName = String(reflecting: Self.self) // "\(Self.self)" doesn't include module name, but String(reflecting:) does.
-        let errorDomain = typeName.replacingOccurrences(of: "ErrorCode", with: "Error").replacingOccurrences(of: "Error.Code", with: "Error")
+        let errorDomain = typeName.replacingOccurrences(of: "ErrorCode", with: "Error")
         return errorDomain
     }
 }
