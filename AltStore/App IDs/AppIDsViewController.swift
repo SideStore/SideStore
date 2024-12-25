@@ -184,14 +184,18 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
     {
-        let indexPath = IndexPath(row: 0, section: section)
-        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        // let indexPath = IndexPath(row: 0, section: section)
+        // let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         
-        // Use this view to calculate the optimal size based on the collection view's width
-        let size = headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingCompressedSize.height),
-                                                      withHorizontalFittingPriority: .required, // Width is fixed
-                                                      verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
-        return size
+        // // Use this view to calculate the optimal size based on the collection view's width
+        // let size = headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingCompressedSize.height),
+        //                                               withHorizontalFittingPriority: .required, // Width is fixed
+        //                                               verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
+        // return size
+        
+        // NOTE: double dequeue of cell has been discontinued
+        // TODO: Using harcoded value until this is fixed
+        return CGSize(width: collectionView.bounds.width, height: 260)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize

@@ -2061,13 +2061,17 @@ extension MyAppsViewController: UICollectionViewDelegateFlowLayout
         {
             guard let _ = DatabaseManager.shared.activeTeam() else { return .zero }
             
-            let indexPath = IndexPath(row: 0, section: section.rawValue)
-            let footerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter, at: indexPath) as! InstalledAppsCollectionFooterView
+            // let indexPath = IndexPath(row: 0, section: section.rawValue)
+            // let footerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter, at: indexPath) as! InstalledAppsCollectionFooterView
                         
-            let size = footerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height),
-                                                          withHorizontalFittingPriority: .required,
-                                                          verticalFittingPriority: .fittingSizeLevel)
-            return size
+            // let size = footerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height),
+            //                                               withHorizontalFittingPriority: .required,
+            //                                               verticalFittingPriority: .fittingSizeLevel)
+            // return size
+
+            // NOTE: double dequeue of cell has been discontinued
+            // TODO: Using harcoded value until this is fixed
+            return CGSize(width: collectionView.bounds.width, height: 60.5)
         }
         
         switch section
