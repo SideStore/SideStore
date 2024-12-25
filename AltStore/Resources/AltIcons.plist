@@ -51,6 +51,12 @@
 		</dict>
 		<dict>
 			<key>name</key>
+			<string>Snow</string>
+			<key>imageName</key>
+			<string>Snow</string>
+		</dict>
+		<dict>
+			<key>name</key>
 			<string>Starburst</string>
 			<key>imageName</key>
 			<string>Starburst</string>
