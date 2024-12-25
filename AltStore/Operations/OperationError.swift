@@ -238,7 +238,15 @@ struct OperationError: ALTLocalizedError {
         }
     }
 }
-
+        return OperationError.profileInstall
+    case 19:
+        return OperationError.profileInstall
+    case 20:
+        return OperationError.noConnection
+    case 21:
+        return OperationError.attach
+    default:
+        return OperationError.unknown
 extension MinimuxerError: LocalizedError {
     public var failureReason: String? {
         switch self {
