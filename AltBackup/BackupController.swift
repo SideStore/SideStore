@@ -76,15 +76,27 @@ struct BackupError: ALTLocalizedError
     let sourceFile: String
     let sourceFileLine: Int
     var failure: String?
-    
+
     var errorTitle: String?
     var errorFailure: String?
-    
-    var failureReason: String? {
-        return self.code.errorFailureReason
-    }
 
-    // Conforming to the userInfo required by ALTLocalizedError
+    var failureReason: String? {
+        switch self.code
+        {
+        case .invalidBundleID: return NSLocalizedString("The bundle identifier is invalid.", comment: "")
+        case .appGroupNotFound(let appGroup):
+            if let appGroup = appGroup
+            {
+                return String(format: NSLocalizedString("The app group “%@” could not be found.", comment: ""), appGroup)
+            }
+            else
+            {
+                return NSLocalizedString("The AltStore app group could not be found.", comment: "")
+            }
+        case .randomError: return NSLocalizedString("A random error occured.", comment: "")
+        }
+    }
+    
     var errorUserInfo: [String : Any] {
         let userInfo: [String: Any?] = [NSLocalizedDescriptionKey: self.errorDescription,
                                         NSLocalizedFailureReasonErrorKey: self.failureReason,
@@ -93,12 +105,12 @@ struct BackupError: ALTLocalizedError
                                         ErrorUserInfoKey.sourceFileLine: self.sourceFileLine]
         return userInfo.compactMapValues { $0 }
     }
-
+    
     // Implement description for CustomStringConvertible
     var description: String {
         return "\(errorTitle ?? "Unknown Error"): \(failureReason ?? "No reason available")"
     }
-    
+
     init(_ code: Code, description: String? = nil, file: String = #file, line: Int = #line)
     {
         self.code = code
