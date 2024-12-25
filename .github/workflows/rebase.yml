@@ -180,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SideStore-${{ steps.version.outputs.version }}-dSYM
-          path: ./SideStore.xcarchive/dSYMs/
+          path: ./SideStore.xcarchive/dSYMs/*
 
       - name: Get short commit hash
         run: |
