@@ -73,6 +73,7 @@ extension SettingsViewController
         case anisetteServers
         case responseCaching
         case betaUpdates
+        case resignedAppExport
 //        case advancedSettings
     }
 }
@@ -94,6 +95,7 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var noIdleTimeoutSwitch: UISwitch!
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
     @IBOutlet private var isBetaUpdatesEnabled: UISwitch!
+    @IBOutlet private var isResignedAppExportEnabled: UISwitch!
     
     @IBOutlet private var refreshSideJITServer: UILabel!
     @IBOutlet private var disableResponseCachingSwitch: UISwitch!
@@ -251,6 +253,7 @@ private extension SettingsViewController
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
         self.disableResponseCachingSwitch.isOn = UserDefaults.standard.responseCachingDisabled
         self.isBetaUpdatesEnabled.isOn = UserDefaults.standard.isBetaUpdatesEnabled
+        self.isResignedAppExportEnabled.isOn = UserDefaults.standard.isResignedAppExportEnabled
 
         if self.isViewLoaded
         {
@@ -429,6 +432,11 @@ private extension SettingsViewController
         }
     }
     
+    @IBAction func toggleResignedAppExport(_ sender: UISwitch) {
+        // update it in database
+        UserDefaults.standard.isResignedAppExportEnabled = sender.isOn
+    }
+
     @IBAction func toggleEnableBetaUpdates(_ sender: UISwitch) {
         // update it in database
         UserDefaults.standard.isBetaUpdatesEnabled = sender.isOn
@@ -995,7 +1003,7 @@ extension SettingsViewController
 //                } else {
 //                    ELOG("UIApplication.openSettingsURLString invalid")
 //                }
-            case .refreshAttempts, .responseCaching, .betaUpdates : break
+            case .refreshAttempts, .responseCaching, .betaUpdates, .resignedAppExport : break
 
             }
             

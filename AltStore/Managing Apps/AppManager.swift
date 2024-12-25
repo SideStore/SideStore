@@ -1762,6 +1762,10 @@ private extension AppManager
     
     private func exportResginedAppsToDocsDir(_ resignedApp: ALTApplication)
     {
+        // Check if the user has enabled exporting resigned apps to the Documents directory and continue
+        guard UserDefaults.standard.isResignedAppExportEnabled else {
+            return
+        }
         
         let sourceURL = resignedApp.fileURL
         
@@ -1777,7 +1781,7 @@ private extension AppManager
             return
         }
         
-//                let destinationURL = resignedAppsURL.appendingPathComponent(sourceURL.lastPathComponent)
+//        let destinationURL = resignedAppsURL.appendingPathComponent(sourceURL.lastPathComponent)
         let utis = Bundle(url: resignedApp.fileURL)?.infoDictionary?[Bundle.Info.exportedUTIs] as? [[String: Any]]
         let isAltBackup = utis?.first?["UTTypeDescription"] as? String == "AltStore Backup App"
         

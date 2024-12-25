@@ -33,6 +33,7 @@ public extension UserDefaults
     @NSManaged var isIdleTimeoutDisableEnabled: Bool
     @NSManaged var isAppLimitDisabled: Bool
     @NSManaged var isBetaUpdatesEnabled: Bool
+    @NSManaged var isResignedAppExportEnabled: Bool
     @NSManaged var isPairingReset: Bool
     @NSManaged var isDebugModeEnabled: Bool
     @NSManaged var presentedLaunchReminderNotification: Bool
@@ -118,6 +119,7 @@ public extension UserDefaults
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
             #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
+            #keyPath(UserDefaults.isResignedAppExportEnabled): false,
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,
             #keyPath(UserDefaults.isPairingReset): true,
