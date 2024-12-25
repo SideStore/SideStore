@@ -182,7 +182,21 @@ jobs:
           name: SideStore-${{ steps.version.outputs.version }}-dSYM
           path: ./SideStore.xcarchive/dSYMs/*
 
+      # Check if PUBLISH_ALPHA_UPDATES secret is set to non-zero
+      - name: Check if PUBLISH_ALPHA_UPDATES is set
+        id: check_publish
+        run: |
+          if [[ "${{ secrets.PUBLISH_ALPHA_UPDATES }}" != "__YES__" ]]; then
+            echo "PUBLISH_ALPHA_UPDATES is not set. Skipping deployment."
+            exit 1  # Exit with 1 to indicate no deployment
+          else
+            echo "PUBLISH_ALPHA_UPDATES is set. Proceeding with deployment."
+            exit 0  # Exit with 0 to indicate deployment should proceed
+          fi
+        continue-on-error: true  # Continue even if exit code is 1
+
       - name: Get short commit hash
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           # SHORT_COMMIT="${{ github.sha }}"
           SHORT_COMMIT=${GITHUB_SHA:0:7}
@@ -190,12 +204,14 @@ jobs:
           echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_ENV          
 
       - name: Get formatted date
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           FORMATTED_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           echo "Formatted date: $FORMATTED_DATE"
           echo "FORMATTED_DATE=$FORMATTED_DATE" >> $GITHUB_ENV          
       
       - name: Get size of IPA in bytes (macOS/Linux)
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           if [[ "$(uname)" == "Darwin" ]]; then
             # macOS
@@ -208,12 +224,14 @@ jobs:
           echo "IPA_SIZE=$IPA_SIZE" >> $GITHUB_ENV
 
       - name: Compute SHA-256 of IPA
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           SHA256_HASH=$(shasum -a 256 SideStore-${{ steps.version.outputs.version }}.ipa | awk '{ print $1 }')
           echo "SHA-256 Hash: $SHA256_HASH"
           echo "SHA256_HASH=$SHA256_HASH" >> $GITHUB_ENV
 
       - name: Set environment variables dynamically
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           echo "VERSION_IPA=$VERSION_IPA" >> $GITHUB_ENV
           echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
@@ -224,7 +242,8 @@ jobs:
           echo "LOCALIZED_DESCRIPTION=This is alpha release for revision: ${{ github.sha }}" >> $GITHUB_ENV
           echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/alpha/SideStore.ipa" >> $GITHUB_ENV
 
-      - name: Publish to SideStore/apps-v2.json
+      - name: Checkout SideStore/apps-v2.json
+        if: ${{ steps.check_publish.outcome == 'success' }}
         uses: actions/checkout@v4
         with:
             # Repository name with owner. For example, actions/checkout
@@ -236,6 +255,7 @@ jobs:
             path: 'SideStore/apps-v2.json'
       
       - name: Publish to SideStore/apps-v2.json
+        if: ${{ steps.check_publish.outcome == 'success' }}
         run: |
           # Copy and execute the update script
           pushd SideStore/apps-v2.json/
