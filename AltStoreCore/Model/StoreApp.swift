@@ -425,7 +425,7 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                     throw DecodingError.dataCorruptedError(forKey: .versions, in: container, debugDescription: "At least one version is required in key: versions")
                 }
 
-                for version in versions
+                for (index, version) in zip(0..., versions)
                 {
                     version.appBundleID = self.bundleIdentifier
 
