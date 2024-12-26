@@ -26,3 +26,4 @@ FOUNDATION_EXPORT const unsigned char AltStoreCoreVersionString[];
 #import <AltStoreCore/ALTWrappedError.h>
 #import <AltStoreCore/NSError+ALTServerError.h>
 #import <AltStoreCore/CFNotificationName+AltStore.h>
+#import "ptrace.h"

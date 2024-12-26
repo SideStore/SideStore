@@ -590,6 +590,8 @@
 		B3C3960F284F53E900DA9E2F /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		B3EE16B52925E27D00B3B1F5 /* AnisetteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnisetteManager.swift; sourceTree = "<group>"; };
 		BD4513AA2C6FA98C0052BCC0 /* AppExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppExtensionView.swift; sourceTree = "<group>"; };
+		BD7FFE492D1D2B7F00A9623D /* ptrace.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ptrace.m; sourceTree = "<group>"; };
+		BD7FFE4A2D1D2B8F00A9623D /* ptrace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ptrace.h; sourceTree = "<group>"; };
 		BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshAttemptsViewController.swift; sourceTree = "<group>"; };
 		BF08858222DE795100DE9F1E /* MyAppsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAppsViewController.swift; sourceTree = "<group>"; };
 		BF08858422DE7EC800DE9F1E /* UpdateCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1307,6 +1309,7 @@
 		BF66EE7F2501AE50007EE018 /* AltStoreCore */ = {
 			isa = PBXGroup;
 			children = (
+				BD7FFE492D1D2B7F00A9623D /* ptrace.m */,
 				BF66EE802501AE50007EE018 /* AltStoreCore.h */,
 				BF66EE8A2501AEB1007EE018 /* Components */,
 				BF66EEE32501AED0007EE018 /* Extensions */,
@@ -1317,6 +1320,7 @@
 				BF66EE8D2501AEBC007EE018 /* Types */,
 				BF66EE812501AE50007EE018 /* Info.plist */,
 				BFCB9205250AB1FF0057B44E /* Resources */,
+				BD7FFE4A2D1D2B8F00A9623D /* ptrace.h */,
 			);
 			path = AltStoreCore;
 			sourceTree = "<group>";

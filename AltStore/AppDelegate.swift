@@ -233,6 +233,13 @@ private extension AppDelegate
                 
                 return true
                 
+            case "jit":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let pidstr = queryItems["pid"], let pid = Int32(pidstr) else { return false }
+                
+                return ptrace(14, pid, nil, 0) == 0
+
+                
             default: return false
             }
         }
