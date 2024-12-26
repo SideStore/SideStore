@@ -58,3 +58,9 @@ SideStore/em_proxy/*
 **/output.txt
 SideStore/.skip-prebuilt-fetch-minimuxer
 SideStore/.skip-prebuilt-fetch-em_proxy
+
+.git.bkp/
+# Never check-in this package.resolved file 
+# coz SPM then resolves packages using the stale entries in this file
+*.xcodeproj/**/Package.resolved
+*.xcworkspace/**/Package.resolved
