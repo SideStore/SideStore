@@ -1,4 +1,4 @@
 #include "AltStoreCore.xcconfig"
 
 // include cocoa pods config
-#include? "Pods/Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"
+#include? "../Pods/Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"

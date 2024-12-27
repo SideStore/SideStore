@@ -1,7 +1,7 @@
 #include "AltStore.xcconfig"
 
 // include cocoa pods config
-#include? "Pods/Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"
+#include? "../Pods/Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"
 
 // for ios14 and above swift runtime is included
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO

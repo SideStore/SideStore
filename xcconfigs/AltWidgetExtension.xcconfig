@@ -1,4 +1,4 @@
-#include "Build.xcconfig"
+#include "../Build.xcconfig"
 
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_BUNDLE_IDENTIFIER).AltWidget
 
