@@ -48,5 +48,54 @@
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
     }
+  ],
+  "sources": [
+    {
+      "identifier": "io.sidestore.example"
+    },
+    {
+      "identifier": "com.sidestoreapps.community",
+      "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
+    },
+    {
+      "identifier": "org.provenance-emu.provenance",
+      "sourceURL": "https://provenance-emu.com/apps.json"
+    },
+    {
+      "identifier": "me.oatmealdome.altstore",
+      "sourceURL": "https://altstore.oatmealdome.me"
+    },
+    {
+      "identifier": "com.utmapp.repos.UTM",
+      "sourceURL": "https://alt.getutm.app"
+    },
+    {
+      "identifier": "com.flyinghead.source",
+      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
+    },
+    {
+      "identifier": "dev.crystall1ne.repos.PojavLauncher",
+      "sourceURL": "https://alt.crystall1ne.dev"
+    },
+    {
+      "identifier": "eu.pokemmo.altstore",
+      "sourceURL": "https://pokemmo.eu/altstore/"
+    },
+    {
+      "identifier": "dev.theodyssey.sidestore",
+      "sourceURL": "https://theodyssey.dev/altstore/odysseysource.json"
+    },
+    {
+      "identifier": "stream.yattee",
+      "sourceURL": "https://repos.yattee.stream/alt/apps.json"
+    },
+    {
+      "identifier": "com.litritt.litsource",
+      "sourceURL": "https://altstore.ignitedemulator.com/"
+    },
+    {
+      "identifier": "thatstel.la.altsource",
+      "sourceURL": "https://alt.thatstel.la/"
+    }
   ]
 }
