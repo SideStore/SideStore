@@ -555,26 +555,26 @@ private extension AuthenticationOperation
                 }
             }
             
-            let alertController = UIAlertController(title: NSLocalizedString("Would you like to revoke your previous certificates?\n\(certsText)", comment: ""), message: nil, preferredStyle: .alert)
-            
-            let noAction = UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .default) { (action) in
-                requestCertificate()
-            }
-            let yesAction = UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default) { (action) in
-                for certificate in ourCertificates {
-                    ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { (success, error) in
-                        if let error = error, !success
-                        {
-                            completionHandler(.failure(error))
+            DispatchQueue.main.async {
+                let alertController = UIAlertController(title: NSLocalizedString("Would you like to revoke your previous certificates?\n\(certsText)", comment: ""), message: nil, preferredStyle: .alert)
+                
+                let noAction = UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .default) { (action) in
+                    requestCertificate()
+                }
+                let yesAction = UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default) { (action) in
+                    for certificate in ourCertificates {
+                        ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { (success, error) in
+                            if let error = error, !success
+                            {
+                                completionHandler(.failure(error))
+                            }
                         }
                     }
+                    requestCertificate()
                 }
-                requestCertificate()
-            }
-            alertController.addAction(noAction)
-            alertController.addAction(yesAction)
-            
-            DispatchQueue.main.async {
+                alertController.addAction(noAction)
+                alertController.addAction(yesAction)
+                
                 if self.navigationController.presentingViewController != nil
                 {
                     self.navigationController.present(alertController, animated: true, completion: nil)
