@@ -1,55 +1,68 @@
 #-------------------------------
 # When changing url/branch in this .gitmodules file,
 #   Always ensure you run:
-# 1. `git submodule sync --recursive`
-# 2. `git submodule update --init --remote --recursive <sub_module_path>`
-# 3. IF for some reason, the update doesn't fetch from updated URL try the following:
-#    a. Either stage or unstage the .gitmodules file fully, ie (don't have it partially staged and partial changes as unstaged)
-#    b. Ensure git used is LATEST VERSION [wasted few hours due to this :( ]
-# 4. To restore to the commit that is marked by the submodule commit tracker file, simply issue `update --recursive` without --remote
-#    `git submodule update --init --recursive <sub_module_path>`
+# 1. `git rm --cached <submodule_relative_path>`                # this removes the submodule entry from general git tracking
+# 2. `rm -rf .git/modules/<submodule_relative_path>`            # this removes the stale name entries in submodule tracker
+# 3. `rm -rf <submodule_relative_path>`                         # removes the submodule completely
+# 4. `git submodule --deinit <submodule_relative_path>`         # make sure that the submodule is de-inited too (ignore errors at this point)
+# 5. `git submodule add [-b <branch_name>] <repo_url> <submodule_relative_path>`    # This adds the submodule back into general git tracking and also adds to the submodule tracker
+# 6. Step 5 creates an entry in the .gitmodules when a submodule is added,
+#    So if you already had one entry, try to remove duplicates at this point
+# 7. `git submodule sync --recursive`                           # this now sets/updates the submodule repo url tracker into git config
+# 8. `git submodule update --init --recursive`                  # this now clones the updated repo set by .gitmodules
+#     But this will always fetch the latest commit sepecified by the custom(if set)/default branch
+# 9. If you do want to have a specific commit in that submodule branch and not latest, you need to perform normal detached head checkout and check-in as follows:
+#    `pushd <submodule_relative_path>`                          # switch to the submodule repo
+#    `git checkout <commit-id>`                                 # this creates a detached head state
+#    `popd`                                                     # get back to parent repo
+#    `git add <submodule_relative_path>`                        # check-in the changes in parent for this submodule link (tracker)
+#    `git commit -m <commit-message>`                           # commit it to parent repo        
+#    `git push`                                                 # push to parent repo to preserve this entire change in the submodule repo/link file
+#
+#  NOTES:
+#  1. updating just this .gitmodules file is NOT ENOUGH when changing repo url and performing a simple `git submodule update --init --recursive`, need to do all the above listed steps for proper tracking
+#  2. updating the branch in this .gitmodules for same repo is okay as long as `git submodule update --init --recursive` is also performed followed by it
+#  3. Ensure there is no stale entries or duplicate entries in this .gitmodules file coz, `git submodule add ...` creates an entry here.
 #-------------------------------
 
 [submodule "Dependencies/Roxas"]
-	path = Dependencies/Roxas
-	url = https://github.com/rileytestut/Roxas.git
+    path = Dependencies/Roxas
+    url = https://github.com/rileytestut/Roxas.git
 [submodule "Dependencies/libimobiledevice"]
-	path = Dependencies/libimobiledevice
-	url = https://github.com/libimobiledevice/libimobiledevice
+    path = Dependencies/libimobiledevice
+    url = https://github.com/libimobiledevice/libimobiledevice
 [submodule "Dependencies/libusbmuxd"]
-	path = Dependencies/libusbmuxd
-	url = https://github.com/libimobiledevice/libusbmuxd.git
+    path = Dependencies/libusbmuxd
+    url = https://github.com/libimobiledevice/libusbmuxd.git
 [submodule "Dependencies/libplist"]
-	path = Dependencies/libplist
-	url = https://github.com/SideStore/libplist.git
+    path = Dependencies/libplist
+    url = https://github.com/SideStore/libplist.git
 [submodule "Dependencies/MarkdownAttributedString"]
-	path = Dependencies/MarkdownAttributedString
-	url = https://github.com/chockenberry/MarkdownAttributedString.git
+    path = Dependencies/MarkdownAttributedString
+    url = https://github.com/chockenberry/MarkdownAttributedString.git
 [submodule "Dependencies/libimobiledevice-glue"]
-	path = Dependencies/libimobiledevice-glue
-	url = https://github.com/libimobiledevice/libimobiledevice-glue
-# [submodule "Dependencies/AltSign"]
-# 	path = Dependencies/AltSign
-# 	url = https://github.com/rileytestut/AltSign.git
-# 	# url = https://github.com/SideStore/AltSign.git
-# 	branch = marketplace
-# 	# branch = master
+    path = Dependencies/libimobiledevice-glue
+    url = https://github.com/libimobiledevice/libimobiledevice-glue
+
 
 #sidestore dependencies
 [submodule "SideStore/minimuxer"]
-	path = SideStore/minimuxer
-	url = https://github.com/SideStore/minimuxer
-	branch = master
+    path = SideStore/minimuxer
+    url = https://github.com/SideStore/minimuxer
+    branch = master
 [submodule "SideStore/em_proxy"]
-	path = SideStore/em_proxy
-	url = https://github.com/SideStore/em_proxy
-	branch = master
+    path = SideStore/em_proxy
+    url = https://github.com/SideStore/em_proxy
+    branch = master
 [submodule "SideStore/libfragmentzip"]
-	path = SideStore/libfragmentzip
-	url = https://github.com/SideStore/libfragmentzip
-	branch = master
+    path = SideStore/libfragmentzip
+    url = https://github.com/SideStore/libfragmentzip
+    branch = master
 [submodule "SideStore/apps-v2.json"]
-	path = SideStore/apps-v2.json
-	url = https://github.com/SideStore/apps-v2.json
-	branch = main
-
+    path = SideStore/apps-v2.json
+    url = https://github.com/SideStore/apps-v2.json
+    branch = main
+[submodule "SideStore/AltSign"]
+    path = SideStore/AltSign
+    url = https://github.com/SideStore/AltSign
+    branch = master
