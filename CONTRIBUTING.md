@@ -44,12 +44,16 @@ Next, make and test your changes. Then, commit and push your changes using git a
 ## Prebuilt binary information
 
 minimuxer and em_proxy use prebuilt static library binaries built by GitHub Actions to speed up builds and remove the need for Rust to be installed when working on SideStore.
-[`Dependencies/fetch-prebuilt.sh`](./Dependencies/fetch-prebuilt.sh) will be run before each build by Xcode, and it will check if the downloaded binaries are up-to-date once every 6 hours. If you want
-to force it to check for new binaries, run `bash ./Dependencies/fetch-prebuilt.sh force`.
+[`SideStore/fetch-prebuilt.sh`](./SideStore/fetch-prebuilt.sh) will be run before each build by Xcode, and it will check if the downloaded binaries are up-to-date once every 6 hours. If you want
+to force it to check for new binaries, run `bash ./SideStore/fetch-prebuilt.sh force`.
 
 ## Building an IPA for distribution
 
-You can use the Makefile: `make build fakesign ipa`
+Install cocoapods if required using: `brew install cocoapods`
+
+Now perform Pod-Install using: `pod install` command to install the dependencies.
+
+You can then use the Makefile command: `make build fakesign ipa` in the root directory.
 
 This will create SideStore.ipa.
 
