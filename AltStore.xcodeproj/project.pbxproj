@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 71;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -614,9 +614,15 @@
 		A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "minimuxer-helpers.swift"; sourceTree = "<group>"; };
 		A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
 		A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
-		A8570F912D104EA100929D17 /* AltStore.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.release.xcconfig; sourceTree = "<group>"; };
-		A8570F922D104F2C00929D17 /* AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.release.xcconfig; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
+		A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
+		A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
+		A85ACB902D1F31C400AA3DE7 /* AltStore.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.release.xcconfig; sourceTree = "<group>"; };
+		A85ACB912D1F31C400AA3DE7 /* AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.debug.xcconfig; sourceTree = "<group>"; };
+		A85ACB922D1F31C400AA3DE7 /* AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.release.xcconfig; sourceTree = "<group>"; };
+		A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltWidgetExtension.xcconfig; sourceTree = "<group>"; };
+		A86202322D1F35640091187B /* AltStore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.xcconfig; sourceTree = "<group>"; };
+		A86202332D1F35640091187B /* AltStoreCore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.xcconfig; sourceTree = "<group>"; };
 		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8D484D72D0CD306002C691D /* AltBackup.ipa */ = {isa = PBXFileReference; lastKnownFileType = file; path = AltBackup.ipa; sourceTree = "<group>"; };
 		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
@@ -644,10 +650,6 @@
 		B3C39606284F4C8400DA9E2F /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		B3C39607284F4C8400DA9E2F /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		B3C39608284F4C8400DA9E2F /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
-		B3C3960B284F4C9800DA9E2F /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
-		B3C3960D284F4E4B00DA9E2F /* AltWidgetExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltWidgetExtension.xcconfig; sourceTree = "<group>"; };
-		B3C3960E284F4F9100DA9E2F /* AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.debug.xcconfig; sourceTree = "<group>"; };
-		B3C3960F284F53E900DA9E2F /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		B3EE16B52925E27D00B3B1F5 /* AnisetteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnisetteManager.swift; sourceTree = "<group>"; };
 		BD4513AA2C6FA98C0052BCC0 /* AppExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppExtensionView.swift; sourceTree = "<group>"; };
 		BF02419522F2199300129732 /* RefreshAttemptsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshAttemptsViewController.swift; sourceTree = "<group>"; };
@@ -996,10 +998,6 @@
 		D5FD4ECA2A9532960097BEE8 /* DatabaseManager+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseManager+Async.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		A85D2D272D1F228A00A9CFC1 /* xcconfigs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = xcconfigs; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		19104DAF2909C06C00C49C7B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -1137,6 +1135,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A85ACB942D1F31C400AA3DE7 /* xcconfigs */ = {
+			isa = PBXGroup;
+			children = (
+				A86202332D1F35640091187B /* AltStoreCore.xcconfig */,
+				A85ACB912D1F31C400AA3DE7 /* AltStoreCore.debug.xcconfig */,
+				A85ACB922D1F31C400AA3DE7 /* AltStoreCore.release.xcconfig */,
+				A86202322D1F35640091187B /* AltStore.xcconfig */,
+				A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */,
+				A85ACB902D1F31C400AA3DE7 /* AltStore.release.xcconfig */,
+				A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */,
+				A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */,
+			);
+			path = xcconfigs;
+			sourceTree = "<group>";
+		};
 		A8A543222D04F0C100D72399 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1146,19 +1159,6 @@
 				A8A5432F2D04F0C100D72399 /* libfragmentzip.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		A8B325D52D1F23130039A9E1 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				B3C3960F284F53E900DA9E2F /* AltBackup.xcconfig */,
-				B3C3960E284F4F9100DA9E2F /* AltStoreCore.debug.xcconfig */,
-				A8570F922D104F2C00929D17 /* AltStoreCore.release.xcconfig */,
-				B3C3960D284F4E4B00DA9E2F /* AltWidgetExtension.xcconfig */,
-				B3C3960B284F4C9800DA9E2F /* AltStore.debug.xcconfig */,
-				A8570F912D104EA100929D17 /* AltStore.release.xcconfig */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		A8F66C072D04C025009689E6 /* SideStore */ = {
@@ -1712,11 +1712,10 @@
 				BFD247852284BB3300981D42 /* Frameworks */,
 				BFD2476B2284B9A500981D42 /* Products */,
 				C2B79346E83FCBDE76D501CB /* Pods */,
-				A85D2D272D1F228A00A9CFC1 /* xcconfigs */,
+				A85ACB942D1F31C400AA3DE7 /* xcconfigs */,
 				B3C39607284F4C8400DA9E2F /* Build.xcconfig */,
 				B3C39606284F4C8400DA9E2F /* CodeSigning.xcconfig */,
 				B3C39608284F4C8400DA9E2F /* CodeSigning.xcconfig.sample */,
-				A8B325D52D1F23130039A9E1 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3239,8 +3238,7 @@
 		};
 		BF58048C246A28F9008AE704 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltBackup.xcconfig;
+			baseConfigurationReference = A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = AltBackup/AltBackup.entitlements;
@@ -3265,8 +3263,7 @@
 		};
 		BF58048D246A28F9008AE704 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltBackup.xcconfig;
+			baseConfigurationReference = A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = AltBackup/AltBackup.entitlements;
@@ -3291,8 +3288,7 @@
 		};
 		BF66EE872501AE50007EE018 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltStoreCore.debug.xcconfig;
+			baseConfigurationReference = A85ACB912D1F31C400AA3DE7 /* AltStoreCore.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3332,8 +3328,7 @@
 		};
 		BF66EE882501AE50007EE018 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltStoreCore.release.xcconfig;
+			baseConfigurationReference = A85ACB922D1F31C400AA3DE7 /* AltStoreCore.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3373,8 +3368,7 @@
 		};
 		BF989179250AABF4002ACF50 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltWidgetExtension.xcconfig;
+			baseConfigurationReference = A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
@@ -3409,8 +3403,7 @@
 		};
 		BF98917A250AABF4002ACF50 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltWidgetExtension.xcconfig;
+			baseConfigurationReference = A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
@@ -3581,8 +3574,7 @@
 		};
 		BFD2477F2284B9A700981D42 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltStore.debug.xcconfig;
+			baseConfigurationReference = A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -3628,8 +3620,7 @@
 		};
 		BFD247802284B9A700981D42 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = A85D2D272D1F228A00A9CFC1 /* xcconfigs */;
-			baseConfigurationReferenceRelativePath = AltStore.release.xcconfig;
+			baseConfigurationReference = A85ACB902D1F31C400AA3DE7 /* AltStore.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
