@@ -3743,22 +3743,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		A81176FC2D0B3BAB00D6C122 /* XCRemoteSwiftPackageReference "OpenSSL" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/OpenSSL";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.2000;
-			};
-		};
-		A81176FF2D0B3C6C00D6C122 /* XCRemoteSwiftPackageReference "AltSign" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SideStore/AltSign";
-			requirement = {
-				kind = revision;
-				revision = 383f1650872fd94fe892923f3f24c0dd01ae5b0a;
-			};
-		};
 		A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftPackageIndex/SemanticVersion";
