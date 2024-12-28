@@ -335,9 +335,13 @@ extension FetchProvisioningProfilesOperation
     
     func updateFeatures(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
     {
-        additionalEntitlements.merge([ALTEntitlement.increasedMemoryLimit : true])
         var entitlements = app.entitlements
         for (key, value) in additionalEntitlements ?? [:]
+        {
+            entitlements[key] = value
+        }
+        
+        for (key, value) in [ALTEntitlement.increasedMemoryLimit : true]
         {
             entitlements[key] = value
         }
