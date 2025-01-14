@@ -77,10 +77,10 @@ struct OperationsLoggingControlView: View {
                                 }
                             ))
                             
-                            CustomToggle("7. FetchProvisioningProfiles", isOn: Binding(
-                                get: { self.viewModel.getFromDatabase(for: FetchProvisioningProfilesOperation.self) },
+                            CustomToggle("7. FetchProvisioningProfiles(I)", isOn: Binding(
+                                get: { self.viewModel.getFromDatabase(for: FetchProvisioningProfilesInstallOperation.self) },
                                 set: { value in
-                                    self.viewModel.updateDatabase(for: FetchProvisioningProfilesOperation.self, value: value)
+                                    self.viewModel.updateDatabase(for: FetchProvisioningProfilesInstallOperation.self, value: value)
                                 }
                             ))
                             
@@ -108,7 +108,14 @@ struct OperationsLoggingControlView: View {
                         
                         CustomSection(header: Text("Refresh Operations"))
                         {
-                            CustomToggle("1. RefreshApp", isOn: Binding(
+                            CustomToggle("1. FetchProvisioningProfiles(R)", isOn: Binding(
+                                get: { self.viewModel.getFromDatabase(for: FetchProvisioningProfilesRefreshOperation.self) },
+                                set: { value in
+                                    self.viewModel.updateDatabase(for: FetchProvisioningProfilesRefreshOperation.self, value: value)
+                                }
+                            ))
+
+                            CustomToggle("2. RefreshApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: RefreshAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: RefreshAppOperation.self, value: value)

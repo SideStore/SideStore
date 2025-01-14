@@ -1146,27 +1146,28 @@ private extension AppManager
                 case .activate(let app) where UserDefaults.standard.isLegacyDeactivationSupported: fallthrough
                 case .refresh(let app):
                     // Check if backup app is installed in place of real app.
-                    let uti = UTTypeCopyDeclaration(app.installedBackupAppUTI as CFString)?.takeRetainedValue() as NSDictionary?
+//                    let altBackupUti = UTTypeCopyDeclaration(app.installedBackupAppUTI as CFString)?.takeRetainedValue() as NSDictionary?
 
-                    if app.certificateSerialNumber != group.context.certificate?.serialNumber ||
-                        uti != nil ||
-                        app.needsResign ||
+//                    if app.certificateSerialNumber != group.context.certificate?.serialNumber ||
+//                        altBackupUti != nil ||        // why would altbackup requires reinstall? it shouldn't cause we are just renewing profiles
+//                        app.needsResign ||            // why would an app require resign during refresh? it shouldn't!
                         // We need to reinstall ourselves on refresh to ensure the new provisioning profile is used
-                        app.bundleIdentifier == StoreApp.altstoreAppID
-                    {
+                        //  => mahee96: jkcoxson confirmed misagent manages profiles independently without requiring lockdownd or installd intervention, so sidestore profile renewal shouldn't require reinstall
+//                        app.bundleIdentifier == StoreApp.altstoreAppID    
+//                    {
                         // Resign app instead of just refreshing profiles because either:
-                        // * Refreshing using different certificate
-                        // * Backup app is still installed
-                        // * App explicitly needs resigning
+                        // * Refreshing using different certificate     // when can this happen?, lets assume, refreshing with different certificate, why not just ask user to re-install manually? (probably we need re-install button)
+                        // * Backup app is still installed              // but why? I mean the AltBackup was put in place for a reason? ie during refresh just renew appIDs don't care about the app itself.
+                        // * App explicitly needs resigning             // when can this happen?
                         // * Device is jailbroken and using AltDaemon on iOS 14.0 or later (b/c refreshing with provisioning profiles is broken)
                         
-                        let installProgress = self._install(app, operation: operation, group: group) { (result) in
-                            self.finish(operation, result: result, group: group, progress: progress)
-                        }
-                        progress?.addChild(installProgress, withPendingUnitCount: 80)
-                    }
-                    else
-                    {
+//                        let installProgress = self._install(app, operation: operation, group: group) { (result) in
+//                            self.finish(operation, result: result, group: group, progress: progress)
+//                        }
+//                        progress?.addChild(installProgress, withPendingUnitCount: 80)
+//                    }
+//                    else
+//                    {
                         // Refreshing with same certificate as last time, and backup app isn't still installed,
                         // so we can just refresh provisioning profiles.
                         
@@ -1174,7 +1175,7 @@ private extension AppManager
                             self.finish(operation, result: result, group: group, progress: progress)
                         }
                         progress?.addChild(refreshProgress, withPendingUnitCount: 80)
-                    }
+//                    }
                     
                 case .activate(let app):
                     let activateProgress = self._activate(app, operation: operation, group: group) { (result) in
@@ -1371,7 +1372,7 @@ private extension AppManager
 
 
         /* Fetch Provisioning Profiles */
-        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
+        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesInstallOperation(context: context)
         fetchProvisioningProfilesOperation.additionalEntitlements = additionalEntitlements
         fetchProvisioningProfilesOperation.resultHandler = { (result) in
             switch result
@@ -1657,26 +1658,27 @@ private extension AppManager
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
         
-        //App-Extensions: Ensure DB data and disk state must match
-        let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
-        let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
-        let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
-        let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
-        let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
+       // Since this doesn't involve modifying app bundle which will cause re-install, this is safe  in refresh path 
+       //App-Extensions: Ensure DB data and disk state must match
+       let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
+       let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
+       let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
+       let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
+       let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
 
-        let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
-            
-            let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
-                           + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
-            print(errMessage)
-            if(!isMatching){
-                completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
-            }
-            op.finish()
-        }
+       let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
+           
+           let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
+                          + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
+           print(errMessage)
+           if(!isMatching){
+               completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
+           }
+           op.finish()
+       }
         
         /* Fetch Provisioning Profiles */
-        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
+        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesRefreshOperation(context: context)
         fetchProvisioningProfilesOperation.resultHandler = { (result) in
             switch result
             {
@@ -1686,7 +1688,7 @@ private extension AppManager
             }
         }
         progress.addChild(fetchProvisioningProfilesOperation.progress, withPendingUnitCount: 60)
-        fetchProvisioningProfilesOperation.addDependency(validateAppExtensionsOperation)
+        // fetchProvisioningProfilesOperation.addDependency(validateAppExtensionsOperation)
 
         /* Refresh */
         let refreshAppOperation = RefreshAppOperation(context: context)
@@ -1695,7 +1697,10 @@ private extension AppManager
             {
             case .success(let installedApp):
                 completionHandler(.success(installedApp))
-                
+
+
+            // refreshing local app's provisioning profile means talking to misagent daemon
+            // which requires loopback vpn
             case .failure(MinimuxerError.ProfileInstall):
                 completionHandler(.failure(OperationError.noWiFi))
                 
@@ -1720,7 +1725,8 @@ private extension AppManager
         progress.addChild(refreshAppOperation.progress, withPendingUnitCount: 40)
         refreshAppOperation.addDependency(fetchProvisioningProfilesOperation)
         
-        let operations = [validateAppExtensionsOperation, fetchProvisioningProfilesOperation, refreshAppOperation]
+//        let operations = [validateAppExtensionsOperation, fetchProvisioningProfilesOperation, refreshAppOperation]
+        let operations = [fetchProvisioningProfilesOperation, refreshAppOperation]
         group.add(operations)
         self.run(operations, context: group.context)
 

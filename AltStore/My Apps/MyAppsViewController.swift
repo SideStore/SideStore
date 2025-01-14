@@ -1151,7 +1151,9 @@ private extension MyAppsViewController
     
     func refresh(_ installedApp: InstalledApp)
     {
-        guard minimuxerStatus else { return }
+       // we do need minimuxer, coz it needs to talk to misagent daemon which manages profiles 
+       // so basically loopback vpn is still required
+       guard minimuxerStatus else { return }     // we don't need minimuxer when renewing appIDs only do we, heck we can even do it on mobile internet
 
         let previousProgress = AppManager.shared.refreshProgress(for: installedApp)
         guard previousProgress == nil else {
@@ -1467,7 +1469,10 @@ private extension MyAppsViewController
             do
             {
                 let tempApp = context.object(with: installedApp.objectID) as! InstalledApp
-                tempApp.needsResign = true
+                tempApp.needsResign = true                      // why do we want to resign it during refresh ?!!!!
+                                                                // I see now, so here we just mark that icon needs to be changed but leave it for refresh/install to do it
+                                                                // this is bad, coz now the weight of installing goes to refresh step !!! which is not what we want
+                
                 tempApp.hasAlternateIcon = (image != nil)
                 
                 if let image = image
