@@ -44,7 +44,10 @@ extension SettingsViewController
             var c: [AppRefreshRow] = [.backgroundRefresh, .noIdleTimeout, .addToSiri]
 
             // conditional entries go at the last to preserve ordering
-            if !ProcessInfo().sparseRestorePatched { c.append(.disableAppLimit) }
+            if UserDefaults.standard.isCowExploitSupported || !ProcessInfo().sparseRestorePatched
+            {
+                c.append(.disableAppLimit)
+            }
             return c
         }
     }
@@ -477,13 +480,16 @@ private extension SettingsViewController
     }
     
     @IBAction func toggleDisableAppLimit(_ sender: UISwitch) {
-        UserDefaults.standard.isAppLimitDisabled = sender.isOn
-        
-        // TODO: Here we force reload the activeAppsLimit after detecting change in isAppLimitDisabled
-        //       Why do we need to do this, once identified if this is intentional and working as expected, remove this todo
-        if UserDefaults.standard.activeAppsLimit != nil
-        {
-            UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+        if UserDefaults.standard.isCowExploitSupported || !ProcessInfo().sparseRestorePatched {
+            // accept state change only when valid
+            UserDefaults.standard.isAppLimitDisabled = sender.isOn
+            
+            // TODO: Here we force reload the activeAppsLimit after detecting change in isAppLimitDisabled
+            //       Why do we need to do this, once identified if this is intentional and working as expected, remove this todo
+            if UserDefaults.standard.activeAppsLimit != nil
+            {
+                UserDefaults.standard.activeAppsLimit = InstalledApp.freeAccountActiveAppsLimit
+            }
         }
     }
     

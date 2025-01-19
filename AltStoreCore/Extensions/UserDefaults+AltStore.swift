@@ -143,7 +143,8 @@ public extension UserDefaults
         UserDefaults.standard.register(defaults: defaults)
         UserDefaults.shared.register(defaults: defaults)
         
-        if !isMacDirtyCowSupported
+        // MDC is unsupported and spareRestore is patched
+        if !isMacDirtyCowSupported && ProcessInfo().sparseRestorePatched
         {
             // Disable isAppLimitDisabled if running iOS version that doesn't support MacDirtyCow.
             UserDefaults.standard.isAppLimitDisabled = false
