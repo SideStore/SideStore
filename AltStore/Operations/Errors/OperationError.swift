@@ -58,6 +58,8 @@ extension OperationError
         case anisetteV3Error//(message: String)
         case cacheClearError//(errors: [String])
         case noWiFi
+        
+        case invalidOperationContext
     }
     
     static var cancelled: CancellationError { CancellationError() }
@@ -128,6 +130,10 @@ extension OperationError
 
     static func invalidParameters(_ message: String? = nil) -> OperationError {
         OperationError(code: .invalidParameters, failureReason: message)
+    }
+    
+    static func invalidOperationContext(_ message: String? = nil) -> OperationError {
+        OperationError(code: .invalidOperationContext, failureReason: message)
     }
     
     static func forbidden(failureReason: String? = nil, file: String = #fileID, line: UInt = #line) -> OperationError {
@@ -232,7 +238,10 @@ struct OperationError: ALTLocalizedError {
 
         case .invalidParameters:
             let message = self._failureReason.map { ": \n\($0)" } ?? "."
-            return String(format: NSLocalizedString("Invalid parameters%@", comment: ""), message)
+            return String(format: NSLocalizedString("Invalid parameters\n%@", comment: ""), message)
+        case .invalidOperationContext:
+            let message = self._failureReason.map { ": \n\($0)" } ?? "."
+            return String(format: NSLocalizedString("Invalid Operation Context\n%@", comment: ""), message)
         case .serverNotFound: return NSLocalizedString("AltServer could not be found.", comment: "")
         case .connectionFailed: return NSLocalizedString("A connection to AltServer could not be established.", comment: "")
         case .connectionDropped: return NSLocalizedString("The connection to AltServer was dropped.", comment: "")

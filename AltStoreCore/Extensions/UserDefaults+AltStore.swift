@@ -33,7 +33,9 @@ public extension UserDefaults
     @NSManaged var isIdleTimeoutDisableEnabled: Bool
     @NSManaged var isAppLimitDisabled: Bool
     @NSManaged var isBetaUpdatesEnabled: Bool
-    @NSManaged var isResignedAppExportEnabled: Bool
+    @NSManaged var isExportResignedAppEnabled: Bool
+    @NSManaged var isVerboseOperationsLoggingEnabled: Bool
+    @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
     @NSManaged var isPairingReset: Bool
     @NSManaged var isDebugModeEnabled: Bool
     @NSManaged var presentedLaunchReminderNotification: Bool
@@ -106,11 +108,12 @@ public extension UserDefaults
         (ProcessInfo.processInfo.isOperatingSystemAtLeast(ios14) && !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios15_7_2)) ||
         (ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16) && !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16_2))
         
-        #if DEBUG
-        let permissionCheckingDisabled = true
-        #else
+        // TODO: @mahee96: why should the permissions checking be any different, for now, it shouldn't so commented debug mode code
+//        #if DEBUG
+//        let permissionCheckingDisabled = true
+//        #else
         let permissionCheckingDisabled = false
-        #endif
+//        #endif
         
         // Pre-iOS 15 doesn't support custom sorting, so default to sorting by name.
         // Otherwise, default to `default` sorting (a.k.a. "source order").
@@ -119,7 +122,10 @@ public extension UserDefaults
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
             #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
-            #keyPath(UserDefaults.isResignedAppExportEnabled): false,
+            #keyPath(UserDefaults.isExportResignedAppEnabled): false,
+            #keyPath(UserDefaults.isDebugModeEnabled): false,
+            #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
+            #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): true, // minimuxer logging is enabled by default as before
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,
             #keyPath(UserDefaults.isPairingReset): true,
@@ -137,7 +143,8 @@ public extension UserDefaults
         UserDefaults.standard.register(defaults: defaults)
         UserDefaults.shared.register(defaults: defaults)
         
-        if !isMacDirtyCowSupported
+        // MDC is unsupported and spareRestore is patched
+        if !isMacDirtyCowSupported && ProcessInfo().sparseRestorePatched
         {
             // Disable isAppLimitDisabled if running iOS version that doesn't support MacDirtyCow.
             UserDefaults.standard.isAppLimitDisabled = false

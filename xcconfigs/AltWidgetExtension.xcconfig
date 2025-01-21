@@ -1,6 +1,3 @@
 #include "../Build.xcconfig"
 
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_BUNDLE_IDENTIFIER).AltWidget
-
-// retain the non-suffixed bundleID set in $GROUP_ID for APP_GROUP_IDENTIFIER
-APP_GROUP_IDENTIFIER = $(GROUP_ID)

@@ -1151,7 +1151,9 @@ private extension MyAppsViewController
     
     func refresh(_ installedApp: InstalledApp)
     {
-        guard minimuxerStatus else { return }
+       // we do need minimuxer, coz it needs to talk to misagent daemon which manages profiles 
+       // so basically loopback vpn is still required
+       guard minimuxerStatus else { return }     // we don't need minimuxer when renewing appIDs only do we, heck we can even do it on mobile internet
 
         let previousProgress = AppManager.shared.refreshProgress(for: installedApp)
         guard previousProgress == nil else {
@@ -1357,6 +1359,50 @@ private extension MyAppsViewController
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func importBackup(for installedApp: InstalledApp){
+        ImportExport.importBackup(presentingViewController: self, for: installedApp) { result in
+            var toast: ToastView
+            switch(result){
+            case .failure(let error):
+                toast = ToastView(error: error, opensLog: false)
+                break
+            case .success:
+                toast = ToastView(text: "Import Backup successful for \(installedApp.name)",
+                                  detailText: "Use 'Restore Backup' option to restore data from this imported backup")
+            }
+            DispatchQueue.main.async {
+                toast.show(in: self)
+            }
+        }
+    }
+    
+    private func getPreviousBackupURL(_ installedApp: InstalledApp) -> URL
+    {
+        let backupURL = FileManager.default.backupDirectoryURL(for: installedApp)!
+        let backupBakURL = ImportExport.getPreviousBackupURL(backupURL)
+        return backupBakURL
+    }
+    
+    func restorePreviousBackup(for installedApp: InstalledApp){
+        let backupURL = FileManager.default.backupDirectoryURL(for: installedApp)!
+        let backupBakURL = ImportExport.getPreviousBackupURL(backupURL)
+        
+        // backupBakURL is expected to exist at this point, this needs to be ensured by caller logic
+        // or invoke this action only when backupBakURL exists
+        
+        // delete the current backup
+        if(FileManager.default.fileExists(atPath: backupURL.path)){
+            try! FileManager.default.removeItem(at: backupURL)
+        }
+        
+        // restore the previously saved backup as current backup
+        // (don't delete the N-1 backup yet so copy instead of move)
+        try! FileManager.default.copyItem(at: backupBakURL, to: backupURL)
+        
+        //perform restore of data from the backup
+        restore(installedApp)
+    }
+    
     func restore(_ installedApp: InstalledApp)
     {
         guard minimuxerStatus else { return }
@@ -1423,7 +1469,10 @@ private extension MyAppsViewController
             do
             {
                 let tempApp = context.object(with: installedApp.objectID) as! InstalledApp
-                tempApp.needsResign = true
+                tempApp.needsResign = true                      // why do we want to resign it during refresh ?!!!!
+                                                                // I see now, so here we just mark that icon needs to be changed but leave it for refresh/install to do it
+                                                                // this is bad, coz now the weight of installing goes to refresh step !!! which is not what we want
+                
                 tempApp.hasAlternateIcon = (image != nil)
                 
                 if let image = image
@@ -1459,27 +1508,27 @@ private extension MyAppsViewController
         }
     }
     
-    func enableJIT(for installedApp: InstalledApp)
-    {
-        
+    func enableJIT(for installedApp: InstalledApp) {
         let sidejitenabled = UserDefaults.standard.sidejitenable
         
-        if #unavailable(iOS 17) {
+        if #unavailable(iOS 17), !sidejitenabled {
             guard minimuxerStatus else { return }
         }
         
-
         if #available(iOS 17, *), !sidejitenabled {
-            ToastView(error: (OperationError.tooNewError as NSError).withLocalizedTitle("No iOS 17 On Device JIT!"), opensLog: true).show(in: self)
-            AppManager.shared.log(OperationError.tooNewError, operation: .enableJIT, app: installedApp)
+            let error = OperationError.tooNewError as NSError
+            let localizedError = error.withLocalizedTitle("No iOS 17 On Device JIT!")
+            
+            ToastView(error: localizedError, opensLog: true).show(in: self)
+            AppManager.shared.log(error, operation: .enableJIT, app: installedApp)
             return
         }
         
         AppManager.shared.enableJIT(for: installedApp) { result in
             DispatchQueue.main.async {
-                switch result
-                {
-                case .success: break
+                switch result {
+                case .success:
+                    break
                 case .failure(let error):
                     ToastView(error: error, opensLog: true).show(in: self)
                     AppManager.shared.log(error, operation: .enableJIT, app: installedApp)
@@ -1810,8 +1859,16 @@ extension MyAppsViewController
             self.exportBackup(for: installedApp)
         }
         
-        let restoreBackupAction = UIAction(title: NSLocalizedString("Restore Backup", comment: ""), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+        let importBackupAction = UIAction(title: NSLocalizedString("Import Backup", comment: ""), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+            self.importBackup(for: installedApp)
+        }
+        
+        let restoreBackupAction = UIAction(title: NSLocalizedString("Restore Backup", comment: "Restores the last or current backup of this app"), image: UIImage(systemName: "arrow.down.doc")) { (action) in
             self.restore(installedApp)
+        }
+
+        let restorePreviousBackupAction = UIAction(title: NSLocalizedString("Restore Previous Backup", comment: "Restores the backup saved before the current backup was created."), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+            self.restorePreviousBackup(for: installedApp)
         }
         
         let chooseIconAction = UIAction(title: NSLocalizedString("Photos", comment: ""), image: UIImage(systemName: "photo")) { (action) in
@@ -1878,7 +1935,8 @@ extension MyAppsViewController
                 var outError: NSError? = nil
                 
                 self.coordinator.coordinate(readingItemAt: backupDirectoryURL, options: [.withoutChanges], error: &outError) { (backupDirectoryURL) in
-                    #if DEBUG
+
+                    #if DEBUG && targetEnvironment(simulator)
                     backupExists = true
                     #else
                     backupExists = FileManager.default.fileExists(atPath: backupDirectoryURL.path)
@@ -1903,15 +1961,21 @@ extension MyAppsViewController
             if installedApp.isActive
             {
                 actions.append(deactivateAction)
+                // import backup into shared backups dir is allowed
+                actions.append(importBackupAction)
             }
             
-            #if DEBUG
+            // have an option to restore the n-1 backup
+            if FileManager.default.fileExists(atPath: getPreviousBackupURL(installedApp).path){
+                actions.append(restorePreviousBackupAction)
+            }
             
+            
+            #if DEBUG && targetEnvironment(simulator)
             if installedApp.bundleIdentifier != StoreApp.altstoreAppID
             {
                 actions.append(removeAction)
             }
-            
             #else
             
             if (UserDefaults.standard.legacySideloadedApps ?? []).contains(installedApp.bundleIdentifier)
@@ -1928,6 +1992,26 @@ extension MyAppsViewController
             
             #endif
         }
+        
+        // Change the order of entries to make changes to how the context menu is displayed
+        let orderedActions = [
+            openMenu,
+            refreshAction,
+            activateAction,
+            jitAction,
+            changeIconMenu,
+            backupAction,
+            exportBackupAction,
+            importBackupAction,
+            restoreBackupAction,
+            restorePreviousBackupAction,
+            deactivateAction,
+            removeAction,
+        ]
+        
+        // remove non-selected actions from the all-actions ordered list
+        // this way the declaration of the action in the above code doesn't determine the context menu order
+        actions = orderedActions.filter{ action in actions.contains(action)}
         
         var title: String?
                 

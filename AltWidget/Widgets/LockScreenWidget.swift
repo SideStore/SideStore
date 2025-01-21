@@ -70,7 +70,7 @@ extension ComplicationView
 @available(iOS 16, *)
 private struct ComplicationView: View
 {
-    let entry: AppsEntry
+    let entry: AppsEntry<Intent>
     let style: Style
     
     var body: some View {
@@ -82,6 +82,7 @@ private struct ComplicationView: View
         
         let progress = Double(daysRemaining) / Double(totalDays)
         
+        // TODO: Gauge initialized with an out-of-bounds progress amount. The amount will be clamped to the nearest bound.
         Gauge(value: progress) {
             if daysRemaining < 0
             {
@@ -143,10 +144,10 @@ private let widgetFamily = if #available(iOS 16, *) { WidgetFamily.accessoryCirc
     let expiredDate = Date().addingTimeInterval(1 * 60 * 60 * 24 * 7)
     let (altstore, _, _, longAltStore, _, _) = AppSnapshot.makePreviewSnapshots()
     
-    AppsEntry(date: Date(), apps: [altstore])
-    AppsEntry(date: Date(), apps: [longAltStore])
+    AppsEntry<Any>(date: Date(), apps: [altstore])
+    AppsEntry<Any>(date: Date(), apps: [longAltStore])
     
-    AppsEntry(date: expiredDate, apps: [altstore])
+    AppsEntry<Any>(date: expiredDate, apps: [altstore])
 }
 
 @available(iOS 17, *)
@@ -156,8 +157,8 @@ private let widgetFamily = if #available(iOS 16, *) { WidgetFamily.accessoryCirc
     let expiredDate = Date().addingTimeInterval(1 * 60 * 60 * 24 * 7)
     let (altstore, _, _, longAltStore, _, _) = AppSnapshot.makePreviewSnapshots()
     
-    AppsEntry(date: Date(), apps: [altstore])
-    AppsEntry(date: Date(), apps: [longAltStore])
+    AppsEntry<Any>(date: Date(), apps: [altstore])
+    AppsEntry<Any>(date: Date(), apps: [longAltStore])
     
-    AppsEntry(date: expiredDate, apps: [altstore])
+    AppsEntry<Any>(date: expiredDate, apps: [altstore])
 }

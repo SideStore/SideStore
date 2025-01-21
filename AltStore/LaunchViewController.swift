@@ -248,7 +248,9 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         target_minimuxer_address()
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
-            try start(pairing_file, documentsDirectory)
+            // enable minimuxer console logging only if enabled in settings
+            let isMinimuxerConsoleLoggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
+            try minimuxer.startWithLogger(pairing_file, documentsDirectory, isMinimuxerConsoleLoggingEnabled)
         } catch {
             try! FileManager.default.removeItem(at: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)"))
             displayError("minimuxer failed to start, please restart SideStore. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR!!!!!! REPORT TO GITHUB ISSUES!")")
@@ -311,6 +313,9 @@ extension LaunchViewController
             guard case .failure(let error) = result else { return }
             Logger.main.error("Failed to update sources on launch. \(error.localizedDescription, privacy: .public)")
             
+            let errorDesc = ErrorProcessing(.fullError).getDescription(error: error as NSError)
+            print("Failed to update sources on launch. \(errorDesc)")
+            
             let toastView = ToastView(error: error)
             toastView.addTarget(self.destinationViewController, action: #selector(TabBarController.presentSources), for: .touchUpInside)
             toastView.show(in: self.destinationViewController.selectedViewController ?? self.destinationViewController)
@@ -318,6 +323,7 @@ extension LaunchViewController
         
         self.updateKnownSources()
         
+        // Ask widgets to be refreshed
         WidgetCenter.shared.reloadAllTimelines()
         
         // Add view controller as child (rather than presenting modally)

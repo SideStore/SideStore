@@ -21,7 +21,7 @@ SideStore's goal is to provide an untethered sideloading experience. It's a comm
 - iOS 15+
 - Rustup (`brew install rustup`)
 
-Why iOS 14? Targeting such a recent version of iOS allows us to accelerate development, especially since not many developers have older devices to test on. This is corrobated by the fact that SwiftUI support is much better, allowing us to transistion to a more modern UI codebase.
+Why iOS 15? Targeting such a recent version of iOS allows us to accelerate development, especially since not many developers have older devices to test on. This is corrobated by the fact that SwiftUI support is much better, allowing us to transistion to a more modern UI codebase.
 ## Project Overview
 
 ### SideStore

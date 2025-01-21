@@ -82,7 +82,7 @@ class ViewController: UIViewController
         self.activityIndicatorView.color = .altstoreText
         self.activityIndicatorView.startAnimating()
         
-        // TODO: @mahee96: Disabled this buttons which were present for debugging purpose.
+        // TODO: @mahee96: Disabled these backup/restore buttons in altbackup.app screen which were present for debugging purpose.
         //                 Can find something useful for these later, but these are not required by this backup/restore app
 //        #if DEBUG
 //        let button1 = UIButton(type: .system)

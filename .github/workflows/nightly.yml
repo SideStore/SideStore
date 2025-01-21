@@ -21,7 +21,9 @@ jobs:
     steps:
 
       - name: Set current build as BETA
-        run: echo "IS_BETA=1" >> $GITHUB_ENV
+        run: |
+          echo "IS_BETA=1" >> $GITHUB_ENV
+          echo "RELEASE_CHANNEL=beta" >> $GITHUB_ENV
         
       - name: Checkout code
         uses: actions/checkout@v4
@@ -133,14 +135,40 @@ jobs:
 
         
       - name: Build SideStore
-        run: NSUnbufferedIO=YES make build 2>&1 | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          NSUnbufferedIO=YES make build 2>&1 | tee build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
-        run: make fakesign
+        run: make fakesign | tee -a build.log
 
       - name: Convert to IPA
-        run: make ipa
+        run: make ipa | tee -a build.log
 
+      - name: Encrypt build.log generated from SideStore build for upload
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi 
+
+          if [ ! -f build.log ]; then
+            echo "Warning: build.log is missing, creating a dummy log..."
+            echo "Error: build.log was missing, This is a dummy placeholder file..." > build.log
+          fi
+          
+          zip -e -P "$BUILD_LOG_ZIP_PASSWORD" encrypted-build_log.zip build.log
+
+      - name: List Files after SideStore build
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+  
       - name: Get current date
         id: date
         run: echo "date=$(date -u +'%c')" >> $GITHUB_OUTPUT
@@ -159,7 +187,7 @@ jobs:
           release: "Nightly"
           tag: "nightly"
           prerelease: true
-          files: SideStore.ipa SideStore.dSYMs.zip
+          files: SideStore.ipa SideStore.dSYMs.zip encrypted-build_log.zip
           body: |
               This is an ⚠️ **EXPERIMENTAL** ⚠️ nightly build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
               
@@ -188,6 +216,12 @@ jobs:
         with:
           name: SideStore-${{ steps.version.outputs.version }}-dSYM
           path: ./SideStore.xcarchive/dSYMs/*
+
+      - name: Upload encrypted-build_log.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-build_log.zip
+          path: encrypted-build_log.zip
 
       # Check if PUBLISH_BETA_UPDATES secret is set to non-zero
       - name: Check if PUBLISH_BETA_UPDATES is set
@@ -242,44 +276,42 @@ jobs:
         run: |
           echo "VERSION_IPA=$VERSION_IPA" >> $GITHUB_ENV
           echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
-          echo "BETA=true" >> $GITHUB_ENV
           echo "COMMIT_ID=$SHORT_COMMIT" >> $GITHUB_ENV
           echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
           echo "SHA256=$SHA256_HASH" >> $GITHUB_ENV
           echo "LOCALIZED_DESCRIPTION=This is nightly release for revision: ${{ github.sha }}" >> $GITHUB_ENV
           echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/nightly/SideStore.ipa" >> $GITHUB_ENV
 
-      # - name: Checkout SideStore/apps-v2.json
-      #   if: ${{ steps.check_publish.outcome == 'success' }}
-      #   uses: actions/checkout@v4
-      #   with:
-      #       # Repository name with owner. For example, actions/checkout
-      #       # Default: ${{ github.repository }}
-      #       repository: 'SideStore/apps-v2.json'
-      #       # ref: 'main' # TODO: use branches for alpha and beta tracks? so as to avoid push collision?
-      #       ref: 'nightly' # TODO: use branches for alpha and beta tracks? so as to avoid push collision?
-      #       # token: ${{ github.token }}
-      #       token: ${{ secrets.APPS_DEPLOY_KEY }}
-      #       path: 'SideStore/apps-v2.json'
+      - name: Checkout SideStore/apps-v2.json
+        if: ${{ steps.check_publish.outcome == 'success' }}
+        uses: actions/checkout@v4
+        with:
+            # Repository name with owner. For example, actions/checkout
+            # Default: ${{ github.repository }}
+            repository: 'SideStore/apps-v2.json'
+            ref: 'main' # TODO: use branches for alpha and beta tracks? so as to avoid push collision?
+            # ref: 'nightly' # TODO: use branches for alpha and beta tracks? so as to avoid push collision?
+            # token: ${{ github.token }}
+            token: ${{ secrets.APPS_DEPLOY_KEY }}
+            path: 'SideStore/apps-v2.json'
       
-      # - name: Publish to SideStore/apps-v2.json
-      #   if: ${{ steps.check_publish.outcome == 'success' }}
-      #   run: |
-      #     # Copy and execute the update script
-      #     pushd SideStore/apps-v2.json/
+      - name: Publish to SideStore/apps-v2.json
+        if: ${{ steps.check_publish.outcome == 'success' }}
+        run: |
+          # Copy and execute the update script
+          pushd SideStore/apps-v2.json/
   
-      #     # Configure Git user (committer details)
-      #     git config user.name "GitHub Actions"
-      #     git config user.email "github-actions@github.com"
+          # Configure Git user (committer details)
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
           
-      #     # Make the update script executable and run it
-      #     python3 ../../update_apps.py "./_includes/source.json"
+          # update the source.json
+          python3 ../../update_apps.py "./_includes/source.json"
           
-      #     # Commit changes and push using SSH
-      #     git add ./_includes/source.json
-      #     git commit -m " - updated for $SHORT_COMMIT deployment" || echo "No changes to commit"
+          # Commit changes and push using SSH
+          git add ./_includes/source.json
+          git commit -m " - updated for $SHORT_COMMIT deployment" || echo "No changes to commit"
 
-      #     git status
-      #     # git push origin HEAD:main
-      #     git push origin HEAD:nightly
-      #     popd
+          git status
+          git push origin HEAD:main
+          popd

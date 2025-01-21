@@ -13,15 +13,16 @@ import AltSign
 import Roxas
 
 @objc(FetchProvisioningProfilesOperation)
-final class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioningProfile]>
+class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioningProfile]>
 {
     let context: AppOperationContext
     
     var additionalEntitlements: [ALTEntitlement: Any]?
     
-    private let appGroupsLock = NSLock()
+    internal let appGroupsLock = NSLock()
     
-    init(context: AppOperationContext)
+    // this class is abstract or shouldn't be instantiated outside, use the subclasses
+    fileprivate init(context: AppOperationContext)
     {
         self.context = context
         
@@ -40,11 +41,13 @@ final class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProv
             return
         }
         
-        guard
-            let team = self.context.team,
-            let session = self.context.session
-        else {
-            return self.finish(.failure(OperationError.invalidParameters("FetchProvisioningProfilesOperation.main: self.context.team or self.context.session is nil"))) }
+        guard let team = self.context.team,
+              let session = self.context.session else {
+            
+            return self.finish(.failure(
+                OperationError.invalidParameters("FetchProvisioningProfilesOperation.main: self.context.team or self.context.session is nil"))
+            )
+        }
         
         guard let app = self.context.app else { return self.finish(.failure(OperationError.appNotFound(name: nil))) }
         
@@ -120,7 +123,11 @@ final class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProv
 
 extension FetchProvisioningProfilesOperation
 {
-    func prepareProvisioningProfile(for app: ALTApplication, parentApp: ALTApplication?, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
+    private func prepareProvisioningProfile(for app: ALTApplication,
+                                    parentApp: ALTApplication?,
+                                    team: ALTTeam,
+                                    session: ALTAppleAPISession, c
+                                    completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
     {
         DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
             
@@ -134,19 +141,21 @@ extension FetchProvisioningProfilesOperation
                 // or if installedApp.team is nil but resignedBundleIdentifier contains the team's identifier.
                 let teamsMatch = installedApp.team?.identifier == team.identifier || (installedApp.team == nil && installedApp.resignedBundleIdentifier.contains(team.identifier))
                 
-//                #if DEBUG
-//
-//                if app.isAltStoreApp
-//                {
-//                    // Use legacy bundle ID format for AltStore.
-//                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
-//                }
-//                else
-//                {
-//                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
-//                }
-//
-//                #else
+                // TODO: @mahee96: Try to keep the debug build and release build operations similar, refactor later with proper reasoning
+                //                 for now, restricted it to debug on simulator only
+                #if DEBUG && targetEnvironment(simulator)
+
+                if app.isAltStoreApp
+                {
+                    // Use legacy bundle ID format for AltStore.
+                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
+                }
+                else
+                {
+                    preferredBundleID = teamsMatch ? installedApp.resignedBundleIdentifier : nil
+                }
+
+                #else
                 
                 if teamsMatch
                 {
@@ -160,7 +169,7 @@ extension FetchProvisioningProfilesOperation
                     preferredBundleID = nil
                 }
                 
-               // #endif
+                #endif
             }
             else
             {
@@ -211,35 +220,22 @@ extension FetchProvisioningProfilesOperation
                 {
                 case .failure(let error): completionHandler(.failure(error))
                 case .success(let appID):
-                    
-                    // Update features
-                    self.updateFeatures(for: appID, app: app, team: team, session: session) { (result) in
-                        switch result
-                        {
-                        case .failure(let error): completionHandler(.failure(error))
-                        case .success(let appID):
-                            
-                            // Update app groups
-                            self.updateAppGroups(for: appID, app: app, team: team, session: session) { (result) in
-                                switch result
-                                {
-                                case .failure(let error): completionHandler(.failure(error))
-                                case .success(let appID):
-                                    
-                                    // Fetch Provisioning Profile
-                                    self.fetchProvisioningProfile(for: appID, team: team, session: session) { (result) in
-                                        completionHandler(result)
-                                    }
-                                }
-                            }
-                        }
-                    }
+
+                    //process
+                    self.fetchProvisioningProfile(
+                        for: appID, team: team, session: session, completionHandler: completionHandler
+                    )
                 }
             }
         }
     }
     
-    func registerAppID(for application: ALTApplication, name: String, bundleIdentifier: String, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
+    private func registerAppID(for application: ALTApplication,
+                       name: String,
+                       bundleIdentifier: String,
+                       team: ALTTeam,
+                       session: ALTAppleAPISession,
+                       completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
     {
         ALTAppleAPI.shared.fetchAppIDs(for: team, session: session) { (appIDs, error) in
             do
@@ -333,7 +329,81 @@ extension FetchProvisioningProfilesOperation
         }
     }
     
-    func updateFeatures(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
+    internal func fetchProvisioningProfile(for appID: ALTAppID, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
+    {
+        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
+            switch Result(profile, error)
+            {
+            case .failure(let error): completionHandler(.failure(error))
+            case .success(let profile):
+                
+                // Delete existing profile
+                ALTAppleAPI.shared.delete(profile, for: team, session: session) { (success, error) in
+                    switch Result(success, error)
+                    {
+                    case .failure:
+                        // As of March 20, 2023, the free provisioning profile is re-generated each fetch, and you can no longer delete it.
+                        // So instead, we just return the fetched profile from above.
+                        completionHandler(.success(profile))
+                        
+                    case .success:
+                        Logger.sideload.notice("Generating new free provisioning profile for App ID \(appID.bundleIdentifier, privacy: .public).")
+                        
+                        // Fetch new provisioning profile
+                        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
+                            completionHandler(Result(profile, error))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+class FetchProvisioningProfilesRefreshOperation: FetchProvisioningProfilesOperation, @unchecked Sendable {
+    override init(context: AppOperationContext)
+    {
+        super.init(context: context)
+    }
+}
+
+class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperation, @unchecked Sendable{
+    override init(context: AppOperationContext)
+    {
+        super.init(context: context)
+    }
+    
+    // modify Operations are allowed for the app groups and other stuffs
+    func fetchProvisioningProfile(appID: ALTAppID,
+                                    for app: ALTApplication,
+                                    team: ALTTeam,
+                                    session: ALTAppleAPISession,
+                                    completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
+    {
+        
+        // Update features
+        self.updateFeatures(for: appID, app: app, team: team, session: session) { (result) in
+            switch result
+            {
+            case .failure(let error): completionHandler(.failure(error))
+            case .success(let appID):
+                
+                // Update app groups
+                self.updateAppGroups(for: appID, app: app, team: team, session: session) { (result) in
+                    switch result
+                    {
+                    case .failure(let error): completionHandler(.failure(error))
+                    case .success(let appID):
+                        
+                        // Fetch Provisioning Profile
+                        super.fetchProvisioningProfile(for: appID, team: team, session: session, completionHandler: completionHandler)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func updateFeatures(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
     {
         var entitlements = app.entitlements
         for (key, value) in additionalEntitlements ?? [:]
@@ -412,7 +482,7 @@ extension FetchProvisioningProfilesOperation
         }
     }
     
-    func updateAppGroups(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
+    private func updateAppGroups(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAppID, Error>) -> Void)
     {
         var entitlements = app.entitlements
         for (key, value) in additionalEntitlements ?? [:]
@@ -511,7 +581,7 @@ extension FetchProvisioningProfilesOperation
                                     Logger.sideload.notice("Created new App Group \(group.groupIdentifier, privacy: .public).")
                                     groups.append(group)
                                     
-                                case .failure(let error): 
+                                case .failure(let error):
                                     Logger.sideload.notice("Failed to create new App Group \(adjustedGroupIdentifier, privacy: .public). \(error.localizedDescription, privacy: .public)")
                                     errors.append(error)
                                 }
@@ -541,36 +611,6 @@ extension FetchProvisioningProfilesOperation
                                     finish(.failure(error))
                                 }
                             }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func fetchProvisioningProfile(for appID: ALTAppID, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
-    {
-        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
-            switch Result(profile, error)
-            {
-            case .failure(let error): completionHandler(.failure(error))
-            case .success(let profile):
-                
-                // Delete existing profile
-                ALTAppleAPI.shared.delete(profile, for: team, session: session) { (success, error) in
-                    switch Result(success, error)
-                    {
-                    case .failure:
-                        // As of March 20, 2023, the free provisioning profile is re-generated each fetch, and you can no longer delete it.
-                        // So instead, we just return the fetched profile from above.
-                        completionHandler(.success(profile))
-                        
-                    case .success:
-                        Logger.sideload.notice("Generating new free provisioning profile for App ID \(appID.bundleIdentifier, privacy: .public).")
-                        
-                        // Fetch new provisioning profile
-                        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
-                            completionHandler(Result(profile, error))
                         }
                     }
                 }

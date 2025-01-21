@@ -626,6 +626,11 @@ extension AppManager
         self.fetchSources() { (result) in
             do
             {
+                // Check if the result is failure and rethrow
+                if case .failure(let error) = result {
+                    throw error  // Rethrow the error
+                }
+                
                 do
                 {
                     let (_, context) = try result.get()
@@ -1146,27 +1151,28 @@ private extension AppManager
                 case .activate(let app) where UserDefaults.standard.isLegacyDeactivationSupported: fallthrough
                 case .refresh(let app):
                     // Check if backup app is installed in place of real app.
-                    let uti = UTTypeCopyDeclaration(app.installedBackupAppUTI as CFString)?.takeRetainedValue() as NSDictionary?
+//                    let altBackupUti = UTTypeCopyDeclaration(app.installedBackupAppUTI as CFString)?.takeRetainedValue() as NSDictionary?
 
-                    if app.certificateSerialNumber != group.context.certificate?.serialNumber ||
-                        uti != nil ||
-                        app.needsResign ||
+//                    if app.certificateSerialNumber != group.context.certificate?.serialNumber ||
+//                        altBackupUti != nil ||        // why would altbackup requires reinstall? it shouldn't cause we are just renewing profiles
+//                        app.needsResign ||            // why would an app require resign during refresh? it shouldn't!
                         // We need to reinstall ourselves on refresh to ensure the new provisioning profile is used
-                        app.bundleIdentifier == StoreApp.altstoreAppID
-                    {
+                        //  => mahee96: jkcoxson confirmed misagent manages profiles independently without requiring lockdownd or installd intervention, so sidestore profile renewal shouldn't require reinstall
+//                        app.bundleIdentifier == StoreApp.altstoreAppID    
+//                    {
                         // Resign app instead of just refreshing profiles because either:
-                        // * Refreshing using different certificate
-                        // * Backup app is still installed
-                        // * App explicitly needs resigning
+                        // * Refreshing using different certificate     // when can this happen?, lets assume, refreshing with different certificate, why not just ask user to re-install manually? (probably we need re-install button)
+                        // * Backup app is still installed              // but why? I mean the AltBackup was put in place for a reason? ie during refresh just renew appIDs don't care about the app itself.
+                        // * App explicitly needs resigning             // when can this happen?
                         // * Device is jailbroken and using AltDaemon on iOS 14.0 or later (b/c refreshing with provisioning profiles is broken)
                         
-                        let installProgress = self._install(app, operation: operation, group: group) { (result) in
-                            self.finish(operation, result: result, group: group, progress: progress)
-                        }
-                        progress?.addChild(installProgress, withPendingUnitCount: 80)
-                    }
-                    else
-                    {
+//                        let installProgress = self._install(app, operation: operation, group: group) { (result) in
+//                            self.finish(operation, result: result, group: group, progress: progress)
+//                        }
+//                        progress?.addChild(installProgress, withPendingUnitCount: 80)
+//                    }
+//                    else
+//                    {
                         // Refreshing with same certificate as last time, and backup app isn't still installed,
                         // so we can just refresh provisioning profiles.
                         
@@ -1174,7 +1180,7 @@ private extension AppManager
                             self.finish(operation, result: result, group: group, progress: progress)
                         }
                         progress?.addChild(refreshProgress, withPendingUnitCount: 80)
-                    }
+//                    }
                     
                 case .activate(let app):
                     let activateProgress = self._activate(app, operation: operation, group: group) { (result) in
@@ -1232,132 +1238,6 @@ private extension AppManager
         }
         
         return group
-    }
-    
-    func removeAppExtensions(
-        from application: ALTApplication,
-        existingApp: InstalledApp?,
-        extensions: Set<ALTApplication>,
-        _ presentingViewController: UIViewController?,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-            
-        // App-Extensions: Ensure existing app's extensions and currently installing app's extensions must match
-        if let existingApp {
-            _ = RSTAsyncBlockOperation { _ in
-                let existingAppEx: Set<InstalledExtension> = existingApp.appExtensions
-                let currentAppEx: Set<ALTApplication> = application.appExtensions
-                
-                let currentAppExNames  = currentAppEx.map{ appEx in appEx.bundleIdentifier}
-                let existingAppExNames = existingAppEx.map{ appEx in appEx.bundleIdentifier}
-                
-                let excessExtensions = currentAppEx.filter{
-                    !(existingAppExNames.contains($0.bundleIdentifier))
-                }
-                
-                
-                let isMatching = (currentAppEx.count == existingAppEx.count) && excessExtensions.isEmpty
-                let diagnosticsMsg = "AppManager.removeAppExtensions: App Extensions in existingApp and currentApp are matching: \(isMatching)\n"
-                + "AppManager.removeAppExtensions: existingAppEx: \(existingAppExNames); currentAppEx: \(String(describing: currentAppExNames))\n"
-                print(diagnosticsMsg)
-                
-                
-                // if background mode, then remove only the excess extensions
-                guard let presentingViewController: UIViewController = presentingViewController else {
-                    // perform silent extensions cleanup for those that aren't already present in existing app
-                    print("\n    Performing background mode Extensions removal    \n")
-                    print("AppManager.removeAppExtensions: Excess Extensions: \(excessExtensions)")
-                    
-                    do {
-                        for appExtension in excessExtensions {
-                            print("Deleting extension \(appExtension.bundleIdentifier)")
-                            try FileManager.default.removeItem(at: appExtension.fileURL)
-                        }
-                        return completion(.success(()))
-                    } catch {
-                        return completion(.failure(error))
-                    }
-                }
-            }
-        }
-     
-        guard !application.appExtensions.isEmpty else { return completion(.success(())) }
-        
-        DispatchQueue.main.async {
-            let firstSentence: String
-            
-            if UserDefaults.standard.activeAppLimitIncludesExtensions
-            {
-                firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions.", comment: "")
-            }
-            else
-            {
-                firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to creating 10 App IDs per week.", comment: "")
-            }
-            
-            let message = firstSentence + " " + NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit? There are \(extensions.count) Extensions", comment: "")
-            
-            let alertController = UIAlertController(title: NSLocalizedString("App Contains Extensions", comment: ""), message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { (action) in
-                completion(.failure(OperationError.cancelled))
-            }))
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Keep App Extensions", comment: ""), style: .default) { (action) in
-                completion(.success(()))
-            })
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove App Extensions", comment: ""), style: .destructive) { (action) in
-                do
-                {
-                    for appExtension in application.appExtensions
-                    {
-                        print("Deleting extension \(appExtension.bundleIdentifier)")
-                        try FileManager.default.removeItem(at: appExtension.fileURL)
-                    }
-                    
-                    completion(.success(()))
-                }
-                catch
-                {
-                    completion(.failure(error))
-                }
-            })
-            
-            if let presentingViewController {
-                alertController.addAction(UIAlertAction(title: NSLocalizedString("Choose App Extensions", comment: ""), style: .default) { (action) in
-                    let popoverContentController = AppExtensionViewHostingController(extensions: extensions) { (selection) in
-                        do
-                        {
-                            for appExtension in selection
-                            {
-                                print("Deleting extension \(appExtension.bundleIdentifier)")
-                                
-                                try FileManager.default.removeItem(at: appExtension.fileURL)
-                            }
-                            completion(.success(()))
-                        }
-                        catch
-                        {
-                            completion(.failure(error))
-                        }
-                        return nil
-                    }
-                    
-                    let suiview = popoverContentController.view!
-                    suiview.translatesAutoresizingMaskIntoConstraints = false
-                    
-                    popoverContentController.modalPresentationStyle = .popover
-                    
-                    if let popoverPresentationController = popoverContentController.popoverPresentationController {
-                        popoverPresentationController.sourceView = presentingViewController.view
-                        popoverPresentationController.sourceRect = CGRect(x: 50, y: 50, width: 4, height: 4)
-                        popoverPresentationController.delegate = popoverContentController
-                        
-                        presentingViewController.present(popoverContentController, animated: true)
-                    }
-                })
-                
-                presentingViewController.present(alertController, animated: true)
-            }
-        }
     }
     
     private func _install(_ app: AppProtocol,
@@ -1469,52 +1349,20 @@ private extension AppManager
         verifyOperation.addDependency(downloadOperation)
         
         /* Remove App Extensions */
-        
-        let removeAppExtensionsOperation = RSTAsyncBlockOperation { [weak self] (operation) in
-            do
+        let localAppExtensions = (app as? ALTApplication)?.appExtensions
+        let removeAppExtensionsOperation = RemoveAppExtensionsOperation(context: context,
+                                                                        localAppExtensions: localAppExtensions)
+        removeAppExtensionsOperation.resultHandler = { (result) in
+            switch result
             {
-                if let error = context.error
-                {
-                    throw error
-                }
-/*
-                guard case .install = appOperation else {
-                    operation.finish()
-                    return
-                }
-*/
-                guard let extensions = context.app?.appExtensions else {
-                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app?.appExtensions is nil")
-                }
-                
-                guard let currentApp = context.app else {
-                    throw OperationError.invalidParameters("AppManager._install.removeAppExtensionsOperation: context.app is nil")
-                }
-                
-                                
-                self?.removeAppExtensions(from: currentApp,
-                                          existingApp: app as? InstalledApp,
-                                          extensions: extensions,
-                                          context.authenticatedContext.presentingViewController
-                ) { result in
-                    switch result {
-                    case .success(): break
-                    case .failure(let error): context.error = error
-                    }
-                    operation.finish()
-                }
-                
-            }
-            catch
-            {
+            case .failure(let error):
                 context.error = error
-                operation.finish()
+            case .success: break
             }
         }
-        
         removeAppExtensionsOperation.addDependency(verifyOperation)
 
-
+        
         /* Refresh Anisette Data */
         let refreshAnisetteDataOperation = FetchAnisetteDataOperation(context: group.context)
         refreshAnisetteDataOperation.resultHandler = { (result) in
@@ -1529,7 +1377,7 @@ private extension AppManager
 
 
         /* Fetch Provisioning Profiles */
-        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
+        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesInstallOperation(context: context)
         fetchProvisioningProfilesOperation.additionalEntitlements = additionalEntitlements
         fetchProvisioningProfilesOperation.resultHandler = { (result) in
             switch result
@@ -1763,7 +1611,7 @@ private extension AppManager
     private func exportResginedAppsToDocsDir(_ resignedApp: ALTApplication)
     {
         // Check if the user has enabled exporting resigned apps to the Documents directory and continue
-        guard UserDefaults.standard.isResignedAppExportEnabled else {
+        guard UserDefaults.standard.isExportResignedAppEnabled else {
             return
         }
         
@@ -1815,26 +1663,27 @@ private extension AppManager
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
         
-        //App-Extensions: Ensure DB data and disk state must match
-        let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
-        let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
-        let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
-        let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
-        let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
+       // Since this doesn't involve modifying app bundle which will cause re-install, this is safe  in refresh path 
+       //App-Extensions: Ensure DB data and disk state must match
+       let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
+       let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
+       let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
+       let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
+       let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
 
-        let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
-            
-            let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
-                           + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
-            print(errMessage)
-            if(!isMatching){
-                completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
-            }
-            op.finish()
-        }
+       let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
+           
+           let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
+                          + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
+           print(errMessage)
+           if(!isMatching){
+               completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
+           }
+           op.finish()
+       }
         
         /* Fetch Provisioning Profiles */
-        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesOperation(context: context)
+        let fetchProvisioningProfilesOperation = FetchProvisioningProfilesRefreshOperation(context: context)
         fetchProvisioningProfilesOperation.resultHandler = { (result) in
             switch result
             {
@@ -1844,7 +1693,7 @@ private extension AppManager
             }
         }
         progress.addChild(fetchProvisioningProfilesOperation.progress, withPendingUnitCount: 60)
-        fetchProvisioningProfilesOperation.addDependency(validateAppExtensionsOperation)
+        // fetchProvisioningProfilesOperation.addDependency(validateAppExtensionsOperation)
 
         /* Refresh */
         let refreshAppOperation = RefreshAppOperation(context: context)
@@ -1853,7 +1702,10 @@ private extension AppManager
             {
             case .success(let installedApp):
                 completionHandler(.success(installedApp))
-                
+
+
+            // refreshing local app's provisioning profile means talking to misagent daemon
+            // which requires loopback vpn
             case .failure(MinimuxerError.ProfileInstall):
                 completionHandler(.failure(OperationError.noWiFi))
                 
@@ -1878,7 +1730,8 @@ private extension AppManager
         progress.addChild(refreshAppOperation.progress, withPendingUnitCount: 40)
         refreshAppOperation.addDependency(fetchProvisioningProfilesOperation)
         
-        let operations = [validateAppExtensionsOperation, fetchProvisioningProfilesOperation, refreshAppOperation]
+//        let operations = [validateAppExtensionsOperation, fetchProvisioningProfilesOperation, refreshAppOperation]
+        let operations = [fetchProvisioningProfilesOperation, refreshAppOperation]
         group.add(operations)
         self.run(operations, context: group.context)
 
@@ -2280,6 +2133,7 @@ private extension AppManager
                 AnalyticsManager.shared.trackEvent(event)
             }
             
+            // Ask widgets to be refreshed
             WidgetCenter.shared.reloadAllTimelines()
             
             do 

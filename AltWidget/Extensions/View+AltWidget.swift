@@ -53,4 +53,29 @@ extension View
             self
         }
     }
+
+    @ViewBuilder
+    func pageUpButton(_ widgetID: Int?, _ widgetKind: String) -> some View {
+        if #available(iOSApplicationExtension 17, *) {
+            Button(intent: PaginationIntent(widgetID, .up, widgetKind)){
+                self
+            }
+            .buttonStyle(.plain)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func pageDownButton(_ widgetID: Int?, _ widgetKind: String) -> some View {
+        if #available(iOSApplicationExtension 17, *) {
+            Button(intent: PaginationIntent(widgetID, .down, widgetKind)){
+                self
+            }
+            .buttonStyle(.plain)
+        } else {
+            self
+        }
+    }
+
 }

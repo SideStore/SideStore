@@ -715,9 +715,10 @@ private extension AuthenticationOperation
         // If we're not using the same certificate used to install AltStore, warn user that they need to refresh.
         guard !provisioningProfile.certificates.contains(signer.certificate) else { return completionHandler(false) }
         
-#if DEBUG
-        completionHandler(false)
-#else
+//        #if DEBUG && targetEnvironment(simulator)
+//        completionHandler(false)
+//        #else
+        
         DispatchQueue.main.async {
             let context = AuthenticatedOperationContext(context: self.context)
             context.operations.removeAllObjects() // Prevent deadlock due to endless waiting on previous operations to finish.
@@ -733,7 +734,7 @@ private extension AuthenticationOperation
                 completionHandler(false)
             }
         }
-#endif
+//        #endif
     }
 }
 

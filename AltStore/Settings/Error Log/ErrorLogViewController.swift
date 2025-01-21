@@ -16,6 +16,7 @@ import Roxas
 import Nuke
 
 import QuickLook
+import SwiftUI
 
 final class ErrorLogViewController: UITableViewController, QLPreviewControllerDelegate
 {
@@ -59,7 +60,45 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
             // Assign just clearLogButton to hide export button.
             self.navigationItem.rightBarButtonItems = [self.clearLogButton]
         }
+        
+//        // Adjust the width of the right bar button items
+//        adjustRightBarButtonWidth()
     }
+    
+    
+//    func adjustRightBarButtonWidth() {
+//        // Access the current rightBarButtonItems
+//        if let rightBarButtonItems = self.navigationItem.rightBarButtonItems {
+//            for barButtonItem in rightBarButtonItems {
+//                // Check if the button is a system button, and if so, replace it with a custom button
+//                if barButtonItem.customView == nil {
+//                    // Replace with a custom UIButton for each bar button item
+//                    let customButton = UIButton(type: .custom)
+//                    if let image = barButtonItem.image {
+//                        customButton.setImage(image, for: .normal)
+//                    }
+//                    if let action = barButtonItem.action{
+//                        customButton.addTarget(barButtonItem.target, action: action, for: .touchUpInside)
+//                    }
+//                    
+//                    // Calculate the original size based on the system button
+//                    let originalSize = customButton.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+//                    
+//                    let scaleFactor = 0.7
+//                    
+//                    // Scale the size by 0.7 (70%)
+//                    let scaledSize = CGSize(width: originalSize.width * scaleFactor, height: originalSize.height * scaleFactor)
+//                    
+//                    // Adjust the custom button's width
+////                    customButton.frame.size = CGSize(width: 22, height: 22) // Adjust width as needed
+//                    customButton.frame.size = scaledSize // Adjust width as needed
+//                    
+//                    // Set the custom button as the custom view for the UIBarButtonItem
+//                    barButtonItem.customView = customButton
+//                }
+//            }
+//        }
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
@@ -216,15 +255,86 @@ private extension ErrorLogViewController
         }
     }
     
-    @IBAction func showMinimuxerLogs(_ sender: UIBarButtonItem)
-    {
-        // Show minimuxer.log
-        let previewController = QLPreviewController()
-        previewController.dataSource = self
-        let navigationController = UINavigationController(rootViewController: previewController)
-        present(navigationController, animated: true, completion: nil)
+    
+    enum LogView: String {
+        case consoleLog = "console-log"
+        case minimuxerLog = "minimuxer-log"
+
+        // This class will manage the QLPreviewController and the timer.
+        private class LogViewManager {
+            var previewController: QLPreviewController
+            var refreshTimer: Timer?
+            var logView: LogView
+
+            init(previewController: QLPreviewController, logView: LogView) {
+                self.previewController = previewController
+                self.logView = logView
+            }
+
+            // Start refreshing the preview controller every second
+            func startRefreshing() {
+                refreshTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(refreshPreview), userInfo: nil, repeats: true)
+            }
+
+            @objc private func refreshPreview() {
+                previewController.reloadData()
+            }
+
+            // Stop the timer to prevent leaks
+            func stopRefreshing() {
+                refreshTimer?.invalidate()
+                refreshTimer = nil
+            }
+
+            func updateLogPath() {
+                // Force the QLPreviewController to reload by changing the file path
+                previewController.reloadData()
+            }
+        }
+
+        // Method to get the QLPreviewController for this log type
+        func getViewController(_ dataSource: QLPreviewControllerDataSource) -> QLPreviewController {
+            let previewController = QLPreviewController()
+            previewController.restorationIdentifier = self.rawValue
+            previewController.dataSource = dataSource
+
+            // Create LogViewManager and start refreshing
+            let manager = LogViewManager(previewController: previewController, logView: self)
+//            manager.startRefreshing()     // DO NOT REFRESH the full view contents causing flickering
+
+            return previewController
+        }
+        
+        func getLogPath() -> URL {
+            switch self {
+                case .consoleLog:
+                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                    return appDelegate.consoleLog.logFileURL
+                case .minimuxerLog:
+                    return FileManager.default.documentsDirectory.appendingPathComponent("minimuxer.log")
+            }
+        }
     }
     
+    @IBAction func showConsoleLogs(_ sender: UIBarButtonItem) {
+        // Create the SwiftUI ConsoleLogView with the URL
+        let consoleLogView = ConsoleLogView(logURL: (UIApplication.shared.delegate as! AppDelegate).consoleLog.logFileURL)
+        
+        // Create the UIHostingController
+        let consoleLogController = UIHostingController(rootView: consoleLogView)
+        
+        // Configure the bottom sheet presentation
+        consoleLogController.modalPresentationStyle = .pageSheet
+        if let sheet = consoleLogController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]  // You can adjust the size of the sheet (medium/large)
+            sheet.prefersGrabberVisible = true    // Optional: Shows a grabber at the top of the sheet
+            sheet.selectedDetentIdentifier = .large  // Default size when presented
+        }
+        
+        // Present the bottom sheet
+        present(consoleLogController, animated: true, completion: nil)
+    }
+        
     @IBAction func clearLoggedErrors(_ sender: UIBarButtonItem)
     {
         let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to clear the error log?", comment: ""), message: nil, preferredStyle: .actionSheet)
@@ -285,58 +395,74 @@ private extension ErrorLogViewController
         self.performSegue(withIdentifier: "showErrorDetails", sender: loggedError)
     }
     
-    @available(iOS 15, *)
-    @IBAction func exportDetailedLog(_ sender: UIBarButtonItem)
+    @IBAction func showMinimuxerLogs(_ sender: UIBarButtonItem)
     {
-        self.exportLogButton.isIndicatingActivity = true
-        
-        Task<Void, Never>.detached(priority: .userInitiated) {
-            do
-            {
-                let store = try OSLogStore(scope: .currentProcessIdentifier)
-                
-                // All logs since the app launched.
-                let position = store.position(timeIntervalSinceLatestBoot: 0)
-                let predicate = NSPredicate(format: "subsystem == %@", Logger.altstoreSubsystem)
-                
-                let entries = try store.getEntries(at: position, matching: predicate)
-                    .compactMap { $0 as? OSLogEntryLog }
-                    .map { "[\($0.date.formatted())] [\($0.category)] [\($0.level.localizedName)] \($0.composedMessage)" }
-                
-                let outputText = entries.joined(separator: "\n")
-                
-                let outputDirectory = FileManager.default.uniqueTemporaryURL()
-                try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
-                
-                let outputURL = outputDirectory.appendingPathComponent("altstore.log")
-                try outputText.write(to: outputURL, atomically: true, encoding: .utf8)
-                
-                await MainActor.run {
-                    self._exportedLogURL = outputURL
-                    
-                    let previewController = QLPreviewController()
-                    previewController.delegate = self
-                    previewController.dataSource = self
-                    previewController.view.tintColor = .altPrimary
-                    self.present(previewController, animated: true)
-                }
-            }
-            catch
-            {
-                Logger.main.error("Failed to export OSLog entries. \(error.localizedDescription, privacy: .public)")
-                
-                await MainActor.run {
-                    let alertController = UIAlertController(title: NSLocalizedString("Unable to Export Detailed Log", comment: ""), message: error.localizedDescription, preferredStyle: .alert)
-                    alertController.addAction(.ok)
-                    self.present(alertController, animated: true)
-                }
-            }
-            
-            await MainActor.run {
-                self.exportLogButton.isIndicatingActivity = false
-            }
-        }
+        // Show minimuxer.log
+        let previewController = LogView.minimuxerLog.getViewController(self)
+        let navigationController = UINavigationController(rootViewController: previewController)
+        present(navigationController, animated: true, completion: nil)
     }
+    
+//    @available(iOS 15, *)
+//    @IBAction func exportDetailedLog(_ sender: UIBarButtonItem)
+//    {
+//        self.exportLogButton.isIndicatingActivity = true
+//        
+//        Task<Void, Never>.detached(priority: .userInitiated) {
+//            do
+//            {
+//                let store = try OSLogStore(scope: .currentProcessIdentifier)
+//                
+//                // All logs since the app launched.
+//                let position = store.position(timeIntervalSinceLatestBoot: 0)
+////                let predicate = NSPredicate(format: "subsystem == %@", Logger.altstoreSubsystem)
+////                
+////                let entries = try store.getEntries(at: position, matching: predicate)
+////                    .compactMap { $0 as? OSLogEntryLog }
+////                    .map { "[\($0.date.formatted())] [\($0.category)] [\($0.level.localizedName)] \($0.composedMessage)" }
+////
+//                // Remove the predicate to get all log entries
+////                let entries = try store.getEntries(at: position)
+////                    .compactMap { $0 as? OSLogEntryLog }
+////                    .map { "[\($0.date.formatted())] [\($0.category)] [\($0.level.localizedName)] \($0.composedMessage)" }
+//
+//                let entries = try store.getEntries(at: position)
+//
+////                let outputText = entries.joined(separator: "\n")
+//                let outputText = entries.map { $0.description }.joined(separator: "\n")
+//                
+//                let outputDirectory = FileManager.default.uniqueTemporaryURL()
+//                try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+//                
+//                let outputURL = outputDirectory.appendingPathComponent("altstore.log")
+//                try outputText.write(to: outputURL, atomically: true, encoding: .utf8)
+//                
+//                await MainActor.run {
+//                    self._exportedLogURL = outputURL
+//                    
+//                    let previewController = QLPreviewController()
+//                    previewController.delegate = self
+//                    previewController.dataSource = self
+//                    previewController.view.tintColor = .altPrimary
+//                    self.present(previewController, animated: true)
+//                }
+//            }
+//            catch
+//            {
+//                Logger.main.error("Failed to export OSLog entries. \(error.localizedDescription, privacy: .public)")
+//                
+//                await MainActor.run {
+//                    let alertController = UIAlertController(title: NSLocalizedString("Unable to Export Detailed Log", comment: ""), message: error.localizedDescription, preferredStyle: .alert)
+//                    alertController.addAction(.ok)
+//                    self.present(alertController, animated: true)
+//                }
+//            }
+//            
+//            await MainActor.run {
+//                self.exportLogButton.isIndicatingActivity = false
+//            }
+//        }
+//    }
 }
 
 extension ErrorLogViewController
@@ -412,9 +538,13 @@ extension ErrorLogViewController: QLPreviewControllerDataSource {
         return 1
     }
 
-    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        let fileURL = FileManager.default.documentsDirectory.appendingPathComponent("minimuxer.log")
-        return fileURL as QLPreviewItem
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem
+    {
+        guard let identifier = controller.restorationIdentifier,
+              let logView = LogView(rawValue: identifier) else {
+            fatalError("Invalid restorationIdentifier")
+        }
+        return logView.getLogPath() as QLPreviewItem
     }
 }
 

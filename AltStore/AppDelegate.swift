@@ -41,8 +41,26 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private let intentHandler = IntentHandler()
     private let viewAppIntentHandler = ViewAppIntentHandler()
     
+    public let consoleLog = ConsoleLog()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
+        // navigation bar buttons spacing is too much (so hack it to use minimal spacing)
+        // this is swift-5 specific behavior and might change
+        // https://stackoverflow.com/a/64988363/11971304
+        //
+        // Warning: this affects all screens through out the app, and basically overrides storyboard
+        let stackViewAppearance = UIStackView.appearance(whenContainedInInstancesOf: [UINavigationBar.self])
+        stackViewAppearance.spacing = -8        // adjust as needed
+        
+        consoleLog.startCapturing()
+        print("===================================================")
+        print("|               App is Starting up                |")
+        print("===================================================")
+        print("| Console Logger started capturing output streams |")
+        print("===================================================")
+        print("\n ")
+
         // Override point for customization after application launch.
 //        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.MigrationDebug")
 //        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.SQLDebug")
@@ -81,9 +99,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UserDefaults.standard.preferredServerID = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.serverID) as? String
         
-//        #if DEBUG || BETA
+        #if DEBUG && (targetEnvironment(simulator) || BETA)
         UserDefaults.standard.isDebugModeEnabled = true
-//        #endif
+        #endif
         
         self.prepareForBackgroundFetch()
         
@@ -129,6 +147,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         case is ViewAppIntent: return self.viewAppIntentHandler
         default: return nil
         }
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Stop console logging and clean up resources
+        print("\n ")
+        print("===================================================")
+        print("| Console Logger stopped capturing output streams |")
+        print("===================================================")
+        print("|           App is being terminated               |")
+        print("===================================================")
+        consoleLog.stopCapturing()
     }
 }
 
@@ -269,7 +298,7 @@ extension AppDelegate
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
         }
         
-        #if DEBUG
+        #if DEBUG && targetEnvironment(simulator)
         UIApplication.shared.registerForRemoteNotifications()
         #endif
     }

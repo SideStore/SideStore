@@ -71,20 +71,20 @@ fileprivate struct BuildVersion: Comparable {
 }
 
 extension ProcessInfo {
-    var shortVersion: String {
+    public var shortVersion: String {
         operatingSystemVersionString
             .replacingOccurrences(of: "Version ", with: "")
             .replacingOccurrences(of: "Build ", with: "")
     }
     
-    var operatingSystemBuild: String {
+    public var operatingSystemBuild: String {
         if let start = shortVersion.range(of: "(")?.upperBound,
            let end = shortVersion.range(of: ")")?.lowerBound {
             shortVersion[start..<end].replacingOccurrences(of: "Build ", with: "")
         } else { "???" }
     }
     
-    var sparseRestorePatched: Bool {
+    public var sparseRestorePatched: Bool {
         if operatingSystemVersion < OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 0) { false }
         else if operatingSystemVersion > OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 1) { true }
         else if operatingSystemVersion >= OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 0),

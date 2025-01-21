@@ -38,10 +38,14 @@ class ResultOperation<ResultType>: Operation
             result = .failure(error)
         }
         
-        // diagnostics logging
-        let resultStatus = String(describing: result).prefix("success".count).uppercased()
-        print("\n  ====> OPERATION: `\(type(of: self))` completed with: \(resultStatus) <====\n\n" +
-              "    Result: \(result)\n")
+        // Diagnostics: perform verbose logging of the operations only if enabled (so as to not flood console logs)
+        let isLoggingEnabledForThisOperation = OperationsLoggingControl.getFromDatabase(for: type(of: self))
+        if UserDefaults.standard.isVerboseOperationsLoggingEnabled && isLoggingEnabledForThisOperation {
+            // diagnostics logging
+            let resultStatus = String(describing: result).prefix("success".count).uppercased()
+            print("\n  ====> OPERATION: `\(type(of: self))` completed with: \(resultStatus) <====\n\n" +
+                  "    Result: \(result)\n")
+        }
 
         self.resultHandler?(result)
 

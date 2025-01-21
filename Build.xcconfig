@@ -16,16 +16,16 @@ ORG_PREFIX = $(ORG_IDENTIFIER)
 PRODUCT_NAME = SideStore
 //PRODUCT_NAME[configuration=Debug] = Prov Debug
 
+
 //PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   =  $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
 //PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).SideStore
-PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
+// preserve unmodified bundle ID (without any extra suffixes)
+GROUP_ID = $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
+PRODUCT_BUNDLE_IDENTIFIER = $(GROUP_ID)
 
 EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
-APP_GROUP_IDENTIFIER        = $(PRODUCT_BUNDLE_IDENTIFIER)
+APP_GROUP_IDENTIFIER        = $(GROUP_ID)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
-
-// preserve unmodified bundle ID (without any extra suffixes)
-GROUP_ID = $(PRODUCT_BUNDLE_IDENTIFIER)
 
 // Suppress noise from os activity in xcode console log for release builds
 DEBUG_ACTIVITY_MODE = disable

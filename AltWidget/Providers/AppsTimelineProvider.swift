@@ -11,53 +11,67 @@ import CoreData
 
 import AltStoreCore
 
-struct AppsEntry: TimelineEntry
+struct AppsEntry<T>: TimelineEntry
 {
     var date: Date
     var relevance: TimelineEntryRelevance?
     
     var apps: [AppSnapshot]
     var isPlaceholder: Bool = false
+    
+    var context: T?
+    
 }
 
-struct AppsTimelineProvider
+class AppsTimelineProviderBase<T>
 {
     typealias Entry = AppsEntry
     
-    func placeholder(in context: TimelineProviderContext) -> AppsEntry
+    func placeholder(in context: TimelineProviderContext) -> AppsEntry<T>
     {
         return AppsEntry(date: Date(), apps: [], isPlaceholder: true)
     }
     
-    func snapshot(for appBundleIDs: [String]) async -> AppsEntry
+    func snapshot(for appBundleIDs: [String], in context: T? = nil) async -> AppsEntry<T>
     {
         do
         {
             try await self.prepare()
             
-            let apps = try await self.fetchApps(withBundleIDs: appBundleIDs)
+            var apps = try await self.fetchApps(withBundleIDs: appBundleIDs)
             
-            let entry = AppsEntry(date: Date(), apps: apps)
+            apps = getUpdatedData(apps, context)
+            
+            let entry = AppsEntry(date: Date(), apps: apps, context: context)
             return entry
         }
         catch
         {
             print("Failed to prepare widget snapshot:", error)
             
-            let entry = AppsEntry(date: Date(), apps: [])
+            let entry = AppsEntry(date: Date(), apps: [], context: context)
             return entry
         }
     }
     
-    func timeline(for appBundleIDs: [String]) async -> Timeline<AppsEntry>
+    func timeline(for appBundleIDs: [String], in context: T? = nil) async -> Timeline<AppsEntry<T>>
     {
         do
         {
             try await self.prepare()
             
-            let apps = try await self.fetchApps(withBundleIDs: appBundleIDs)
+            var apps = try await self.fetchApps(withBundleIDs: appBundleIDs)
+
+            apps = getUpdatedData(apps, context)
+
+            var entries = self.makeEntries(for: apps, in: context)
             
-            let entries = self.makeEntries(for: apps)
+//            #if targetEnvironment(simulator)
+//            if let first = entries.first{
+//                entries = [first]
+//            }
+//            #endif
+            
             let timeline = Timeline(entries: entries, policy: .atEnd)
             return timeline
         }
@@ -65,21 +79,27 @@ struct AppsTimelineProvider
         {
             print("Failed to prepare widget timeline:", error)
             
-            let entry = AppsEntry(date: Date(), apps: [])
+            let entry = AppsEntry(date: Date(), apps: [], context: context)
             let timeline = Timeline(entries: [entry], policy: .atEnd)
             return timeline
         }
     }
+    
+    func getUpdatedData(_ apps: [AppSnapshot], _ context: T?) -> [AppSnapshot]{
+        // override in subclasses as required
+        return apps
+    }
 }
 
-private extension AppsTimelineProvider
+extension AppsTimelineProviderBase
 {
-    func prepare() async throws
+    
+    private func prepare() async throws
     {
         try await DatabaseManager.shared.start()
     }
     
-    func fetchApps(withBundleIDs bundleIDs: [String]) async throws -> [AppSnapshot]
+    private func fetchApps(withBundleIDs bundleIDs: [String]) async throws -> [AppSnapshot]
     {
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         let apps = try await context.performAsync {
@@ -99,7 +119,7 @@ private extension AppsTimelineProvider
         return apps
     }
     
-    func makeEntries(for snapshots: [AppSnapshot]) -> [AppsEntry]
+    func makeEntries(for snapshots: [AppSnapshot], in context: T? = nil) -> [AppsEntry<T>]
     {
         let sortedAppsByExpirationDate = snapshots.sorted { $0.expirationDate < $1.expirationDate }
         guard let firstExpiringApp = sortedAppsByExpirationDate.first, let lastExpiringApp = sortedAppsByExpirationDate.last else { return [] }
@@ -108,16 +128,16 @@ private extension AppsTimelineProvider
         let numberOfDays = lastExpiringApp.expirationDate.numberOfCalendarDays(since: currentDate)
         
         // Generate a timeline consisting of one entry per day.
-        var entries: [AppsEntry] = []
+        var entries: [AppsEntry<T>] = []
         
         switch numberOfDays
         {
         case ..<0:
-            let entry = AppsEntry(date: currentDate, relevance: TimelineEntryRelevance(score: 0.0), apps: snapshots)
+            let entry = AppsEntry(date: currentDate, relevance: TimelineEntryRelevance(score: 0.0), apps: snapshots, context: context)
             entries.append(entry)
             
         case 0:
-            let entry = AppsEntry(date: currentDate, relevance: TimelineEntryRelevance(score: 1.0), apps: snapshots)
+            let entry = AppsEntry(date: currentDate, relevance: TimelineEntryRelevance(score: 1.0), apps: snapshots, context: context)
             entries.append(entry)
             
         default:
@@ -141,7 +161,7 @@ private extension AppsTimelineProvider
                     score = 0
                 }
                 
-                let entry = AppsEntry(date: entryDate, relevance: TimelineEntryRelevance(score: score), apps: snapshots)
+                let entry = AppsEntry(date: entryDate, relevance: TimelineEntryRelevance(score: score), apps: snapshots, context: context)
                 return entry
             }
             
@@ -150,31 +170,8 @@ private extension AppsTimelineProvider
         
         return entries
     }
-}
-
-extension AppsTimelineProvider: TimelineProvider
-{
-    func getSnapshot(in context: Context, completion: @escaping (AppsEntry) -> Void)
-    {
-        Task<Void, Never> {
-            let bundleIDs = await self.fetchActiveAppBundleIDs()
-            
-            let snapshot = await self.snapshot(for: bundleIDs)
-            completion(snapshot)
-        }
-    }
     
-    func getTimeline(in context: Context, completion: @escaping (Timeline<AppsEntry>) -> Void)
-    {
-        Task<Void, Never> {
-            let bundleIDs = await self.fetchActiveAppBundleIDs()
-            
-            let timeline = await self.timeline(for: bundleIDs)
-            completion(timeline)
-        }
-    }
-    
-    private func fetchActiveAppBundleIDs() async -> [String]
+    func fetchActiveAppBundleIDs() async -> [String]
     {
         do
         {
@@ -201,26 +198,26 @@ extension AppsTimelineProvider: TimelineProvider
     }
 }
 
-extension AppsTimelineProvider: IntentTimelineProvider
+typealias Intent = ViewAppIntent
+
+class AppsTimelineProvider: AppsTimelineProviderBase<Intent>, IntentTimelineProvider
 {
-    typealias Intent = ViewAppIntent
-    
-    func getSnapshot(for intent: Intent, in context: Context, completion: @escaping (AppsEntry) -> Void)
+    func getSnapshot(for intent: Intent, in context: Context, completion: @escaping (AppsEntry<Intent>) -> Void)
     {
         Task<Void, Never> {
             let bundleIDs = [intent.app?.identifier ?? StoreApp.altstoreAppID]
             
-            let snapshot = await self.snapshot(for: bundleIDs)
+            let snapshot = await self.snapshot(for: bundleIDs, in: intent)
             completion(snapshot)
         }
     }
     
-    func getTimeline(for intent: Intent, in context: Context, completion: @escaping (Timeline<AppsEntry>) -> Void)
+    func getTimeline(for intent: Intent, in context: Context, completion: @escaping (Timeline<AppsEntry<Intent>>) -> Void)
     {
         Task<Void, Never> {
             let bundleIDs = [intent.app?.identifier ?? StoreApp.altstoreAppID]
             
-            let timeline = await self.timeline(for: bundleIDs)
+            let timeline = await self.timeline(for: bundleIDs, in: intent)
             completion(timeline)
         }
     }

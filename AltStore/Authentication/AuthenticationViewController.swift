@@ -125,6 +125,7 @@ private extension AuthenticationViewController
                     let error = error.withLocalizedTitle(NSLocalizedString("Failed to Log In", comment: ""))
                     let toastView = ToastView(error: error)
                     toastView.show(in: self)
+                    toastView.backgroundColor = .white
                     toastView.textLabel.textColor = .altPrimary
                     toastView.detailTextLabel.textColor = .altPrimary
                     self.toastView = toastView

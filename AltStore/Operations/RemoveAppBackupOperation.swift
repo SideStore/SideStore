@@ -58,17 +58,18 @@ final class RemoveAppBackupOperation: ResultOperation<Void>
                 }
                 catch let error as CocoaError where error.code == CocoaError.Code.fileNoSuchFile
                 {
-                    #if DEBUG
-                    
-                    // When debugging, it's expected that app groups don't match, so ignore.
-                    self.finish(.success(()))
-                    
-                    #else
+                    // TODO: @mahee96: Find out why should in debug builds the app-groups is not expected to match
+//                    #if DEBUG
+//                    
+//                    // When debugging, it's expected that app groups don't match, so ignore.
+//                    self.finish(.success(()))
+//                    
+//                    #else
                     
                     Logger.sideload.error("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
                     self.finish(.failure(error))
                     
-                    #endif
+//                    #endif
                 }
                 catch
                 {
