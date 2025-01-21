@@ -119,6 +119,36 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
             return value
         }
     }
+    
+    internal func fetchProvisioningProfile(for appID: ALTAppID, app: ALTApplication, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
+    {
+        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
+            switch Result(profile, error)
+            {
+            case .failure(let error): completionHandler(.failure(error))
+            case .success(let profile):
+                
+                // Delete existing profile
+                ALTAppleAPI.shared.delete(profile, for: team, session: session) { (success, error) in
+                    switch Result(success, error)
+                    {
+                    case .failure:
+                        // As of March 20, 2023, the free provisioning profile is re-generated each fetch, and you can no longer delete it.
+                        // So instead, we just return the fetched profile from above.
+                        completionHandler(.success(profile))
+                        
+                    case .success:
+                        Logger.sideload.notice("Generating new free provisioning profile for App ID \(appID.bundleIdentifier, privacy: .public).")
+                        
+                        // Fetch new provisioning profile
+                        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
+                            completionHandler(Result(profile, error))
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension FetchProvisioningProfilesOperation
@@ -223,7 +253,7 @@ extension FetchProvisioningProfilesOperation
 
                     //process
                     self.fetchProvisioningProfile(
-                        for: appID, team: team, session: session, completionHandler: completionHandler
+                        for: appID, app: app, team: team, session: session, completionHandler: completionHandler
                     )
                 }
             }
@@ -328,36 +358,6 @@ extension FetchProvisioningProfilesOperation
             }
         }
     }
-    
-    internal func fetchProvisioningProfile(for appID: ALTAppID, team: ALTTeam, session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
-    {
-        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
-            switch Result(profile, error)
-            {
-            case .failure(let error): completionHandler(.failure(error))
-            case .success(let profile):
-                
-                // Delete existing profile
-                ALTAppleAPI.shared.delete(profile, for: team, session: session) { (success, error) in
-                    switch Result(success, error)
-                    {
-                    case .failure:
-                        // As of March 20, 2023, the free provisioning profile is re-generated each fetch, and you can no longer delete it.
-                        // So instead, we just return the fetched profile from above.
-                        completionHandler(.success(profile))
-                        
-                    case .success:
-                        Logger.sideload.notice("Generating new free provisioning profile for App ID \(appID.bundleIdentifier, privacy: .public).")
-                        
-                        // Fetch new provisioning profile
-                        ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
-                            completionHandler(Result(profile, error))
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 class FetchProvisioningProfilesRefreshOperation: FetchProvisioningProfilesOperation, @unchecked Sendable {
@@ -374,8 +374,8 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
     }
     
     // modify Operations are allowed for the app groups and other stuffs
-    func fetchProvisioningProfile(appID: ALTAppID,
-                                    for app: ALTApplication,
+    override func fetchProvisioningProfile(for appID: ALTAppID,
+                                    app: ALTApplication,
                                     team: ALTTeam,
                                     session: ALTAppleAPISession,
                                     completionHandler: @escaping (Result<ALTProvisioningProfile, Error>) -> Void)
@@ -396,7 +396,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                     case .success(let appID):
                         
                         // Fetch Provisioning Profile
-                        super.fetchProvisioningProfile(for: appID, team: team, session: session, completionHandler: completionHandler)
+                        super.fetchProvisioningProfile(for: appID, app: app, team: team, session: session, completionHandler: completionHandler)
                     }
                 }
             }
