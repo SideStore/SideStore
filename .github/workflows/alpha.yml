@@ -4,6 +4,10 @@ on:
     branches:
       - develop-alpha
 
+concurrency:
+  group: build-number-increment
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build and upload SideStore Alpha releases
@@ -44,7 +48,7 @@ jobs:
           key: beta-build-num-${{ hashFiles('.beta-build-num') }}
           restore-keys: beta-build-num-
 
-      - name: Rename cache to .beta-build-num 
+      - name: Rename cache to .beta-build-num
         run: mv beta-build-num-* .beta-build-num || true
         
       - name: Echo Build.xcconfig, .beta-build-num
