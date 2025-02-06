@@ -83,8 +83,9 @@ jobs:
         id: cache-build-num
         with:
           path: .beta-build-num
-          key: beta-build-num-${{ hashFiles('.beta-build-num') }}
-          restore-keys: beta-build-num-
+          key: beta-build-num-
+          restore-keys: |
+            beta-build-num-
 
       - name: Rename cache to .beta-build-num
         run: mv .beta-build-num* .beta-build-num || true
