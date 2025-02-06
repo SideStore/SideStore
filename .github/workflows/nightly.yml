@@ -74,23 +74,23 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Cache .nightly-build-num
+      - name: Cache .beta-build-num
         uses: actions/cache@v4
         with:
-          path: .nightly-build-num
-          key: nightly-build-num-${{ hashFiles('.nightly-build-num') }}
-          restore-keys: nightly-build-num-
+          path: .beta-build-num
+          key: beta-build-num-${{ hashFiles('.beta-build-num') }}
+          restore-keys: beta-build-num-
 
-      - name: Rename cache to .nightly-build-num 
-        run: mv nightly-build-num-* .nightly-build-num || true
+      - name: Rename cache to .beta-build-num 
+        run: mv beta-build-num-* .beta-build-num || true
         
-      - name: Echo Build.xcconfig, .nightly-build-num
+      - name: Echo Build.xcconfig, .beta-build-num
         run: |
           cat Build.xcconfig
-          [ -f .nightly-build-num ] && cat .nightly-build-num || echo ".nightly-build-num not found"
+          [ -f .beta-build-num ] && cat .beta-build-num || echo ".beta-build-num not found"
 
       - name: Increase nightly build number and set as version
-        run: bash .github/workflows/increase-nightly-build-num.sh
+        run: bash .github/workflows/increase-beta-build-num.sh
 
       - name: Extract MARKETING_VERSION from Build.xcconfig
         id: version
@@ -115,10 +115,10 @@ jobs:
           echo "MARKETING_VERSION=$MARKETING_VERSION"
 
     
-      - name: Echo Build.xcconfig, .nightly-build-num
+      - name: Echo Build.xcconfig, .beta-build-num
         run: |
           cat Build.xcconfig
-          cat .nightly-build-num
+          cat .beta-build-num
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
