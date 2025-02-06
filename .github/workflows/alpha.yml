@@ -47,7 +47,7 @@ jobs:
         id: cache-build-num
         with:
           path: .beta-build-num
-          key: beta-build-num-
+          key: beta-build-num-${{ github.ref }}
           restore-keys: |
             beta-build-num-
 
@@ -74,7 +74,7 @@ jobs:
         # if: always() && steps.cache-build-num.outputs.cache-hit != 'true'
         with:
           path: .beta-build-num
-          key: beta-build-num-${{ hashFiles('.beta-build-num') }}
+          key: beta-build-num-${{ github.ref }}
 
       - name: Set MARKETING_VERSION
         run: |
