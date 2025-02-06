@@ -14,7 +14,7 @@ jobs:
     name: Build and upload SideStore Alpha releases
     concurrency:
       group: build-number-increment   # serialize for build num cache access
-      cancel-in-progress: false
+      # cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
