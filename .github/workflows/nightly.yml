@@ -84,17 +84,18 @@ jobs:
         id: cache-build-num
         with:
           path: .beta-build-num
-          key: beta-build-num-${{ github.ref }}
+          key: beta-build-num-${{ hashFiles('.beta-build-num') }}
           restore-keys: |
             beta-build-num-
 
       - name: Rename cache to .beta-build-num
-        run: mv .beta-build-num* .beta-build-num || true
+        run: |
+          cp .beta-build-num* .beta-build-num.orig || true
         
       - name: Echo Build.xcconfig, .beta-build-num
         run: |
           cat Build.xcconfig
-          [ -f .beta-build-num ] && cat .beta-build-num || echo ".beta-build-num not found"
+          [ -f .beta-build-num ] && cat .beta-build-num && cat .beta-build-num.orig || echo ".beta-build-num not found"
 
       - name: Increase nightly build number and set as version
         run: bash .github/workflows/increase-beta-build-num.sh
@@ -105,13 +106,6 @@ jobs:
           version=$(grep MARKETING_VERSION Build.xcconfig | sed -e 's/MARKETING_VERSION = //g')
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "version=$version"
-
-      - name: Save updated .beta-build-num back to cache
-        uses: actions/cache/save@v4
-        # if: always() && steps.cache-build-num.outputs.cache-hit != 'true'
-        with:
-          path: .beta-build-num
-          key: beta-build-num-${{ github.ref }}
 
       - name: Set MARKETING_VERSION
         run: |
@@ -133,6 +127,7 @@ jobs:
         run: |
           cat Build.xcconfig
           cat .beta-build-num
+          cat .beta-build-num.orig || echo ".beta-build-num.orig not found"
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
@@ -280,6 +275,18 @@ jobs:
               Commit SHA: `${{ github.sha }}`
               Version: `${{ steps.version.outputs.version }}`
 
+
+      # Step 1: Generate a UUID for the cache key
+      - name: Generate UUID for cache key
+        run: echo "CACHE_KEY=$(uuidgen)" >>  $GITHUB_ENV
+
+      # try to save cache since upload was successful
+      - name: Save updated .beta-build-num back to cache
+        uses: actions/cache/save@v4
+        with:
+          path: .beta-build-num
+          key: beta-build-num-${{env.CACHE_KEY}}
+
       - name: Add version to IPA file name
         run: cp SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
 
@@ -388,7 +395,9 @@ jobs:
             path: 'SideStore/apps-v2.json'
       
       - name: Publish to SideStore/apps-v2.json
+        id: publish-release
         if: steps.check_publish.outputs.should_deploy == 'true'
+        continue-on-error: true     # we need this to restore cache and fail the build
         run: |
           # Copy and execute the update script
           pushd SideStore/apps-v2.json/
@@ -407,3 +416,18 @@ jobs:
           git status
           git push origin HEAD:main
           popd
+
+      # try to save cache since upload was successful
+      - name: Restore original .beta-build-num back to cache
+        if: steps.publish-release.outcome != 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: .beta-build-num.orig        # restore original
+          key: beta-build-num-${{env.CACHE_KEY}}-1
+
+      # post build validation
+      - name: Fail the build if upload Failed
+        if: steps.publish-release.outcome != 'success'
+        run: |
+          echo "Publish to SideStore/apps-v2.json failed, flagging the build as error with exit(1)"
+          exit(1)
