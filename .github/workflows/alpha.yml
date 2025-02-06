@@ -14,7 +14,8 @@ jobs:
     name: Build and upload SideStore Alpha releases
     concurrency:
       group: build-number-increment   # serialize for build num cache access
-      # cancel-in-progress: false
+      # coz, concurrent runs across branch at same time, captures cache state so both get same state and we dont want that
+      cancel-in-progress: true        
     strategy:
       fail-fast: false
       matrix:
