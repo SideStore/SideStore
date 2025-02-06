@@ -37,7 +37,8 @@ jobs:
         run: brew install xcbeautify
 
       - name: Cache .beta-build-num
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
+        id: cache-build-num
         with:
           path: .beta-build-num
           key: beta-build-num-${{ hashFiles('.beta-build-num') }}
@@ -60,6 +61,13 @@ jobs:
           version=$(grep MARKETING_VERSION Build.xcconfig | sed -e 's/MARKETING_VERSION = //g')
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "version=$version"
+
+      - name: Save updated .beta-build-num back to cache
+        uses: actions/cache/save@v4
+        # if: always() && steps.cache-build-num.outputs.cache-hit != 'true'
+        with:
+          path: .beta-build-num
+          key: beta-build-num-${{ hashFiles('.beta-build-num') }}
 
       - name: Set MARKETING_VERSION
         run: |
@@ -229,7 +237,7 @@ jobs:
               Version: `${{ steps.version.outputs.version }}`
 
       - name: Add version to IPA file name
-        run: mv SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
+        run: cp SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
 
       - name: Upload SideStore.ipa Artifact
         uses: actions/upload-artifact@v4
@@ -282,10 +290,10 @@ jobs:
         run: |
           if [[ "$(uname)" == "Darwin" ]]; then
             # macOS
-            IPA_SIZE=$(stat -f %z SideStore-${{ steps.version.outputs.version }}.ipa)
+            IPA_SIZE=$(stat -f %z SideStore.ipa)
           else
             # Linux
-            IPA_SIZE=$(stat -c %s SideStore-${{ steps.version.outputs.version }}.ipa)
+            IPA_SIZE=$(stat -c %s SideStore.ipa)
           fi
           echo "IPA size in bytes: $IPA_SIZE"
           echo "IPA_SIZE=$IPA_SIZE" >> $GITHUB_ENV
@@ -293,7 +301,7 @@ jobs:
       - name: Compute SHA-256 of IPA
         if: steps.check_publish.outputs.should_deploy == 'true'
         run: |
-          SHA256_HASH=$(shasum -a 256 SideStore-${{ steps.version.outputs.version }}.ipa | awk '{ print $1 }')
+          SHA256_HASH=$(shasum -a 256 SideStore.ipa | awk '{ print $1 }')
           echo "SHA-256 Hash: $SHA256_HASH"
           echo "SHA256_HASH=$SHA256_HASH" >> $GITHUB_ENV
 
@@ -305,9 +313,8 @@ jobs:
           LOCALIZED_DESCRIPTION=$(cat <<EOF
           This is release for:
             - version: "${{ steps.version.outputs.version }}"
-            - revision: "$SHORT_COMMIT"
+            - revision: "$SHORT_COMMIT"          track: "$RELEASE_CHANNEL" 
             - timestamp: "${{ steps.date.outputs.date }}"
-            - track: "alpha"
           EOF
           )
           
