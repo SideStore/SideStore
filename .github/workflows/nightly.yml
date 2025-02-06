@@ -354,7 +354,7 @@ jobs:
           LOCALIZED_DESCRIPTION=$(cat <<EOF
           This is release for:
             - version: "${{ steps.version.outputs.version }}"
-            - revision: "$SHORT_COMMIT"          track: "$RELEASE_CHANNEL" 
+            - revision: "$SHORT_COMMIT"           track: "$RELEASE_CHANNEL" 
             - timestamp: "${{ steps.date.outputs.date }}"
           EOF
           )
