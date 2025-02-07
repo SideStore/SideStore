@@ -68,7 +68,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Register default settings before doing anything else.
         UserDefaults.registerDefaults()
         
-    
+        
+        // Recreate Database if requested
+        // NOTE: Userdefaults are local to the SideStore.app sandbox and are not shared
+        if UserDefaults.standard.recreateDatabaseOnNextStart{
+            // reset the state
+            UserDefaults.standard.recreateDatabaseOnNextStart = false
+            
+            // re-create database
+            DatabaseManager.recreateDatabase()
+        }
+        
         
         DatabaseManager.shared.start { (error) in
             if let error = error
@@ -99,7 +109,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UserDefaults.standard.preferredServerID = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.serverID) as? String
         
-        #if DEBUG && (targetEnvironment(simulator) || BETA)
+        #if DEBUG && targetEnvironment(simulator)
         UserDefaults.standard.isDebugModeEnabled = true
         #endif
         
@@ -423,6 +433,8 @@ private extension AppDelegate
                 let previousNewsItems = try context.fetch(previousNewsItemsFetchRequest) as! [[String: String]]
                 
                 try context.save()
+                
+                
                 
                 let updatesFetchRequest = InstalledApp.supportedUpdatesFetchRequest()
                 let newsItemsFetchRequest = NewsItem.fetchRequest() as NSFetchRequest<NewsItem>

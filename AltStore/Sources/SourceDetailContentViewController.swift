@@ -385,7 +385,8 @@ private extension SourceDetailContentViewController
         
         let storeApp = self.dataSource.item(at: indexPath) as! StoreApp
         
-        if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        // if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        if let installedApp = storeApp.installedApp, !installedApp.hasUpdate
         {
             self.open(installedApp)
         }
@@ -406,7 +407,8 @@ private extension SourceDetailContentViewController
         do
         {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+                // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+                if let installedApp = storeApp.installedApp, installedApp.hasUpdate
                 {
                     AppManager.shared.update(installedApp, presentingViewController: self) { result in
                         continuation.resume(with: result.map { _ in () })

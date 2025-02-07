@@ -9,7 +9,7 @@
 import CoreData
 
 @objc(AppVersion)
-public class AppVersion: NSManagedObject, Decodable, Fetchable
+public class AppVersion: BaseEntity, Decodable
 {
     /* Properties */
     @NSManaged public var version: String
@@ -22,11 +22,16 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
     }
     @NSManaged @objc(buildVersion) public private(set) var _buildVersion: String
     
-    @NSManaged public var date: Date
-    @NSManaged public var localizedDescription: String?
-    @NSManaged public var downloadURL: URL
-    @NSManaged public var size: Int64
-    @NSManaged public var sha256: String?
+    @NSManaged public private(set) var date: Date
+    @NSManaged @objc(localizedDescription) private(set) var _localizedDescription: String?
+    @NSManaged public private(set) var downloadURL: URL
+    @NSManaged public private(set) var size: Int64
+    @NSManaged public private(set) var sha256: String?
+
+    @nonobjc public var localizedDescription: String {
+        return self._localizedDescription ?? app?.localizedDescription ??
+            "localizedDescription not set, contact the source owner to fix this"
+    }
     
     @nonobjc public var minOSVersion: OperatingSystemVersion? {
         guard let osVersionString = self._minOSVersion else { return nil }
@@ -46,11 +51,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
     
     @NSManaged public var appBundleID: String
     @NSManaged public var sourceID: String?
-   
-    // TODO: @mahee96: retire isBeta and use a string type to decode and store values as enum
-    @NSManaged public var isBeta: Bool
-    @NSManaged public var revision: String?
-    
+
     /* Relationships */
     @NSManaged public private(set) var app: StoreApp?
     @NSManaged @objc(latestVersionApp) public internal(set) var latestSupportedVersionApp: StoreApp?
@@ -71,8 +72,6 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
         case sha256
         case minOSVersion
         case maxOSVersion
-        case isBeta = "beta"
-        case revision = "commitID"
     }
     
     public required init(from decoder: Decoder) throws
@@ -89,7 +88,7 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
             self.buildVersion = try container.decodeIfPresent(String.self, forKey: .buildVersion)
             
             self.date = try container.decode(Date.self, forKey: .date)
-            self.localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)
+            self._localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)
             
             self.downloadURL = try container.decode(URL.self, forKey: .downloadURL)
             self.size = try container.decode(Int64.self, forKey: .size)
@@ -97,9 +96,6 @@ public class AppVersion: NSManagedObject, Decodable, Fetchable
             self.sha256 = try container.decodeIfPresent(String.self, forKey: .sha256)?.lowercased()
             self._minOSVersion = try container.decodeIfPresent(String.self, forKey: .minOSVersion)
             self._maxOSVersion = try container.decodeIfPresent(String.self, forKey: .maxOSVersion)
-
-            self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
         }
         catch
         {
@@ -140,6 +136,8 @@ public extension AppVersion
         return NSFetchRequest<AppVersion>(entityName: "AppVersion")
     }
     
+    // this creates an entry into context(for each instantiation), so don't invoke unnessarily for temp things
+    // create once and use mutateForData() to update it if required
     class func makeAppVersion(
         version: String,
         buildVersion: String?,
@@ -147,6 +145,7 @@ public extension AppVersion
         localizedDescription: String? = nil,
         downloadURL: URL,
         size: Int64,
+        sha256: String? = nil,
         appBundleID: String,
         sourceID: String? = nil,
         in context: NSManagedObjectContext) -> AppVersion
@@ -155,9 +154,10 @@ public extension AppVersion
         appVersion.version = version
         appVersion.buildVersion = buildVersion
         appVersion.date = date
-        appVersion.localizedDescription = localizedDescription
+        appVersion._localizedDescription = localizedDescription
         appVersion.downloadURL = downloadURL
         appVersion.size = size
+        appVersion.sha256 = sha256
         appVersion.appBundleID = appBundleID
         appVersion.sourceID = sourceID
 

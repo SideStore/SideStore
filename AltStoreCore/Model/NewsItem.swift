@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 @objc(NewsItem)
-public class NewsItem: NSManagedObject, Decodable, Fetchable
+public class NewsItem: BaseEntity, Decodable
 {
     /* Properties */
     @NSManaged public var identifier: String

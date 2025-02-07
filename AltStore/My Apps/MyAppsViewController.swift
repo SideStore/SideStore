@@ -16,6 +16,7 @@ import AltStoreCore
 import AltSign
 import Roxas
 import minimuxer
+import SemanticVersion
 
 import Nuke
 
@@ -241,7 +242,18 @@ private extension MyAppsViewController
             
             cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.configure(for: app, action: .update)
-            cell.bannerView.subtitleLabel.text = String(format: NSLocalizedString("Version %@", comment: ""), latestSupportedVersion.localizedVersion)
+            
+            var versionText = latestSupportedVersion.localizedVersion
+
+            // If the app is SideStore itself, remove the build number to save space
+            if app.bundleIdentifier == Bundle.Info.appbundleIdentifier,
+               let version = SemanticVersion(latestSupportedVersion.version)
+            {
+                // leave out the build so that it doesnt take up much space
+                versionText = SemanticVersion(version.major, version.minor, version.patch, version.preRelease).description
+            }
+            
+            cell.bannerView.subtitleLabel.text = String(format: NSLocalizedString("Version %@", comment: ""), versionText)
 
             let appName: String
             
@@ -1044,57 +1056,6 @@ private extension MyAppsViewController
         cell.bannerView.iconImageView.isIndicatingActivity = false
     }
     
-    func removeAppExtensions(from application: ALTApplication, completion: @escaping (Result<Void, Error>) -> Void)
-    {
-        guard !application.appExtensions.isEmpty else { return completion(.success(())) }
-        
-        func removeAppExtensions() throws
-        {
-            for appExtension in application.appExtensions
-            {
-                try FileManager.default.removeItem(at: appExtension.fileURL)
-            }
-            
-            let scInfoURL = application.fileURL.appendingPathComponent("SC_Info")
-            let manifestPlistURL = scInfoURL.appendingPathComponent("Manifest.plist")
-            
-            if let manifestPlist = NSMutableDictionary(contentsOf: manifestPlistURL),
-               let sinfReplicationPaths = manifestPlist["SinfReplicationPaths"] as? [String]
-            {
-                let replacementPaths = sinfReplicationPaths.filter { !$0.starts(with: "PlugIns/") } // Filter out app extension paths.
-                manifestPlist["SinfReplicationPaths"] = replacementPaths
-                try manifestPlist.write(to: manifestPlistURL)
-            }
-        }
-        
-        let firstSentence: String
-        
-        if UserDefaults.standard.activeAppLimitIncludesExtensions
-        {
-            firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions.", comment: "")
-        }
-        else
-        {
-            firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to creating 10 App IDs per week.", comment: "")
-        }
-        
-        let message = firstSentence + " " + NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit?", comment: "")
-        
-        let alertController = UIAlertController(title: NSLocalizedString("App Contains Extensions", comment: ""), message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { (action) in
-            completion(.failure(OperationError.cancelled))
-        }))
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Keep App Extensions", comment: ""), style: .default) { (action) in
-            completion(.success(()))
-        })
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove App Extensions", comment: ""), style: .destructive) { (action) in
-            let result = Result { try removeAppExtensions() }
-            completion(result)
-        })
-        
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
     @objc func showHiddenUpdatesAlert(_ sender: UIButton)
     {
         guard !self.unsupportedUpdates.isEmpty else { return }
@@ -1602,6 +1563,7 @@ private extension MyAppsViewController
                     }
                     catch let error as AppManager.FetchSourcesError
                     {
+                        print(error)
                         try await error.managedObjectContext?.performAsync {
                             try error.managedObjectContext?.save()
                         }
@@ -1633,6 +1595,7 @@ private extension MyAppsViewController
             }
             catch let error as NSError
             {
+                print(error)
                 let toastView = ToastView(error: error.withLocalizedTitle(NSLocalizedString("Unable to Check for Updates", comment: "")))
                 toastView.addTarget(nil, action: #selector(TabBarController.presentSources), for: .touchUpInside)
                 toastView.show(in: self)

@@ -123,8 +123,15 @@ private struct PatreonParameters: Decodable
     var hidden: Bool?
 }
 
+// added for v0.6.0
+extension StoreApp {
+    //MARK: - properties
+    @NSManaged public private(set) var sha256: String?
+}
+
+
 @objc(StoreApp)
-public class StoreApp: NSManagedObject, Decodable, Fetchable
+public class StoreApp: BaseEntity, Decodable
 {
     /* Properties */
     @NSManaged public private(set) var name: String
@@ -132,8 +139,8 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     @NSManaged public private(set) var subtitle: String?
     
     @NSManaged public private(set) var developerName: String
-    @NSManaged public private(set) var localizedDescription: String
-    @NSManaged @objc(size) internal var _size: Int32
+    @NSManaged public private(set) var localizedDescription: String?
+    @NSManaged public private(set) var size: Int64
     
     @nonobjc public var category: StoreCategory? {
         guard let _category else { return nil }
@@ -146,14 +153,13 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     @NSManaged public private(set) var iconURL: URL
     @NSManaged public private(set) var screenshotURLs: [URL]
     
-    @NSManaged @objc(downloadURL) internal var _downloadURL: URL
+    @NSManaged public private(set) var downloadURL: URL?
     @NSManaged public private(set) var platformURLs: PlatformURLs?
 
     @NSManaged public private(set) var tintColor: UIColor?
 
     // TODO: @mahee96: retire isBeta and use a string type to decode and store values as enum
     @NSManaged public private(set) var isBeta: Bool
-    @NSManaged public private(set) var revision: String?
     
     // Required for Marketplace apps.
     @NSManaged public private(set) var marketplaceID: String?
@@ -202,9 +208,9 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
     @NSManaged private var primitiveSourceIdentifier: String?
     
     // Legacy (kept for backwards compatibility)
-    @NSManaged @objc(version) internal private(set) var _version: String
-    @NSManaged @objc(versionDate) internal private(set) var _versionDate: Date
-    @NSManaged @objc(versionDescription) internal private(set) var _versionDescription: String?
+    @NSManaged public private(set) var version: String?
+    @NSManaged public private(set) var versionDate: Date?
+    @NSManaged public private(set) var versionDescription: String?
     
     /* Relationships */
     @NSManaged public var installedApp: InstalledApp?
@@ -243,30 +249,6 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         return self._versions.array as! [AppVersion]
     }
     
-    @nonobjc public var size: Int64? {
-        guard let version = self.latestSupportedVersion else { return nil }
-        return version.size
-    }
-    
-    @nonobjc public var version: String? {
-        guard let version = self.latestSupportedVersion else { return nil }
-        return version.version
-    }
-    
-    @nonobjc public var versionDescription: String? {
-        guard let version = self.latestSupportedVersion else { return nil }
-        return version.localizedDescription
-    }
-    
-    @nonobjc public var versionDate: Date? {
-        guard let version = self.latestSupportedVersion else { return nil }
-        return version.date
-    }
-    
-    @nonobjc public var downloadURL: URL? {
-        guard let version = self.latestSupportedVersion else { return nil }
-        return version.downloadURL
-    }
     @nonobjc public var screenshots: [AppScreenshot] {
         return self._screenshots.array as! [AppScreenshot]
     }
@@ -292,7 +274,6 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case permissions = "appPermissions"
         case size
         case isBeta = "beta"
-        case revision = "commitID"
         case versions
         case patreon
         case category
@@ -303,6 +284,9 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         case versionDate
         case downloadURL
         case screenshotURLs
+        
+        // new for v0.6.0
+        case sha256
     }
     
     public required init(from decoder: Decoder) throws
@@ -316,50 +300,16 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
         {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
+            self.sha256 = try container.decodeIfPresent(String.self, forKey: .sha256)
+            
             self.name = try container.decode(String.self, forKey: .name)
             self.bundleIdentifier = try container.decode(String.self, forKey: .bundleIdentifier)
             self.developerName = try container.decode(String.self, forKey: .developerName)
-            self.localizedDescription = try container.decode(String.self, forKey: .localizedDescription)
+            self.localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)
             self.iconURL = try container.decode(URL.self, forKey: .iconURL)
             
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
             self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-            self.revision = try container.decodeIfPresent(String.self, forKey: .revision)
-            
-            var downloadURL = try container.decodeIfPresent(URL.self, forKey: .downloadURL)
-            let platformURLs = try container.decodeIfPresent(PlatformURLs.self.self, forKey: .platformURLs)
-            if let platformURLs = platformURLs {
-                self.platformURLs = platformURLs
-                // Backwards compatibility, use the fiirst (iOS will be first since sorted that way)
-                if let first = platformURLs.sorted().first {
-                    self._downloadURL = first.downloadURL
-                } else {
-                    throw DecodingError.dataCorruptedError(forKey: .platformURLs, in: container, debugDescription: "platformURLs has no entries")
-
-                }
-                    
-            } else if let downloadURL = downloadURL {
-                self._downloadURL = downloadURL
-            } else {
-                let version = try container.decode(String.self, forKey: .version)
-                    if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions){
-                        for ver in versions {
-                            if ver.version == version {
-                                self._downloadURL = ver.downloadURL
-                                downloadURL = ver.downloadURL // not sure if this is needed
-                            }
-                        }
-                        throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
-                    } else {
-                        throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
-                    }
-            // Required for Marketplace apps, but we'll verify later.
-            self.marketplaceID = try container.decodeIfPresent(String.self, forKey: .marketplaceID)
-
-//                 else {
-//                throw DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
-//                }
-            }
 
             if let tintColorHex = try container.decodeIfPresent(String.self, forKey: .tintColor)
             {
@@ -383,13 +333,21 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
             }
             else if let screenshotURLs = try container.decodeIfPresent([URL].self, forKey: .screenshotURLs)
             {
-                // Update to iPhone 13 screen size
-                let modernAspectRatio = CGSize(width: 1170, height: 2532)
+                // Assume 9:16 iPhone 8 screen dimensions for legacy screenshotURLs.
+                let legacyAspectRatio = CGSize(width: 750, height: 1334)
                 
                 appScreenshots = screenshotURLs.map { imageURL in
-                    let screenshot = AppScreenshot(imageURL: imageURL, size: modernAspectRatio, deviceType: .iphone, context: context)
+                    let screenshot = AppScreenshot(imageURL: imageURL, size: legacyAspectRatio, deviceType: .iphone, context: context)
                     return screenshot
                 }
+
+                // // Update to iPhone 13 screen size
+                // let modernAspectRatio = CGSize(width: 1170, height: 2532)
+                
+                // appScreenshots = screenshotURLs.map { imageURL in
+                //     let screenshot = AppScreenshot(imageURL: imageURL, size: modernAspectRatio, deviceType: .iphone, context: context)
+                //     return screenshot
+                // }
             }
             else
             {
@@ -418,6 +376,9 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                 self._permissions = NSSet()
             }
             
+            // Required for Marketplace apps, but we'll verify later.
+            self.marketplaceID = try container.decodeIfPresent(String.self, forKey: .marketplaceID)
+
             if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions)
             {
                 //TODO: Throw error if there isn't at least one version.
@@ -477,6 +438,28 @@ public class StoreApp: NSManagedObject, Decodable, Fetchable
                                                            appBundleID: self.bundleIdentifier,
                                                            in: context)
                 try self.setVersions([appVersion])
+            }
+            
+            // latestSupportedVersion is set by this point if one was available
+            let platformURLs = try container.decodeIfPresent(PlatformURLs.self.self, forKey: .platformURLs)
+            if let platformURLs = platformURLs {
+                self.platformURLs = platformURLs
+                // Backwards compatibility, use the fiirst (iOS will be first since sorted that way)
+                if let first = platformURLs.sorted().first {
+                    self.downloadURL = first.downloadURL
+                } else {
+                    throw DecodingError.dataCorruptedError(forKey: .platformURLs, in: container, debugDescription: "platformURLs has no entries")
+
+                }
+            } else if let downloadURL = try container.decodeIfPresent(URL.self, forKey: .downloadURL) {
+                self.downloadURL = downloadURL
+            } else {
+                // capture it first coz field might still be faulted by coredata
+                guard let _ = self.downloadURL else
+                {
+                    let error = DecodingError.dataCorruptedError(forKey: .downloadURL, in: container, debugDescription: "E downloadURL:String or downloadURLs:[[Platform:URL]] key required.")
+                    throw error
+                }
             }
             
             // Must _explicitly_ set to false to ensure it updates cached database value.
@@ -560,11 +543,13 @@ internal extension StoreApp
         }
                 
         // Preserve backwards compatibility by assigning legacy property values.
-        self._version = latestVersion.version
-        self._versionDate = latestVersion.date
-        self._versionDescription = latestVersion.localizedDescription
-        self._downloadURL = latestVersion.downloadURL
-        self._size = Int32(latestVersion.size)
+        self.version = latestVersion.version
+        self.versionDate = latestVersion.date
+        self.versionDescription = latestVersion.localizedDescription
+        self.downloadURL = latestVersion.downloadURL
+        self.size = latestVersion.size
+        self.localizedDescription = latestVersion.localizedDescription
+        self.sha256 = latestVersion.sha256
     }
     
     func setPermissions(_ permissions: Set<AppPermission>)
@@ -674,24 +659,63 @@ public extension StoreApp
         return NSFetchRequest<StoreApp>(entityName: "StoreApp")
     }
     
+    //MARK: - override in subclasses if required
+    @objc func placeholderAppVersion(appVersion: AppVersion, in context: NSManagedObjectContext) -> AppVersion{
+        return appVersion
+    }
+    //MARK: - override in subclasses if required
+    @objc class func createStoreApp(in context: NSManagedObjectContext) -> StoreApp{
+        return StoreApp(context: context)
+    }
+    
+    
+    class func isPlaceHolderVersion(_ version: AppVersion) -> Bool{
+        return version.version == "0.0.0" && version.date == Date.distantPast && version.appBundleID == StoreApp.altstoreAppID
+    }
+    
+    class func isPlaceHolderStoreApp(_ app: StoreApp) -> Bool{
+        return app.version == "0.0.0" && app.versionDate == Date.distantPast && app.bundleIdentifier == StoreApp.altstoreAppID
+    }    
+    
+    
+    private static var sideStoreAppIconURL: URL {
+        let iconNames = [
+            "AppIcon76x76@2x~ipad",
+            "AppIcon60x60@2x",
+            "AppIcon"
+        ]
+        
+        for iconName in iconNames {
+            if let path = Bundle.main.path(forResource: iconName, ofType: "png") {
+                return URL(fileURLWithPath: path)
+            }
+        }
+        
+        return URL(string: "https://sidestore.io/apps-v2.json/apps/sidestore/icon.png")!
+    }
+    
     class func makeAltStoreApp(version: String, buildVersion: String?, in context: NSManagedObjectContext) -> StoreApp
     {
+        let placeholderAppID = StoreApp.altstoreAppID
+        let placeholderDownloadURL = URL(string: "https://sidestore.io")!
+        let placeholderSourceID = Source.altStoreIdentifier
+        
         let app = StoreApp(context: context)
         app.name = "SideStore"
-        app.bundleIdentifier = StoreApp.altstoreAppID
+        app.bundleIdentifier = placeholderAppID
         app.developerName = "Side Team"
         app.localizedDescription = "SideStore is an alternative App Store."
-        app.iconURL = URL(string: "https://user-images.githubusercontent.com/705880/63392210-540c5980-c37b-11e9-968c-8742fc68ab2e.png")!
+        app.iconURL = Self.sideStoreAppIconURL
         app.screenshotURLs = []
-        app.sourceIdentifier = Source.altStoreIdentifier
+        app.sourceIdentifier = placeholderSourceID
         
         let appVersion = AppVersion.makeAppVersion(version: version,
                                                    buildVersion: buildVersion,
                                                    date: Date(),
-                                                   downloadURL: URL(string: "http://rileytestut.com")!,
+                                                   downloadURL: placeholderDownloadURL,
                                                    size: 0,
                                                    appBundleID: app.bundleIdentifier,
-                                                   sourceID: Source.altStoreIdentifier,
+                                                   sourceID: app.sourceIdentifier,
                                                    in: context)
         try? app.setVersions([appVersion])
         

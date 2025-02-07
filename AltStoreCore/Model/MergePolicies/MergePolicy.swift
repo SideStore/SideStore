@@ -129,77 +129,107 @@ private extension Error
     }
 }
 
+
+
+
 open class MergePolicy: RSTRelationshipPreservingMergePolicy
 {
+    var permissionsByGlobalAppID = [String: Set<AnyHashable>]()
+    var sortedVersionIDsByGlobalAppID = [String: NSOrderedSet]()
+    var sortedScreenshotIDsByGlobalAppID = [String: NSOrderedSet]()
+    var featuredAppIDsBySourceID = [String: [String]]()
+
+
+    // MARK: - Actual Constraint conflict resolution takes place here!
     open override func resolve(constraintConflicts conflicts: [NSConstraintConflict]) throws
     {
+
+         // When conflict.databaseObject is unavailable, it means this is the first time insertion
         guard conflicts.allSatisfy({ $0.databaseObject != nil }) else {
-            for conflict in conflicts
-            {
-                switch conflict.conflictingObjects.first
-                {
-                case is StoreApp where conflict.conflictingObjects.count == 2:
-                    // Modified cached StoreApp while replacing it with new one, causing context-level conflict.
-                    // Most likely, we set up a relationship between the new StoreApp and a NewsItem,
-                    // causing cached StoreApp to delete it's NewsItem relationship, resulting in (resolvable) conflict.
-                    
-                    if let previousApp = conflict.conflictingObjects.first(where: { !$0.isInserted }) as? StoreApp
-                    {
-                        // Delete previous permissions (different than below).
-                        for case let permission as AppPermission in previousApp._permissions where permission.app == nil
-                        {
-                            permission.managedObjectContext?.delete(permission)
-                        }
-                        
-                        // Delete previous versions (different than below).
-                        for case let appVersion as AppVersion in previousApp._versions where appVersion.app == nil
-                        {
-                            appVersion.managedObjectContext?.delete(appVersion)
-                        }
-                        
-                        // Delete previous screenshots (different than below).
-                        for case let appScreenshot as AppScreenshot in previousApp._screenshots where appScreenshot.app == nil
-                        {
-                            appScreenshot.managedObjectContext?.delete(appScreenshot)
-                        }
-                    }
-                    
-                case is AppVersion where conflict.conflictingObjects.count == 2:
-                    // Occurs first time fetching sources after migrating from pre-AppVersion database model.
-                    let conflictingAppVersions = conflict.conflictingObjects.lazy.compactMap { $0 as? AppVersion }
-                    
-                    // Primary AppVersion == AppVersion whose latestVersionApp.latestVersion points back to itself.
-                    if let primaryAppVersion = conflictingAppVersions.first(where: { $0.latestSupportedVersionApp?.latestSupportedVersion == $0 }),
-                       let secondaryAppVersion = conflictingAppVersions.first(where: { $0 != primaryAppVersion })
-                    {
-                        secondaryAppVersion.managedObjectContext?.delete(secondaryAppVersion)
-                        print("[ALTLog] Resolving AppVersion context-level conflict. Most likely due to migrating from pre-AppVersion model version.", primaryAppVersion)
-                    }
-                    
-                default:
-                    // Unknown context-level conflict.
-                    assertionFailure("MergePolicy is only intended to work with database-level conflicts.")
-                }
-            }
-            
+            try self.resolveWhenDatabaseObjectUnavailable(conflicts)
             try super.resolve(constraintConflicts: conflicts)
-                        
             return
         }
         
-        var permissionsByGlobalAppID = [String: Set<AnyHashable>]()
-        var sortedVersionIDsByGlobalAppID = [String: NSOrderedSet]()
-        var sortedScreenshotIDsByGlobalAppID = [String: NSOrderedSet]()
+        permissionsByGlobalAppID.removeAll()
+        sortedVersionIDsByGlobalAppID.removeAll()
+        sortedScreenshotIDsByGlobalAppID.removeAll()
+        featuredAppIDsBySourceID.removeAll()
         
-        var featuredAppIDsBySourceID = [String: [String]]()
+        // When conflict.databaseObject is available, it means this is replace (delete + insert) or update
+        try self.resolveWhenDatabaseObjectAvailable(conflicts)
+        try super.resolve(constraintConflicts: conflicts)
         
+        try self.performPostMergeValidationAndCorrections(for: conflicts)
+    }
+}
+
+
+extension MergePolicy{
+    
+    // When conflict.databaseObject is unavailable, the conflicts exist only in context level and they must be new insertions
+    private func resolveWhenDatabaseObjectUnavailable(_ conflicts: [NSConstraintConflict]) throws{
+        
+        for conflict in conflicts
+        {
+            switch conflict.conflictingObjects.first
+            {
+            case is StoreApp where conflict.conflictingObjects.count == 2:
+                // Modified cached StoreApp while replacing it with new one, causing context-level conflict.
+                // Most likely, we set up a relationship between the new StoreApp and a NewsItem,
+                // causing cached StoreApp to delete it's NewsItem relationship, resulting in (resolvable) conflict.
+                
+                if let previousApp = conflict.conflictingObjects.first(where: { !$0.isInserted }) as? StoreApp
+                {
+                    // Delete previous permissions (different than below).
+                    for case let permission as AppPermission in previousApp._permissions where permission.app == nil
+                    {
+                        permission.managedObjectContext?.delete(permission)
+                    }
+                                        
+                    // Delete previous versions (different than below).
+                    for case let appVersion as AppVersion in previousApp._versions where appVersion.app == nil
+                    {
+                        appVersion.managedObjectContext?.delete(appVersion)
+                    }
+
+                    // Delete previous screenshots (different than below).
+                    for case let appScreenshot as AppScreenshot in previousApp._screenshots where appScreenshot.app == nil
+                    {
+                        appScreenshot.managedObjectContext?.delete(appScreenshot)
+                    }
+                }
+                
+            case is AppVersion where conflict.conflictingObjects.count == 2:
+                // Occurs first time fetching sources after migrating from pre-AppVersion database model.
+                let conflictingAppVersions = conflict.conflictingObjects.lazy.compactMap { $0 as? AppVersion }
+                
+                // Primary AppVersion == AppVersion whose latestVersionApp.latestVersion points back to itself.
+                if let primaryAppVersion = conflictingAppVersions.first(where: { $0.latestSupportedVersionApp?.latestSupportedVersion == $0 }),
+                   let secondaryAppVersion = conflictingAppVersions.first(where: { $0 != primaryAppVersion })
+                {
+                    secondaryAppVersion.managedObjectContext?.delete(secondaryAppVersion)
+                    print("[ALTLog] Resolving AppVersion context-level conflict. Most likely due to migrating from pre-AppVersion model version.", primaryAppVersion)
+                }
+                
+            default:
+                // Unknown context-level conflict.
+//                assertionFailure("MergePolicy is only intended to work with database-level conflicts.")
+                assertionFailure("Context Conflict Detected: is there ambigious data in your incoming sources?\nConflict:\(conflict)")
+            }
+        }
+    }
+    
+    // When conflict.databaseObject is available, it means this is replace (delete + insert) or update
+    private func resolveWhenDatabaseObjectAvailable(_ conflicts: [NSConstraintConflict]) throws {
+
         for conflict in conflicts
         {
             switch conflict.databaseObject
             {
             case let databaseObject as StoreApp:
                 guard let contextApp = conflict.conflictingObjects.first as? StoreApp else { break }
-                
+
                 // Permissions
                 let contextPermissions = Set(contextApp._permissions.lazy.compactMap { $0 as? AppPermission }.map { AnyHashable($0.permission) })
                 for case let databasePermission as AppPermission in databaseObject._permissions /* where !contextPermissions.contains(AnyHashable(databasePermission.permission)) */ // Compiler error as of Xcode 15
@@ -308,7 +338,13 @@ open class MergePolicy: RSTRelationshipPreservingMergePolicy
             }
         }
         
-        try super.resolve(constraintConflicts: conflicts)
+    }
+}
+
+
+extension MergePolicy{
+
+    func performPostMergeValidationAndCorrections(for conflicts: [NSConstraintConflict]) throws{
         
         for conflict in conflicts
         {
@@ -318,23 +354,23 @@ open class MergePolicy: RSTRelationshipPreservingMergePolicy
                 do
                 {
                     var appVersions = databaseObject.versions
-                    
+
                     if let globallyUniqueID = databaseObject.globallyUniqueID
                     {
                         // Permissions
                         if let appPermissions = permissionsByGlobalAppID[globallyUniqueID],
-                           case let databasePermissions = Set(databaseObject.permissions.map({ AnyHashable($0.permission) })),
-                           databasePermissions != appPermissions
+                            case let databasePermissions = Set(databaseObject.permissions.map({ AnyHashable($0.permission) })),
+                            databasePermissions != appPermissions
                         {
                             // Sorting order doesn't matter, but elements themselves don't match so throw error.
                             throw MergeError.incorrectPermissions(for: databaseObject)
                         }
-                        
+
                         // App versions
                         if let sortedAppVersionIDs = sortedVersionIDsByGlobalAppID[globallyUniqueID],
-                           let sortedAppVersionsIDsArray = sortedAppVersionIDs.array as? [String],
+                            let sortedAppVersionsIDsArray = sortedAppVersionIDs.array as? [String],
                            case let databaseVersionIDs = databaseObject.versions.map({ $0.versionID }),
-                           databaseVersionIDs != sortedAppVersionsIDsArray
+                            databaseVersionIDs != sortedAppVersionsIDsArray
                         {
                             // databaseObject.versions post-merge doesn't match contextApp.versions pre-merge, so attempt to fix by re-sorting.
                             
@@ -355,9 +391,9 @@ open class MergePolicy: RSTRelationshipPreservingMergePolicy
                         
                         // Screenshots
                         if let sortedScreenshotIDs = sortedScreenshotIDsByGlobalAppID[globallyUniqueID],
-                           let sortedScreenshotIDsArray = sortedScreenshotIDs.array as? [String],
-                           case let databaseScreenshotIDs = databaseObject.screenshots.map({ $0.screenshotID }),
-                           databaseScreenshotIDs != sortedScreenshotIDsArray
+                            let sortedScreenshotIDsArray = sortedScreenshotIDs.array as? [String],
+                            case let databaseScreenshotIDs = databaseObject.screenshots.map({ $0.screenshotID }),
+                            databaseScreenshotIDs != sortedScreenshotIDsArray
                         {
                             // Screenshot order is incorrect, so attempt to fix by re-sorting.
                             let fixedScreenshots = databaseObject.screenshots.sorted { (screenshotA, screenshotB) in
@@ -419,5 +455,11 @@ open class MergePolicy: RSTRelationshipPreservingMergePolicy
             default: break
             }
         }
+    }
+}
+
+extension MergePolicy{
+    class func getHeader(_ obj: AnyObject) -> String {
+        return obj.debugDescription.components(separatedBy: "; data:").first ?? ""
     }
 }

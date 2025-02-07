@@ -538,7 +538,8 @@ private extension BrowseViewController
         
         let app = self.dataSource.item(at: indexPath)
         
-        if let installedApp = app.installedApp, !installedApp.isUpdateAvailable
+        // if let installedApp = app.installedApp, !installedApp.isUpdateAvailable
+        if let installedApp = app.installedApp, !installedApp.hasUpdate
         {
             self.open(installedApp)
         }
@@ -563,7 +564,8 @@ private extension BrowseViewController
         }
         
         Task<Void, Never>(priority: .userInitiated) { @MainActor in
-            if let installedApp = app.installedApp, installedApp.isUpdateAvailable
+            // if let installedApp = app.installedApp, installedApp.isUpdateAvailable
+            if let installedApp = app.installedApp, installedApp.hasUpdate
             {
                 AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
             }

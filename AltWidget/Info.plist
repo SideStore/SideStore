@@ -22,10 +22,6 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
-	<key>BuildRevision</key>
-	<string>$(BUILD_REVISION)</string>
-	<key>BuildChannel</key>
-	<string>$(BUILD_CHANNEL)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSExtension</key>

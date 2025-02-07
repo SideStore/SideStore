@@ -12,7 +12,7 @@ import CoreData
 import AltSign
 
 @objc(AppID)
-public class AppID: NSManagedObject, Fetchable
+public class AppID: BaseEntity
 {
     /* Properties */
     @NSManaged public var name: String

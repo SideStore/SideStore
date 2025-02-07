@@ -65,8 +65,6 @@
 		A86315DF2D3EB2DE0048FA40 /* ErrorProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86315DE2D3EB2D80048FA40 /* ErrorProcessing.swift */; };
 		A868CFE42D31999A002F1201 /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
 		A8696EE42D34512C00E96389 /* RemoveAppExtensionsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8696EE32D34512C00E96389 /* RemoveAppExtensionsOperation.swift */; };
-		A888EAD52D401D8F0026F7E3 /* BuildInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A888EAD42D401D8A0026F7E3 /* BuildInfo.swift */; };
-		A888EAD62D4020770026F7E3 /* BuildInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A888EAD42D401D8A0026F7E3 /* BuildInfo.swift */; };
 		A88B8C492D35AD3200F53F9D /* OperationsLoggingContolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88B8C482D35AD3200F53F9D /* OperationsLoggingContolView.swift */; };
 		A88B8C552D35F1EC00F53F9D /* OperationsLoggingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88B8C542D35F1EC00F53F9D /* OperationsLoggingControl.swift */; };
 		A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8945AA52D059B6100D86CBE /* Roxas.framework */; };
@@ -90,6 +88,7 @@
 		A8C6D5182D1EE95B00DF01F1 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A8D484D82D0CD306002C691D /* AltBackup.ipa in Resources */ = {isa = PBXBuildFile; fileRef = A8D484D72D0CD306002C691D /* AltBackup.ipa */; };
 		A8D49F532D3D2F9400844B92 /* ProcessInfo+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D49F522D3D2F9400844B92 /* ProcessInfo+AltStore.swift */; };
+		A8EA195F2D4982D600DC6322 /* BaseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EA195E2D4982D600DC6322 /* BaseEntity.swift */; };
 		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
 		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
@@ -651,7 +650,6 @@
 		A86315DE2D3EB2D80048FA40 /* ErrorProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorProcessing.swift; sourceTree = "<group>"; };
 		A868CFE32D319988002F1201 /* SingletonGenericMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingletonGenericMap.swift; sourceTree = "<group>"; };
 		A8696EE32D34512C00E96389 /* RemoveAppExtensionsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAppExtensionsOperation.swift; sourceTree = "<group>"; };
-		A888EAD42D401D8A0026F7E3 /* BuildInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildInfo.swift; sourceTree = "<group>"; };
 		A88B8C482D35AD3200F53F9D /* OperationsLoggingContolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationsLoggingContolView.swift; sourceTree = "<group>"; };
 		A88B8C542D35F1EC00F53F9D /* OperationsLoggingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationsLoggingControl.swift; sourceTree = "<group>"; };
 		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -667,6 +665,7 @@
 		A8C38C372D2084D000E83DBD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
 		A8D484D72D0CD306002C691D /* AltBackup.ipa */ = {isa = PBXFileReference; lastKnownFileType = file; path = AltBackup.ipa; sourceTree = "<group>"; };
 		A8D49F522D3D2F9400844B92 /* ProcessInfo+AltStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+AltStore.swift"; sourceTree = "<group>"; };
+		A8EA195E2D4982D600DC6322 /* BaseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEntity.swift; sourceTree = "<group>"; };
 		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
 		A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minimuxer.xcodeproj; sourceTree = "<group>"; };
 		A8FD915B2D046EF100322782 /* ProcessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessError.swift; sourceTree = "<group>"; };
@@ -1227,14 +1226,6 @@
 			path = errors;
 			sourceTree = "<group>";
 		};
-		A888EAD32D401D7C0026F7E3 /* buildinfo */ = {
-			isa = PBXGroup;
-			children = (
-				A888EAD42D401D8A0026F7E3 /* BuildInfo.swift */,
-			);
-			path = buildinfo;
-			sourceTree = "<group>";
-		};
 		A88B8C532D35F1E800F53F9D /* operations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1299,7 +1290,6 @@
 		A8C38C1C2D2068D100E83DBD /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				A888EAD32D401D7C0026F7E3 /* buildinfo */,
 				A8AD35572D31BEB2003A28B4 /* datastructures */,
 				A8A853AD2D3050CC00995795 /* pagination */,
 				A8087E712D2D291B002DB21B /* importexport */,
@@ -1328,6 +1318,31 @@
 				A8C38C2B2D206AD900E83DBD /* AbstractClassError.swift */,
 			);
 			path = common;
+			sourceTree = "<group>";
+		};
+		A8EA19602D4982E300DC6322 /* DatabaseManager */ = {
+			isa = PBXGroup;
+			children = (
+				BF66EECA2501AECA007EE018 /* DatabaseManager.swift */,
+				D5FD4ECA2A9532960097BEE8 /* DatabaseManager+Async.swift */,
+			);
+			path = DatabaseManager;
+			sourceTree = "<group>";
+		};
+		A8EA19612D4982E300DC6322 /* MergePolicies */ = {
+			isa = PBXGroup;
+			children = (
+				BF66EEC52501AECA007EE018 /* MergePolicy.swift */,
+			);
+			path = MergePolicies;
+			sourceTree = "<group>";
+		};
+		A8EA19622D4982FC00DC6322 /* Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				BF66EEC12501AECA007EE018 /* SecureValueTransformer.swift */,
+			);
+			path = Transformers;
 			sourceTree = "<group>";
 		};
 		A8F66C072D04C025009689E6 /* SideStore */ = {
@@ -1665,27 +1680,26 @@
 		BF66EEAA2501AECA007EE018 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				A8EA19602D4982E300DC6322 /* DatabaseManager */,
+				A8EA19612D4982E300DC6322 /* MergePolicies */,
+				A8EA19622D4982FC00DC6322 /* Transformers */,
+				D557A4862AE88232007D0DCF /* Patreon */,
+				BF66EEAC2501AECA007EE018 /* Migrations */,
+				A8EA195E2D4982D600DC6322 /* BaseEntity.swift */,
 				BF66EEB72501AECA007EE018 /* AltStore.xcdatamodeld */,
 				BF66EEC92501AECA007EE018 /* Account.swift */,
 				BF66EEC72501AECA007EE018 /* AppID.swift */,
 				BF66EEC62501AECA007EE018 /* AppPermission.swift */,
 				D5F9821C2AB900060045751F /* AppScreenshot.swift */,
 				D52C08ED28AEC37A006C4AE5 /* AppVersion.swift */,
-				BF66EECA2501AECA007EE018 /* DatabaseManager.swift */,
-				D5FD4ECA2A9532960097BEE8 /* DatabaseManager+Async.swift */,
 				BF66EEC02501AECA007EE018 /* InstalledApp.swift */,
 				BF66EECB2501AECA007EE018 /* InstalledExtension.swift */,
 				D58916FD28C7C55C00E39C8B /* LoggedError.swift */,
-				BF66EEC52501AECA007EE018 /* MergePolicy.swift */,
 				BF66EEBF2501AECA007EE018 /* NewsItem.swift */,
-				D5CA0C4A280E141900469595 /* ManagedPatron.swift */,
 				BF66EEC32501AECA007EE018 /* RefreshAttempt.swift */,
-				BF66EEC12501AECA007EE018 /* SecureValueTransformer.swift */,
 				BF66EEAB2501AECA007EE018 /* Source.swift */,
 				BF66EEC42501AECA007EE018 /* StoreApp.swift */,
 				BF66EEC22501AECA007EE018 /* Team.swift */,
-				D557A4862AE88232007D0DCF /* Patreon */,
-				BF66EEAC2501AECA007EE018 /* Migrations */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1713,21 +1727,21 @@
 		BF66EEB02501AECA007EE018 /* Mapping Models */ = {
 			isa = PBXGroup;
 			children = (
-				BF66EEB12501AECA007EE018 /* AltStoreToAltStore2.xcmappingmodel */,
-				BF66EEB22501AECA007EE018 /* AltStore6ToAltStore7.xcmappingmodel */,
-				BF66EEB32501AECA007EE018 /* AltStore3ToAltStore4.xcmappingmodel */,
-				BF66EEB42501AECA007EE018 /* AltStore4ToAltStore5.xcmappingmodel */,
-				BF66EEB52501AECA007EE018 /* AltStore2ToAltStore3.xcmappingmodel */,
-				BF66EEB62501AECA007EE018 /* AltStore5ToAltStore6.xcmappingmodel */,
-				BFBF331A2526762200B7B8C9 /* AltStore8ToAltStore9.xcmappingmodel */,
-				D5CA0C4D280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel */,
-				D5F99A1728D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel */,
-				D5927D6829DCE28700D6898E /* AltStore11ToAltStore12.xcmappingmodel */,
-				D5177B0C2A26944600270065 /* AltStore12ToAltStore13.xcmappingmodel */,
-				D5185B7F2AE1E51B00646E33 /* AltStore13ToAltStore14.xcmappingmodel */,
-				D5753A612B279F1900090456 /* AltStore14ToAltStore15.xcmappingmodel */,
-				D5CE309B2B4C946300DB8151 /* AltStore15ToAltStore16.xcmappingmodel */,
 				D51E83812B8692DF0092FC61 /* AltStore16ToAltStore17.xcmappingmodel */,
+				D5CE309B2B4C946300DB8151 /* AltStore15ToAltStore16.xcmappingmodel */,
+				D5753A612B279F1900090456 /* AltStore14ToAltStore15.xcmappingmodel */,
+				D5185B7F2AE1E51B00646E33 /* AltStore13ToAltStore14.xcmappingmodel */,
+				D5177B0C2A26944600270065 /* AltStore12ToAltStore13.xcmappingmodel */,
+				D5927D6829DCE28700D6898E /* AltStore11ToAltStore12.xcmappingmodel */,
+				D5F99A1728D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel */,
+				D5CA0C4D280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel */,
+				BFBF331A2526762200B7B8C9 /* AltStore8ToAltStore9.xcmappingmodel */,
+				BF66EEB22501AECA007EE018 /* AltStore6ToAltStore7.xcmappingmodel */,
+				BF66EEB62501AECA007EE018 /* AltStore5ToAltStore6.xcmappingmodel */,
+				BF66EEB42501AECA007EE018 /* AltStore4ToAltStore5.xcmappingmodel */,
+				BF66EEB32501AECA007EE018 /* AltStore3ToAltStore4.xcmappingmodel */,
+				BF66EEB52501AECA007EE018 /* AltStore2ToAltStore3.xcmappingmodel */,
+				BF66EEB12501AECA007EE018 /* AltStoreToAltStore2.xcmappingmodel */,
 			);
 			path = "Mapping Models";
 			sourceTree = "<group>";
@@ -2234,6 +2248,7 @@
 				D557A4802AE85BB0007D0DCF /* Pledge.swift */,
 				D557A4842AE88227007D0DCF /* PledgeTier.swift */,
 				D557A4822AE85DB7007D0DCF /* PledgeReward.swift */,
+				D5CA0C4A280E141900469595 /* ManagedPatron.swift */,
 			);
 			path = Patreon;
 			sourceTree = "<group>";
@@ -2889,6 +2904,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8D49F532D3D2F9400844B92 /* ProcessInfo+AltStore.swift in Sources */,
+				A8EA195F2D4982D600DC6322 /* BaseEntity.swift in Sources */,
 				A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */,
 				D5FB28EE2ADDF89800A1C337 /* KnownSource.swift in Sources */,
 				BF66EED32501AECA007EE018 /* AltStore2ToAltStore3.xcmappingmodel in Sources */,
@@ -2922,7 +2938,6 @@
 				0E05025C2BEC947000879B5C /* String+SideStore.swift in Sources */,
 				0EE7FDCB2BE8D12B00D1E390 /* ALTLocalizedError.swift in Sources */,
 				BF66EEA92501AEC5007EE018 /* Tier.swift in Sources */,
-				A888EAD62D4020770026F7E3 /* BuildInfo.swift in Sources */,
 				BF66EEDB2501AECA007EE018 /* StoreApp.swift in Sources */,
 				D5CE309C2B4C946300DB8151 /* AltStore15ToAltStore16.xcmappingmodel in Sources */,
 				BF66EEDE2501AECA007EE018 /* AppID.swift in Sources */,
@@ -3067,7 +3082,6 @@
 				BFF00D302501BD7D00746320 /* Intents.intentdefinition in Sources */,
 				D5B6F6AB2AD76541007EED5A /* PreviewAppScreenshotsViewController.swift in Sources */,
 				BFD2476E2284B9A500981D42 /* AppDelegate.swift in Sources */,
-				A888EAD52D401D8F0026F7E3 /* BuildInfo.swift in Sources */,
 				BF41B806233423AE00C593A3 /* TabBarController.swift in Sources */,
 				BFE00A202503097F00EB4D0C /* INInteraction+AltStore.swift in Sources */,
 				BFDB6A0B22AAEDB7007EA6D6 /* Operation.swift in Sources */,

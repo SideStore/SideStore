@@ -12,7 +12,7 @@ import CoreData
 import AltSign
 
 @objc(InstalledExtension)
-public class InstalledExtension: NSManagedObject, InstalledAppProtocol
+public class InstalledExtension: BaseEntity, InstalledAppProtocol
 {
     /* Properties */
     @NSManaged public var name: String

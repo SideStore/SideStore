@@ -15,10 +15,6 @@ ORG_IDENTIFIER = com.myuniquename
 // we don't want to do this for release since those builds will most likely be installed via SideServer, which adds the team ID
 BUNDLE_ID_SUFFIX = .$(DEVELOPMENT_TEAM)
 
-// Comment this out to use default 'stable' channel defined in Build.xcconfig
-// For local xcode or commandline builds we can use local channel for local build specific logic
-BUILD_CHANNEL = local
-
 // Set to YES if you have a valid paid Apple Developer account
 DEVELOPER_ACCOUNT_PAID = NO
 

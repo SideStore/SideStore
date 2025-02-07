@@ -55,8 +55,23 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
             try FileManager.default.removeItem(at: appExtension.fileURL)
         }
     }
-                                  
-    
+
+    private func updateManifest() throws {
+        guard let app = context.app else {
+            return
+        }
+        
+        let scInfoURL = app.fileURL.appendingPathComponent("SC_Info")
+        let manifestPlistURL = scInfoURL.appendingPathComponent("Manifest.plist")
+        
+        if let manifestPlist = NSMutableDictionary(contentsOf: manifestPlistURL),
+           let sinfReplicationPaths = manifestPlist["SinfReplicationPaths"] as? [String]
+        {
+            let replacementPaths = sinfReplicationPaths.filter { !$0.starts(with: "PlugIns/") } // Filter out app extension paths.
+            manifestPlist["SinfReplicationPaths"] = replacementPaths
+            try manifestPlist.write(to: manifestPlistURL)
+        }
+    }
     
     private func removeAppExtensions(from targetAppBundle: ALTApplication,
                                      localAppExtensions: Set<ALTApplication>?,
@@ -127,6 +142,7 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
         alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove App Extensions", comment: ""), style: .destructive) { (action) in
             do {
                 try Self.removeExtensions(from: targetAppBundle.appExtensions)
+                try self.updateManifest()
                 return self.finish(.success(()))
             } catch {
                 return self.finish(.failure(error))

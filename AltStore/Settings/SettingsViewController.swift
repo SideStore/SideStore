@@ -13,6 +13,8 @@ import MessageUI
 import Intents
 import IntentsUI
 
+import SemanticVersion
+
 import AltStoreCore
 
 extension SettingsViewController
@@ -73,7 +75,6 @@ extension SettingsViewController
         case refreshSideJITServer
         case resetPairingFile
         case anisetteServers
-        case betaUpdates
 //        case hiddenSettings
     }
 
@@ -82,8 +83,10 @@ extension SettingsViewController
         case responseCaching
         case exportResignedApp
         case verboseOperationsLogging
-        case exportSqliteDB
+        case exportDatabase
+        case deleteDatabase
         case operationsLoggingControl
+case recreateDatabase
         case minimuxerConsoleLogging
     }
 }
@@ -104,7 +107,6 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var backgroundRefreshSwitch: UISwitch!
     @IBOutlet private var noIdleTimeoutSwitch: UISwitch!
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
-    @IBOutlet private var betaUpdatesSwitch: UISwitch!
     @IBOutlet private var exportResignedAppsSwitch: UISwitch!
     @IBOutlet private var verboseOperationsLoggingSwitch: UISwitch!
     @IBOutlet private var minimuxerConsoleLoggingSwitch: UISwitch!
@@ -118,12 +120,15 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var githubButton: UIButton!
     
     @IBOutlet private var versionLabel: UILabel!
+
+    @IBOutlet private var recreateDatabaseSwitch: UISwitch!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
-    private var exportDBInProgress = false
+    private static var exportDBInProgress = false
+private static var deleteDBInProgress = false
     
     required init?(coder aDecoder: NSCoder)
     {
@@ -207,6 +212,51 @@ final class SettingsViewController: UITableViewController
 
 }
 
+private class BuildInfo{
+    private static let MARKETING_VERSION_TAG        = "CFBundleShortVersionString"
+    private static let CURRENT_PROJECT_VERSION_TAG  = kCFBundleVersionKey as String
+    
+    private static let XCODE_VERSION_TAG  = "DTXcode"
+    private static let XCODE_REVISION_TAG = "DTXcodeBuild"
+
+    let bundle: Bundle
+    
+    public init(){
+        bundle = Bundle.main
+    }
+    
+    enum BundleError: Swift.Error {
+        case invalidURL
+    }
+
+    public init(url: URL) throws {
+        guard let bundle = Bundle(url: url) else {
+            throw BundleError.invalidURL
+        }
+        self.bundle = bundle
+    }
+
+    public lazy var project_version: String? = {
+        let version  = bundle.object(forInfoDictionaryKey: Self.CURRENT_PROJECT_VERSION_TAG) as? String
+        return version
+    }()
+
+    public lazy var marketing_version: String? = {
+        let version  = bundle.object(forInfoDictionaryKey: Self.MARKETING_VERSION_TAG) as? String
+        return version
+    }()
+
+    public lazy var xcode: String? = {
+        let xcode  = bundle.object(forInfoDictionaryKey: Self.XCODE_VERSION_TAG) as? String
+        return xcode
+    }()
+
+    public lazy var xcode_revision: String? = {
+        let revision  = bundle.object(forInfoDictionaryKey: Self.XCODE_REVISION_TAG) as? String
+        return revision
+    }()
+}
+
 private extension SettingsViewController
 {
     
@@ -227,30 +277,23 @@ private extension SettingsViewController
 
         
         var versionLabel: String = ""
-        
-        if let installedApp = InstalledApp.fetchAltStore(in: DatabaseManager.shared.viewContext)
+        let installedApp = InstalledApp.fetchAltStore(in: DatabaseManager.shared.viewContext)
+        // first check if there is installed app entity, if so, get version info from that
+        if let installedApp
         {
-            let isStableBuild = (buildInfo.channel == .stable)
-            let revision = buildInfo.revision ?? ""
-            
             var localizedVersion = installedApp.version
-            // Only show build version (and build revision) for non stable builds.
-            if !isStableBuild {
-                localizedVersion += buildInfo.project_version.map{ version in
-                    version.isEmpty  ? "" : " (\(version))" + (revision.isEmpty ? "" : " - \(revision)")
-                } ?? installedApp.localizedVersion
-            }
+            // Only show build version for non stable builds.
+            localizedVersion += buildInfo.project_version.map{ version in
+                version.isEmpty  ? "" : " (\(version))"
+            } ?? installedApp.localizedVersion
             
             versionLabel = NSLocalizedString(String(format: "Version %@", localizedVersion), comment: "SideStore Version")
         }
-        else if let version = buildInfo.marketing_version
+        else if var version = buildInfo.marketing_version
         {
-            var version = "SideStore \(version)"
-            
-            version += getXcodeVersion()
-            
             versionLabel = NSLocalizedString(String(format: "Version %@", version), comment: "SideStore Version")
         }
+        
         else
         {
             var version = "SideStore\t"
@@ -259,7 +302,11 @@ private extension SettingsViewController
         }
         
         // add xcode build version for local builds
-        if buildInfo.channel == .local
+        if let installedApp,
+           let version = installedApp.storeApp?.latestSupportedVersion?.version,
+           // if MARKETING_VERSION is set as "0.6.0-local" in CodeSigning.xcconfig as override,
+           // then it is assumed it is local build and we should show xcode build information
+           SemanticVersion(version)?.preRelease == "local"
         {
             versionLabel += "\n\(getXcodeVersion())"
         }
@@ -289,13 +336,14 @@ private extension SettingsViewController
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
 
         // AdvancedSettingsRow
-        self.betaUpdatesSwitch.isOn = UserDefaults.standard.isBetaUpdatesEnabled
 
         // DiagnosticsRow
         self.disableResponseCachingSwitch.isOn = UserDefaults.standard.responseCachingDisabled
         self.exportResignedAppsSwitch.isOn = UserDefaults.standard.isExportResignedAppEnabled
         self.verboseOperationsLoggingSwitch.isOn = UserDefaults.standard.isVerboseOperationsLoggingEnabled
         self.minimuxerConsoleLoggingSwitch.isOn = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
+
+        self.recreateDatabaseSwitch.isOn = UserDefaults.standard.recreateDatabaseOnNextStart
 
         if self.isViewLoaded
         {
@@ -499,10 +547,35 @@ private extension SettingsViewController
         UserDefaults.standard.isMinimuxerConsoleLoggingEnabled = sender.isOn
     }
 
-    @IBAction func toggleEnableBetaUpdates(_ sender: UISwitch) {
-        // update it in database
-        UserDefaults.standard.isBetaUpdatesEnabled = sender.isOn
+    @IBAction func toggleRecreateDatabaseSwitch(_ sender: UISwitch) {
+        // Update the setting in UserDefaults
+        UserDefaults.standard.recreateDatabaseOnNextStart = sender.isOn
+
+        guard sender.isOn else { return }
+        
+        DispatchQueue.global().async {
+            for time in (1...3).reversed() {
+                DispatchQueue.main.async {
+                    guard UserDefaults.standard.recreateDatabaseOnNextStart else {
+                        return
+                    }
+                    let toast = ToastView(text: "Database Delete Scheduled on Next Launch", detailText: "App is closing in \(time) seconds...")
+                    toast.tintColor = .altPrimary
+                    toast.preferredDuration = 1
+                    toast.show(in: self)
+                }
+                sleep(1) // Background sleep
+            }
+
+            DispatchQueue.main.async {
+                guard UserDefaults.standard.recreateDatabaseOnNextStart else {
+                    return
+                }
+                exit(0)
+            }
+        }
     }
+
     
     @IBAction func toggleIsBackgroundRefreshEnabled(_ sender: UISwitch)
     {
@@ -877,6 +950,7 @@ extension SettingsViewController
                         mailViewController.mailComposeDelegate = self
                         mailViewController.setToRecipients(["support@sidestore.io"])
 
+                        // TODO: MARKETING_VERSION is going to be set anyways so this needs to be fixed for beta
                         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
                             mailViewController.setSubject("SideStore Beta \(version) Feedback")
                         } else {
@@ -1064,7 +1138,7 @@ extension SettingsViewController
 //                } else {
 //                    ELOG("UIApplication.openSettingsURLString invalid")
 //                }
-            case .refreshAttempts, .betaUpdates : break
+            case .refreshAttempts : break
 
             }
         
@@ -1072,10 +1146,19 @@ extension SettingsViewController
             let row = DiagnosticsRow.allCases[indexPath.row]
             switch row {
                 
-            case .exportSqliteDB:
+            case .deleteDatabase:
+                if !Self.deleteDBInProgress {
+                    Self.deleteDBInProgress = true
+                    
+                    _ = DatabaseManager.deleteDatabase()
+                    
+                    exit(0) // exit app immediately to prevent db usage and crashes
+                }
+                
+            case .exportDatabase:
                 // do not accept simulatenous export requests
-                if !exportDBInProgress {
-                    exportDBInProgress = true
+                if !Self.exportDBInProgress {
+                    Self.exportDBInProgress = true
                     Task{
                         var toastView: ToastView?
                         do{
@@ -1093,7 +1176,7 @@ extension SettingsViewController
                         }
                         
                         // update that work has finished
-                        exportDBInProgress = false
+                        Self.exportDBInProgress = false
                     }
                 }
                 
@@ -1104,7 +1187,7 @@ extension SettingsViewController
                 let segue = UIStoryboardSegue(identifier: "operationsLoggingControl", source: self, destination: operationsLoggingController)
                 self.present(segue.destination, animated: true, completion: nil)
                 
-            case .responseCaching, .exportResignedApp, .verboseOperationsLogging, .minimuxerConsoleLogging : break
+            case .responseCaching, .exportResignedApp, .verboseOperationsLogging, .minimuxerConsoleLogging, .recreateDatabase : break
             }
             
             

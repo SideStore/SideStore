@@ -625,7 +625,7 @@ private extension AddSourceViewController
                             switch result
                             {
                             case .failure(let error):
-                                print("Failed to load recommended source \(sourceURL.absoluteString):", error.localizedDescription)
+                                print("Failed to load recommended source \(sourceURL.absoluteString):", error.localizedDescription, error)
                                 fetchError = error
                                 
                             case .success(let source): sourcesByURL[source.sourceURL] = source

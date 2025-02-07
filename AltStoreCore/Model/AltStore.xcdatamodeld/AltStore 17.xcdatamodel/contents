@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D60" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Account" representedClassName="Account" syncable="YES">
         <attribute name="appleID" attributeType="String"/>
         <attribute name="firstName" attributeType="String"/>
@@ -64,11 +64,9 @@
         <attribute name="buildVersion" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="downloadURL" attributeType="URI"/>
-        <attribute name="isBeta" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="localizedDescription" optional="YES" attributeType="String"/>
         <attribute name="maxOSVersion" optional="YES" attributeType="String"/>
         <attribute name="minOSVersion" optional="YES" attributeType="String"/>
-        <attribute name="revision" optional="YES" attributeType="String"/>
         <attribute name="sha256" optional="YES" attributeType="String"/>
         <attribute name="size" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sourceID" optional="YES" attributeType="String"/>
@@ -231,6 +229,7 @@
         <attribute name="sourceURL" attributeType="URI"/>
         <attribute name="subtitle" optional="YES" attributeType="String"/>
         <attribute name="tintColor" optional="YES" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>
+        <attribute name="version" optional="YES" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="NO"/>
         <attribute name="websiteURL" optional="YES" attributeType="URI"/>
         <relationship name="apps" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="StoreApp" inverseName="source" inverseEntity="StoreApp"/>
         <relationship name="featuredApps" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="StoreApp" inverseName="featuringSource" inverseEntity="StoreApp"/>
@@ -245,28 +244,28 @@
         <attribute name="bundleIdentifier" attributeType="String"/>
         <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="developerName" attributeType="String"/>
-        <attribute name="downloadURL" attributeType="URI"/>
+        <attribute name="downloadURL" optional="YES" attributeType="URI"/>
         <attribute name="featuredSortID" optional="YES" attributeType="String"/>
         <attribute name="iconURL" attributeType="URI"/>
         <attribute name="isBeta" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isHiddenWithoutPledge" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isPledged" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isPledgeRequired" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="localizedDescription" attributeType="String"/>
+        <attribute name="localizedDescription" optional="YES" attributeType="String"/>
         <attribute name="marketplaceID" optional="YES" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="pledgeAmount" optional="YES" attributeType="Decimal"/>
         <attribute name="pledgeCurrency" optional="YES" attributeType="String"/>
         <attribute name="prefersCustomPledge" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="revision" optional="YES" attributeType="String"/>
         <attribute name="screenshotURLs" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>
-        <attribute name="size" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sha256" optional="YES" attributeType="String"/>
+        <attribute name="size" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sortIndex" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sourceIdentifier" optional="YES" attributeType="String"/>
         <attribute name="subtitle" optional="YES" attributeType="String"/>
         <attribute name="tintColor" optional="YES" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>
-        <attribute name="version" attributeType="String"/>
-        <attribute name="versionDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="version" optional="YES" attributeType="String"/>
+        <attribute name="versionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="versionDescription" optional="YES" attributeType="String"/>
         <relationship name="featuringSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="featuredApps" inverseEntity="Source"/>
         <relationship name="installedApp" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="InstalledApp" inverseName="storeApp" inverseEntity="InstalledApp"/>

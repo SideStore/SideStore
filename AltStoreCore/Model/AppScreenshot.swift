@@ -16,7 +16,7 @@ public extension AppScreenshot
 }
 
 @objc(AppScreenshot)
-public class AppScreenshot: NSManagedObject, Fetchable, Decodable
+public class AppScreenshot: BaseEntity, Decodable
 {
     /* Properties */
     @NSManaged public private(set) var imageURL: URL

@@ -482,7 +482,8 @@ private extension FeaturedViewController
         
         let storeApp = self.dataSource.item(at: indexPath)
         
-        if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        // if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        if let installedApp = storeApp.installedApp, !installedApp.hasUpdate
         {
             self.open(installedApp)
         }
@@ -500,7 +501,8 @@ private extension FeaturedViewController
             return
         }
         
-        if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+        // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+        if let installedApp = storeApp.installedApp, installedApp.hasUpdate
         {
             AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
         }

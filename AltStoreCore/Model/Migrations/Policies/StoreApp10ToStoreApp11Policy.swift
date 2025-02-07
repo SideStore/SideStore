@@ -22,27 +22,27 @@ fileprivate extension NSManagedObject
     }
     
     var storeAppVersion: String? {
-        let version = self.value(forKey: #keyPath(StoreApp._version)) as? String
+        let version = self.value(forKey: #keyPath(StoreApp.version)) as? String
         return version
     }
     
     var storeAppVersionDate: Date? {
-        let versionDate = self.value(forKey: #keyPath(StoreApp._versionDate)) as? Date
+        let versionDate = self.value(forKey: #keyPath(StoreApp.versionDate)) as? Date
         return versionDate
     }
     
     var storeAppVersionDescription: String? {
-        let versionDescription = self.value(forKey: #keyPath(StoreApp._versionDescription)) as? String
+        let versionDescription = self.value(forKey: #keyPath(StoreApp.versionDescription)) as? String
         return versionDescription
     }
     
     var storeAppSize: NSNumber? {
-        let size = self.value(forKey: #keyPath(StoreApp._size)) as? NSNumber
+        let size = self.value(forKey: #keyPath(StoreApp.size)) as? NSNumber
         return size
     }
     
     var storeAppDownloadURL: URL? {
-        let downloadURL = self.value(forKey: #keyPath(StoreApp._downloadURL)) as? URL
+        let downloadURL = self.value(forKey: #keyPath(StoreApp.downloadURL)) as? URL
         return downloadURL
     }
     
@@ -66,7 +66,7 @@ fileprivate extension NSManagedObject
         let appVersion = NSEntityDescription.insertNewObject(forEntityName: AppVersion.entity().name!, into: context)
         appVersion.setValue(version, forKey: #keyPath(AppVersion.version))
         appVersion.setValue(date, forKey: #keyPath(AppVersion.date))
-        appVersion.setValue(localizedDescription, forKey: #keyPath(AppVersion.localizedDescription))
+        appVersion.setValue(localizedDescription, forKey: #keyPath(AppVersion._localizedDescription))
         appVersion.setValue(downloadURL, forKey: #keyPath(AppVersion.downloadURL))
         appVersion.setValue(size, forKey: #keyPath(AppVersion.size))
         appVersion.setValue(appBundleID, forKey: #keyPath(AppVersion.appBundleID))

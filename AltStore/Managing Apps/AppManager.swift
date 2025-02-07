@@ -1232,16 +1232,12 @@ private extension AppManager
         else
         {
             // Disable the idleTimeout
-            if !UIApplication.shared.isIdleTimerDisabled {       // accept only once if concurrent
-                DispatchQueue.main.schedule {
+            DispatchQueue.main.schedule {
+                if !UIApplication.shared.isIdleTimerDisabled {       // accept only once if concurrent
                     UIApplication.shared.isIdleTimerDisabled = UserDefaults.standard.isIdleTimeoutDisableEnabled
                 }
             }
             performAppOperations()
-            // Moved to self.finish()
-//            DispatchQueue.main.schedule {
-//                UIApplication.shared.isIdleTimerDisabled = false
-//            }
         }
         
         return group
@@ -2106,8 +2102,8 @@ private extension AppManager
         // TODO: This should disable for the last finish() request not the first though for batches
         //       probably if we are in batch mode, we can count expected no of finishes() to arrive
         //       and schedule disabling only on last request by matching it with count.
-        if UIApplication.shared.isIdleTimerDisabled {       // accept only once if concurrent
-            DispatchQueue.main.schedule {
+        DispatchQueue.main.schedule {
+            if UIApplication.shared.isIdleTimerDisabled {       // accept only once if concurrent
                 UIApplication.shared.isIdleTimerDisabled = false
             }
         }

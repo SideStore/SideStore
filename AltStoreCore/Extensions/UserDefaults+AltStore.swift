@@ -32,10 +32,10 @@ public extension UserDefaults
     @NSManaged var isBackgroundRefreshEnabled: Bool
     @NSManaged var isIdleTimeoutDisableEnabled: Bool
     @NSManaged var isAppLimitDisabled: Bool
-    @NSManaged var isBetaUpdatesEnabled: Bool
     @NSManaged var isExportResignedAppEnabled: Bool
     @NSManaged var isVerboseOperationsLoggingEnabled: Bool
     @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
+    @NSManaged var recreateDatabaseOnNextStart: Bool
     @NSManaged var isPairingReset: Bool
     @NSManaged var isDebugModeEnabled: Bool
     @NSManaged var presentedLaunchReminderNotification: Bool
@@ -89,7 +89,7 @@ public extension UserDefaults
     
     @NSManaged var permissionCheckingDisabled: Bool
     @NSManaged var responseCachingDisabled: Bool
-    
+        
     class func registerDefaults()
     {
         let ios13_5 = OperatingSystemVersion(majorVersion: 13, minorVersion: 5, patchVersion: 0)
@@ -121,11 +121,11 @@ public extension UserDefaults
         
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
-            #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
             #keyPath(UserDefaults.isExportResignedAppEnabled): false,
             #keyPath(UserDefaults.isDebugModeEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
-            #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): true, // minimuxer logging is enabled by default as before
+            #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): false, // minimuxer logging is disabled by default for console loggin
+            #keyPath(UserDefaults.recreateDatabaseOnNextStart): false, 
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,
             #keyPath(UserDefaults.isPairingReset): true,

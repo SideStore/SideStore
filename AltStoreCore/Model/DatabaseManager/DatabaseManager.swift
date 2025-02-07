@@ -40,7 +40,7 @@ fileprivate class PersistentContainer: RSTPersistentContainer
 
 public class DatabaseManager
 {
-    public static let shared = DatabaseManager()
+    public static private(set) var shared = DatabaseManager()
     
     public let persistentContainer: RSTPersistentContainer
     
@@ -64,10 +64,95 @@ public class DatabaseManager
     }
 }
 
+
+public extension DatabaseManager
+{
+    private class func loadPersistentStoresSync() {
+        let container = Self.shared.persistentContainer
+        let semaphore = DispatchSemaphore(value: 0)  // Semaphore to wait for async completion
+        
+        container.loadPersistentStores { description, error in
+            if let error = error {
+                print("Failed to load store: \(error)")
+            } else {
+                print("Store URL: \(description.url ?? URL(string: "unknown")!)")
+            }
+            
+            semaphore.signal()  // Signal the semaphore to unblock the thread
+        }
+        
+        semaphore.wait()  // Wait for the semaphore signal to unblock the thread
+        print("Persistent store loading complete.")
+    }
+    
+    class func deleteDatabase() -> Bool
+    {
+        // delete existing database and start fresh if required
+        do {
+            let container = Self.shared.persistentContainer
+            
+            var databaseStore = container.persistentStoreCoordinator.persistentStores.first
+            if databaseStore == nil{
+                // perform a load before acquiring the databaseStoreURL
+                Self.loadPersistentStoresSync()
+                databaseStore = container.persistentStoreCoordinator.persistentStores.first
+            }
+            
+
+            guard let databaseStore else
+            {
+                print("\nDatabase Delete request FAILED: databaseStore = nil\n")
+                return false
+            }
+
+            guard let databaseStoreURL = databaseStore.url else
+            {
+                print("\nDatabase Delete request FAILED: databaseStoreURL = nil\n")
+                return false
+            }
+            
+            // Reset the managed object context
+            Self.shared.persistentContainer.viewContext.reset()
+
+            // Remove all existing persistent stores
+            for store in Self.shared.persistentContainer.persistentStoreCoordinator.persistentStores {
+                try? Self.shared.persistentContainer.persistentStoreCoordinator.remove(store)
+            }
+
+            // Now destroy the persistent store
+            try Self.shared.persistentContainer.persistentStoreCoordinator.destroyPersistentStore(
+                at: databaseStoreURL,
+                ofType: NSSQLiteStoreType,
+                options: nil
+            )
+            
+            // just be sure
+            try? FileManager.default.removeItem(at: databaseStoreURL)
+                
+            print("\nDatabase Delete: SUCCEEDED\n")
+            
+            return true
+        }catch{
+            print("\nDatabase Delete request FAILED: \(error)\n")
+            return false
+        }
+    }
+    
+    class func recreateDatabase() {
+        // Try to perform delete if one exists
+        _ = Self.deleteDatabase()
+        
+        // create new instance and load persistence store
+        Self.shared = DatabaseManager()
+    }
+
+}
+
 public extension DatabaseManager
 {
     func start(completionHandler: @escaping (Error?) -> Void)
     {
+        
         func finish(_ error: Error?)
         {
             self.dispatchQueue.async {

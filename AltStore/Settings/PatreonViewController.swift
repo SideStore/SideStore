@@ -24,7 +24,7 @@ extension PatreonViewController
 
 final class PatreonViewController: UICollectionViewController
 {
-    private lazy var dataSource = self.makeDataSource()
+//    private lazy var dataSource = self.makeDataSource()
     private lazy var patronsDataSource = self.makePatronsDataSource()
     
     private var prototypeAboutHeader: AboutPatreonHeaderView!
@@ -40,13 +40,13 @@ final class PatreonViewController: UICollectionViewController
         let aboutHeaderNib = UINib(nibName: "AboutPatreonHeaderView", bundle: nil)
         self.prototypeAboutHeader = aboutHeaderNib.instantiate(withOwner: nil, options: nil)[0] as? AboutPatreonHeaderView
         
-        self.collectionView.dataSource = self.dataSource
+//        self.collectionView.dataSource = self.dataSource
         
         self.collectionView.register(aboutHeaderNib, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "AboutHeader")
         self.collectionView.register(PatronsHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "PatronsHeader")
-        //self.collectionView.register(PatronsFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "PatronsFooter")
+        self.collectionView.register(PatronsFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "PatronsFooter")
         
-        //NotificationCenter.default.addObserver(self, selector: #selector(PatreonViewController.didUpdatePatrons(_:)), name: AppManager.didUpdatePatronsNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatreonViewController.didUpdatePatrons(_:)), name: AppManager.didUpdatePatronsNotification, object: nil)
         
         self.update()
     }

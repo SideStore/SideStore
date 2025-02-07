@@ -42,7 +42,7 @@ public protocol InstalledAppProtocol: Fetchable
 }
 
 @objc(InstalledApp)
-public class InstalledApp: NSManagedObject, InstalledAppProtocol
+public class InstalledApp: BaseEntity, InstalledAppProtocol
 {
     /* Properties */
     @NSManaged public var name: String
@@ -76,45 +76,93 @@ public class InstalledApp: NSManagedObject, InstalledAppProtocol
         return self.storeApp == nil
     }
     
+    
+    // TODO: integrate the following into the hasUpdate such that altstore sources also work with SideStore, ex: pledge check etc for updates
+    /*
+     
+     
+     
+     
+//        let predicateFormat = [
+//            // isActive && storeApp != nil && latestSupportedVersion != nil
+//            "%K == YES AND %K != nil AND %K != nil",
+//
+//            "AND",
+//
+//            // latestSupportedVersion.version != installedApp.version || latestSupportedVersion.buildVersion != installedApp.storeBuildVersion
+//            //
+//            // We have to also check !(latestSupportedVersion.buildVersion == '' && installedApp.storeBuildVersion == nil)
+//            // because latestSupportedVersion.buildVersion stores an empty string for nil, while installedApp.storeBuildVersion uses NULL.
+//            "(%K != %K OR (%K != %K AND NOT (%K == '' AND %K == nil)))",
+//
+//            "AND",
+//
+//            // !isPledgeRequired || isPledged
+//            "(%K == NO OR %K == YES)"
+//        ].joined(separator: " ")
+//
+//        fetchRequest.predicate = NSPredicate(format: predicateFormat,
+//                                             #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.latestSupportedVersion),
+//                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion.version), #keyPath(InstalledApp.version),
+//                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+//                                             #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+//                                             #keyPath(InstalledApp.storeApp.isPledgeRequired), #keyPath(InstalledApp.storeApp.isPledged))
+//
+     
+
+    */
+    
+    
+    
     @objc public var hasUpdate: Bool {
-        guard let storeApp = self.storeApp,
-              let latestSupportedVersion = storeApp.latestSupportedVersion?.version else {
+        // Basic validation
+        guard isActive,
+              let storeApp = self.storeApp,
+              let latestVersion = storeApp.latestSupportedVersion else
+        {
             return false
         }
 
-        let currentVersion = SemanticVersion(self.version)
-        let latestVersion = SemanticVersion(latestSupportedVersion)
-
-        if currentVersion == nil || latestVersion == nil {
-            return self.version < latestSupportedVersion
+        // Check pledge requirements
+        guard !storeApp.isPledgeRequired || storeApp.isPledged else
+        {
+            return false
         }
         
-        let isBeta = storeApp.isBeta
+        // Get current semantic versions
+        let currentSemVer = SemanticVersion(self.version)
+        let latestSemVer = SemanticVersion(latestVersion.version)
         
-        // compare semantic version updates
-        //   - for stable releases "beta" shouldn't be true
-        if !isBeta && (currentVersion! < latestVersion!) {
-            return true
+        // If semantic versions can't be parsed, fall back to string comparison
+        if currentSemVer == nil || latestSemVer == nil {
+            return !matches(latestVersion)
         }
+        // let currentVer = SemanticVersion("\(currentSemVer!.major).\(currentSemVer!.minor).\(currentSemVer!.patch)")
+        // let latestVer  = SemanticVersion("\(latestSemVer!.major).\(latestSemVer!.minor).\(latestSemVer!.patch)")
         
-        if UserDefaults.standard.isBetaUpdatesEnabled {
-            // NOTE: beta builds will always need commit ID suffix
-            //       so it doesn't matter if semantic version was bumped, because commit ID won't be same
-            //       and we will accept this update
-            
-            // storeApp.revision is set in sources.json deployed at apps.json for the respective source
-            let revision = storeApp.revision ?? ""
-            if(isBeta && !revision.isEmpty){
-                let SHORT_COMMIT_LEN        = 7
-                let isRevisionValid         = (revision.count == SHORT_COMMIT_LEN)
-                let installedAppRevision    = Bundle.main.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
-                // when installing beta build over stable build installedAppRevision will be empty!
-                let isBetaUpdateAvailable   = (installedAppRevision != revision)
-                return isRevisionValid && isBetaUpdateAvailable
-            }
-        }
-        return false
+        // // Compare by major.minor.patch
+        // if latestVer! > latestVer! {
+        //     return true
+        // }
+        
+        // // Check beta updates if enabled
+        // if UserDefaults.standard.isBetaUpdatesEnabled,
+        //    ReleaseTracks.betaTracks.contains(latestVersion.channel),
+        //    latestVer == currentVer,         // major.minor.patch are matching
+        //    // now compare by preRelease and build to break the tie
+        //    // TODO: since multiple tracks can be independent, when a different version is available on selected track than installed
+        //    //       we accept it, now ex: if the setup is consistent for upstream merge lets say from alpha to nightly and alpha can never fall behind nightly,
+        //    //       then the preRelease+build combo will always be incremental and our below not-equals check will still work.
+        //    (latestSemVer!.build != currentSemVer!.build) || (latestSemVer!.preRelease != currentSemVer!.preRelease)
+        // {
+        //     return true
+        // }
+        
+        // else include everything as-is when doing lexicographic comparison
+        // NOTE: stable x.y.z is always > x.y.z-abcd+1234
+        return latestSemVer! > currentSemVer!
     }
+
     
     public var appIDCount: Int {
         return 1 + self.appExtensions.count
@@ -165,8 +213,8 @@ public extension InstalledApp
         
         self.resignedBundleIdentifier = resignedApp.bundleIdentifier
         self.version = resignedApp.version
-        // TODO: @mahee96: requires altsign-marketplace branch release or equivalent
-//        self.buildVersion = resignedApp.buildVersion
+        
+        self.buildVersion = resignedApp.buildVersion
         self.storeBuildVersion = storeBuildVersion
         
         self.certificateSerialNumber = certificateSerialNumber
@@ -239,33 +287,7 @@ public extension InstalledApp
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
         
-        // let predicateFormat = [
-        //     // isActive && storeApp != nil && latestSupportedVersion != nil
-        //     "%K == YES AND %K != nil AND %K != nil",
-            
-        //     "AND",
-            
-        //     // latestSupportedVersion.version != installedApp.version || latestSupportedVersion.buildVersion != installedApp.storeBuildVersion
-        //     //
-        //     // We have to also check !(latestSupportedVersion.buildVersion == '' && installedApp.storeBuildVersion == nil)
-        //     // because latestSupportedVersion.buildVersion stores an empty string for nil, while installedApp.storeBuildVersion uses NULL.
-        //     "(%K != %K OR (%K != %K AND NOT (%K == '' AND %K == nil)))",
-            
-        //     "AND",
-            
-        //     // !isPledgeRequired || isPledged
-        //     "(%K == NO OR %K == YES)"
-        // ].joined(separator: " ")
-        
-        // fetchRequest.predicate = NSPredicate(format: predicateFormat,
-        //                                      #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.latestSupportedVersion),
-        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion.version), #keyPath(InstalledApp.version),
-        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
-        //                                      #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
-        //                                      #keyPath(InstalledApp.storeApp.isPledgeRequired), #keyPath(InstalledApp.storeApp.isPledged))
-
-        fetchRequest.predicate = NSPredicate(format: "%K == YES AND %K == YES",
-                                                     #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.hasUpdate))
+        fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(InstalledApp.hasUpdate))
 
         return fetchRequest
     }
@@ -383,13 +405,13 @@ public extension InstalledApp
         return openAppURL
     }
     
-    var isUpdateAvailable: Bool {
-        guard let storeApp = self.storeApp, let latestVersion = storeApp.latestSupportedVersion else { return false }
-        guard !storeApp.isPledgeRequired || storeApp.isPledged else { return false }
+    // var isUpdateAvailable: Bool {
+    //     guard let storeApp = self.storeApp, let latestVersion = storeApp.latestSupportedVersion else { return false }
+    //     guard !storeApp.isPledgeRequired || storeApp.isPledged else { return false }
         
-        let isUpdateAvailable = !self.matches(latestVersion)
-        return isUpdateAvailable
-    }
+    //     let isUpdateAvailable = !self.matches(latestVersion)
+    //     return isUpdateAvailable
+    // }
 }
 
 public extension InstalledApp

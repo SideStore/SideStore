@@ -157,57 +157,19 @@ test:
 	bundle exec fastlane test
 
 ## -- Building --
-
-IS_ALPHA_TRUE := $(filter true TRUE 1, $(IS_ALPHA))
-IS_BETA_TRUE := $(filter true TRUE 1, $(IS_BETA))
-
-# set build types to embed into Info.plist for key: BuildChannel
-BUILD_CHANNEL := stable
-BUILD_CHANNEL := $(if $(IS_ALPHA_TRUE),alpha,$(BUILD_CHANNEL))
-BUILD_CHANNEL := $(if $(IS_BETA_TRUE),beta,$(BUILD_CHANNEL))
-
-# Fetch the latest commit ID for ALPHA or BETA builds
-COMMIT_ID := $(if $(or $(IS_ALPHA_TRUE),$(IS_BETA_TRUE)),$(shell git rev-parse --short HEAD),)
-
-# Print release type based on the value of IS_ALPHA or IS_BETA
-print_release_type:
-	@echo ""
-	@if [ $(IS_ALPHA_TRUE) ]; then \
-		echo "'IS_ALPHA' is set to true. Fetched the latest commit ID from HEAD..."; \
-		echo "    Commit ID: $(COMMIT_ID)"; \
-		echo ""; \
-		echo ">>>>>>>> This is now an ALPHA release for COMMIT_ID = '$(COMMIT_ID)' <<<<<<<<<"; \
-		echo "    Building with BUILD_REVISION = '$(COMMIT_ID)'"; \
-	elif [ $(IS_BETA_TRUE) ]; then \
-		echo "'IS_BETA' is set to true. Fetched the latest commit ID from HEAD..."; \
-		echo "    Commit ID: $(COMMIT_ID)"; \
-		echo ""; \
-		echo ">>>>>>>> This is now a BETA release for COMMIT_ID = '$(COMMIT_ID)' <<<<<<<<<"; \
-		echo "    Building with BUILD_REVISION = '$(COMMIT_ID)'"; \
-	else \
-		echo "'IS_ALPHA' and 'IS_BETA' are not set to true. Skipping commit ID fetch."; \
-		echo ""; \
-		echo ">>>>>>>> This is now a STABLE release because neither IS_ALPHA nor IS_BETA was true <<<<<<<<<"; \
-		echo "    Building with BUILD_REVISION = '$(COMMIT_ID)'"; \
-		echo ""; \
-	fi
-	@echo ""
-
-# Build target with the print_commit_id dependency
-
 # NOTE: The build config was implicitly 'release' since it was set in AltStore.project
 #       under "use "Release" configuration for commandline builds" setting
 #		so I had just defined it explicitly.
 #
 #       However the scheme used is Debug Scheme, so it was deliberately 
 #       using scheme = Debug and config = Release (so I have kept it as-is) 
-# BUILD_CONFIG := "Debug"				# switched to debug build-config to diagnose issue since debugger won't resolve breakpoints in release
-# BUILD_CONFIG := "Release"
+# BUILD_CONFIG ?= Debug		# switched to debug build-config to diagnose issue since debugger won't resolve breakpoints in release
 
-# switched back to release build as default config, unless specified by the incoming environment vars
+# Overrides (will inherit from env if set already)
 BUILD_CONFIG ?= Release
-build: print_release_type
-	@echo ">>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<"
+MARKETING_VERSION ?= 
+build:
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
 	@xcodebuild -workspace AltStore.xcworkspace \
 				-scheme SideStore \
@@ -219,8 +181,7 @@ build: print_release_type
 				CODE_SIGNING_ALLOWED=NO \
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
-				BUILD_REVISION=$(COMMIT_ID) \
-				BUILD_CHANNEL=$(BUILD_CHANNEL)
+				MARKETING_VERSION=$(MARKETING_VERSION) \
 				BUNDLE_ID_SUFFIX=
 #				DWARF_DSYM_FOLDER_PATH="."
 

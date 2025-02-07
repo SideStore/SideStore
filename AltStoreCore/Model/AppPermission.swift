@@ -12,7 +12,7 @@ import UIKit
 import AltSign
 
 @objc(AppPermission) @dynamicMemberLookup
-public class AppPermission: NSManagedObject, Fetchable
+public class AppPermission: BaseEntity
 {
     /* Properties */
     @NSManaged public var type: ALTAppPermissionType

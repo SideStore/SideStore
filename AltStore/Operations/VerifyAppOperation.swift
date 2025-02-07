@@ -82,17 +82,16 @@ final class VerifyAppOperation: ResultOperation<Void>
                 do
                 {
                     guard let ipaURL = self.context.ipaURL else { throw OperationError.appNotFound(name: app.name) }
-                    
-                    
-                    // TODO: @mahee96: appVersion is instantiated source info as AppVersion incoming from source json
-                    //                 app is the instantiated ipa downloaded from the specified in the source json in temp dir
-                    //
-                    //                 For alpha and beta/nightly releases, the CFBundleShortVersionString which is the
-                    //                 $(MARKETING_VERSION) will be overriden with the commit id before invoking xcode build
-                    //
+                                        
                     try await self.verifyHash(of: app, at: ipaURL, matches: appVersion)
                     try await self.verifyDownloadedVersion(of: app, matches: appVersion)
-                    try await self.verifyPermissions(of: app, match: appVersion)
+                    
+                    // process missing permissions check only if the source is V2 or later
+                    if let source = appVersion.app?.source,
+                       source.isSourceAtLeastV2
+                    {
+                        try await self.verifyPermissions(of: app, match: appVersion)
+                    }
                     
                     self.finish(.success(()))
                 }
@@ -129,24 +128,17 @@ private extension VerifyAppOperation
     {
         let (version, buildVersion) = await $appVersion.perform { ($0.version, $0.buildVersion) }
         
-        let downloadedIpaRevision = Bundle(url: app.fileURL)!.object(forInfoDictionaryKey: "BuildRevision") as? String ?? ""
-        let sourceJsonIpaRevision = appVersion.revision
-
-        // if not beta but version matches, then accept it, else compare revisions between source and downloaded
+        // marketplace buildVersion validation
+        if let buildVersion
+        {
+            guard buildVersion == app.buildVersion else {
+                throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app)
+            }
+        }
+        
         if version != app.version {
-            throw VerificationError.mismatchedVersion(app.version, expectedVersion: version, app: app)
+            throw VerificationError.mismatchedVersion(version: app.version, expectedVersion: version, app: app)
         }
-        if (appVersion.isBeta && downloadedIpaRevision != sourceJsonIpaRevision) {
-            let sourceJsonIpaRevision = sourceJsonIpaRevision ?? "nil"
-            throw VerificationError.mismatchedVersion(app.version + " - " + downloadedIpaRevision,
-                                                      expectedVersion: version  + " - " + sourceJsonIpaRevision, app: app)
-        }
-
-//        if let buildVersion
-//        {
-//            // TODO: @mahee96: requires altsign-marketplace branch release or equivalent
-//            guard buildVersion == app.buildVersion else { throw VerificationError.mismatchedBuildVersion(app.buildVersion, expectedVersion: buildVersion, app: app) }
-//        }
     }
     
     func verifyPermissions(of app: ALTApplication, @AsyncManaged match appVersion: AppVersion) async throws

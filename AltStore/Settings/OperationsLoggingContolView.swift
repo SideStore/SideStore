@@ -228,7 +228,7 @@ struct OperationsLoggingControlView: View {
                             CustomToggle("1. Anisette Internal Logging", isOn: Binding(
                                 // enable anisette internal logging by default since it was already printing before
                                 get: { OperationsLoggingControl.getUpdatedFromDatabase(
-                                    for: ANISETTE_VERBOSITY.self, defaultVal: true
+                                    for: ANISETTE_VERBOSITY.self, defaultVal: false
                                 )},
                                 set: { value in
                                     self.viewModel.updateDatabase(for: ANISETTE_VERBOSITY.self, value: value)

@@ -24,7 +24,7 @@ extension LoggedError
 }
 
 @objc(LoggedError)
-public class LoggedError: NSManagedObject, Fetchable
+public class LoggedError: BaseEntity
 {
     /* Properties */
     @NSManaged public private(set) var date: Date

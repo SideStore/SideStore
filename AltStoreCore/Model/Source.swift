@@ -52,6 +52,8 @@ public struct AppVersionFeed: Codable {
     
     let downloadURL: URL
     let size: Int64
+    // added in 0.6.0
+    let sha256: String?     // sha 256 of the uploaded IPA
     
     enum CodingKeys: String, CodingKey
     {
@@ -60,6 +62,8 @@ public struct AppVersionFeed: Codable {
         case localizedDescription
         case downloadURL
         case size
+        // added in 0.6.0
+        case sha256
     }
 }
 
@@ -99,7 +103,7 @@ public struct StoreAppFeed: Codable {
     let isBeta: Bool
     
     //    let source: Source?
-    let appPermission: [AppPermissionFeed]
+    let appPermissions: [AppPermissionFeed]
     let versions: [AppVersionFeed]
     
     enum CodingKeys: String, CodingKey
@@ -111,7 +115,7 @@ public struct StoreAppFeed: Codable {
         case isBeta = "beta"
         case localizedDescription
         case name
-        case appPermission = "permissions"
+        case appPermissions
         case platformURLs
         case screenshotURLs
         case size
@@ -154,6 +158,7 @@ public struct NewsItemFeed: Codable {
 
 
 public struct SourceJSON: Codable {
+    let version: Int?
     let name: String
     let identifier: String
     let sourceURL: URL
@@ -163,6 +168,7 @@ public struct SourceJSON: Codable {
     
     enum CodingKeys: String, CodingKey
     {
+        case version
         case name
         case identifier
         case sourceURL
@@ -195,9 +201,10 @@ public extension Source
 }
 
 @objc(Source)
-public class Source: NSManagedObject, Fetchable, Decodable
+public class Source: BaseEntity, Decodable
 {
     /* Properties */
+    @NSManaged public var version: Int
     @NSManaged public var name: String
     @NSManaged public private(set) var identifier: String
     @NSManaged public var sourceURL: URL
@@ -246,6 +253,12 @@ public class Source: NSManagedObject, Fetchable, Decodable
         }
     }
     
+    
+    public var isSourceAtLeastV2: Bool {
+        return self.version >= 2
+    }
+    
+    
     // `internal` to prevent accidentally using instead of `effectiveFeaturedApps`
     @nonobjc internal var featuredApps: [StoreApp]? {
         return self._hasFeaturedApps ? self._featuredApps.array as? [StoreApp] : nil
@@ -253,6 +266,7 @@ public class Source: NSManagedObject, Fetchable, Decodable
     
     private enum CodingKeys: String, CodingKey
     {
+        case version
         case name
         case sourceURL
         case subtitle
@@ -287,6 +301,10 @@ public class Source: NSManagedObject, Fetchable, Decodable
             self.name = try container.decode(String.self, forKey: .name)
             
             // Optional Values
+            
+            // use sourceversion = 1 by default if not specified in source json
+            self.version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
+            
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
             self.websiteURL = try container.decodeIfPresent(URL.self, forKey: .websiteURL)
             self.localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)

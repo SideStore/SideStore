@@ -319,7 +319,8 @@ private extension NewsViewController
         let app = self.dataSource.item(at: indexPath)
         guard let storeApp = app.storeApp else { return }
         
-        if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        // if let installedApp = storeApp.installedApp, !installedApp.isUpdateAvailable
+        if let installedApp = storeApp.installedApp, !installedApp.hasUpdate
         {
             self.open(installedApp)
         }
@@ -338,7 +339,8 @@ private extension NewsViewController
         }
         
         Task<Void, Never>(priority: .userInitiated) { @MainActor in
-            if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+            // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
+            if let installedApp = storeApp.installedApp, installedApp.hasUpdate
             {
                 AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
             }

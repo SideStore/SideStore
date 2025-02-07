@@ -12,7 +12,7 @@ import CoreData
 import AltSign
 
 @objc(Account)
-public class Account: NSManagedObject, Fetchable
+public class Account: BaseEntity
 {
     public var localizedName: String {
         var components = PersonNameComponents()

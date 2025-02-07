@@ -9,7 +9,7 @@
 import CoreData
 
 @objc(ManagedPatron)
-public class ManagedPatron: NSManagedObject, Fetchable
+public class ManagedPatron: BaseEntity
 {
     @NSManaged public var name: String
     @NSManaged public var identifier: String
@@ -18,7 +18,7 @@ public class ManagedPatron: NSManagedObject, Fetchable
     {
         super.init(entity: entity, insertInto: context)
     }
-    
+
     public init?(patron: PatreonAPI.Patron, context: NSManagedObjectContext)
     {
         // Only cache Patrons with non-nil names.

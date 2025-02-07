@@ -45,8 +45,14 @@ extension VerificationError
         VerificationError(code: .mismatchedHash, app: app, hash: hash, expectedHash: expectedHash)
     }
     
-    static func mismatchedVersion(_ version: String, expectedVersion: String, app: AppProtocol) -> VerificationError {
-        VerificationError(code: .mismatchedVersion, app: app, version: version, expectedVersion: expectedVersion)
+    static func mismatchedVersion(version: String,
+                                  expectedVersion: String,
+                                  app: AppProtocol) -> VerificationError
+    {
+        VerificationError(code: .mismatchedVersion, app: app,
+                          version: version,
+                          expectedVersion: expectedVersion
+        )
     }
     
     static func mismatchedBuildVersion(_ version: String, expectedVersion: String, app: AppProtocol) -> VerificationError {

@@ -31,7 +31,7 @@ public extension Team
 }
 
 @objc(Team)
-public class Team: NSManagedObject, Fetchable
+public class Team: BaseEntity
 {
     /* Properties */
     @NSManaged public var name: String

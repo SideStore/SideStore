@@ -9,7 +9,7 @@
 import CoreData
 
 @objc(RefreshAttempt)
-public class RefreshAttempt: NSManagedObject, Fetchable
+public class RefreshAttempt: BaseEntity
 {
     @NSManaged public var identifier: String
     @NSManaged public var date: Date

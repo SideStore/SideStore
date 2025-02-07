@@ -11,6 +11,8 @@ import Foundation
 import CoreData
 import System
 
+import AltStoreCore
+
 class CoreDataHelper{
     
     private static let STORE_XCMODELD_NAME = "AltStore"
@@ -36,23 +38,25 @@ class CoreDataHelper{
         }
         
 //        let container = NSPersistentContainer(name: STORE_XCMODELD_NAME)
-        let container = NSPersistentContainer(name: STORE_XCMODELD_NAME, managedObjectModel: model)
-        
+//        let container = NSPersistentContainer(name: STORE_XCMODELD_NAME, managedObjectModel: model)
+        let container = DatabaseManager.shared.persistentContainer
 
         // bridge callback into async-await pattern
-        return try await withCheckedThrowingContinuation{ (continuation: CheckedContinuation<URL, Error>) in
+//        return try await withCheckedThrowingContinuation{ (continuation: CheckedContinuation<URL, Error>) in
             
             // async callback processing
-            container.loadPersistentStores { description, error in
+//            container.loadPersistentStores { description, error in
                 // perform actual backup in sync manner
-                do{
-                    let exportedURL = try backupCoreDataStore(container: container, loadError: error)
-                    continuation.resume(returning: exportedURL)
-                }catch{
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+//                do{
+//                    let exportedURL = try backupCoreDataStore(container: container, loadError: error)
+//                    let exportedURL = try backupCoreDataStore(container: container)
+                    return try backupCoreDataStore(container: container)
+//                    continuation.resume(returning: exportedURL)
+//                }catch{
+//                    continuation.resume(throwing: error)
+//                }
+//            }
+//        }
     }
     
     private static func lockSQLiteFile(at url: URL) -> FileDescriptor? {
@@ -86,7 +90,8 @@ class CoreDataHelper{
     }
     
     
-    private static func backupCoreDataStore(container: NSPersistentContainer, loadError: Error?) throws -> URL {
+    private static func backupCoreDataStore(container: NSPersistentContainer, loadError: Error? = nil) throws -> URL
+    {
         
         // Check for load errors
         if let error = loadError {
@@ -119,25 +124,29 @@ class CoreDataHelper{
         let currentDateTime = Date()
         let currentTimeStamp = DateTimeUtil.getDateInTimeStamp(date: currentDateTime)
         
-        let fileNamePrefix = storeURL.deletingPathExtension().lastPathComponent
-        let fileExtension = storeURL.pathExtension
-        let fileName = DateTimeUtil.getTimeStampSuffixedFileName(
-            fileName: fileNamePrefix,
-            timestamp: currentTimeStamp,
-            extn: "." + fileExtension
-        )
+        func getFileName(extn fileExtension: String) -> String {
+            let fileNamePrefix = storeURL.deletingPathExtension().lastPathComponent
+            let fileName = DateTimeUtil.getTimeStampSuffixedFileName(
+                fileName: fileNamePrefix,
+                timestamp: currentTimeStamp,
+                extn: "." + fileExtension
+            )
+            return fileName
+        }
         
+        let fileName = getFileName(extn: storeURL.pathExtension)
         let destinationURL = exportedDir.appendingPathComponent(fileName)
         
         let directoryURL = storeURL.deletingLastPathComponent()
         if let files = try? FileManager.default.contentsOfDirectory(atPath: directoryURL.path) {
-            print("Files in Application Support: \(files)")
+            print("Files in Database Dir: \(directoryURL), \(files)")
         } else {
             print("Failed to list directory contents.")
         }
         
         let parentDirectory = destinationURL.deletingLastPathComponent()
         
+        // TODO: CLOSE Store such that WAL and SHM are flushed and take backup of single sqlite store
         
         do {
             // create intermediate dirs as required
@@ -147,18 +156,19 @@ class CoreDataHelper{
             
             // Copy main SQLite file
             try fileManager.copyItem(at: storeURL, to: destinationURL)
-            
+            print("Core Data store exported to: \(destinationURL.path)")
+
             // Copy -shm and -wal files if they exist
             let additionalFiles = ["-shm", "-wal"].compactMap {
-                destinationURL.deletingPathExtension().appendingPathExtension(destinationURL.pathExtension + $0)
+                storeURL.deletingPathExtension().appendingPathExtension(destinationURL.pathExtension + $0)
             }
             
             for file in additionalFiles where fileManager.fileExists(atPath: file.path) {
-                let destination = documentsURL.appendingPathComponent(file.lastPathComponent)
+                let destination = destinationURL.deletingPathExtension() .appendingPathExtension(file.pathExtension)
                 try fileManager.copyItem(at: file, to: destination)
+                print("Core Data store exported to: \(destination.path)")
             }
             
-            print("Core Data store exported to: \(destinationURL.path)")
             return destinationURL
             
         } catch {
