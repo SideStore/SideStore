@@ -283,7 +283,7 @@ jobs:
           body: |
               This is an ⚠️ **EXPERIMENTAL** ⚠️ ${{ inputs.release_name }} build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
 
-              ${{ inputs.release_name }} builds are **extremely experimental builds only meant to be used by developers and alpha testers. They often contain bugs and experimental features. Use at your own risk!**
+              ${{ inputs.release_name }} builds are **extremely experimental builds only meant to be used by developers and beta testers. They often contain bugs and experimental features. Use at your own risk!**
 
               If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore ${{ inputs.upstream_name }}](https://github.com/${{ github.repository }}/releases?q=${{ inputs.upstream_tag }}).
 
