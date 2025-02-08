@@ -23,15 +23,10 @@ public class AppVersion: BaseEntity, Decodable
     @NSManaged @objc(buildVersion) public private(set) var _buildVersion: String
     
     @NSManaged public private(set) var date: Date
-    @NSManaged @objc(localizedDescription) private(set) var _localizedDescription: String?
+    @NSManaged public private(set) var localizedDescription: String?
     @NSManaged public private(set) var downloadURL: URL
     @NSManaged public private(set) var size: Int64
     @NSManaged public private(set) var sha256: String?
-
-    @nonobjc public var localizedDescription: String {
-        return self._localizedDescription ?? app?.localizedDescription ??
-            "localizedDescription not set, contact the source owner to fix this"
-    }
     
     @nonobjc public var minOSVersion: OperatingSystemVersion? {
         guard let osVersionString = self._minOSVersion else { return nil }
@@ -88,7 +83,7 @@ public class AppVersion: BaseEntity, Decodable
             self.buildVersion = try container.decodeIfPresent(String.self, forKey: .buildVersion)
             
             self.date = try container.decode(Date.self, forKey: .date)
-            self._localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)
+            self.localizedDescription = try container.decodeIfPresent(String.self, forKey: .localizedDescription)
             
             self.downloadURL = try container.decode(URL.self, forKey: .downloadURL)
             self.size = try container.decode(Int64.self, forKey: .size)
@@ -154,7 +149,7 @@ public extension AppVersion
         appVersion.version = version
         appVersion.buildVersion = buildVersion
         appVersion.date = date
-        appVersion._localizedDescription = localizedDescription
+        appVersion.localizedDescription = localizedDescription
         appVersion.downloadURL = downloadURL
         appVersion.size = size
         appVersion.sha256 = sha256

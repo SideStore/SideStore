@@ -168,6 +168,7 @@ test:
 # Overrides (will inherit from env if set already)
 BUILD_CONFIG ?= Release
 MARKETING_VERSION ?= 
+BUNDLE_ID_SUFFIX ?= 
 build:
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
@@ -182,7 +183,7 @@ build:
 				DEVELOPMENT_TEAM=XYZ0123456 \
 				ORG_IDENTIFIER=com.SideStore \
 				MARKETING_VERSION=$(MARKETING_VERSION) \
-				BUNDLE_ID_SUFFIX=
+				BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
 #				DWARF_DSYM_FOLDER_PATH="."
 
 fakesign-apps:

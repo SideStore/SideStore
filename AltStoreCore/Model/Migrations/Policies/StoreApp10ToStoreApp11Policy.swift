@@ -37,7 +37,7 @@ fileprivate extension NSManagedObject
     }
     
     var storeAppSize: NSNumber? {
-        let size = self.value(forKey: #keyPath(StoreApp.size)) as? NSNumber
+        let size = self.value(forKey: #keyPath(StoreApp._size)) as? NSNumber
         return size
     }
     
@@ -66,7 +66,7 @@ fileprivate extension NSManagedObject
         let appVersion = NSEntityDescription.insertNewObject(forEntityName: AppVersion.entity().name!, into: context)
         appVersion.setValue(version, forKey: #keyPath(AppVersion.version))
         appVersion.setValue(date, forKey: #keyPath(AppVersion.date))
-        appVersion.setValue(localizedDescription, forKey: #keyPath(AppVersion._localizedDescription))
+        appVersion.setValue(localizedDescription, forKey: #keyPath(AppVersion.localizedDescription))
         appVersion.setValue(downloadURL, forKey: #keyPath(AppVersion.downloadURL))
         appVersion.setValue(size, forKey: #keyPath(AppVersion.size))
         appVersion.setValue(appBundleID, forKey: #keyPath(AppVersion.appBundleID))

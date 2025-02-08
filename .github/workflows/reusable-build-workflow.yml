@@ -100,11 +100,15 @@ jobs:
           echo "cat Build.xcconfig"
           cat Build.xcconfig
           
+      - name: Set Release Channel info for build number bumper
+        run: |
+          echo "RELEASE_CHANNEL=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}"
+          
 
       - name: Increase build number for beta builds
         if: ${{ inputs.is_beta }}
         run: |
-          echo "RELEASE_CHANNEL=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
           bash .github/workflows/increase-beta-build-num.sh
 
       - name: Extract MARKETING_VERSION from Build.xcconfig
@@ -218,10 +222,13 @@ jobs:
           echo ""
 
 
+      - name: Set BundleID Suffix for Sidestore build
+        run: |
+          echo "BUNDLE_ID_SUFFIX=${{ inputs.bundle_id_suffix }}" >> $GITHUB_ENV
+
       - name: Build SideStore
         # using 'tee' to intercept stdout and log for detailed build-log
         run: |
-          echo "BUNDLE_ID_SUFFIX=${{ inputs.bundle_id_suffix }}" >> $GITHUB_ENV
           NSUnbufferedIO=YES make build 2>&1 | tee build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
