@@ -67,6 +67,11 @@ final class AppViewController: UIViewController
         self.navigationBarTitleView.sizeToFit()
         self.navigationItem.titleView = self.navigationBarTitleView
         
+        // spacing in storyboard wasn't working, so had to do programatically
+        if let stackView = self.navigationBarTitleView as? UIStackView {
+            stackView.spacing = 8
+        }
+        
         self.contentViewControllerShadowView = UIView()
         self.contentViewControllerShadowView.backgroundColor = .white
         self.contentViewControllerShadowView.layer.cornerRadius = 38
