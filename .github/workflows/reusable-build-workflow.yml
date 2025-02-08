@@ -273,7 +273,7 @@ jobs:
 
               ${{ inputs.release_name }} builds are **extremely experimental builds only meant to be used by developers and alpha testers. They often contain bugs and experimental features. Use at your own risk!**
 
-              If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore ${{ inputs.upstrea_name }}](https://github.com/${{ github.repository }}/releases?q=${{ inputs.upstream_tag }}).
+              If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore ${{ inputs.upstream_name }}](https://github.com/${{ github.repository }}/releases?q=${{ inputs.upstream_tag }}).
 
               ## Build Info
 
