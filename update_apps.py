@@ -106,7 +106,12 @@ new_version = {
     "size": SIZE,
     "sha256": SHA256,
 }
-versions.insert(0, new_version)
+
+if versions is []:
+    versions.append(new_version)
+else:
+    # versions.insert(0, new_version)     # insert at front
+    versions[0] = new_version             # replace top one
 
 # Save the updated JSON to the input file
 try:

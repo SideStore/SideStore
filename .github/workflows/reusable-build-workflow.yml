@@ -30,6 +30,10 @@ on:
         default: com.SideStore.SideStore
         required: true
         type: string
+      bundle_id_suffix:
+        default: ''
+        required: false
+        type: string
 
     secrets:
     #   GITHUB_TOKEN:
@@ -217,6 +221,7 @@ jobs:
       - name: Build SideStore
         # using 'tee' to intercept stdout and log for detailed build-log
         run: |
+          echo "BUNDLE_ID_SUFFIX=${{ inputs.bundle_id_suffix }}" >> $GITHUB_ENV
           NSUnbufferedIO=YES make build 2>&1 | tee build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
