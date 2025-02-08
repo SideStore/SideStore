@@ -102,7 +102,7 @@ jobs:
           
       - name: Set Release Channel info for build number bumper
         run: |
-          echo "RELEASE_CHANNEL=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
+          echo "RELEASE_CHANNEL=${{ inputs.release_tag }}" >> $GITHUB_ENV
           echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}"
           
 

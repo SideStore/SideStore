@@ -39,10 +39,16 @@ jobs:
         run: |
           if [ -n "$LAST_SUCCESS" ]; then
             NEW_COMMITS=$(git rev-list --count --since="$LAST_SUCCESS" origin/develop)
+            COMMIT_LOG=$(git log --since="$LAST_SUCCESS" --pretty=format:"%h %s" origin/develop)
           else
             NEW_COMMITS=1
+            COMMIT_LOG=$(git log -n 10 --pretty=format:"%h %s" origin/develop) # Show last 10 commits if no history
           fi
+          
           echo "Has changes: $NEW_COMMITS"
+          echo "New commits since last successful build:"
+          echo "$COMMIT_LOG"
+          
           if [ "$NEW_COMMITS" -gt 0 ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
@@ -73,4 +79,3 @@ jobs:
       CROSS_REPO_PUSH_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
       BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
 
-      
