@@ -27,7 +27,8 @@ public class AppVersion: BaseEntity, Decodable
     @NSManaged public private(set) var downloadURL: URL
     @NSManaged public private(set) var size: Int64
     @NSManaged public private(set) var sha256: String?
-    
+    @NSManaged @objc(channel) private var _channel: String?
+
     @nonobjc public var minOSVersion: OperatingSystemVersion? {
         guard let osVersionString = self._minOSVersion else { return nil }
         
@@ -45,11 +46,21 @@ public class AppVersion: BaseEntity, Decodable
     @NSManaged @objc(maxOSVersion) private var _maxOSVersion: String?
     
     @NSManaged public var appBundleID: String
-    @NSManaged public var sourceID: String?
+    @NSManaged public var sourceID: String?   
 
     /* Relationships */
-    @NSManaged public private(set) var app: StoreApp?
+    @NSManaged @objc(app) public private(set) var _app: StoreApp?
     @NSManaged @objc(latestVersionApp) public internal(set) var latestSupportedVersionApp: StoreApp?
+    @NSManaged public var releaseTrack: ReleaseTrack?    
+    
+    // public accessors
+    public var app: StoreApp? {
+        return releaseTrack?.storeApp ?? _app
+    }
+
+    public var channel: ReleaseTracks {
+        ReleaseTracks(stringValue: releaseTrack?.track ?? _channel ?? "") ?? .unknown
+    }
     
     private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
     {
@@ -136,6 +147,7 @@ public extension AppVersion
     class func makeAppVersion(
         version: String,
         buildVersion: String?,
+        channel: String? = nil,
         date: Date,
         localizedDescription: String? = nil,
         downloadURL: URL,
@@ -148,6 +160,7 @@ public extension AppVersion
         let appVersion = AppVersion(context: context)
         appVersion.version = version
         appVersion.buildVersion = buildVersion
+        appVersion._channel = channel
         appVersion.date = date
         appVersion.localizedDescription = localizedDescription
         appVersion.downloadURL = downloadURL
@@ -158,6 +171,49 @@ public extension AppVersion
 
         return appVersion
     }
+    
+    // update with new values
+    func mutateForData(
+        version: String? = nil,
+        channel: String? = nil,
+        buildVersion: String? = nil,
+        date: Date? = nil,
+        localizedDescription: String? = nil,
+        downloadURL: URL? = nil,
+        size: Int64? = nil,
+        sha256: String? = nil,
+        appBundleID: String? = nil,
+        sourceID: String? = nil) -> AppVersion
+    {
+        // use overriding incoming params if present else retain existing
+
+        // non-optionals
+        if let version {
+            self.version = version
+        }
+        if let date {
+            self.date = date
+        }
+        if let downloadURL{
+            self.downloadURL = downloadURL
+        }
+        if let size{
+            self.size = size
+        }
+        if let appBundleID{
+            self.appBundleID = appBundleID
+        }
+        
+        // optionals
+        self.localizedDescription = localizedDescription ?? self.localizedDescription
+        self._channel = channel ?? self._channel
+        self.buildVersion = buildVersion ?? self.buildVersion
+        self.sha256 = sha256 ?? self.sha256
+        self.sourceID = sourceID ?? self.sourceID
+
+        return self
+    }
+    
     
     var isSupported: Bool {
         if let minOSVersion = self.minOSVersion, !ProcessInfo.processInfo.isOperatingSystemAtLeast(minOSVersion)

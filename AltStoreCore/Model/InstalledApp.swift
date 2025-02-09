@@ -122,7 +122,7 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         {
             return false
         }
-
+        
         // Check pledge requirements
         guard !storeApp.isPledgeRequired || storeApp.isPledged else
         {
@@ -137,26 +137,26 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         if currentSemVer == nil || latestSemVer == nil {
             return !matches(latestVersion)
         }
-        // let currentVer = SemanticVersion("\(currentSemVer!.major).\(currentSemVer!.minor).\(currentSemVer!.patch)")
-        // let latestVer  = SemanticVersion("\(latestSemVer!.major).\(latestSemVer!.minor).\(latestSemVer!.patch)")
+        let currentVer = SemanticVersion("\(currentSemVer!.major).\(currentSemVer!.minor).\(currentSemVer!.patch)")
+        let latestVer  = SemanticVersion("\(latestSemVer!.major).\(latestSemVer!.minor).\(latestSemVer!.patch)")
         
-        // // Compare by major.minor.patch
-        // if latestVer! > latestVer! {
-        //     return true
-        // }
+        // Compare by major.minor.patch
+        if latestVer! > latestVer! {
+            return true
+        }
         
-        // // Check beta updates if enabled
-        // if UserDefaults.standard.isBetaUpdatesEnabled,
-        //    ReleaseTracks.betaTracks.contains(latestVersion.channel),
-        //    latestVer == currentVer,         // major.minor.patch are matching
-        //    // now compare by preRelease and build to break the tie
-        //    // TODO: since multiple tracks can be independent, when a different version is available on selected track than installed
-        //    //       we accept it, now ex: if the setup is consistent for upstream merge lets say from alpha to nightly and alpha can never fall behind nightly,
-        //    //       then the preRelease+build combo will always be incremental and our below not-equals check will still work.
-        //    (latestSemVer!.build != currentSemVer!.build) || (latestSemVer!.preRelease != currentSemVer!.preRelease)
-        // {
-        //     return true
-        // }
+        // Check beta updates if enabled
+        if UserDefaults.standard.isBetaUpdatesEnabled,
+           ReleaseTracks.betaTracks.contains(latestVersion.channel),
+           latestVer == currentVer,         // major.minor.patch are matching
+           // now compare by preRelease and build to break the tie
+           // TODO: since multiple tracks can be independent, when a different version is available on selected track than installed
+           //       we accept it, now ex: if the setup is consistent for upstream merge lets say from alpha to nightly and alpha can never fall behind nightly,
+           //       then the preRelease+build combo will always be incremental and our below not-equals check will still work.
+           (latestSemVer!.build != currentSemVer!.build) || (latestSemVer!.preRelease != currentSemVer!.preRelease)
+        {
+            return true
+        }
         
         // else include everything as-is when doing lexicographic comparison
         // NOTE: stable x.y.z is always > x.y.z-abcd+1234
@@ -268,8 +268,8 @@ public extension InstalledApp
             }
         }
     }
-    
-    func matches(_ appVersion: AppVersion) -> Bool
+
+    func matches(_ appVersion: AppVersion) -> Bool 
     {
         let matchesAppVersion = (self.version == appVersion.version && self.storeBuildVersion == appVersion.buildVersion)
         return matchesAppVersion
@@ -283,12 +283,12 @@ public extension InstalledApp
         return NSFetchRequest<InstalledApp>(entityName: "InstalledApp")
     }
     
-    class func supportedUpdatesFetchRequest() -> NSFetchRequest<InstalledApp>
+    class func supportedUpdatesFetchRequest() -> NSFetchRequest<InstalledApp> 
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
         
         fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(InstalledApp.hasUpdate))
-
+        
         return fetchRequest
     }
     

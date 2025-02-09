@@ -56,6 +56,7 @@
 		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
 		A809F6A82D04DA1900F0F0F3 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */; };
 		A809F6A92D04DA1900F0F0F3 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */; };
+		A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */; };
 		A80D790D2D2F20AF00A40F40 /* PaginationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */; };
 		A80D790F2D2F217000A40F40 /* PaginationDataHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
@@ -636,6 +637,7 @@
 		A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "minimuxer-helpers.swift"; sourceTree = "<group>"; };
 		A809F6A62D04DA1900F0F0F3 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
 		A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack.swift; sourceTree = "<group>"; };
 		A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationIntent.swift; sourceTree = "<group>"; };
 		A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationDataHolder.swift; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
@@ -1697,6 +1699,7 @@
 				D58916FD28C7C55C00E39C8B /* LoggedError.swift */,
 				BF66EEBF2501AECA007EE018 /* NewsItem.swift */,
 				BF66EEC32501AECA007EE018 /* RefreshAttempt.swift */,
+				A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */,
 				BF66EEAB2501AECA007EE018 /* Source.swift */,
 				BF66EEC42501AECA007EE018 /* StoreApp.swift */,
 				BF66EEC22501AECA007EE018 /* Team.swift */,
@@ -2975,6 +2978,7 @@
 				D5F99A1A28D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift in Sources */,
 				D5177B0D2A26944600270065 /* AltStore12ToAltStore13.xcmappingmodel in Sources */,
 				BFAECC562501B0A400528F27 /* ALTServerError+Conveniences.swift in Sources */,
+				A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */,
 				D56915072AD5E91B00A2B747 /* Regex+Permissions.swift in Sources */,
 				BFAECC592501B0A400528F27 /* Result+Conveniences.swift in Sources */,
 				D571ADD02A02FC7200B24B63 /* ALTAppPermission.swift in Sources */,

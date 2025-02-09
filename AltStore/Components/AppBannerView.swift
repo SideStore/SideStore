@@ -138,11 +138,12 @@ extension AppBannerView
             init(app: AppProtocol)
             {
                 self.name = app.name
-                
+                                
                 guard let storeApp = (app as? StoreApp) ?? (app as? InstalledApp)?.storeApp else { return }
                 self.developerName = storeApp.developerName
-                
-                if storeApp.isBeta
+
+                if let track = storeApp.latestSupportedVersion?.channel,
+                   ReleaseTracks.betaTracks.contains(track)
                 {
                     self.name = String(format: NSLocalizedString("%@ beta", comment: ""), app.name)
                     self.isBeta = true
