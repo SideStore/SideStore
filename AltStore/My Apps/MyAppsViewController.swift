@@ -257,7 +257,7 @@ private extension MyAppsViewController
 
             let appName: String
             
-            if app.isBeta
+            if ReleaseTracks.betaTracks.contains(latestSupportedVersion.channel)
             {
                 appName = String(format: NSLocalizedString("%@ beta", comment: ""), app.name)
             }

@@ -12,6 +12,32 @@ import CoreData
 import Roxas
 import AltSign
 
+import SemanticVersion
+
+public enum ReleaseTracks: String, CodingKey, CaseIterable
+{
+    case unknown
+    case local          
+    
+    case alpha
+    case beta = "nightly"
+    case stable
+    
+        
+    public static var betaTracks: [ReleaseTracks] {
+        ReleaseTracks.allCases.filter(isBetaTrack)
+    }
+
+    public static var nonBetaTracks: [ReleaseTracks] {
+        ReleaseTracks.allCases.filter { !isBetaTrack($0) }
+    }
+
+    private static func isBetaTrack(_ key: ReleaseTracks) -> Bool {
+        key == .alpha || key == .beta
+    }
+}
+
+
 public extension StoreApp
 {
     #if ALPHA
@@ -21,7 +47,7 @@ public extension StoreApp
     #else
     static let altstoreAppID = Bundle.Info.appbundleIdentifier
     #endif
-
+    
     static let dolphinAppID = "me.oatmealdome.dolphinios-njb"
 }
 
@@ -37,22 +63,22 @@ public final class PlatformURL: NSManagedObject, Decodable {
     /* Properties */
     @NSManaged public private(set) var platform: Platform
     @NSManaged public private(set) var downloadURL: URL
-
-
+    
+    
     private enum CodingKeys: String, CodingKey
     {
         case platform
         case downloadURL
     }
-
-
+    
+    
     public init(from decoder: Decoder) throws
     {
         guard let context = decoder.managedObjectContext else { preconditionFailure("Decoder must have non-nil NSManagedObjectContext.") }
-
+        
         // Must initialize with context in order for child context saves to work correctly.
         super.init(entity: PlatformURL.entity(), insertInto: context)
-
+        
         do
         {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -65,7 +91,7 @@ public final class PlatformURL: NSManagedObject, Decodable {
             {
                 context.delete(self)
             }
-
+            
             throw error
         }
     }
@@ -75,15 +101,15 @@ extension PlatformURL: Comparable {
     public static func < (lhs: PlatformURL, rhs: PlatformURL) -> Bool {
         return lhs.platform.rawValue < rhs.platform.rawValue
     }
-
+    
     public static func > (lhs: PlatformURL, rhs: PlatformURL) -> Bool {
         return lhs.platform.rawValue > rhs.platform.rawValue
     }
-
+    
     public static func <= (lhs: PlatformURL, rhs: PlatformURL) -> Bool {
         return lhs.platform.rawValue <= rhs.platform.rawValue
     }
-
+    
     public static func >= (lhs: PlatformURL, rhs: PlatformURL) -> Bool {
         return lhs.platform.rawValue >= rhs.platform.rawValue
     }
@@ -97,11 +123,11 @@ private struct PatreonParameters: Decodable
     {
         var amount: Decimal
         var isCustom: Bool
-
+        
         init(from decoder: Decoder) throws
         {
             let container = try decoder.singleValueContainer()
-
+            
             if let stringValue = try? container.decode(String.self), stringValue == "custom"
             {
                 self.amount = 0 // Use 0 as amount internally to simplify logic.
@@ -115,12 +141,57 @@ private struct PatreonParameters: Decodable
             }
         }
     }
-
+    
     var pledge: Pledge?
     var currency: String?
     var tiers: Set<String>?
     var benefit: String?
     var hidden: Bool?
+}
+
+
+extension StoreApp {
+    
+    //MARK: - relationships
+    @NSManaged @objc(releaseTracks) private(set) var _releaseTracks: NSOrderedSet?
+    
+    private var releaseTracks: [ReleaseTrack]?{
+        return _releaseTracks?.array as? [ReleaseTrack]
+    }
+    
+    private func releaseTrackFor(track: String) -> ReleaseTrack? {
+        return releaseTracks?.first(where: { $0.track == track })
+    }
+    
+    private var stableTrack: ReleaseTrack? {
+        releaseTrackFor(track: ReleaseTracks.stable.stringValue)
+    }
+    
+    private var betaReleases: [AppVersion]? {
+        // If beta track is selected, use it instead
+        if UserDefaults.standard.isBetaUpdatesEnabled,
+           let betaTrack = UserDefaults.standard.betaUdpatesTrack {
+            
+            // Filter and flatten beta and stable releases
+            let betaReleases = releaseTrackFor(track: betaTrack)?.releases?.compactMap { $0 }
+
+            // Ensure both beta and stable releases are found and supported
+            if let latestBeta = betaReleases?.first(where: { $0.isSupported }),
+               let latestStable = stableTrack?.releases?.first(where: { $0.isSupported }),
+               let stableSemVer = SemanticVersion(latestStable.version),
+               let betaSemVer = SemanticVersion(latestBeta.version),
+               betaSemVer >= stableSemVer
+            {
+                return betaReleases
+            }
+        }
+        return nil
+    }
+    
+    private func getReleases(default releases: ReleaseTrack?) -> [AppVersion]?
+    {
+        return betaReleases ?? releases?.releases?.compactMap { $0 }
+    }
 }
 
 
@@ -131,27 +202,26 @@ public class StoreApp: BaseEntity, Decodable
     @NSManaged public private(set) var name: String
     @NSManaged public private(set) var bundleIdentifier: String
     @NSManaged public private(set) var subtitle: String?
-
+    
     @NSManaged public private(set) var developerName: String
     @NSManaged public private(set) var localizedDescription: String
     @NSManaged @objc(size) internal var _size: Int32
-
+    
     @nonobjc public var category: StoreCategory? {
         guard let _category else { return nil }
-
+        
         let category = StoreCategory(rawValue: _category)
         return category
     }
     @NSManaged @objc(category) public private(set) var _category: String?
-
+    
     @NSManaged public private(set) var iconURL: URL
     @NSManaged public private(set) var screenshotURLs: [URL]
-
+    
     @NSManaged public private(set) var downloadURL: URL?
     @NSManaged public private(set) var platformURLs: PlatformURLs?
 
     @NSManaged public private(set) var tintColor: UIColor?
-    @NSManaged public private(set) var isBeta: Bool
 
     // Required for Marketplace apps.
     @NSManaged public private(set) var marketplaceID: String?
@@ -161,18 +231,18 @@ public class StoreApp: BaseEntity, Decodable
     @NSManaged public private(set) var isHiddenWithoutPledge: Bool
     @NSManaged public private(set) var pledgeCurrency: String?
     @NSManaged public private(set) var prefersCustomPledge: Bool
-
+    
     @nonobjc public var pledgeAmount: Decimal? { _pledgeAmount as? Decimal }
     @NSManaged @objc(pledgeAmount) private var _pledgeAmount: NSDecimalNumber?
-
+    
     @NSManaged public var sortIndex: Int32
     @NSManaged public var featuredSortID: String?
-
+    
     @objc public internal(set) var sourceIdentifier: String? {
         get {
             self.willAccessValue(forKey: #keyPath(sourceIdentifier))
             defer { self.didAccessValue(forKey: #keyPath(sourceIdentifier)) }
-
+            
             let sourceIdentifier = self.primitiveSourceIdentifier
             return sourceIdentifier
         }
@@ -180,17 +250,17 @@ public class StoreApp: BaseEntity, Decodable
             self.willChangeValue(forKey: #keyPath(sourceIdentifier))
             self.primitiveSourceIdentifier = newValue
             self.didChangeValue(forKey: #keyPath(sourceIdentifier))
-
+            
             for version in self.versions
             {
                 version.sourceID = newValue
             }
-
+            
             for permission in self.permissions
             {
                 permission.sourceID = self.sourceIdentifier ?? ""
             }
-
+            
             for screenshot in self.allScreenshots
             {
                 screenshot.sourceID = self.sourceIdentifier ?? ""
@@ -198,26 +268,26 @@ public class StoreApp: BaseEntity, Decodable
         }
     }
     @NSManaged private var primitiveSourceIdentifier: String?
-
+    
     // Legacy (kept for backwards compatibility)
     @NSManaged public private(set) var version: String?
     @NSManaged public private(set) var versionDate: Date?
     @NSManaged public private(set) var versionDescription: String?
-
+    
     /* Relationships */
     @NSManaged public var installedApp: InstalledApp?
     @NSManaged public var newsItems: Set<NewsItem>
-
+    
     @NSManaged @objc(source) public var _source: Source?
     @NSManaged public internal(set) var featuringSource: Source?
-
+    
     @NSManaged @objc(latestVersion) public private(set) var latestSupportedVersion: AppVersion?
     @NSManaged @objc(versions) public private(set) var _versions: NSOrderedSet
-
+    
     @NSManaged public private(set) var loggedErrors: NSSet /* Set<LoggedError> */ // Use NSSet to avoid eagerly fetching values.
-
+    
     /* Non-Core Data Properties */
-
+    
     // Used to set isPledged after fetching source.
     public var _tierIDs: Set<String>?
     public var _rewardID: String?
@@ -236,11 +306,11 @@ public class StoreApp: BaseEntity, Decodable
         return self._permissions as! Set<AppPermission>
     }
     @NSManaged @objc(permissions) internal private(set) var _permissions: NSSet // Use NSSet to avoid eagerly fetching values.
-
+    
     @nonobjc public var versions: [AppVersion] {
         return self._versions.array as! [AppVersion]
     }
-
+    
     @nonobjc public var allScreenshots: [AppScreenshot] {
         return self._screenshots.array as! [AppScreenshot]
     }
@@ -250,7 +320,7 @@ public class StoreApp: BaseEntity, Decodable
     {
         super.init(entity: entity, insertInto: context)
     }
-
+    
     private enum CodingKeys: String, CodingKey
     {
         case name
@@ -265,19 +335,22 @@ public class StoreApp: BaseEntity, Decodable
         case subtitle
         case permissions = "appPermissions"
         case size
-        case isBeta = "beta"
+        case isBeta = "beta"    // backward compatibility for altstore source format
         case versions
         case patreon
         case category
-
+        
         // Legacy
         case version
         case versionDescription
         case versionDate
         case downloadURL
         case screenshotURLs
-    }
 
+        // v2 source format
+        case releaseTracks = "releaseChannels"
+    }
+    
     public required init(from decoder: Decoder) throws
     {
         guard let context = decoder.managedObjectContext else { preconditionFailure("Decoder must have non-nil NSManagedObjectContext.") }
@@ -293,10 +366,9 @@ public class StoreApp: BaseEntity, Decodable
             self.developerName = try container.decode(String.self, forKey: .developerName)
             self.localizedDescription = try container.decode(String.self, forKey: .localizedDescription)
             self.iconURL = try container.decode(URL.self, forKey: .iconURL)
-
+            
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
-            self.isBeta = try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
-
+            
             // Required for Marketplace apps, but we'll verify later.
             self.marketplaceID = try container.decodeIfPresent(String.self, forKey: .marketplaceID)
 
@@ -305,17 +377,17 @@ public class StoreApp: BaseEntity, Decodable
                 guard let tintColor = UIColor(hexString: tintColorHex) else {
                     throw DecodingError.dataCorruptedError(forKey: .tintColor, in: container, debugDescription: "Hex code is invalid.")
                 }
-
+                
                 self.tintColor = tintColor
             }
-
+            
             if let rawCategory = try container.decodeIfPresent(String.self, forKey: .category)
             {
                 self._category = rawCategory.lowercased() // Store raw (lowercased) category value.
             }
-
+            
             let appScreenshots: [AppScreenshot]
-
+            
             if let screenshots = try container.decodeIfPresent(AppScreenshots.self, forKey: .screenshots)
             {
                 appScreenshots = screenshots.screenshots
@@ -324,7 +396,7 @@ public class StoreApp: BaseEntity, Decodable
             {
                 // Assume 9:16 iPhone 8 screen dimensions for legacy screenshotURLs.
                 let legacyAspectRatio = CGSize(width: 750, height: 1334)
-
+                
                 appScreenshots = screenshotURLs.map { imageURL in
                     let screenshot = AppScreenshot(imageURL: imageURL, size: legacyAspectRatio, deviceType: .iphone, context: context)
                     return screenshot
@@ -342,14 +414,14 @@ public class StoreApp: BaseEntity, Decodable
             {
                 appScreenshots = []
             }
-
+   
             for screenshot in appScreenshots
             {
                 screenshot.appBundleID = self.bundleIdentifier
             }
-
+            
             self.setScreenshots(appScreenshots)
-
+            
             if let appPermissions = try container.decodeIfPresent(AppPermissions.self, forKey: .permissions)
             {
                 let allPermissions = appPermissions.entitlements + appPermissions.privacy
@@ -357,7 +429,7 @@ public class StoreApp: BaseEntity, Decodable
                 {
                     permission.appBundleID = self.bundleIdentifier
                 }
-
+                
                 self._permissions = NSSet(array: allPermissions)
             }
             else
@@ -365,66 +437,8 @@ public class StoreApp: BaseEntity, Decodable
                 self._permissions = NSSet()
             }
 
-            if let versions = try container.decodeIfPresent([AppVersion].self, forKey: .versions)
-            {
-                if (versions.count == 0){
-                    throw DecodingError.dataCorruptedError(forKey: .versions, in: container, debugDescription: "At least one version is required in key: versions")
-                }
-
-                for (index, version) in zip(0..., versions)
-                {
-                    version.appBundleID = self.bundleIdentifier
-
-                    if self.marketplaceID != nil
-                    {
-                        struct IndexCodingKey: CodingKey
-                        {
-                            var stringValue: String { self.intValue?.description ?? "" }
-                            var intValue: Int?
-
-                            init?(stringValue: String)
-                            {
-                                fatalError()
-                            }
-
-                            init(intValue: Int)
-                            {
-                                self.intValue = intValue
-                            }
-                        }
-
-                        // Marketplace apps must provide build version.
-                        guard version.buildVersion != nil else {
-                            let codingPath = container.codingPath + [CodingKeys.versions as CodingKey] + [IndexCodingKey(intValue: index) as CodingKey]
-                            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Notarized apps must provide a build version.")
-                            throw DecodingError.keyNotFound(AppVersion.CodingKeys.buildVersion, context)
-                        }
-                    }
-
-                }
-
-                try self.setVersions(versions)
-            }
-            else
-            {
-                let version = try container.decode(String.self, forKey: .version)
-                let versionDate = try container.decode(Date.self, forKey: .versionDate)
-                let versionDescription = try container.decodeIfPresent(String.self, forKey: .versionDescription)
-
-                let downloadURL = try container.decode(URL.self, forKey: .downloadURL)
-                let size = try container.decode(Int32.self, forKey: .size)
-
-                let appVersion = AppVersion.makeAppVersion(version: version,
-                                                           buildVersion: nil,
-                                                           date: versionDate,
-                                                           localizedDescription: versionDescription,
-                                                           downloadURL: downloadURL,
-                                                           size: Int64(size),
-                                                           appBundleID: self.bundleIdentifier,
-                                                           in: context)
-                try self.setVersions([appVersion])
-            }
-
+            try self.decodeVersions(from: decoder)  // pre-req for downloadURL procesing
+            
             // latestSupportedVersion is set by this point if one was available
             let platformURLs = try container.decodeIfPresent(PlatformURLs.self.self, forKey: .platformURLs)
             if let platformURLs = platformURLs {
@@ -450,12 +464,12 @@ public class StoreApp: BaseEntity, Decodable
             // Must _explicitly_ set to false to ensure it updates cached database value.
             self.isPledged = false
             self.prefersCustomPledge = false
-
+            
             if let patreon = try container.decodeIfPresent(PatreonParameters.self, forKey: .patreon)
             {
                 self.isPledgeRequired = true
                 self.isHiddenWithoutPledge = patreon.hidden ?? false // Default to showing Patreon apps
-
+                                
                 if let pledge = patreon.pledge
                 {
                     self._pledgeAmount = pledge.amount as NSDecimalNumber
@@ -467,7 +481,7 @@ public class StoreApp: BaseEntity, Decodable
                     // No conditions, so default to pledgeAmount of 0 to simplify logic.
                     self._pledgeAmount = 0 as NSDecimalNumber
                 }
-
+                
                 self._tierIDs = patreon.tiers
                 self._rewardID = patreon.benefit
             }
@@ -477,7 +491,7 @@ public class StoreApp: BaseEntity, Decodable
                 self.isHiddenWithoutPledge = false
                 self._pledgeAmount = nil
                 self.pledgeCurrency = nil
-
+                
                 self._tierIDs = nil
                 self._rewardID = nil
             }
@@ -488,23 +502,118 @@ public class StoreApp: BaseEntity, Decodable
             {
                 context.delete(self)
             }
-
+            
             throw error
         }
     }
+    
+    private func decodeVersions(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+      
+        if let releaseTracks = try container.decodeIfPresent([ReleaseTrack].self, forKey: .releaseTracks){
+            self._releaseTracks = NSOrderedSet(array: releaseTracks)
+        }
+        
+        // get channel info if present, else default to stable
+        var channel = ReleaseTracks.stable.stringValue
 
+        var versions = getReleases(default: stableTrack) ?? []
+        if versions.isEmpty {
+            if let appVersions = try container.decodeIfPresent([AppVersion].self, forKey: .versions)
+            {
+                versions = appVersions
+            }
+            else
+            {
+                if try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
+                {
+                    channel = ReleaseTracks.beta.stringValue
+                }
+                
+                // create one from the storeApp description and use it as current
+                let newRelease = try createNewAppVersion(decoder: decoder)
+                                        .mutateForData(
+                                            channel: channel,
+                                            appBundleID: self.bundleIdentifier
+                                        )
+
+                versions = [newRelease]
+            }
+        }
+        
+        for (index, version) in zip(0..., versions)
+        {
+            version.appBundleID = self.bundleIdentifier
+            
+            // ignore setting, if it was already updated by ReleaseTracks in V2 sources
+            if version.channel == .unknown {
+                _ = version.mutateForData(channel: channel)
+            }
+
+            if self.marketplaceID != nil
+            {
+                struct IndexCodingKey: CodingKey
+                {
+                    var stringValue: String { self.intValue?.description ?? "" }
+                    var intValue: Int?
+
+                    init?(stringValue: String)
+                    {
+                        fatalError()
+                    }
+
+                    init(intValue: Int)
+                    {
+                        self.intValue = intValue
+                    }
+                }
+
+                // Marketplace apps must provide build version.
+                guard version.buildVersion != nil else {
+                    let codingPath = container.codingPath + [CodingKeys.versions as CodingKey] + [IndexCodingKey(intValue: index) as CodingKey]
+                    let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Notarized apps must provide a build version.")
+                    throw DecodingError.keyNotFound(AppVersion.CodingKeys.buildVersion, context)
+                }
+            }
+
+        }
+        
+        try self.setVersions(versions)
+    }
+
+    func createNewAppVersion(decoder: Decoder) throws -> AppVersion {
+        guard let context = decoder.managedObjectContext else { preconditionFailure("Decoder must have non-nil NSManagedObjectContext.") }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        //
+        let version = try container.decode(String.self, forKey: .version)
+        let versionDate = try container.decode(Date.self, forKey: .versionDate)
+        let versionDescription = try container.decodeIfPresent(String.self, forKey: .versionDescription)
+        
+        let downloadURL = try container.decode(URL.self, forKey: .downloadURL)
+        let size = try container.decode(Int32.self, forKey: .size)
+        
+        return AppVersion.makeAppVersion(version: version,
+                                        buildVersion: nil,
+                                        date: versionDate,
+                                        localizedDescription: versionDescription,
+                                        downloadURL: downloadURL,
+                                        size: Int64(size),
+                                        appBundleID: self.bundleIdentifier,
+                                        in: context)
+    }
+    
     public override func awakeFromInsert()
     {
         super.awakeFromInsert()
-
+        
         self.featuredSortID = UUID().uuidString
     }
 }
 
 internal extension StoreApp
 {
-    func setVersions(_ versions: [AppVersion]) throws
-    {
+    func setVersions(_ versions: [AppVersion]) throws 
+    {        
         guard let latestVersion = versions.first else {
             throw MergeError.noVersions(for: self)
         }
@@ -513,7 +622,7 @@ internal extension StoreApp
 
         let latestSupportedVersion = versions.first(where: { $0.isSupported })
         self.latestSupportedVersion = latestSupportedVersion
-
+        
         for case let version as AppVersion in self._versions
         {
             if version == latestSupportedVersion
@@ -534,7 +643,7 @@ internal extension StoreApp
         self.downloadURL = latestVersion.downloadURL
         self._size = Int32(latestVersion.size)
     }
-
+    
     func setPermissions(_ permissions: Set<AppPermission>)
     {
         for case let permission as AppPermission in self._permissions
@@ -548,10 +657,10 @@ internal extension StoreApp
                 permission.app = nil
             }
         }
-
+        
         self._permissions = permissions as NSSet
     }
-
+    
     func setScreenshots(_ screenshots: [AppScreenshot])
     {
         for case let screenshot as AppScreenshot in self._screenshots
@@ -565,9 +674,9 @@ internal extension StoreApp
                 screenshot.app = nil
             }
         }
-
+        
         self._screenshots = NSOrderedSet(array: screenshots)
-
+        
         // Backwards compatibility
         self.screenshotURLs = screenshots.map { $0.imageURL }
     }
@@ -581,11 +690,11 @@ public extension StoreApp
         let filteredScreenshots = self.allScreenshots.filter { $0.deviceType == deviceType }
         return filteredScreenshots
     }
-
+    
     func preferredScreenshots() -> [AppScreenshot]
     {
         let deviceType: ALTDeviceType
-
+        
         if UIDevice.current.model.contains("iPad")
         {
             deviceType = .ipad
@@ -594,13 +703,13 @@ public extension StoreApp
         {
             deviceType = .iphone
         }
-
+        
         let preferredScreenshots = self.screenshots(for: deviceType)
         guard !preferredScreenshots.isEmpty else {
             // There are no screenshots for deviceType, so return _all_ screenshots instead.
             return self.allScreenshots
         }
-
+        
         return preferredScreenshots
     }
 }
@@ -610,10 +719,10 @@ public extension StoreApp
     var latestAvailableVersion: AppVersion? {
         return self._versions.firstObject as? AppVersion
     }
-
+    
     var globallyUniqueID: String? {
         guard let sourceIdentifier = self.sourceIdentifier else { return nil }
-
+        
         let globallyUniqueID = self.bundleIdentifier + "|" + sourceIdentifier
         return globallyUniqueID
     }
@@ -629,63 +738,71 @@ public extension StoreApp
                                     #keyPath(StoreApp.isPledged))
         return predicate
     }
-
+    
     class var otherCategoryPredicate: NSPredicate {
         let knownCategories = StoreCategory.allCases.lazy.filter { $0 != .other }.map { $0.rawValue }
-
+        
         let predicate = NSPredicate(format: "%K == nil OR NOT (%K IN %@)", #keyPath(StoreApp._category), #keyPath(StoreApp._category), Array(knownCategories))
         return predicate
     }
-
+    
     @nonobjc class func fetchRequest() -> NSFetchRequest<StoreApp>
     {
         return NSFetchRequest<StoreApp>(entityName: "StoreApp")
     }
-
+    
     private static var sideStoreAppIconURL: URL {
         let iconNames = [
             "AppIcon76x76@2x~ipad",
             "AppIcon60x60@2x",
             "AppIcon"
         ]
-
+        
         for iconName in iconNames {
             if let path = Bundle.main.path(forResource: iconName, ofType: "png") {
                 return URL(fileURLWithPath: path)
             }
         }
-
+        
         return URL(string: "https://sidestore.io/apps-v2.json/apps/sidestore/icon.png")!
     }
-
+    
     class func makeAltStoreApp(version: String, buildVersion: String?, in context: NSManagedObjectContext) -> StoreApp
     {
-        let placeholderAppID = StoreApp.altstoreAppID
+        let placeholderBundleId = StoreApp.altstoreAppID
         let placeholderDownloadURL = URL(string: "https://sidestore.io")!
         let placeholderSourceID = Source.altStoreIdentifier
-
+        let placeholderVersion = "0.0.0"
+        let placeholderDate = Date.distantPast
+        // let placeholderDate = Date(timeIntervalSinceReferenceDate: 0)
+        // let placeholderDate = Date(timeIntervalSince1970: 0)
+        var placeholderChannel = ReleaseTracks.stable.stringValue      // placeholder is always assumed to be from stable channel
+        let placeholderSize: Int32 = 0
+        
+        #if BETA
+        placeholderChannel = ReleaseTracks.beta.stringValue
+        #endif
+        
         let app = StoreApp(context: context)
         app.name = "SideStore"
-        app.bundleIdentifier = placeholderAppID
+        app.bundleIdentifier = placeholderBundleId
         app.developerName = "Side Team"
         app.localizedDescription = "SideStore is an alternative App Store."
-        app.iconURL = Self.sideStoreAppIconURL
+        app.iconURL = sideStoreAppIconURL        
         app.screenshotURLs = []
         app.sourceIdentifier = placeholderSourceID
-
-        let appVersion = AppVersion.makeAppVersion(version: version,
+        
+        let appVersion = AppVersion.makeAppVersion(version: placeholderVersion,
                                                    buildVersion: buildVersion,
-                                                   date: Date(),
+                                                   channel: placeholderChannel,
+                                                   date: placeholderDate,
                                                    downloadURL: placeholderDownloadURL,
-                                                   size: 0,
+                                                   size: Int64(app._size),
                                                    appBundleID: app.bundleIdentifier,
                                                    sourceID: app.sourceIdentifier,
                                                    in: context)
         try? app.setVersions([appVersion])
 
-        #if BETA
-        app.isBeta = true
-        #endif
         
         return app
     }

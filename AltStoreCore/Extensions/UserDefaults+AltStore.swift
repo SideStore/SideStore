@@ -32,6 +32,7 @@ public extension UserDefaults
     @NSManaged var isBackgroundRefreshEnabled: Bool
     @NSManaged var isIdleTimeoutDisableEnabled: Bool
     @NSManaged var isAppLimitDisabled: Bool
+    @NSManaged var isBetaUpdatesEnabled: Bool
     @NSManaged var isExportResignedAppEnabled: Bool
     @NSManaged var isVerboseOperationsLoggingEnabled: Bool
     @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
@@ -55,6 +56,8 @@ public extension UserDefaults
     @NSManaged var trustedServerURL: String?
     @NSManaged var skipPatreonDownloads: Bool
     
+    @NSManaged var betaUdpatesTrack: String?
+
     @nonobjc var preferredAppSorting: AppSorting {
         get {
             let sorting = _preferredAppSorting.flatMap { AppSorting(rawValue: $0) } ?? .default
@@ -89,7 +92,10 @@ public extension UserDefaults
     
     @NSManaged var permissionCheckingDisabled: Bool
     @NSManaged var responseCachingDisabled: Bool
-        
+    
+    // Default track for beta updates when beta-updates are enabled
+    static let defaultBetaUpdatesTrack: String = ReleaseTracks.beta.rawValue
+
     class func registerDefaults()
     {
         let ios13_5 = OperatingSystemVersion(majorVersion: 13, minorVersion: 5, patchVersion: 0)
@@ -121,6 +127,7 @@ public extension UserDefaults
         
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
+            #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
             #keyPath(UserDefaults.isExportResignedAppEnabled): false,
             #keyPath(UserDefaults.isDebugModeEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
@@ -138,6 +145,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.isCowExploitSupported): isMacDirtyCowSupported,
             #keyPath(UserDefaults.permissionCheckingDisabled): permissionCheckingDisabled,
             #keyPath(UserDefaults._preferredAppSorting): preferredAppSorting.rawValue,
+            #keyPath(UserDefaults.betaUdpatesTrack): defaultBetaUpdatesTrack,
         ] as [String: Any]
         
         UserDefaults.standard.register(defaults: defaults)

@@ -13,8 +13,9 @@ jobs:
   Reuseable-build:
     uses: ./.github/workflows/reusable-build-workflow.yml
     with:
-      bundle_id: "com.SideStore.SideStore.Alpha"
-      bundle_id_suffix: ".Alpha"
+      # bundle_id: "com.SideStore.SideStore.Alpha"
+      bundle_id: "com.SideStore.SideStore"
+      # bundle_id_suffix: ".Alpha"
       is_beta: true
       publish: true
       is_shared_build_num: false

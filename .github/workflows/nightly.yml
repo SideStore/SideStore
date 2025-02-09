@@ -66,8 +66,9 @@ jobs:
     needs: check-changes
     uses: ./.github/workflows/reusable-build-workflow.yml
     with:
-      bundle_id: "com.SideStore.SideStore.Nightly"
-      bundle_id_suffix: ".Nightly"
+      # bundle_id: "com.SideStore.SideStore.Nightly"
+      bundle_id: "com.SideStore.SideStore"
+      # bundle_id_suffix: ".Nightly"
       is_beta: true
       publish: true
       is_shared_build_num: false
