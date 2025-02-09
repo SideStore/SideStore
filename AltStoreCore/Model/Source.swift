@@ -33,172 +33,171 @@ public extension Source
     #endif
 }
 
-public struct AppPermissionFeed: Codable {
-    let type: String // ALTAppPermissionType
-    let usageDescription: String
+// public struct AppPermissionFeed: Codable {
+//     let type: String // ALTAppPermissionType
+//     let usageDescription: String
        
-    enum CodingKeys: String, CodingKey
-    {
-        case type
-        case usageDescription
-    }
-}
+//     enum CodingKeys: String, CodingKey
+//     {
+//         case type
+//         case usageDescription
+//     }
+// }
 
-public struct AppVersionFeed: Codable {
-    /* Properties */
-    let version: String
-    let date: Date
-    let localizedDescription: String?
+// public struct AppVersionFeed: Codable {
+//     /* Properties */
+//     let version: String
+//     let date: Date
+//     let localizedDescription: String?
     
-    let downloadURL: URL
-    let size: Int64
-    // added in 0.6.0
-    let sha256: String?     // sha 256 of the uploaded IPA
+//     let downloadURL: URL
+//     let size: Int64
+//     // added in 0.6.0
+//     let sha256: String?     // sha 256 of the uploaded IPA
     
-    enum CodingKeys: String, CodingKey
-    {
-        case version
-        case date
-        case localizedDescription
-        case downloadURL
-        case size
-        // added in 0.6.0
-        case sha256
-    }
-}
+//     enum CodingKeys: String, CodingKey
+//     {
+//         case version
+//         case date
+//         case localizedDescription
+//         case downloadURL
+//         case size
+//         // added in 0.6.0
+//         case sha256
+//     }
+// }
 
-public struct PlatformURLFeed: Codable {
-    /* Properties */
-    let platform: Platform
-    let downloadURL: URL
+// public struct PlatformURLFeed: Codable {
+//     /* Properties */
+//     let platform: Platform
+//     let downloadURL: URL
     
     
-    private enum CodingKeys: String, CodingKey
-    {
-        case platform
-        case downloadURL
-    }
-}
-
-
-public struct StoreAppFeed: Codable {
-    let name: String
-    let bundleIdentifier: String
-    let subtitle: String?
-    
-    let developerName: String
-    let localizedDescription: String
-    let size: Int64
-    
-    let iconURL: URL
-    let screenshotURLs: [URL]
-    
-    let version: String
-    let versionDate: Date
-    let versionDescription: String?
-    let downloadURL: URL
-    let platformURLs: [PlatformURLFeed]?
-    
-    let tintColor: String? // UIColor?
-    let isBeta: Bool
-    
-    //    let source: Source?
-    let appPermissions: [AppPermissionFeed]
-    let versions: [AppVersionFeed]
-    
-    enum CodingKeys: String, CodingKey
-    {
-        case bundleIdentifier
-        case developerName
-        case downloadURL
-        case iconURL
-        case isBeta = "beta"
-        case localizedDescription
-        case name
-        case appPermissions
-        case platformURLs
-        case screenshotURLs
-        case size
-        case subtitle
-        case tintColor
-        case version
-        case versionDate
-        case versionDescription
-        case versions
-    }
-}
-
-public struct NewsItemFeed: Codable {
-    let identifier: String
-    let date: Date
-    
-    let title: String
-    let caption: String
-    let tintColor: String //UIColor
-    let notify: Bool
-    
-    let imageURL: URL?
-    let externalURL: URL?
-    
-    let appID: String?
-    
-    private enum CodingKeys: String, CodingKey
-    {
-        case identifier
-        case date
-        case title
-        case caption
-        case tintColor
-        case imageURL
-        case externalURL = "url"
-        case appID
-        case notify
-    }
-}
+//     private enum CodingKeys: String, CodingKey
+//     {
+//         case platform
+//         case downloadURL
+//     }
+// }
 
 
-public struct SourceJSON: Codable {
-    let version: Int?
-    let name: String
-    let identifier: String
-    let sourceURL: URL
-    let userInfo: [String:String]? //[ALTSourceUserInfoKey:String]?
-    let apps: [StoreAppFeed]
-    let news: [NewsItemFeed]
+// public struct StoreAppFeed: Codable {
+//     let name: String
+//     let bundleIdentifier: String
+//     let subtitle: String?
     
-    enum CodingKeys: String, CodingKey
-    {
-        case version
-        case name
-        case identifier
-        case sourceURL
-        case userInfo
-        case apps
-        case news
-    }
+//     let developerName: String
+//     let localizedDescription: String
+//     let size: Int64
     
-}
+//     let iconURL: URL
+//     let screenshotURLs: [URL]
+    
+//     let version: String
+//     let versionDate: Date
+//     let versionDescription: String?
+//     let downloadURL: URL
+//     let platformURLs: [PlatformURLFeed]?
+    
+//     let tintColor: String? // UIColor?
+//     let isBeta: Bool
+    
+//     //    let source: Source?
+//     let appPermissions: [AppPermissionFeed]
+//     let versions: [AppVersionFeed]
+    
+//     enum CodingKeys: String, CodingKey
+//     {
+//         case bundleIdentifier
+//         case developerName
+//         case downloadURL
+//         case iconURL
+//         case isBeta = "beta"
+//         case localizedDescription
+//         case name
+//         case appPermissions
+//         case platformURLs
+//         case screenshotURLs
+//         case size
+//         case subtitle
+//         case tintColor
+//         case version
+//         case versionDate
+//         case versionDescription
+//         case versions
+//     }
+// }
 
-public extension Source
-{
-    // Fallbacks for optional JSON values.
+// public struct NewsItemFeed: Codable {
+//     let identifier: String
+//     let date: Date
     
-    var effectiveIconURL: URL? {
-        return self.iconURL ?? self.apps.first?.iconURL
-    }
+//     let title: String
+//     let caption: String
+//     let tintColor: String //UIColor
+//     let notify: Bool
     
-    var effectiveHeaderImageURL: URL? {
-        return self.headerImageURL ?? self.effectiveIconURL
-    }
+//     let imageURL: URL?
+//     let externalURL: URL?
     
-    var effectiveTintColor: UIColor? {
-        return self.tintColor ?? self.apps.first?.tintColor
-    }
+//     let appID: String?
     
-    var effectiveFeaturedApps: [StoreApp] {
-        return self.featuredApps ?? self.apps
-    }
-}
+//     private enum CodingKeys: String, CodingKey
+//     {
+//         case identifier
+//         case date
+//         case title
+//         case caption
+//         case tintColor
+//         case imageURL
+//         case externalURL = "url"
+//         case appID
+//         case notify
+//     }
+// }
+
+
+// public struct SourceJSON: Codable {
+//     let version: Int?
+//     let name: String
+//     let identifier: String
+//     let sourceURL: URL
+//     let userInfo: [String:String]? //[ALTSourceUserInfoKey:String]?
+//     let apps: [StoreAppFeed]
+//     let news: [NewsItemFeed]
+    
+//     enum CodingKeys: String, CodingKey
+//     {
+//         case version
+//         case name
+//         case identifier
+//         case sourceURL
+//         case userInfo
+//         case apps
+//         case news
+//     }
+// }
+
+ public extension Source
+ {
+     // Fallbacks for optional JSON values.
+    
+     var effectiveIconURL: URL? {
+         return self.iconURL ?? self.apps.first?.iconURL
+     }
+    
+     var effectiveHeaderImageURL: URL? {
+         return self.headerImageURL ?? self.effectiveIconURL
+     }
+    
+     var effectiveTintColor: UIColor? {
+         return self.tintColor ?? self.apps.first?.tintColor
+     }
+    
+     var effectiveFeaturedApps: [StoreApp] {
+         return self.featuredApps ?? self.apps
+     }
+ }
 
 @objc(Source)
 public class Source: BaseEntity, Decodable

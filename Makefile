@@ -7,8 +7,6 @@ RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
 BUNDLER := $(shell command -v bundle 2>/dev/null)
 
-default: help
-
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
 # A category can be added with @category

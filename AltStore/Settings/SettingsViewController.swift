@@ -289,11 +289,10 @@ private extension SettingsViewController
             
             versionLabel = NSLocalizedString(String(format: "Version %@", localizedVersion), comment: "SideStore Version")
         }
-        else if var version = buildInfo.marketing_version
+        else if let version = buildInfo.marketing_version
         {
             versionLabel = NSLocalizedString(String(format: "Version %@", version), comment: "SideStore Version")
         }
-        
         else
         {
             var version = "SideStore\t"
@@ -303,10 +302,7 @@ private extension SettingsViewController
         
         // add xcode build version for local builds
         if let installedApp,
-           let version = installedApp.storeApp?.latestSupportedVersion?.version,
-           // if MARKETING_VERSION is set as "0.6.0-local" in CodeSigning.xcconfig as override,
-           // then it is assumed it is local build and we should show xcode build information
-           SemanticVersion(version)?.preRelease == "local"
+           SemanticVersion(installedApp.version)?.preRelease == "local"
         {
             versionLabel += "\n\(getXcodeVersion())"
         }

@@ -222,7 +222,7 @@ extension MergePolicy{
     
     // When conflict.databaseObject is available, it means this is replace (delete + insert) or update
     private func resolveWhenDatabaseObjectAvailable(_ conflicts: [NSConstraintConflict]) throws {
-
+        
         for conflict in conflicts
         {
             switch conflict.databaseObject
@@ -354,7 +354,7 @@ extension MergePolicy{
                 do
                 {
                     var appVersions = databaseObject.versions
-
+                    
                     if let globallyUniqueID = databaseObject.globallyUniqueID
                     {
                         // Permissions
@@ -365,16 +365,16 @@ extension MergePolicy{
                             // Sorting order doesn't matter, but elements themselves don't match so throw error.
                             throw MergeError.incorrectPermissions(for: databaseObject)
                         }
-
+                        
                         // App versions
                         if let sortedAppVersionIDs = sortedVersionIDsByGlobalAppID[globallyUniqueID],
                             let sortedAppVersionsIDsArray = sortedAppVersionIDs.array as? [String],
-                           case let databaseVersionIDs = databaseObject.versions.map({ $0.versionID }),
+                        case let databaseVersionIDs = databaseObject.versions.map({ $0.versionID }),
                             databaseVersionIDs != sortedAppVersionsIDsArray
                         {
                             // databaseObject.versions post-merge doesn't match contextApp.versions pre-merge, so attempt to fix by re-sorting.
                             
-                            let fixedAppVersions = databaseObject.versions.sorted { (versionA, versionB) in
+                        let fixedAppVersions = databaseObject.versions.sorted { (versionA, versionB) in
                                 let indexA = sortedAppVersionIDs.index(of: versionA.versionID)
                                 let indexB = sortedAppVersionIDs.index(of: versionB.versionID)
                                 return indexA < indexB
@@ -387,16 +387,19 @@ extension MergePolicy{
                             }
                             
                             appVersions = fixedAppVersions
+                            
+                            // Always update versions post-merging to make sure latestSupportedVersion is correct.
+                            try databaseObject.setVersions(appVersions)
                         }
                         
                         // Screenshots
                         if let sortedScreenshotIDs = sortedScreenshotIDsByGlobalAppID[globallyUniqueID],
                             let sortedScreenshotIDsArray = sortedScreenshotIDs.array as? [String],
-                            case let databaseScreenshotIDs = databaseObject.allScreenshots.map({ $0.screenshotID }),
+                        case let databaseScreenshotIDs = databaseObject.allScreenshots.map({ $0.screenshotID }),
                             databaseScreenshotIDs != sortedScreenshotIDsArray
                         {
                             // Screenshot order is incorrect, so attempt to fix by re-sorting.
-                            let fixedScreenshots = databaseObject.allScreenshots.sorted { (screenshotA, screenshotB) in
+                        let fixedScreenshots = databaseObject.allScreenshots.sorted { (screenshotA, screenshotB) in
                                 let indexA = sortedScreenshotIDs.index(of: screenshotA.screenshotID)
                                 let indexB = sortedScreenshotIDs.index(of: screenshotB.screenshotID)
                                 return indexA < indexB
@@ -415,8 +418,6 @@ extension MergePolicy{
                         }
                     }
                     
-                    // Always update versions post-merging to make sure latestSupportedVersion is correct.
-                    try databaseObject.setVersions(appVersions)
                 }
                 catch
                 {

@@ -14,11 +14,13 @@ SIZE = os.getenv("SIZE")
 SHA256 = os.getenv("SHA256")
 LOCALIZED_DESCRIPTION = os.getenv("LOCALIZED_DESCRIPTION")
 DOWNLOAD_URL = os.getenv("DOWNLOAD_URL")
+# BUNDLE_IDENTIFIER = os.getenv("BUNDLE_IDENTIFIER", SIDESTORE_BUNDLE_ID)
 BUNDLE_IDENTIFIER = os.getenv("BUNDLE_IDENTIFIER")
 
 # Uncomment to debug/test by simulating dummy input locally
 # VERSION_IPA = os.getenv("VERSION_IPA", "0.0.0")
 # VERSION_DATE = os.getenv("VERSION_DATE", "2000-12-18T00:00:00Z")
+# IS_BETA = os.getenv("IS_BETA", True)
 # SIZE = int(os.getenv("SIZE", "0"))  # Convert to integer
 # SHA256 = os.getenv("SHA256", "")
 # LOCALIZED_DESCRIPTION = os.getenv("LOCALIZED_DESCRIPTION", "Invalid Update")

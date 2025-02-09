@@ -3,12 +3,16 @@
 // https://developer.apple.com/account/#/membership
 DEVELOPMENT_TEAM = XYZ0123456
 
+// Set this for dev-local xcode builds
+MARKETING_VERSION_SUFFIX = -local
+
 // Prefix of unique bundle IDs registered to you in Apple Developer Portal.
 // You need to register:
 //   - com.myuniquename.provenance
 //   - com.myuniquename.provenance.spotlight
 //   - com.myuniquename.provenance.topshelf
-ORG_IDENTIFIER = com.myuniquename
+// Uncomment the folowing and customize it to set the override:
+//ORG_IDENTIFIER = com.myuniquename
 
 // add team ID to bundle ID for debug builds since these will most likely be installed via Xcode
 // SideStore will expect the team ID to be at the end of the bundle ID, but this doesn't happen when we install via Xcode
