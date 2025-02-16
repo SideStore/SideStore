@@ -1238,6 +1238,7 @@ extension SettingsViewController
                 }
                 
             case .operationsLoggingControl:
+                
                 // Instantiate SwiftUI View inside UIHostingController
                 let operationsLoggingControlView = OperationsLoggingControlView()
                 let operationsLoggingController = UIHostingController(rootView: operationsLoggingControlView)
@@ -1251,6 +1252,10 @@ extension SettingsViewController
         // case .account, .patreon, .display, .instructions, .macDirtyCow: break
         case .account, .patreon, .display, .instructions: break
         }
+        
+        
+        // deselect the row before returning (so that it doesn't look like stuck selected)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
