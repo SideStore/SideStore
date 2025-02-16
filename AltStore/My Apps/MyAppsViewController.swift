@@ -367,8 +367,12 @@ private extension MyAppsViewController
             
             formatter.maximumUnitCount = 1
             
-            
-            let timeInterval = formatter.string(from: currentDate, to: installedApp.expirationDate)
+            var timeInterval: String? = "expired"
+            let expirationDate = installedApp.expirationDate
+            let isExpired = currentDate > expirationDate
+            if(!isExpired) {
+                timeInterval = formatter.string(from: currentDate, to: expirationDate)
+            }
             cell.bannerView.button.setTitle(timeInterval?.uppercased(), for: .normal)
             
             cell.bannerView.button.isIndicatingActivity = false
@@ -376,7 +380,7 @@ private extension MyAppsViewController
             
             cell.bannerView.iconImageView.isIndicatingActivity = true
             
-            cell.bannerView.buttonLabel.isHidden = false
+            cell.bannerView.buttonLabel.isHidden = isExpired
             cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
             
             cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
