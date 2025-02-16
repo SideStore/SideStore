@@ -20,7 +20,7 @@ public enum ReleaseTracks: String, CodingKey, CaseIterable
     case local          
     
     case alpha
-    case beta = "nightly"
+    case nightly = "nightly"
     case stable
     
         
@@ -33,7 +33,7 @@ public enum ReleaseTracks: String, CodingKey, CaseIterable
     }
 
     private static func isBetaTrack(_ key: ReleaseTracks) -> Bool {
-        key == .alpha || key == .beta
+        key == .alpha || key == .nightly
     }
 }
 
@@ -527,7 +527,7 @@ public class StoreApp: BaseEntity, Decodable
             {
                 if try container.decodeIfPresent(Bool.self, forKey: .isBeta) ?? false
                 {
-                    channel = ReleaseTracks.beta.stringValue
+                    channel = ReleaseTracks.nightly.stringValue
                 }
                 
                 // create one from the storeApp description and use it as current
@@ -780,7 +780,7 @@ public extension StoreApp
         let placeholderSize: Int32 = 0
         
         #if BETA
-        placeholderChannel = ReleaseTracks.beta.stringValue
+        placeholderChannel = ReleaseTracks.nightly.stringValue
         #endif
         
         let app = StoreApp(context: context)

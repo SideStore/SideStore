@@ -94,7 +94,7 @@ public extension UserDefaults
     @NSManaged var responseCachingDisabled: Bool
     
     // Default track for beta updates when beta-updates are enabled
-    static let defaultBetaUpdatesTrack: String = ReleaseTracks.beta.rawValue
+    static let defaultBetaUpdatesTrack: String = ReleaseTracks.nightly.rawValue
 
     class func registerDefaults()
     {
