@@ -60,7 +60,7 @@ extension AddSourceViewController
 
 class AddSourceViewController: UICollectionViewController 
 {
-    private var stagedForAdd: [Source: Bool] = [:]
+    private var stagedForAdd: LinkedHashMap<Source, Bool> = LinkedHashMap()
     
     private lazy var dataSource = self.makeDataSource()
     private lazy var addSourceDataSource = self.makeAddSourceDataSource()
@@ -817,7 +817,7 @@ private extension AddSourceViewController
                     }
                     
                     // remove this kv pair
-                    self.stagedForAdd.removeValue(forKey: staged.source)
+                    _ = self.stagedForAdd.removeValue(forKey: staged.source)
                 }
                 catch is CancellationError {
                     isCancelled = true
