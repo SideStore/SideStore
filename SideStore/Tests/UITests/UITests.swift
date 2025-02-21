@@ -116,15 +116,15 @@ private extension UITests {
         let recommendedSources: [(identifier: String, alertTitle: String, requiresSwipe: Bool)] = [
             ("SideStore Team Picks\ncommunity-apps.sidestore.io/sidecommunity.json", "SideStore Team Picks", false),
             ("Provenance EMU\nprovenance-emu.com/apps.json", "Provenance EMU", false),
-//            ("Countdown Respository\nneoarz.github.io/Countdown-App/Countdown.json", "Countdown Respository", false),
-//            ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", false),
-//            ("UTM Repository\nVirtual machines for iOS", "UTM Repository", true),
-//            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", false),
-//            ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", true),
-//            ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", false),
-//            ("Odyssey\ntheodyssey.dev/altstore/odysseysource.json", "Odyssey", false),
-//            ("Yattee\nrepos.yattee.stream/alt/apps.json", "Yattee", false),
-//            ("ThatStella7922 Source\nThe home for all apps ThatStella7922", "ThatStella7922 Source", false)
+            ("Countdown Respository\nneoarz.github.io/Countdown-App/Countdown.json", "Countdown Respository", false),
+            ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", false),
+            ("UTM Repository\nVirtual machines for iOS", "UTM Repository", true),
+            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", false),
+            ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", true),
+            ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", false),
+            ("Odyssey\ntheodyssey.dev/altstore/odysseysource.json", "Odyssey", false),
+            ("Yattee\nrepos.yattee.stream/alt/apps.json", "Yattee", false),
+            ("ThatStella7922 Source\nThe home for all apps ThatStella7922", "ThatStella7922 Source", false)
         ]
         
         // Tap on each recommended source's "add" button.

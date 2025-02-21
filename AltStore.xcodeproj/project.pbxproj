@@ -59,13 +59,16 @@
 		A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */; };
 		A80D790D2D2F20AF00A40F40 /* PaginationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */; };
 		A80D790F2D2F217000A40F40 /* PaginationDataHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */; };
-		A81A8CB52D68B2180086C96F /* TreeMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB42D68B2180086C96F /* TreeMapTests.swift */; };
 		A81A8CB92D68B30B0086C96F /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
 		A81A8CBA2D68B3110086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
-		A81A8CBB2D68B3230086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
 		A81A8CBD2D68B43F0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
-		A81A8CBE2D68B43F0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
-		A81A8CC02D68B4520086C96F /* LinkedHashMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */; };
+		A81A8CC82D68BA610086C96F /* DataStructuresTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CC72D68BA610086C96F /* DataStructuresTests.swift */; };
+		A81A8CCE2D68BA8D0086C96F /* LinkedHashMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */; };
+		A81A8CCF2D68BA8D0086C96F /* TreeMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB42D68B2180086C96F /* TreeMapTests.swift */; };
+		A81A8CD02D68BA9B0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
+		A81A8CD12D68BA9B0086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
+		A81A8CD22D68BAA30086C96F /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
+		A81A8CD42D68BAFF0086C96F /* DataStructureTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
 		A859ED5C2D1EE827003DCC58 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; };
@@ -660,6 +663,9 @@
 		A81A8CB42D68B2180086C96F /* TreeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeMapTests.swift; sourceTree = "<group>"; };
 		A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedHashMap.swift; sourceTree = "<group>"; };
 		A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedHashMapTests.swift; sourceTree = "<group>"; };
+		A81A8CC52D68BA610086C96F /* DataStructureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataStructureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A81A8CC72D68BA610086C96F /* DataStructuresTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructuresTests.swift; sourceTree = "<group>"; };
+		A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataStructureTests.xctestplan; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
@@ -1091,6 +1097,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A81A8CC22D68BA610086C96F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8E2DB1E2D684CBD009E5D31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1250,6 +1263,7 @@
 			children = (
 				A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */,
 				A81A8CB42D68B2180086C96F /* TreeMapTests.swift */,
+				A81A8CC72D68BA610086C96F /* DataStructuresTests.swift */,
 			);
 			path = datastructures;
 			sourceTree = "<group>";
@@ -1389,6 +1403,7 @@
 				A81A8CB22D68B2030086C96F /* UnitTests */,
 				A8E2DB302D684E2A009E5D31 /* UITests */,
 				A8E2DB332D68507F009E5D31 /* SideStoreTests.xctestplan */,
+				A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1992,6 +2007,7 @@
 				191E5FAB290A5D92001A3B7C /* libminimuxer.a */,
 				D586D39828EF58B0000E101F /* AltTests.xctest */,
 				A8E2DB212D684CBD009E5D31 /* UITests.xctest */,
+				A81A8CC52D68BA610086C96F /* DataStructureTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2472,6 +2488,25 @@
 			productReference = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		A81A8CC42D68BA610086C96F /* DataStructureTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A81A8CC92D68BA610086C96F /* Build configuration list for PBXNativeTarget "DataStructureTests" */;
+			buildPhases = (
+				A81A8CC12D68BA610086C96F /* Sources */,
+				A81A8CC22D68BA610086C96F /* Frameworks */,
+				A81A8CC32D68BA610086C96F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DataStructureTests;
+			packageProductDependencies = (
+			);
+			productName = DataStructuresTests;
+			productReference = A81A8CC52D68BA610086C96F /* DataStructureTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A8E2DB202D684CBD009E5D31 /* UITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A8E2DB292D684CBD009E5D31 /* Build configuration list for PBXNativeTarget "UITests" */;
@@ -2613,6 +2648,9 @@
 					191E5FAA290A5D92001A3B7C = {
 						CreatedOnToolsVersion = 14.0;
 					};
+					A81A8CC42D68BA610086C96F = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					A8E2DB202D684CBD009E5D31 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = BFD247692284B9A500981D42;
@@ -2684,6 +2722,7 @@
 				19104DB12909C06C00C49C7B /* EmotionalDamage */,
 				191E5FAA290A5D92001A3B7C /* minimuxer */,
 				A8E2DB202D684CBD009E5D31 /* UITests */,
+				A81A8CC42D68BA610086C96F /* DataStructureTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2741,10 +2780,18 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A81A8CC32D68BA610086C96F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8E2DB1F2D684CBD009E5D31 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A81A8CD42D68BAFF0086C96F /* DataStructureTests.xctestplan in Resources */,
 				A8E2DB342D68507F009E5D31 /* SideStoreTests.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2920,16 +2967,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A81A8CC12D68BA610086C96F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A81A8CC82D68BA610086C96F /* DataStructuresTests.swift in Sources */,
+				A81A8CD02D68BA9B0086C96F /* LinkedHashMap.swift in Sources */,
+				A81A8CD22D68BAA30086C96F /* SingletonGenericMap.swift in Sources */,
+				A81A8CD12D68BA9B0086C96F /* TreeMap.swift in Sources */,
+				A81A8CCE2D68BA8D0086C96F /* LinkedHashMapTests.swift in Sources */,
+				A81A8CCF2D68BA8D0086C96F /* TreeMapTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8E2DB1D2D684CBD009E5D31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A8E2DB312D684E2A009E5D31 /* UITests.swift in Sources */,
-				A81A8CB52D68B2180086C96F /* TreeMapTests.swift in Sources */,
-				A81A8CBB2D68B3230086C96F /* TreeMap.swift in Sources */,
 				A8E2DB322D684E2A009E5D31 /* UITestsLaunchTests.swift in Sources */,
-				A81A8CC02D68B4520086C96F /* LinkedHashMapTests.swift in Sources */,
-				A81A8CBE2D68B43F0086C96F /* LinkedHashMap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3486,6 +3542,59 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SideStore/minimuxer/minimuxer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A81A8CCA2D68BA610086C96F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.SideStore.DataStructuresTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A81A8CCB2D68BA610086C96F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.SideStore.DataStructuresTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4075,6 +4184,15 @@
 			buildConfigurations = (
 				191E5FB0290A5D92001A3B7C /* Debug */,
 				191E5FB1290A5D92001A3B7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A81A8CC92D68BA610086C96F /* Build configuration list for PBXNativeTarget "DataStructureTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A81A8CCA2D68BA610086C96F /* Debug */,
+				A81A8CCB2D68BA610086C96F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
