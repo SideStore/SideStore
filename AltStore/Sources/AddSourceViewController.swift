@@ -315,10 +315,13 @@ private extension AddSourceViewController
         self.viewModel.$sourceAddress
             .map { [weak self] in
                 guard let self else { return [] }
-                print("\n\nStarting pipeline processing...\n\n")
                 
-                let lines = $0.split(whereSeparator: { $0.isWhitespace }).map(String.init).compactMap(self.sourceURL)
-                return lines
+                // Preserve order of parsed URLs
+                let lines = $0.split(whereSeparator: { $0.isWhitespace })
+                                .map(String.init)
+                                .compactMap(self.sourceURL)
+                
+                return NSOrderedSet(array: lines).array as! [URL] // de-duplicate while preserving order
             }
             .assign(to: &self.viewModel.$sourceURLs)
 
@@ -344,16 +347,26 @@ private extension AddSourceViewController
                 
                 self.viewModel.isLoadingPreview = true
                 
-                let publishers = sourceURLs.map { sourceURL in
-                    print("Creating preview for source:", sourceURL, " ...")
-                    return self.fetchSourcePreview(sourceURL: sourceURL)
+                // Create publishers maintaining order
+                let publishers = sourceURLs.enumerated().map { index, sourceURL in
+                    self.fetchSourcePreview(sourceURL: sourceURL)
+                        .map { result in
+                            // Add index to maintain order
+                            (index: index, result: result)
+                        }
                         .eraseToAnyPublisher()
                 }
                 
+                // since network requests are concurrent, we sort the values when they are received
                 return publishers.isEmpty
                     ? Just([]).eraseToAnyPublisher()
                     : Publishers.MergeMany(publishers)
-                        .collect()
+                        .collect()                                      // await all publishers to emit the results
+                        .map { results in                               // perform sorting of the collected results
+                            // Sort by original index before returning
+                            results.sorted { $0.index < $1.index }
+                                .map { $0.result }
+                        }
                         .eraseToAnyPublisher()
             }
             .sink { [weak self] sourcePreviewResults in
@@ -386,49 +399,20 @@ private extension AddSourceViewController
         }
         .store(in: &self.cancellables)
         
-//        self.viewModel.$sourcePreviewResults
-//            .map { sourcePreviewResults -> [Source] in
-//                // Process the full array:
-//                // - For each tuple, extract the `result` (the second element)
-//                // - For each result, convert it to a Managed<Source> if it's successful
-//                // - Remove any nil values from failed results
-//                let managedSources = sourcePreviewResults.compactMap { previewResult -> Managed<Source>? in
-//                    switch previewResult.result {
-//                    case .success(let source):
-//                        return source
-//                    case .failure:
-//                        return nil
-//                    }
-//                }
-//                // Optionally, remove duplicates based on identifier:
-//                // (This groups by identifier and keeps the first occurrence.)
-//                let uniqueManagedSources = Dictionary(grouping: managedSources, by: { $0.identifier })
-//                    .compactMap { $0.value.first }
-//                
-//                // Unwrap Managed<Source> into Source (assuming Managed<Source> has a wrappedValue property)
-//                let sources = uniqueManagedSources.map { $0.wrappedValue }
-//                return sources
-//            }
-//            .receive(on: RunLoop.main)
-//            .sink { [weak self] sources in
-//                self?.updateSourcesPreview(for: sources)
-//            }
-//            .store(in: &self.cancellables)
-
         self.viewModel.$sourcePreviewResults
             .map { sourcePreviewResults -> [Source] in
-                var seenIdentifiers = Set<String>()
-                let orderedSources = sourcePreviewResults.compactMap { previewResult -> Source? in
-                    switch previewResult.result {
-                    case .success(let managedSource):
-                        let id = managedSource.identifier
-                        guard !seenIdentifiers.contains(id) else { return nil }
-                        seenIdentifiers.insert(id)
-                        return managedSource.wrappedValue
-                    case .failure:
+                // Maintain order based on original sourceURLs array
+                let orderedSources = self.viewModel.sourceURLs.compactMap { sourceURL -> Source? in
+                    // Find the preview result matching this URL
+                    guard let previewResult = sourcePreviewResults.first(where: { $0.sourceURL == sourceURL }),
+                          case .success(let managedSource) = previewResult.result
+                    else {
                         return nil
                     }
+                    
+                    return managedSource.wrappedValue
                 }
+                
                 return orderedSources
             }
             .receive(on: RunLoop.main)
@@ -614,6 +598,9 @@ private extension AddSourceViewController
         cell.bannerView.button.contentEdgeInsets = .zero
         cell.bannerView.button.tintColor = .clear
         cell.bannerView.button.isHidden = false
+        
+        // mark the button with label (useful for accessibility and for UITests)
+        cell.bannerView.button.accessibilityIdentifier = "add"
         
         func setButtonIcon()
         {
