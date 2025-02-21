@@ -211,6 +211,7 @@ build-and-test:
 		-scheme SideStore \
 		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
 		-enableCodeCoverage YES \
+		-resultBundlePath build/tests/test-results.xcresult \
 		$(COMMON_BUILD_SETTINGS)
 
 clean-build:
