@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "93E5E265-DC67-47F3-A214-8082A3421288",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:AltStore.xcodeproj",
+      "identifier" : "BFD247692284B9A500981D42",
+      "name" : "SideStore"
+    }
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "UITests\/testLaunchPerformance()",
+        "UITestsLaunchTests",
+        "UITestsLaunchTests\/testLaunch()"
+      ],
+      "target" : {
+        "containerPath" : "container:AltStore.xcodeproj",
+        "identifier" : "A8E2DB202D684CBD009E5D31",
+        "name" : "UITests"
+      }
+    }
+  ],
+  "version" : 1
+}
