@@ -59,12 +59,18 @@
 		A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */; };
 		A80D790D2D2F20AF00A40F40 /* PaginationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */; };
 		A80D790F2D2F217000A40F40 /* PaginationDataHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */; };
+		A81A8CB52D68B2180086C96F /* TreeMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB42D68B2180086C96F /* TreeMapTests.swift */; };
+		A81A8CB92D68B30B0086C96F /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
+		A81A8CBA2D68B3110086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
+		A81A8CBB2D68B3230086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
+		A81A8CBD2D68B43F0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
+		A81A8CBE2D68B43F0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
+		A81A8CC02D68B4520086C96F /* LinkedHashMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
 		A859ED5C2D1EE827003DCC58 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; };
 		A859ED5D2D1EE827003DCC58 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A86315DF2D3EB2DE0048FA40 /* ErrorProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86315DE2D3EB2D80048FA40 /* ErrorProcessing.swift */; };
-		A868CFE42D31999A002F1201 /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
 		A8696EE42D34512C00E96389 /* RemoveAppExtensionsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8696EE32D34512C00E96389 /* RemoveAppExtensionsOperation.swift */; };
 		A88B8C492D35AD3200F53F9D /* OperationsLoggingContolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88B8C482D35AD3200F53F9D /* OperationsLoggingContolView.swift */; };
 		A88B8C552D35F1EC00F53F9D /* OperationsLoggingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88B8C542D35F1EC00F53F9D /* OperationsLoggingControl.swift */; };
@@ -650,6 +656,10 @@
 		A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack.swift; sourceTree = "<group>"; };
 		A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationIntent.swift; sourceTree = "<group>"; };
 		A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationDataHolder.swift; sourceTree = "<group>"; };
+		A81A8CB02D68B0320086C96F /* TreeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeMap.swift; sourceTree = "<group>"; };
+		A81A8CB42D68B2180086C96F /* TreeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeMapTests.swift; sourceTree = "<group>"; };
+		A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedHashMap.swift; sourceTree = "<group>"; };
+		A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedHashMapTests.swift; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
@@ -1227,6 +1237,23 @@
 			path = Intents;
 			sourceTree = "<group>";
 		};
+		A81A8CB22D68B2030086C96F /* UnitTests */ = {
+			isa = PBXGroup;
+			children = (
+				A81A8CB32D68B20F0086C96F /* datastructures */,
+			);
+			path = UnitTests;
+			sourceTree = "<group>";
+		};
+		A81A8CB32D68B20F0086C96F /* datastructures */ = {
+			isa = PBXGroup;
+			children = (
+				A81A8CBF2D68B4520086C96F /* LinkedHashMapTests.swift */,
+				A81A8CB42D68B2180086C96F /* TreeMapTests.swift */,
+			);
+			path = datastructures;
+			sourceTree = "<group>";
+		};
 		A85ACB942D1F31C400AA3DE7 /* xcconfigs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1289,6 +1316,8 @@
 		A8AD35572D31BEB2003A28B4 /* datastructures */ = {
 			isa = PBXGroup;
 			children = (
+				A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */,
+				A81A8CB02D68B0320086C96F /* TreeMap.swift */,
 				A868CFE32D319988002F1201 /* SingletonGenericMap.swift */,
 			);
 			path = datastructures;
@@ -1357,6 +1386,7 @@
 		A8E2DB352D6850A9009E5D31 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A81A8CB22D68B2030086C96F /* UnitTests */,
 				A8E2DB302D684E2A009E5D31 /* UITests */,
 				A8E2DB332D68507F009E5D31 /* SideStoreTests.xctestplan */,
 			);
@@ -2895,7 +2925,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8E2DB312D684E2A009E5D31 /* UITests.swift in Sources */,
+				A81A8CB52D68B2180086C96F /* TreeMapTests.swift in Sources */,
+				A81A8CBB2D68B3230086C96F /* TreeMap.swift in Sources */,
 				A8E2DB322D684E2A009E5D31 /* UITestsLaunchTests.swift in Sources */,
+				A81A8CC02D68B4520086C96F /* LinkedHashMapTests.swift in Sources */,
+				A81A8CBE2D68B43F0086C96F /* LinkedHashMap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3100,6 +3134,7 @@
 			files = (
 				D55467C52A8D72C300F4CE90 /* ActiveAppsWidget.swift in Sources */,
 				D577AB7B2A967DF5007FE952 /* AppsTimelineProvider.swift in Sources */,
+				A81A8CB92D68B30B0086C96F /* SingletonGenericMap.swift in Sources */,
 				D577AB7F2A96878A007FE952 /* AppDetailWidget.swift in Sources */,
 				BF98917E250AAC4F002ACF50 /* Countdown.swift in Sources */,
 				D5151BE22A90363300C96F28 /* RefreshAllAppsWidgetIntent.swift in Sources */,
@@ -3108,7 +3143,6 @@
 				D5FD4EC92A9530C00097BEE8 /* AppSnapshot.swift in Sources */,
 				A8AD35592D31BF2C003A28B4 /* PageInfoManager.swift in Sources */,
 				D5151BE72A90395400C96F28 /* View+AltWidget.swift in Sources */,
-				A868CFE42D31999A002F1201 /* SingletonGenericMap.swift in Sources */,
 				A8A853AF2D3065A300995795 /* ActiveAppsTimelineProvider.swift in Sources */,
 				BF98917F250AAC4F002ACF50 /* LockScreenWidget.swift in Sources */,
 				A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */,
@@ -3142,6 +3176,7 @@
 				D5E1E7C128077DE90016FC96 /* UpdateKnownSourcesOperation.swift in Sources */,
 				BFE338DF22F0EADB002E24B9 /* FetchSourceOperation.swift in Sources */,
 				D54DED1428CBC44B008B27A0 /* ErrorLogTableViewCell.swift in Sources */,
+				A81A8CBD2D68B43F0086C96F /* LinkedHashMap.swift in Sources */,
 				D5390C3C2AC3A43900D17E62 /* AddSourceViewController.swift in Sources */,
 				D5CD805F29CA755E00E591B0 /* SourceDetailViewController.swift in Sources */,
 				D57968CB29CB99EF00539069 /* VibrantButton.swift in Sources */,
@@ -3224,6 +3259,7 @@
 				BF770E5122BB1CF6002A40FE /* InstallAppOperation.swift in Sources */,
 				BF9ABA4B22DD1380008935CF /* NavigationBar.swift in Sources */,
 				A8FD917B2D0472DD00322782 /* DeprecatedAPIs.swift in Sources */,
+				A81A8CBA2D68B3110086C96F /* TreeMap.swift in Sources */,
 				BF6C8FAC242935ED00125131 /* NSAttributedString+Markdown.m in Sources */,
 				A8C38C382D2084D000E83DBD /* ConsoleLogView.swift in Sources */,
 				BFF00D322501BDA100746320 /* BackgroundRefreshAppsOperation.swift in Sources */,

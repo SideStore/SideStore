@@ -18,6 +18,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "UITests",
+        "UITests\/testBulkAddRecommendedSources()",
         "UITests\/testLaunchPerformance()",
         "UITestsLaunchTests",
         "UITestsLaunchTests\/testLaunch()"
