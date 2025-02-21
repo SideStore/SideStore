@@ -167,22 +167,55 @@ test:
 BUILD_CONFIG ?= Release
 MARKETING_VERSION ?= 
 BUNDLE_ID_SUFFIX ?= 
+# Common build settings for xcodebuild
+COMMON_BUILD_SETTINGS = \
+	-sdk iphoneos \
+	-configuration $(BUILD_CONFIG) \
+	CODE_SIGNING_REQUIRED=NO \
+	AD_HOC_CODE_SIGNING_ALLOWED=YES \
+	CODE_SIGNING_ALLOWED=NO \
+	DEVELOPMENT_TEAM=XYZ0123456 \
+	ORG_IDENTIFIER=com.SideStore
+
+# Append MARKETING_VERSION if it’s not empty (coz otherwise the blank entry becomes override)
+ifneq ($(strip $(MARKETING_VERSION)),)
+COMMON_BUILD_SETTINGS += MARKETING_VERSION=$(MARKETING_VERSION)
+endif
+
+# Append BUNDLE_ID_SUFFIX if it’s not empty (coz otherwise the blank entry becomes override)
+ifneq ($(strip $(BUNDLE_ID_SUFFIX)),)
+COMMON_BUILD_SETTINGS += BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
+endif
+
 build:
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
 	@xcodebuild -workspace AltStore.xcworkspace \
-				-scheme SideStore \
-				-sdk iphoneos \
-				-configuration $(BUILD_CONFIG) \
-				archive -archivePath ./SideStore \
-				CODE_SIGNING_REQUIRED=NO \
-				AD_HOC_CODE_SIGNING_ALLOWED=YES \
-				CODE_SIGNING_ALLOWED=NO \
-				DEVELOPMENT_TEAM=XYZ0123456 \
-				ORG_IDENTIFIER=com.SideStore \
-				MARKETING_VERSION=$(MARKETING_VERSION) \
-				BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
-#				DWARF_DSYM_FOLDER_PATH="."
+		-scheme SideStore \
+		archive -archivePath ./SideStore \
+		$(COMMON_BUILD_SETTINGS)
+
+boot-sim:
+	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
+		echo "Simulator 'iPhone 16 Pro' is already booted."; \
+	else \
+		echo "Booting simulator 'iPhone 16 Pro'..."; \
+		xcrun simctl boot "iPhone 16 Pro"; \
+	fi
+
+build-and-test:
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a build and running tests..."
+	@xcodebuild test -workspace AltStore.xcworkspace \
+		-scheme SideStore \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+		-enableCodeCoverage YES \
+		$(COMMON_BUILD_SETTINGS)
+
+clean-build:
+	@echo "Cleaning build artifacts..."
+	@xcodebuild clean -workspace AltStore.xcworkspace -scheme SideStore
 
 fakesign-apps:
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
