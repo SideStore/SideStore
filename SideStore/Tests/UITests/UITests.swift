@@ -20,18 +20,10 @@ final class UITests: XCTestCase {
     private static let APP_NAME = "SideStore"
     
     override func setUpWithError() throws {
-        // ignore spotlight it it was shown
-        let searchBar = Self.searchBar
-        if searchBar.exists {
-            let clearButton = searchBar.buttons["Clear text"]
-            if clearButton.exists{
-                clearButton.tap()
-            }
-        }
-        Self.springboard_app.tap()
-        
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        
+//        Self.dismissSpotlight()
+        Self.dismissSpringboardAlerts()
+
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
         
@@ -40,7 +32,8 @@ final class UITests: XCTestCase {
     
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        Self.deleteMyApp()
+//        Self.deleteMyApp()
+        Self.deleteMyApp2()
         super.tearDown()
     }
    
@@ -91,6 +84,17 @@ final class UITests: XCTestCase {
 // Helpers
 private extension UITests {
     
+    class func dismissSpotlight(){
+        // ignore spotlight if it was shown
+        if searchBar.exists {
+            let clearButton = searchBar.buttons["Clear text"]
+            if clearButton.exists{
+                clearButton.tap()
+            }
+        }
+        springboard_app.tap()
+    }
+    
     class func deleteMyApp() {
         XCUIApplication().terminate()
         dismissSpringboardAlerts()
@@ -123,6 +127,38 @@ private extension UITests {
         
         springboard_app.tap()
     }
+    
+    class func deleteMyApp2() {
+        XCUIApplication().terminate()
+        dismissSpringboardAlerts()
+        
+        // Rest of the deletion flow...
+        let appIcon = springboard_app.icons[APP_NAME]
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        if appIcon.exists || appIcon.waitForExistence(timeout: 5) {
+            appIcon.press(forDuration: 1)
+            
+            do {
+                let button = springboard_app.buttons["Remove App"]
+                _ = button.exists || button.waitForExistence(timeout: 5)
+                button.tap()
+            }
+            do {
+                let button = springboard_app.buttons["Delete App"]
+                _ = button.waitForExistence(timeout: 0.3)
+                button.tap()
+            }
+            do {
+                let button = springboard_app.buttons["Delete"]
+                _ = button.waitForExistence(timeout: 0.3)
+                button.tap()
+            }
+
+            // Press home once to make the icons stop wiggling
+            XCUIDevice.shared.press(.home)
+        }
+    }
+    
     
     
     class func dismissSpringboardAlerts() {
