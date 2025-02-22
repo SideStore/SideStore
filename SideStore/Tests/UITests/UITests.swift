@@ -179,6 +179,45 @@ private extension UITests {
 // Test guts (definition)
 private extension UITests {
     
+    
+    private func performBulkAdd(
+        app: XCUIApplication,
+        sorucesMapping: [(identifier: String, alertTitle: String, requiresSwipe: Bool)],
+        cellsQuery: XCUIElementQuery
+    ) throws {
+        
+        // Tap on each textInputSources source's "add" button.
+        for source in sorucesMapping {
+            let sourceButton = cellsQuery.otherElements
+                    .containing(.button, identifier: source.identifier)
+                    .children(matching: .button)[source.identifier]
+            _ = sourceButton.exists || sourceButton.waitForExistence(timeout: 5)            // this can come from internet fetch, so give it ample time before timeout
+            
+//            let addButton = sourceButton.children(matching: .button).firstMatch
+            let addButton = sourceButton.children(matching: .button)["add"]
+            _ = addButton.exists || addButton.waitForExistence(timeout: 0.3)
+            addButton.tap()
+
+            if source.requiresSwipe {
+                sourceButton.swipeUp(velocity: .slow)  // Swipe up if needed.
+            }
+        }
+        
+        // Commit the changes by tapping "Done".
+        app.navigationBars["Add Source"].buttons["Done"].tap()
+        
+        // Accept each source addition via alert.
+        for source in sorucesMapping {
+            let alertIdentifier = "Would you like to add the source “\(source.alertTitle)”?"
+            let addSourceButton = app.alerts[alertIdentifier]
+                .scrollViews.otherElements.buttons["Add Source"]
+            _ = addSourceButton.exists || addSourceButton.waitForExistence(timeout: 0.3)
+            addSourceButton.tap()
+        }
+    }
+    
+    
+    
     private func performBulkAddingInputSources(for app: XCUIApplication) throws {
         
         // set content into clipboard (for bulk add (paste))
@@ -201,6 +240,7 @@ private extension UITests {
 
         let collectionViewsQuery = app.collectionViews
         let appsSidestoreIoTextField = collectionViewsQuery.textFields["apps.sidestore.io"]
+        _ = appsSidestoreIoTextField.exists || appsSidestoreIoTextField.waitForExistence(timeout: 5)
         appsSidestoreIoTextField.tap()
         appsSidestoreIoTextField.tap()
         collectionViewsQuery.staticTexts["Paste"].tap()
@@ -233,30 +273,10 @@ private extension UITests {
             ("Quantum Source\nContains all of your favorite emulators, games, jailbreaks, utilities, and more.", "Quantum Source", false),
         ]
         
-        // Tap on each textInputSources source's "add" button.
-        for source in textInputSources {
-            let sourceButton = cellsQuery.otherElements
-                .containing(.button, identifier: source.identifier)
-                .children(matching: .button)[source.identifier]
-//            let addButton = sourceButton.children(matching: .button).firstMatch
-            let addButton = sourceButton.children(matching: .button)["add"]
-            addButton.tap()
-            if source.requiresSwipe {
-                sourceButton.swipeUp(velocity: .slow)  // Swipe up if needed.
-            }
-        }
-        
-        // Commit the changes by tapping "Done".
-        app.navigationBars["Add Source"].buttons["Done"].tap()
-        
-        // Accept each source addition via alert.
-        for source in textInputSources {
-            let alertIdentifier = "Would you like to add the source “\(source.alertTitle)”?"
-            app.alerts[alertIdentifier]
-                .scrollViews.otherElements.buttons["Add Source"]
-                .tap()
-        }
+        try performBulkAdd(app: app, sorucesMapping: textInputSources, cellsQuery: cellsQuery)
     }
+    
+    
 
     private func performBulkAddingRecommendedSources(for app: XCUIApplication) throws {
         // Navigate to the Sources screen and open the Add Source view.
@@ -280,28 +300,7 @@ private extension UITests {
             ("ThatStella7922 Source\nThe home for all apps ThatStella7922", "ThatStella7922 Source", false)
         ]
         
-        // Tap on each recommended source's "add" button.
-        for source in recommendedSources {
-            let sourceButton = cellsQuery.otherElements
-                .containing(.button, identifier: source.identifier)
-                .children(matching: .button)[source.identifier]
-            let addButton = sourceButton.children(matching: .button)["add"]
-            addButton.tap()
-            if source.requiresSwipe {
-                sourceButton.swipeUp()  // Swipe up if needed.
-            }
-        }
-        
-        // Commit the changes by tapping "Done".
-        app.navigationBars["Add Source"].buttons["Done"].tap()
-        
-        // Accept each source addition via alert.
-        for source in recommendedSources {
-            let alertIdentifier = "Would you like to add the source “\(source.alertTitle)”?"
-            app.alerts[alertIdentifier]
-                .scrollViews.otherElements.buttons["Add Source"]
-                .tap()
-        }
+        try performBulkAdd(app: app, sorucesMapping: recommendedSources, cellsQuery: cellsQuery)
     }
 }
 
