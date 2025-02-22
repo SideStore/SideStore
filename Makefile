@@ -208,19 +208,23 @@ build-and-test:
         # code cov probably cause full recompilation of tests even if archive target was just invoked before tests
     	# -enableCodeCoverage YES \
 
-boot-sim:
+boot-sim-async:
 	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
 		echo "Simulator 'iPhone 16 Pro' is already booted."; \
 	else \
-		echo "Booting simulator 'iPhone 16 Pro'..."; \
-		xcrun simctl boot "iPhone 16 Pro"; \
-		\
-		if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
-			echo "Simulator 'iPhone 16 Pro' is now booted."; \
-		else \
-			echo "Simulator bootup failed..."; \
-			exit 1; \
-		fi \
+		echo "Booting simulator 'iPhone 16 Pro' asynchronously..."; \
+		# Dispatch boot in the background  
+		xcrun simctl boot "iPhone 16 Pro" & \
+		echo "Simulator boot command dispatched."; \
+	fi
+
+sim-boot-check:
+	@echo "Checking simulator boot status..."
+	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
+		echo "Simulator 'iPhone 16 Pro' is booted."; \
+	else \
+		echo "Simulator bootup failed or is not booted yet."; \
+		exit 1; \
 	fi
 
 clean-build:

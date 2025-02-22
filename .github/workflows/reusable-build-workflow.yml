@@ -66,6 +66,12 @@ jobs:
         with:
           submodules: recursive
 
+      # dispatch simulator boot in bg coz it take a while to boot-up fresh
+      - name: Boot Simulator for testing
+        run: |
+          mkdir -p build/logs
+          make -B boot-sim-async | tee -a build/logs/test.log
+
       - name: Install dependencies - ldid & xcbeautify & xcpretty
         run: |
           brew install ldid xcbeautify
@@ -246,8 +252,12 @@ jobs:
       - name: Convert to IPA
         run: make ipa | tee -a build/logs/build.log
 
-      - name: Boot Simulator for testing
-        run: make -B boot-sim | tee -a build/logs/test.log
+
+      # we expect simulator to have been booted by now, so exit otherwise
+      - name: Simulator Boot Check
+        run: |
+          mkdir -p build/logs
+          make -B sim-boot-check | tee -a build/logs/test.log
 
       - name: Start Recording UI tests (if DEBUG_RECORD_TESTS is set to 1)
         if: ${{ vars.DEBUG_RECORD_TESTS == '1' }}
@@ -261,7 +271,7 @@ jobs:
         # using 'tee' to intercept stdout and log for detailed build-log
         run: |
           NSUnbufferedIO=YES make -B build-and-test 2>&1 | tee -a build/logs/test.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
-        # NSUnbufferedIO=YES make boot-sim build-and-test 2>&1 | tee build/logs/test.log | xcpretty -r junit --output ./build/tests/test-results.xml && exit ${PIPESTATUS[0]}
+        # NSUnbufferedIO=YES make -B build-and-test 2>&1 | tee build/logs/test.log | xcpretty -r junit --output ./build/tests/test-results.xml && exit ${PIPESTATUS[0]}
 
       - name: Stop Recording tests
         if: ${{ always() && env.RECORD_PID != '' }}
