@@ -71,6 +71,7 @@ jobs:
         run: |
           mkdir -p build/logs
           make -B boot-sim-async | tee -a build/logs/test.log
+          exit ${PIPESTATUS[0]}
 
       - name: Install dependencies - ldid & xcbeautify & xcpretty
         run: |
@@ -258,6 +259,7 @@ jobs:
         run: |
           mkdir -p build/logs
           make -B sim-boot-check | tee -a build/logs/test.log
+          exit ${PIPESTATUS[0]}
 
       - name: Start Recording UI tests (if DEBUG_RECORD_TESTS is set to 1)
         if: ${{ vars.DEBUG_RECORD_TESTS == '1' }}

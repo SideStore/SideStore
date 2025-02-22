@@ -213,7 +213,6 @@ boot-sim-async:
 		echo "Simulator 'iPhone 16 Pro' is already booted."; \
 	else \
 		echo "Booting simulator 'iPhone 16 Pro' asynchronously..."; \
-		# Dispatch boot in the background  
 		xcrun simctl boot "iPhone 16 Pro" & \
 		echo "Simulator boot command dispatched."; \
 	fi
