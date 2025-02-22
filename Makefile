@@ -201,9 +201,17 @@ boot-sim:
 	else \
 		echo "Booting simulator 'iPhone 16 Pro'..."; \
 		xcrun simctl boot "iPhone 16 Pro"; \
+		\
+		if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
+			echo "Simulator 'iPhone 16 Pro' is now booted."; \
+		else \
+			echo "Simulator bootup failed..."; \
+			exit 1; \
+		fi \
 	fi
 
 build-and-test:
+	@rm -rf build/tests/test-results.xcresult
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
 	@echo "Performing a build and running tests..."
@@ -342,7 +350,7 @@ ipa-altbackup: checkPaths copy-altbackup
 	@mkdir -p 	"$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
 	@echo " Copying from $(ALT_APP_SRC) into $(ALT_APP_PAYLOAD_DST)"
 	@cp -R -f	"$(ALT_APP_SRC)/." "$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
-	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload && popd
+	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload || popd
 	@cp	   -f	"$(ALT_APP_IPA_DST)" AltStore/Resources
 	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
 
@@ -351,11 +359,8 @@ clean-altbackup:
 	@echo "====> Cleaning up AltBackup related artifacts <===="
 	@rm -rf build/altbackup.xcarchive/
 	@rm -f build/AltBackup.ipa
-	@rm -f AltStore/Resources/AltBackup.ipa
+    #@rm -f AltStore/Resources/AltBackup.ipa
 
 clean: clean-altbackup
-	@rm -rf *.xcarchive/
-	@rm -rf *.dSYM/
 	@rm -rf SideStore.ipa
 	@rm -rf build/
-	@rm -rf Payload/

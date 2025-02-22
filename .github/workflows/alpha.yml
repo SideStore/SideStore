@@ -17,7 +17,7 @@ jobs:
       bundle_id: "com.SideStore.SideStore"
       # bundle_id_suffix: ".Alpha"
       is_beta: true
-      publish: true
+      publish: ${{ vars.PUBLISH_ALPHA_UPDATES == 'true' }} 
       is_shared_build_num: false
       release_tag: "alpha"
       release_name: "Alpha"

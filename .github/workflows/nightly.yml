@@ -70,7 +70,7 @@ jobs:
       bundle_id: "com.SideStore.SideStore"
       # bundle_id_suffix: ".Nightly"
       is_beta: true
-      publish: true
+      publish: ${{ vars.PUBLISH_NIGHTLY_UPDATES == 'true' }} 
       is_shared_build_num: false
       release_tag: "nightly"
       release_name: "Nightly"
