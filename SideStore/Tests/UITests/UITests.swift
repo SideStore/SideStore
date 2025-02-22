@@ -15,10 +15,19 @@ final class UITests: XCTestCase {
     private static let springboard_app = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     private static let spotlight_app = XCUIApplication(bundleIdentifier: "com.apple.Spotlight")
     
+    private static let searchBar = spotlight_app.textFields["SpotlightSearchField"]
+
     private static let APP_NAME = "SideStore"
     
     override func setUpWithError() throws {
         // ignore spotlight it it was shown
+        let searchBar = Self.searchBar
+        if searchBar.exists {
+            let clearButton = searchBar.buttons["Clear text"]
+            if clearButton.exists{
+                clearButton.tap()
+            }
+        }
         Self.springboard_app.tap()
         
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -44,7 +53,8 @@ final class UITests: XCTestCase {
 
         let systemAlert = Self.springboard_app.alerts["“\(Self.APP_NAME)” Would Like to Send You Notifications"]
 
-        XCTAssertTrue(systemAlert.waitForExistence(timeout: 0.2), "Notifications alert did not appear")
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        XCTAssertTrue(systemAlert.exists || systemAlert.waitForExistence(timeout: 5), "Notifications alert did not appear")
         systemAlert.scrollViews.otherElements.buttons["Allow"].tap()
         
         // Do the actual validation
@@ -58,7 +68,8 @@ final class UITests: XCTestCase {
 
         let systemAlert = Self.springboard_app.alerts["“\(Self.APP_NAME)” Would Like to Send You Notifications"]
 
-        XCTAssertTrue(systemAlert.waitForExistence(timeout: 0.2), "Notifications alert did not appear")
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        XCTAssertTrue(systemAlert.exists || systemAlert.waitForExistence(timeout: 5), "Notifications alert did not appear")
         systemAlert.scrollViews.otherElements.buttons["Allow"].tap()
         
         // Do the actual validation
@@ -87,21 +98,29 @@ private extension UITests {
 //        XCUIDevice.shared.press(.home)
         springboard_app.swipeDown()
         
-        let searchBar = spotlight_app.textFields["SpotlightSearchField"]
+        let searchBar = Self.searchBar
+        _ = searchBar.exists || searchBar.waitForExistence(timeout: 5)
         searchBar.typeText(APP_NAME)
 
         // Rest of the deletion flow...
         let appIcon = spotlight_app.icons[APP_NAME]
-        if appIcon.waitForExistence(timeout: 0.2) {
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        if appIcon.exists || appIcon.waitForExistence(timeout: 5) {
             appIcon.press(forDuration: 1)
             
             let deleteAppButton = spotlight_app.buttons["Delete App"]
+            _ = deleteAppButton.exists || deleteAppButton.waitForExistence(timeout: 5)
             deleteAppButton.tap()
             
             let confirmDeleteButton = springboard_app.alerts["Delete “\(APP_NAME)”?"]
+            _ = confirmDeleteButton.exists || confirmDeleteButton.waitForExistence(timeout: 5)
             confirmDeleteButton.scrollViews.otherElements.buttons["Delete"].tap()
         }
-        searchBar.buttons["Clear text"].tap()
+        
+        let clearButton = searchBar.buttons["Clear text"]
+        _ = clearButton.exists || clearButton.waitForExistence(timeout: 5)
+        clearButton.tap()
+        
         springboard_app.tap()
     }
     
@@ -150,6 +169,19 @@ private extension UITests {
         appsSidestoreIoTextField.tap()
         collectionViewsQuery.staticTexts["Paste"].tap()
 
+//        if app.keyboards.buttons["Return"].exists {
+//            app.keyboards.buttons["Return"].tap()
+//        } else if app.keyboards.buttons["Done"].exists {
+//            app.keyboards.buttons["Done"].tap()
+//        } else {
+//            // if still exists try tapping outside of text field focus
+//            app.tap()
+//        }
+        
+        if app.keyboards.count > 0 {
+            appsSidestoreIoTextField.typeText("\n") // Fallback to newline so that soft kb is dismissed
+        }
+        
         let cellsQuery = collectionViewsQuery.cells
 
         // Data model for recommended sources. NOTE: This list order is required to be the same as that of "Add Source" Screen
