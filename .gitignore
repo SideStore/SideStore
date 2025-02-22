@@ -64,3 +64,9 @@ SideStore/.skip-prebuilt-fetch-em_proxy
 # coz SPM then resolves packages using the stale entries in this file
 *.xcodeproj/**/Package.resolved
 *.xcworkspace/**/Package.resolved
+
+# some more commandline build artifacts
+test-recording.mp4
+test-recording.log
+altstore-sources.md
+local-build.sh
