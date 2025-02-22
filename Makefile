@@ -169,6 +169,8 @@ MARKETING_VERSION ?=
 BUNDLE_ID_SUFFIX ?= 
 # Common build settings for xcodebuild
 COMMON_BUILD_SETTINGS = \
+	-workspace AltStore.xcworkspace \
+	-scheme SideStore \
 	-sdk iphoneos \
 	-configuration $(BUILD_CONFIG) \
 	CODE_SIGNING_REQUIRED=NO \
@@ -190,10 +192,21 @@ endif
 build:
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
-	@xcodebuild -workspace AltStore.xcworkspace \
-		-scheme SideStore \
-		archive -archivePath ./SideStore \
+	@xcodebuild archive -archivePath ./SideStore \
 		$(COMMON_BUILD_SETTINGS)
+
+build-and-test:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a build and running tests..."
+	@xcodebuild test \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+		-resultBundlePath build/tests/test-results.xcresult \
+		$(COMMON_BUILD_SETTINGS)
+
+        # code cov probably cause full recompilation of tests even if archive target was just invoked before tests
+    	# -enableCodeCoverage YES \
 
 boot-sim:
 	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
@@ -209,18 +222,6 @@ boot-sim:
 			exit 1; \
 		fi \
 	fi
-
-build-and-test:
-	@rm -rf build/tests/test-results.xcresult
-	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
-	@echo ""
-	@echo "Performing a build and running tests..."
-	@xcodebuild test -workspace AltStore.xcworkspace \
-		-scheme SideStore \
-		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
-		-enableCodeCoverage YES \
-		-resultBundlePath build/tests/test-results.xcresult \
-		$(COMMON_BUILD_SETTINGS)
 
 clean-build:
 	@echo "Cleaning build artifacts..."

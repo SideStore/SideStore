@@ -252,7 +252,7 @@ jobs:
       - name: Start Recording UI tests (if DEBUG_RECORD_TESTS is set to 1)
         if: ${{ vars.DEBUG_RECORD_TESTS == '1' }}
         run: |
-          nohup xcrun simctl io booted recordVideo test-recording.mp4 </dev/null > test-recording.log 2>&1 &
+          nohup xcrun simctl io booted recordVideo -f test-recording.mp4 --codec h264 </dev/null > test-recording.log 2>&1 &
           RECORD_PID=$!
           echo "RECORD_PID=$RECORD_PID" >> $GITHUB_ENV
 
