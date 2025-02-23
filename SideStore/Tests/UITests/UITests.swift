@@ -22,7 +22,8 @@ final class UITests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
 //        Self.dismissSpotlight()
-        Self.dismissSpringboardAlerts()
+//        Self.deleteMyApp()
+        Self.deleteMyApp2()
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
@@ -32,8 +33,6 @@ final class UITests: XCTestCase {
     
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-//        Self.deleteMyApp()
-        Self.deleteMyApp2()
         super.tearDown()
     }
    
@@ -67,6 +66,21 @@ final class UITests: XCTestCase {
         
         // Do the actual validation
         try performBulkAddingInputSources(for: app)
+    }
+
+    func testRepeatabilityForStagingInputSources() throws {
+        
+        let app = XCUIApplication()
+        app.launch()
+
+        let systemAlert = Self.springboard_app.alerts["“\(Self.APP_NAME)” Would Like to Send You Notifications"]
+
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        XCTAssertTrue(systemAlert.exists || systemAlert.waitForExistence(timeout: 5), "Notifications alert did not appear")
+        systemAlert.scrollViews.otherElements.buttons["Allow"].tap()
+        
+        // Do the actual validation
+        try performRepeatabilityForStagingInputSources(for: app)
     }
 
     
@@ -154,8 +168,8 @@ private extension UITests {
                 button.tap()
             }
 
-            // Press home once to make the icons stop wiggling
-            XCUIDevice.shared.press(.home)
+//            // Press home once to make the icons stop wiggling
+//            XCUIDevice.shared.press(.home)
         }
     }
     
@@ -176,6 +190,17 @@ private extension UITests {
 }
 
 
+struct SeededGenerator: RandomNumberGenerator {
+    var seed: UInt64
+
+    mutating func next() -> UInt64 {
+        // A basic LCG (not cryptographically secure, but fine for testing)
+        seed = 6364136223846793005 &* seed &+ 1
+        return seed
+    }
+}
+
+
 // Test guts (definition)
 private extension UITests {
     
@@ -186,7 +211,7 @@ private extension UITests {
         cellsQuery: XCUIElementQuery
     ) throws {
         
-        // Tap on each textInputSources source's "add" button.
+        // Tap on each sorucesMapping source's "add" button.
         for source in sorucesMapping {
             let sourceButton = cellsQuery.otherElements
                     .containing(.button, identifier: source.identifier)
@@ -277,6 +302,67 @@ private extension UITests {
     }
     
     
+    private func performRepeatabilityForStagingInputSources(for app: XCUIApplication) throws {
+        
+        // set content into clipboard (for bulk add (paste))
+        // NOTE: THIS IS AN ORDERED SEQUENCE AND MUST MATCH THE ORDER in textInputSources BELOW (Remember to take this into account when adding more entries)
+        UIPasteboard.general.string = """
+            https://alts.lao.sb
+            https://taurine.app/altstore/taurinestore.json
+            https://randomblock1.com/altstore/apps.json
+            https://burritosoftware.github.io/altstore/channels/burritosource.json
+            https://bit.ly/40Isul6
+        """.trimmedIndentation
+        
+        let app = XCUIApplication()
+        app.tabBars["Tab Bar"].buttons["Sources"].tap()
+        app.navigationBars["Sources"].buttons["Add"].tap()
+
+        let collectionViewsQuery = app.collectionViews
+        let appsSidestoreIoTextField = collectionViewsQuery.textFields["apps.sidestore.io"]
+        _ = appsSidestoreIoTextField.exists || appsSidestoreIoTextField.waitForExistence(timeout: 5)
+        appsSidestoreIoTextField.tap()
+        appsSidestoreIoTextField.tap()
+        _ = appsSidestoreIoTextField.exists || appsSidestoreIoTextField.waitForExistence(timeout: 5)
+        collectionViewsQuery.staticTexts["Paste"].tap()
+        
+        if app.keyboards.count > 0 {
+            appsSidestoreIoTextField.typeText("\n") // Fallback to newline so that soft kb is dismissed
+        }
+        
+        let cellsQuery = collectionViewsQuery.cells
+
+        // Data model for recommended sources. NOTE: This list order is required to be the same as that of "Add Source" Screen
+        let textInputSources: [(identifier: String, alertTitle: String, requiresSwipe: Bool)] = [
+            ("Laoalts\nalts.lao.sb", "Laoalts", false),
+            ("Taurine\ntaurine.app/altstore/taurinestore.json", "Taurine", false),
+            ("RandomSource\nrandomblock1.com/altstore/apps.json", "RandomSource", false),
+            ("Burrito's AltStore\nburritosoftware.github.io/altstore/channels/burritosource.json", "Burrito's AltStore", false),
+            ("Qn_'s AltStore Repo\nbit.ly/40Isul6", "Qn_'s AltStore Repo", false),
+        ]
+        
+        let repeatCount = 3  // number of times to run the entire sequence
+        let timeSeed = UInt64(Date().timeIntervalSince1970)
+        var seededGenerator = SeededGenerator(seed: timeSeed)     // time is unique (upto microseconds) - uncomment this to use non-deterministic seed based RNG (random number generator)
+//        var seededGenerator = SeededGenerator(seed: 42)             // fixed seed for deterministic start of this generator
+
+        for _ in 0..<repeatCount {
+            // The same fixed seeded generator will yield the same permutation if not advanced, so you might want to reinitialize or use a fresh copy for each iteration:
+//            var seededGenerator = seededGenerator                                               // uncomment this for repeats to use same(shuffled once due to inital seed) order for all repeats
+//            for source in textInputSources.shuffled() {                                         // use this for non-deterministic shuffling
+            for source in textInputSources.shuffled(using: &seededGenerator) {                  // use this for deterministic shuffling based on seed
+                let sourceButton = cellsQuery.otherElements
+                    .containing(.button, identifier: source.identifier)
+                    .children(matching: .button)[source.identifier]
+                XCTAssert(sourceButton.exists || sourceButton.waitForExistence(timeout: 5), "Source preview for id '\(source.alertTitle)' not found in the view")
+
+                let addButton = sourceButton.children(matching: .button)["add"]
+                addButton.tap()
+            }
+        }
+    }
+    
+    
 
     private func performBulkAddingRecommendedSources(for app: XCUIApplication) throws {
         // Navigate to the Sources screen and open the Add Source view.
@@ -291,8 +377,8 @@ private extension UITests {
             ("Provenance EMU\nprovenance-emu.com/apps.json", "Provenance EMU", false),
             ("Countdown Respository\nneoarz.github.io/Countdown-App/Countdown.json", "Countdown Respository", false),
             ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", false),
-            ("UTM Repository\nVirtual machines for iOS", "UTM Repository", true),
-            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", false),
+            ("UTM Repository\nVirtual machines for iOS", "UTM Repository", false),
+            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", true),
             ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", false),
             ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", false),
             ("Odyssey\ntheodyssey.dev/altstore/odysseysource.json", "Odyssey", false),
