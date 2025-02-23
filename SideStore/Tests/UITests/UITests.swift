@@ -83,6 +83,21 @@ final class UITests: XCTestCase {
         try performRepeatabilityForStagingInputSources(for: app)
     }
 
+    func testRepeatabilityForStagingRecommendedSources() throws {
+        
+        let app = XCUIApplication()
+        app.launch()
+
+        let systemAlert = Self.springboard_app.alerts["“\(Self.APP_NAME)” Would Like to Send You Notifications"]
+
+        // if it exists keep going immediately else wait for upto 5 sec with polling every 1 sec for existence
+        XCTAssertTrue(systemAlert.exists || systemAlert.waitForExistence(timeout: 5), "Notifications alert did not appear")
+        systemAlert.scrollViews.otherElements.buttons["Allow"].tap()
+        
+        // Do the actual validation
+        try performRepeatabilityForStagingRecommendedSources(for: app)
+    }
+
     
 //    @MainActor
 //    func testLaunchPerformance() throws {
@@ -207,32 +222,18 @@ private extension UITests {
     
     private func performBulkAdd(
         app: XCUIApplication,
-        sorucesMapping: [(identifier: String, alertTitle: String, requiresSwipe: Bool)],
+        sourceMappings: [(identifier: String, alertTitle: String, requiresSwipe: Bool)],
         cellsQuery: XCUIElementQuery
     ) throws {
         
-        // Tap on each sorucesMapping source's "add" button.
-        for source in sorucesMapping {
-            let sourceButton = cellsQuery.otherElements
-                    .containing(.button, identifier: source.identifier)
-                    .children(matching: .button)[source.identifier]
-            _ = sourceButton.exists || sourceButton.waitForExistence(timeout: 5)            // this can come from internet fetch, so give it ample time before timeout
-            
-//            let addButton = sourceButton.children(matching: .button).firstMatch
-            let addButton = sourceButton.children(matching: .button)["add"]
-            _ = addButton.exists || addButton.waitForExistence(timeout: 0.3)
-            addButton.tap()
-
-            if source.requiresSwipe {
-                sourceButton.swipeUp(velocity: .slow)  // Swipe up if needed.
-            }
-        }
+        // Tap on each sourceMappings source's "add" button.
+        try tapAddForThesePickedSources(app: app, sourceMappings: sourceMappings, cellsQuery: cellsQuery)
         
         // Commit the changes by tapping "Done".
         app.navigationBars["Add Source"].buttons["Done"].tap()
         
         // Accept each source addition via alert.
-        for source in sorucesMapping {
+        for source in sourceMappings {
             let alertIdentifier = "Would you like to add the source “\(source.alertTitle)”?"
             let addSourceButton = app.alerts[alertIdentifier]
                 .scrollViews.otherElements.buttons["Add Source"]
@@ -298,7 +299,7 @@ private extension UITests {
             ("Quantum Source\nContains all of your favorite emulators, games, jailbreaks, utilities, and more.", "Quantum Source", false),
         ]
         
-        try performBulkAdd(app: app, sorucesMapping: textInputSources, cellsQuery: cellsQuery)
+        try performBulkAdd(app: app, sourceMappings: textInputSources, cellsQuery: cellsQuery)
     }
     
     
@@ -341,28 +342,55 @@ private extension UITests {
             ("Qn_'s AltStore Repo\nbit.ly/40Isul6", "Qn_'s AltStore Repo", false),
         ]
         
-        let repeatCount = 3  // number of times to run the entire sequence
-        let timeSeed = UInt64(Date().timeIntervalSince1970)
-        var seededGenerator = SeededGenerator(seed: timeSeed)     // time is unique (upto microseconds) - uncomment this to use non-deterministic seed based RNG (random number generator)
-//        var seededGenerator = SeededGenerator(seed: 42)             // fixed seed for deterministic start of this generator
+        let repeatCount = 3                                     // number of times to run the entire sequence
+        let timeSeed = UInt64(Date().timeIntervalSince1970)     // time is unique (upto microseconds) - uncomment this to use non-deterministic seed based RNG (random number generator)
+
+        try repeatabilityTest(app: app, sourceMappings: textInputSources, cellsQuery: cellsQuery, repeatCount: repeatCount, seed: timeSeed)
+    }
+    
+    private func repeatabilityTest(
+        app: XCUIApplication,
+        sourceMappings: [(identifier: String, alertTitle: String, requiresSwipe: Bool)],
+        cellsQuery: XCUIElementQuery,
+        repeatCount: Int = 1,   // number of times to run the entire sequence
+        seed: UInt64 = 42       // default = fixed seed for deterministic start of this generator
+    ) throws {
+        let seededGenerator = SeededGenerator(seed: seed)
 
         for _ in 0..<repeatCount {
             // The same fixed seeded generator will yield the same permutation if not advanced, so you might want to reinitialize or use a fresh copy for each iteration:
-//            var seededGenerator = seededGenerator                                               // uncomment this for repeats to use same(shuffled once due to inital seed) order for all repeats
-//            for source in textInputSources.shuffled() {                                         // use this for non-deterministic shuffling
-            for source in textInputSources.shuffled(using: &seededGenerator) {                  // use this for deterministic shuffling based on seed
-                let sourceButton = cellsQuery.otherElements
-                    .containing(.button, identifier: source.identifier)
-                    .children(matching: .button)[source.identifier]
-                XCTAssert(sourceButton.exists || sourceButton.waitForExistence(timeout: 5), "Source preview for id '\(source.alertTitle)' not found in the view")
+            var seededGenerator = seededGenerator                                       // uncomment this for repeats to use same(shuffled once due to inital seed) order for all repeats
 
-                let addButton = sourceButton.children(matching: .button)["add"]
-                addButton.tap()
+//            let sourceMappings = sourceMappings.shuffled()                              // use this for non-deterministic shuffling
+            let sourceMappings = sourceMappings.shuffled(using: &seededGenerator)       // use this for deterministic shuffling based on seed
+            try tapAddForThesePickedSources(app: app, sourceMappings: sourceMappings, cellsQuery: cellsQuery)
+        }
+        
+    }
+    
+    private func tapAddForThesePickedSources(
+        app: XCUIApplication,
+        sourceMappings: [(identifier: String, alertTitle: String, requiresSwipe: Bool)],
+        cellsQuery: XCUIElementQuery
+    ) throws {
+        
+        // Tap on each sourceMappings source's "add" button.
+        for source in sourceMappings {
+            let sourceButton = cellsQuery.otherElements
+                .containing(.button, identifier: source.identifier)
+                .children(matching: .button)[source.identifier]
+            XCTAssert(sourceButton.exists || sourceButton.waitForExistence(timeout: 5), "Source preview for id: '\(source.alertTitle)' not found in the view")
+            
+//            let addButton = sourceButton.children(matching: .button).firstMatch
+            let addButton = sourceButton.children(matching: .button)["add"]
+            XCTAssert(addButton.exists || addButton.waitForExistence(timeout: 0.3), " `+` button for id: '\(source.alertTitle)' not found in the preview container")
+            addButton.tap()
+            
+            if source.requiresSwipe {
+                sourceButton.swipeUp(velocity: .slow)  // Swipe up if needed.
             }
         }
     }
-    
-    
 
     private func performBulkAddingRecommendedSources(for app: XCUIApplication) throws {
         // Navigate to the Sources screen and open the Add Source view.
@@ -376,17 +404,39 @@ private extension UITests {
             ("SideStore Team Picks\ncommunity-apps.sidestore.io/sidecommunity.json", "SideStore Team Picks", false),
             ("Provenance EMU\nprovenance-emu.com/apps.json", "Provenance EMU", false),
             ("Countdown Respository\nneoarz.github.io/Countdown-App/Countdown.json", "Countdown Respository", false),
-            ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", false),
+            ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", true),
             ("UTM Repository\nVirtual machines for iOS", "UTM Repository", false),
-            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", true),
+            ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", false),
             ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", false),
-            ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", false),
+            ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", true),
             ("Odyssey\ntheodyssey.dev/altstore/odysseysource.json", "Odyssey", false),
             ("Yattee\nrepos.yattee.stream/alt/apps.json", "Yattee", false),
             ("ThatStella7922 Source\nThe home for all apps ThatStella7922", "ThatStella7922 Source", false)
         ]
         
-        try performBulkAdd(app: app, sorucesMapping: recommendedSources, cellsQuery: cellsQuery)
+        try performBulkAdd(app: app, sourceMappings: recommendedSources, cellsQuery: cellsQuery)
+    }
+    
+    private func performRepeatabilityForStagingRecommendedSources(for app: XCUIApplication) throws {
+        // Navigate to the Sources screen and open the Add Source view.
+        app.tabBars["Tab Bar"].buttons["Sources"].tap()
+        app.navigationBars["Sources"].buttons["Add"].tap()
+        
+        let cellsQuery = app.collectionViews.cells
+        
+        // Data model for recommended sources. NOTE: This list order is required to be the same as that of "Add Source" Screen
+        let recommendedSources: [(identifier: String, alertTitle: String, requiresSwipe: Bool)] = [
+            ("SideStore Team Picks\ncommunity-apps.sidestore.io/sidecommunity.json", "SideStore Team Picks", false),
+            ("Provenance EMU\nprovenance-emu.com/apps.json", "Provenance EMU", false),
+            ("Countdown Respository\nneoarz.github.io/Countdown-App/Countdown.json", "Countdown Respository", false),
+            ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", false),
+            ("UTM Repository\nVirtual machines for iOS", "UTM Repository", false),
+        ]
+        
+        let repeatCount = 3                                     // number of times to run the entire sequence
+        let timeSeed = UInt64(Date().timeIntervalSince1970)     // time is unique (upto microseconds) - uncomment this to use non-deterministic seed based RNG (random number generator)
+
+        try repeatabilityTest(app: app, sourceMappings: recommendedSources, cellsQuery: cellsQuery, repeatCount: repeatCount, seed: timeSeed)
     }
 }
 
