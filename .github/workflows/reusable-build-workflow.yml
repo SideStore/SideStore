@@ -77,6 +77,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     outputs:
       version: ${{ steps.version.outputs.version }}
+      marketing-version: ${{ steps.marketing-version.outputs.MARKETING_VERSION }}
       release-channel: ${{ steps.release-channel.outputs.RELEASE_CHANNEL }}
 
     steps:
@@ -147,6 +148,7 @@ jobs:
 
       - name: Set MARKETING_VERSION
         if: ${{ inputs.is_beta }}
+        id: marketing-version
         run: |
           # Extract version number (e.g., "0.6.0")
           version=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
@@ -159,6 +161,7 @@ jobs:
           MARKETING_VERSION="${version}-${date}.${build_num}+${{ needs.serialize.outputs.short-commit }}"
 
           echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_ENV
+          echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_OUTPUT
           echo "MARKETING_VERSION=$MARKETING_VERSION"
 
       - name: Echo Updated Build.xcconfig, build_number.txt
@@ -656,7 +659,7 @@ jobs:
 
           echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
           echo "BUNDLE_IDENTIFIER=${{ inputs.bundle_id }}" >> $GITHUB_ENV
-          echo "VERSION_IPA=${{ needs.build.outputs.version }}" >> $GITHUB_ENV
+          echo "VERSION_IPA=${{ needs.build.outputs.marketing-version }}" >> $GITHUB_ENV
           echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
           echo "RELEASE_CHANNEL=${{ needs.build.outputs.release-channel }}" >> $GITHUB_ENV
           echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
