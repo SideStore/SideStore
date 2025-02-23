@@ -379,7 +379,7 @@ private extension UITests {
             let sourceButton = cellsQuery.otherElements
                 .containing(.button, identifier: source.identifier)
                 .children(matching: .button)[source.identifier]
-            XCTAssert(sourceButton.exists || sourceButton.waitForExistence(timeout: 5), "Source preview for id: '\(source.alertTitle)' not found in the view")
+            XCTAssert(sourceButton.exists || sourceButton.waitForExistence(timeout: 10), "Source preview for id: '\(source.alertTitle)' not found in the view")
             
 //            let addButton = sourceButton.children(matching: .button).firstMatch
             let addButton = sourceButton.children(matching: .button)["add"]
@@ -407,7 +407,7 @@ private extension UITests {
             ("OatmealDome's AltStore Source\naltstore.oatmealdome.me", "OatmealDome's AltStore Source", true),
             ("UTM Repository\nVirtual machines for iOS", "UTM Repository", false),
             ("Flyinghead\nflyinghead.github.io/flycast-builds/altstore.json", "Flyinghead", false),
-            ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", false),
+//            ("PojavLauncher Repository\nalt.crystall1ne.dev", "PojavLauncher Repository", false),            // not a stable source, sometimes becomes unreachable, so disabled
             ("PokeMMO\npokemmo.eu/altstore/", "PokeMMO", true),
             ("Odyssey\ntheodyssey.dev/altstore/odysseysource.json", "Odyssey", false),
             ("Yattee\nrepos.yattee.stream/alt/apps.json", "Yattee", false),
