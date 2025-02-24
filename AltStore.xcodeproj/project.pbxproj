@@ -3444,8 +3444,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SideStore/AltSign";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 4323ff794e600ce1759cb6ea57275e13b7ea72f2;
 			};
 		};
 		4879A9602861049C00FC1BBD /* XCRemoteSwiftPackageReference "OpenSSL" */ = {
