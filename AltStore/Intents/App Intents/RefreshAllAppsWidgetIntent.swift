@@ -11,7 +11,7 @@ import AppIntents
 @available(iOS 17, *)
 struct RefreshAllAppsWidgetIntent: AppIntent, ProgressReportingIntent
 {
-    static var title: LocalizedStringResource { "Refresh Apps via Widget" }
+    static var title: LocalizedStringResource { "通过小部件刷新应用" }
     static var isDiscoverable: Bool { false } // Don't show in Shortcuts or Spotlight.
     
     #if !WIDGET_EXTENSION

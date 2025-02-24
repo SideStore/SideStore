@@ -242,7 +242,7 @@ private extension PillButton
             self.dateComponentsFormatter.allowedUnits = [.day]
             
             let numberOfDays = endDate.numberOfCalendarDays(since: startDate)
-            text = String(format: NSLocalizedString("%@ DAYS", comment: ""), NSNumber(value: numberOfDays))
+            text = String(format: NSLocalizedString("%@ 天", comment: ""), NSNumber(value: numberOfDays))
         }
         
         if let text = text

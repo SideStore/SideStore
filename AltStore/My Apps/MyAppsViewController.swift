@@ -168,7 +168,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     }
     var minimuxerStatus: Bool {
         guard minimuxer.ready() else {
-            ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No WiFi or VPN!")).show(in: self)
+            ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("没有 WiFi 或 VPN！")).show(in: self)
             return false
         }
         return true
@@ -203,12 +203,12 @@ private extension MyAppsViewController
             
             if !self.unsupportedUpdates.isEmpty
             {
-                cell.textLabel.text = NSLocalizedString("Unsupported Updates Available", comment: "")
+                cell.textLabel.text = NSLocalizedString("有不支持的更新", comment: "")
                 cell.button.isHidden = false
             }
             else
             {
-                cell.textLabel.text = NSLocalizedString("No Updates Available", comment: "")
+                cell.textLabel.text = NSLocalizedString("没有可用的更新", comment: "")
                 cell.button.isHidden = true
             }
         }
@@ -377,12 +377,12 @@ private extension MyAppsViewController
             cell.bannerView.iconImageView.isIndicatingActivity = true
             
             cell.bannerView.buttonLabel.isHidden = false
-            cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
+            cell.bannerView.buttonLabel.text = NSLocalizedString("有效", comment: "")
             
             cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
             cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.refreshApp(_:)), for: .primaryActionTriggered)
             
-            cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Refresh %@", comment: ""), installedApp.name)
+            cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("刷新 %@", comment: ""), installedApp.name)
 
             // formatter.includesTimeRemainingPhrase = true
 
@@ -399,7 +399,7 @@ private extension MyAppsViewController
                 cell.bannerView.button.alpha = 1.0
             }
             
-            cell.bannerView.accessibilityLabel? += ". " + String(format: NSLocalizedString("Expires in %@", comment: ""), timeInterval!)
+            cell.bannerView.accessibilityLabel? += ". " + String(format: NSLocalizedString("将在 %@ 后过期", comment: ""), timeInterval!)
             
             // Make sure refresh button is correct size.
             cell.layoutIfNeeded()
@@ -472,12 +472,12 @@ private extension MyAppsViewController
             cell.deactivateBadge?.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
             
             cell.bannerView.button.isIndicatingActivity = false
-            cell.bannerView.configure(for: installedApp, action: .custom(NSLocalizedString("ACTIVATE", comment: "")))
+            cell.bannerView.configure(for: installedApp, action: .custom(NSLocalizedString("激活", comment: "")))
             
             cell.bannerView.button.tintColor = tintColor
             cell.bannerView.button.removeTarget(self, action: nil, for: .primaryActionTriggered)
             cell.bannerView.button.addTarget(self, action: #selector(MyAppsViewController.activateApp(_:)), for: .primaryActionTriggered)
-            cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("Activate %@", comment: ""), installedApp.name)
+            cell.bannerView.button.accessibilityLabel = String(format: NSLocalizedString("激活 %@", comment: ""), installedApp.name)
             
             if let storeApp = installedApp.storeApp, storeApp.isPledgeRequired, !storeApp.isPledged
             {
@@ -645,11 +645,11 @@ private extension MyAppsViewController
                     
                     if failures.count == 1
                     {
-                        localizedText = NSLocalizedString("Failed to refresh 1 app.", comment: "")
+                        localizedText = NSLocalizedString("刷新 1 个应用失败。", comment: "")
                     }
                     else
                     {
-                        localizedText = String(format: NSLocalizedString("Failed to refresh %@ apps.", comment: ""), NSNumber(value: failures.count))
+                        localizedText = String(format: NSLocalizedString("刷新 %@ 个应用失败。", comment: ""), NSNumber(value: failures.count))
                     }
                     
                     let error = failures.first?.value as NSError?
@@ -899,7 +899,7 @@ private extension MyAppsViewController
         }
         
         let unzipProgress = Progress.discreteProgress(totalUnitCount: 1)
-        let unzipAppOperation = BlockOperation { 
+        let unzipAppOperation = BlockOperation {
             do
             {
                 if let error = context.error
@@ -1027,21 +1027,21 @@ private extension MyAppsViewController
         var message: String
         
         if UserDefaults.standard.activeAppLimitIncludesExtensions
-        {
-            message = NSLocalizedString("Non-developer Apple IDs are limited to 3 apps and app extensions. Inactive apps don't count towards your total, but cannot be opened until activated.", comment: "")
-        }
-        else
-        {
-            message = NSLocalizedString("Non-developer Apple IDs are limited to 3 apps. Inactive apps are backed up and uninstalled so they don't count towards your total, but will be reinstalled with all their data when activated again.", comment: "")
-            
-            if UserDefaults.standard.isAppLimitDisabled
-            {
-                message += "\n\n"
-                message += NSLocalizedString("If you're using the MacDirtyCow exploit to remove the 3-app limit, you can install up to 10 apps and app extensions instead.", comment: "")
-            }
-        }
+           {
+               message = NSLocalizedString("非开发者的 Apple ID 限制最多只能安装 3 个应用和应用扩展。非活动应用不会计入您的总数，但在激活之前无法打开。", comment: "")
+           }
+           else
+           {
+               message = NSLocalizedString("非开发者的 Apple ID 限制最多只能安装 3 个应用。非活动应用会被备份并卸载，因此不会计入总数，但当再次激活时，将会重新安装并恢复所有数据。", comment: "")
+               
+               if UserDefaults.standard.isAppLimitDisabled
+               {
+                   message += "\n\n"
+                   message += NSLocalizedString("如果您使用 MacDirtyCow 漏洞移除了 3 个应用的限制，那么您最多可以安装 10 个应用和应用扩展。", comment: "")
+               }
+           }
                 
-        let alertController = UIAlertController(title: NSLocalizedString("What are inactive apps?", comment: ""), message: message, preferredStyle: .alert)
+        let alertController = UIAlertController(title: NSLocalizedString("什么是非活动应用？", comment: ""), message: message, preferredStyle: .alert)
         alertController.addAction(.ok)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -1062,9 +1062,9 @@ private extension MyAppsViewController
         
         let sortedHiddenUpdates = self.unsupportedUpdates.sorted(by: { $0.name.localizedStandardCompare($1.name) == .orderedAscending })
         
-        let title = sortedHiddenUpdates.count == 1 ? NSLocalizedString("Unsupported Update Available", comment: "") : String(format: NSLocalizedString("%@ Unsupported Updates Available", comment: ""), sortedHiddenUpdates.count as NSNumber)
-        var message = String(format: NSLocalizedString("These updates don't support iOS %@. Please update your device to the latest iOS version to install them.", comment: ""), ProcessInfo.processInfo.operatingSystemVersion.stringValue)
-        message += "\n"
+        let title = sortedHiddenUpdates.count == 1 ? NSLocalizedString("有不支持的更新", comment: "") : String(format: NSLocalizedString("%@ 有不支持的更新", comment: ""), sortedHiddenUpdates.count as NSNumber)
+            var message = String(format: NSLocalizedString("这些更新不支持 iOS %@。请更新您的设备到最新的 iOS 版本以安装它们。", comment: ""), ProcessInfo.processInfo.operatingSystemVersion.stringValue)
+            message += "\n"
         
         for storeApp in sortedHiddenUpdates
         {
@@ -1076,11 +1076,11 @@ private extension MyAppsViewController
                 var osVersion: String? = nil
                 if let minOSVersion = appVersion.minOSVersion, !ProcessInfo.processInfo.isOperatingSystemAtLeast(minOSVersion)
                 {
-                    osVersion = String(format: NSLocalizedString("iOS %@ or later", comment: ""), minOSVersion.stringValue)
+                    osVersion = String(format: NSLocalizedString("iOS %@ or 或更高版本", comment: ""), minOSVersion.stringValue)
                 }
                 else if let maxOSVersion = appVersion.maxOSVersion, ProcessInfo.processInfo.operatingSystemVersion > maxOSVersion
                 {
-                    osVersion = String(format: NSLocalizedString("iOS %@ or earlier", comment: ""), maxOSVersion.stringValue)
+                    osVersion = String(format: NSLocalizedString("iOS %@ or 或更低版本", comment: ""), maxOSVersion.stringValue)
                 }
                 
                 if let osVersion
@@ -1112,7 +1112,7 @@ private extension MyAppsViewController
     
     func refresh(_ installedApp: InstalledApp)
     {
-       // we do need minimuxer, coz it needs to talk to misagent daemon which manages profiles 
+       // we do need minimuxer, coz it needs to talk to misagent daemon which manages profiles
        // so basically loopback vpn is still required
        guard minimuxerStatus else { return }     // we don't need minimuxer when renewing appIDs only do we, heck we can even do it on mobile internet
 
@@ -1250,21 +1250,21 @@ private extension MyAppsViewController
     
     func remove(_ installedApp: InstalledApp)
     {
-        let title = String(format: NSLocalizedString("Remove “%@” from SideStore?", comment: ""), installedApp.name)
+        let title = String(format: NSLocalizedString("移除 “%@” from AppFlex?", comment: ""), installedApp.name)
         let message: String
         
         if UserDefaults.standard.isLegacyDeactivationSupported
         {
-            message = NSLocalizedString("You must also delete it from the home screen to fully uninstall the app.", comment: "")
+            message = NSLocalizedString("您还必须从主屏幕删除该应用才能完全卸载该应用。", comment: "")
         }
         else
         {
-            message = NSLocalizedString("This will also erase all backup data for this app.", comment: "")
+            message = NSLocalizedString("这也将删除该应用的所有备份数据。", comment: "")
         }
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(.cancel)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: ""), style: .destructive, handler: { (action) in
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("移除", comment: ""), style: .destructive, handler: { (action) in
             AppManager.shared.remove(installedApp) { (result) in
                 switch result
                 {
@@ -1284,13 +1284,13 @@ private extension MyAppsViewController
     {
         guard minimuxerStatus else { return }
 
-        let title = NSLocalizedString("Start Backup?", comment: "")
-        let message = NSLocalizedString("This will replace any previous backups. Please leave SideStore open until the backup is complete.", comment: "")
+        let title = NSLocalizedString("开始备份?", comment: "")
+        let message = NSLocalizedString("这将替换任何之前的备份。请保持 AppFlex 打开直到备份完成。", comment: "")
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         alertController.addAction(.cancel)
         
-        let actionTitle = String(format: NSLocalizedString("Back Up %@", comment: ""), installedApp.name)
+        let actionTitle = String(format: NSLocalizedString("备份 %@", comment: ""), installedApp.name)
         alertController.addAction(UIAlertAction(title: actionTitle, style: .default, handler: { (action) in
             AppManager.shared.backup(installedApp, presentingViewController: self) { (result) in
                 do
@@ -1328,8 +1328,8 @@ private extension MyAppsViewController
                 toast = ToastView(error: error, opensLog: false)
                 break
             case .success:
-                toast = ToastView(text: "Import Backup successful for \(installedApp.name)",
-                                  detailText: "Use 'Restore Backup' option to restore data from this imported backup")
+                toast = ToastView(text: "导入备份成功，适用于 \(installedApp.name)",
+                                  detailText: "使用 '恢复备份' 选项从此导入的备份中恢复数据")
             }
             DispatchQueue.main.async {
                 toast.show(in: self)
@@ -1368,10 +1368,10 @@ private extension MyAppsViewController
     {
         guard minimuxerStatus else { return }
 
-        let message = String(format: NSLocalizedString("This will replace all data you currently have in %@.", comment: ""), installedApp.name)
-        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to restore this backup?", comment: ""), message: message, preferredStyle: .actionSheet)
+        let message = String(format: NSLocalizedString("这将替换您当前在 %@ 中的所有数据。", comment: ""), installedApp.name)
+        let alertController = UIAlertController(title: NSLocalizedString("您确定要恢复此备份吗？", comment: ""), message: message, preferredStyle: .actionSheet)
         alertController.addAction(.cancel)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Restore Backup", comment: ""), style: .destructive, handler: { (action) in
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("恢复备份", comment: ""), style: .destructive, handler: { (action) in
             AppManager.shared.restore(installedApp, presentingViewController: self) { (result) in
                 do
                 {
@@ -1422,7 +1422,7 @@ private extension MyAppsViewController
     
     func changeIcon(for installedApp: InstalledApp, to image: UIImage?)
     {
-        // Remove previous icon from cache.
+        // 移除 previous icon from cache.
         self.activeAppsDataSource.prefetchItemCache.removeObject(forKey: installedApp)
         self.inactiveAppsDataSource.prefetchItemCache.removeObject(forKey: installedApp)
         
@@ -1615,7 +1615,7 @@ private extension MyAppsViewController
     {
         guard let altStoreApp = InstalledApp.fetchAltStore(in: DatabaseManager.shared.viewContext) else { return }
         
-        // Remove previous icon from cache.
+        // 移除 previous icon from cache.
         self.activeAppsDataSource.prefetchItemCache.removeObject(forKey: altStoreApp)
         self.inactiveAppsDataSource.prefetchItemCache.removeObject(forKey: altStoreApp)
         
@@ -1693,16 +1693,16 @@ extension MyAppsViewController
                 
                 if UserDefaults.standard.activeAppsLimit == nil || UserDefaults.standard.isAppLimitDisabled
                 {
-                    headerView.textLabel.text = NSLocalizedString("Installed", comment: "")
+                    headerView.textLabel.text = NSLocalizedString("已安装", comment: "")
                 }
                 else
                 {
-                    headerView.textLabel.text = NSLocalizedString("Active", comment: "")
+                    headerView.textLabel.text = NSLocalizedString("已激活", comment: "")
                 }
                 
                 headerView.button.isIndicatingActivity = false
                 headerView.button.activityIndicatorView.color = .altPrimary
-                headerView.button.setTitle(NSLocalizedString("Refresh All", comment: ""), for: .normal)
+                headerView.button.setTitle(NSLocalizedString("刷新全部", comment: ""), for: .normal)
                 headerView.button.addTarget(self, action: #selector(MyAppsViewController.refreshAllApps(_:)), for: .primaryActionTriggered)
                 
                 headerView.button.layoutIfNeeded()
@@ -1710,7 +1710,7 @@ extension MyAppsViewController
                 if self.isRefreshingAllApps
                 {
                     headerView.button.isIndicatingActivity = true
-                    headerView.button.accessibilityLabel = NSLocalizedString("Refreshing", comment: "")
+                    headerView.button.accessibilityLabel = NSLocalizedString("正在刷新", comment: "")
                     headerView.button.accessibilityTraits.remove(.notEnabled)
                 }
                 else
@@ -1729,7 +1729,7 @@ extension MyAppsViewController
                 headerView.layoutMargins.left = self.view.layoutMargins.left
                 headerView.layoutMargins.right = self.view.layoutMargins.right
                 
-                headerView.textLabel.text = NSLocalizedString("Inactive", comment: "")
+                headerView.textLabel.text = NSLocalizedString("未激活", comment: "")
                 headerView.button.setTitle(nil, for: .normal)
                 headerView.button.setImage(UIImage(systemName: "questionmark.circle"), for: .normal)
                 headerView.button.addTarget(self, action: #selector(MyAppsViewController.presentInactiveAppsAlert), for: .primaryActionTriggered)
@@ -1751,11 +1751,11 @@ extension MyAppsViewController
                 
                 if remainingAppIDs == 1
                 {
-                    footerView.textLabel.text = String(format: NSLocalizedString("1 App ID Remaining", comment: ""))
+                    footerView.textLabel.text = String(format: NSLocalizedString("剩余 1 个 App ID", comment: ""))
                 }
                 else
                 {
-                    footerView.textLabel.text = String(format: NSLocalizedString("%@ App IDs Remaining", comment: ""), NSNumber(value: remainingAppIDs))
+                    footerView.textLabel.text = String(format: NSLocalizedString("剩余 %@ 个 App ID", comment: ""), NSNumber(value: remainingAppIDs))
                 }
                 
                 footerView.textLabel.isHidden = remainingAppIDs < 0
@@ -1788,25 +1788,25 @@ extension MyAppsViewController
     {
         var actions = [UIMenuElement]()
         
-        let openAction = UIAction(title: NSLocalizedString("Open", comment: ""), image: UIImage(systemName: "arrow.up.forward.app")) { (action) in
+        let openAction = UIAction(title: NSLocalizedString("打开", comment: ""), image: UIImage(systemName: "arrow.up.forward.app")) { (action) in
             self.open(installedApp)
         }
         
         let openMenu = UIMenu(title: "", options: .displayInline, children: [openAction])
         
-        let refreshAction = UIAction(title: NSLocalizedString("Refresh", comment: ""), image: UIImage(systemName: "arrow.clockwise")) { (action) in
+        let refreshAction = UIAction(title: NSLocalizedString("刷新", comment: ""), image: UIImage(systemName: "arrow.clockwise")) { (action) in
             self.refresh(installedApp)
         }
         
-        let activateAction = UIAction(title: NSLocalizedString("Activate", comment: ""), image: UIImage(systemName: "checkmark.circle")) { (action) in
+        let activateAction = UIAction(title: NSLocalizedString("激活", comment: ""), image: UIImage(systemName: "checkmark.circle")) { (action) in
             self.activate(installedApp)
         }
         
-        let deactivateAction = UIAction(title: NSLocalizedString("Deactivate", comment: ""), image: UIImage(systemName: "xmark.circle"), attributes: .destructive) { (action) in
+        let deactivateAction = UIAction(title: NSLocalizedString("停用", comment: ""), image: UIImage(systemName: "xmark.circle"), attributes: .destructive) { (action) in
             self.deactivate(installedApp)
         }
         
-        let removeAction = UIAction(title: NSLocalizedString("Remove", comment: ""), image: UIImage(systemName: "trash"), attributes: .destructive) { (action) in
+        let removeAction = UIAction(title: NSLocalizedString("移除", comment: ""), image: UIImage(systemName: "trash"), attributes: .destructive) { (action) in
             self.remove(installedApp)
         }
         
@@ -1814,31 +1814,31 @@ extension MyAppsViewController
             self.enableJIT(for: installedApp)
         }
         
-        let backupAction = UIAction(title: NSLocalizedString("Back Up", comment: ""), image: UIImage(systemName: "doc.on.doc")) { (action) in
+        let backupAction = UIAction(title: NSLocalizedString("备份", comment: ""), image: UIImage(systemName: "doc.on.doc")) { (action) in
             self.backup(installedApp)
         }
         
-        let exportBackupAction = UIAction(title: NSLocalizedString("Export Backup", comment: ""), image: UIImage(systemName: "arrow.up.doc")) { (action) in
+        let exportBackupAction = UIAction(title: NSLocalizedString("导出备份", comment: ""), image: UIImage(systemName: "arrow.up.doc")) { (action) in
             self.exportBackup(for: installedApp)
         }
         
-        let importBackupAction = UIAction(title: NSLocalizedString("Import Backup", comment: ""), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+        let importBackupAction = UIAction(title: NSLocalizedString("导入备份", comment: ""), image: UIImage(systemName: "arrow.down.doc")) { (action) in
             self.importBackup(for: installedApp)
         }
         
-        let restoreBackupAction = UIAction(title: NSLocalizedString("Restore Backup", comment: "Restores the last or current backup of this app"), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+        let restoreBackupAction = UIAction(title: NSLocalizedString("恢复备份", comment: "Restores the last or current backup of this app"), image: UIImage(systemName: "arrow.down.doc")) { (action) in
             self.restore(installedApp)
         }
 
-        let restorePreviousBackupAction = UIAction(title: NSLocalizedString("Restore Previous Backup", comment: "Restores the backup saved before the current backup was created."), image: UIImage(systemName: "arrow.down.doc")) { (action) in
+        let restorePreviousBackupAction = UIAction(title: NSLocalizedString("恢复上一个备份", comment: "Restores the backup saved before the current backup was created."), image: UIImage(systemName: "arrow.down.doc")) { (action) in
             self.restorePreviousBackup(for: installedApp)
         }
         
-        let chooseIconAction = UIAction(title: NSLocalizedString("Photos", comment: ""), image: UIImage(systemName: "photo")) { (action) in
+        let chooseIconAction = UIAction(title: NSLocalizedString("图片", comment: ""), image: UIImage(systemName: "photo")) { (action) in
             self.chooseIcon(for: installedApp)
         }
         
-        let removeIconAction = UIAction(title: NSLocalizedString("Remove Custom Icon", comment: ""), image: UIImage(systemName: "trash"), attributes: [.destructive]) { (action) in
+        let removeIconAction = UIAction(title: NSLocalizedString("移除 Custom Icon", comment: ""), image: UIImage(systemName: "trash"), attributes: [.destructive]) { (action) in
             self.changeIcon(for: installedApp, to: nil)
         }
         
@@ -1848,7 +1848,7 @@ extension MyAppsViewController
             changeIconActions.append(removeIconAction)
         }
         
-        let changeIconMenu = UIMenu(title: NSLocalizedString("Change Icon", comment: ""), image: UIImage(systemName: "photo"), children: changeIconActions)
+        let changeIconMenu = UIMenu(title: NSLocalizedString("更换图标", comment: ""), image: UIImage(systemName: "photo"), children: changeIconActions)
         
         if installedApp.bundleIdentifier == StoreApp.altstoreAppID
         {
@@ -2419,13 +2419,13 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
             
             if previousUpdateCount == 0 && updateCount > 0
             {
-                // Remove "No Updates Available" cell.
+                // 移除 "没有可用的更新" cell.
                 let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
                 self.collectionView.add(change)
             }
             else if previousUpdateCount > 0 && updateCount == 0
             {
-                // Insert "No Updates Available" cell.
+                // Insert "没有可用的更新" cell.
                 let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
                 self.collectionView.add(change)
                 

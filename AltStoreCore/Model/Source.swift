@@ -16,18 +16,18 @@ public extension Source
     #if STAGING
     
     #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    static let altStoreSourceURL = URL(string: "https://blog.cloudmantoub.online/app.json")!
     #else
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    static let altStoreSourceURL = URL(string: "https://blog.cloudmantoub.online/app.json")!
     #endif
     
     #else
     
     #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    static let altStoreSourceURL = URL(string: "https://blog.cloudmantoub.online/app.json")!
     #else
 //    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!       // using v2 for alpha releases
+    static let altStoreSourceURL = URL(string: "https://blog.cloudmantoub.online/app.json")!       // using v2 for alpha releases
     #endif
     
     #endif
@@ -478,7 +478,7 @@ public extension Source
     class func makeAltStoreSource(in context: NSManagedObjectContext) -> Source
     {
         let source = Source(context: context)
-        source.name = "SideStore Offical"
+        source.name = "AppFlex Offical"
         source.identifier = Source.altStoreIdentifier
         try! source.setSourceURL(Source.altStoreSourceURL)
         

@@ -67,7 +67,7 @@ final class AppContentViewController: UITableViewController
         if let version = self.app.latestAvailableVersion
         {
             self.versionDescriptionTextView.text = version.localizedDescription
-            self.versionLabel.text = String(format: NSLocalizedString("Version %@", comment: ""), version.localizedVersion)
+            self.versionLabel.text = String(format: NSLocalizedString("版本 %@", comment: ""), version.localizedVersion)
             self.versionDateLabel.text = Date().relativeDateString(since: version.date)
             self.sizeLabel.text = self.byteCountFormatter.string(fromByteCount: version.size)
         }
@@ -109,7 +109,7 @@ final class AppContentViewController: UITableViewController
         if needsTableViewUpdate
         {
             UIView.performWithoutAnimation {
-                // Update row height without animation.
+                // 更新行高时不使用动画。
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
             }
@@ -128,7 +128,7 @@ private extension AppContentViewController
     }
     
     func makePermissionsDataSource() -> RSTArrayCollectionViewDataSource<AppPermission>
-    {        
+    {
         let dataSource = RSTArrayCollectionViewDataSource(items: Array(self.app.permissions))
         dataSource.cellConfigurationHandler = { (cell, permission, indexPath) in
             let cell = cell as! PermissionCollectionViewCell
@@ -167,7 +167,7 @@ private extension AppContentViewController
         default: return
         }
         
-        // Disable animations to prevent some potentially strange ones.
+        // 禁用动画以避免一些可能会有点奇怪的动画效果。
         UIView.performWithoutAnimation {
             self.tableView.reloadRows(at: [indexPath], with: .none)
         }

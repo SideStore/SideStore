@@ -5,22 +5,22 @@ MARKETING_VERSION = 0.6.0
 CURRENT_PROJECT_VERSION = 6000
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
-DEVELOPMENT_TEAM = S32Z3HMYVQ
-ORG_IDENTIFIER = com.SideStore
+DEVELOPMENT_TEAM = W5DCNSYG76
+ORG_IDENTIFIER = com.mantou.newTest2
 
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
 
 ORG_PREFIX = $(ORG_IDENTIFIER)
 
-PRODUCT_NAME = SideStore
+PRODUCT_NAME = AppFlex
 //PRODUCT_NAME[configuration=Debug] = Prov Debug
 
 
 //PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   =  $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
-//PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).SideStore
+PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).AppFlex
 // preserve unmodified bundle ID (without any extra suffixes)
-GROUP_ID = $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
+GROUP_ID = $(ORG_PREFIX).AppFlex$(BUNDLE_ID_SUFFIX)
 PRODUCT_BUNDLE_IDENTIFIER = $(GROUP_ID)
 
 EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)

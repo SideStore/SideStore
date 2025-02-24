@@ -28,7 +28,7 @@ final class RefreshAltStoreViewController: UIViewController
         
         self.placeholderView.detailTextLabel.textAlignment = .left
         self.placeholderView.detailTextLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-        self.placeholderView.detailTextLabel.text = NSLocalizedString("SideStore was unable to use an existing signing certificate, so it had to create a new one. This will cause any apps installed with an existing certificate to expire — including SideStore.\n\nTo prevent SideStore from expiring early, please refresh the app now. SideStore will quit once refreshing is complete.", comment: "")
+        self.placeholderView.detailTextLabel.text = NSLocalizedString("AppFlex 无法使用现有的签名证书，因此必须创建一个新的证书。这将导致任何使用现有证书安装的应用程序过期——包括 AppFlex。\n\n为了防止 AppFlex 提前过期，请立即刷新应用程序。刷新完成后，AppFlex 将退出。", comment: "")
     }
 }
 
@@ -44,11 +44,11 @@ private extension RefreshAltStoreViewController
             
             if let progress = AppManager.shared.installationProgress(for: altStore)
             {
-                // Cancel pending AltStore installation so we can start a new one.
+                // 取消待处理的 AltStore 安装，以便我们可以开始新的安装。
                 progress.cancel()
             }
                         
-            // Install, _not_ refresh, to ensure we are installing with a non-revoked certificate.
+            // 安装，_不是_ 刷新，以确保我们使用的是没有被撤销的证书进行安装。
             let group = AppManager.shared.install(altStore, presentingViewController: self, context: self.context) { (result) in
                 switch result
                 {
@@ -58,11 +58,11 @@ private extension RefreshAltStoreViewController
                         sender.progress = nil
                         sender.isIndicatingActivity = false
                         
-                        let alertController = UIAlertController(title: NSLocalizedString("Failed to Refresh SideStore", comment: ""), message: error.localizedFailureReason ?? error.localizedDescription, preferredStyle: .alert)
-                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Try Again", comment: ""), style: .default, handler: { (action) in
+                        let alertController = UIAlertController(title: NSLocalizedString("刷新 AppFlex 失败", comment: ""), message: error.localizedFailureReason ?? error.localizedDescription, preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("重试", comment: ""), style: .default, handler: { (action) in
                             refresh()
                         }))
-                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Refresh Later", comment: ""), style: .cancel, handler: { (action) in
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("稍后刷新", comment: ""), style: .cancel, handler: { (action) in
                             self.completionHandler?(.failure(error))
                         }))
                         

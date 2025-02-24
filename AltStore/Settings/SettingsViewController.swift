@@ -428,7 +428,7 @@ private extension SettingsViewController
             }
             else
             {
-                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Support the SideStore Team by following our socials or becoming a patron!", comment: "")
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("Support the AppFlex Team by following our socials or becoming a patron!", comment: "")
             }
 
         case .account:

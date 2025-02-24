@@ -159,14 +159,14 @@ test:
 #       under "use "Release" configuration for commandline builds" setting
 #		so I had just defined it explicitly.
 #
-#       However the scheme used is Debug Scheme, so it was deliberately 
-#       using scheme = Debug and config = Release (so I have kept it as-is) 
+#       However the scheme used is Debug Scheme, so it was deliberately
+#       using scheme = Debug and config = Release (so I have kept it as-is)
 # BUILD_CONFIG ?= Debug		# switched to debug build-config to diagnose issue since debugger won't resolve breakpoints in release
 
 # Overrides (will inherit from env if set already)
 BUILD_CONFIG ?= Release
-MARKETING_VERSION ?= 
-BUNDLE_ID_SUFFIX ?= 
+MARKETING_VERSION ?=
+BUNDLE_ID_SUFFIX ?=
 build:
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
@@ -179,7 +179,7 @@ build:
 				AD_HOC_CODE_SIGNING_ALLOWED=YES \
 				CODE_SIGNING_ALLOWED=NO \
 				DEVELOPMENT_TEAM=XYZ0123456 \
-				ORG_IDENTIFIER=com.SideStore \
+				ORG_IDENTIFIER=com.AppFlex \
 				MARKETING_VERSION=$(MARKETING_VERSION) \
 				BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
 #				DWARF_DSYM_FOLDER_PATH="."
@@ -189,7 +189,7 @@ fakesign-apps:
 	ldid -SAltStore/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/SideStore
 	ldid -SAltWidget/Resources/ReleaseEntitlements.plist SideStore.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
 
-fakesign-altbackup:	
+fakesign-altbackup:
 	@echo ''
 	@echo "fake-signing altbackup even though it will get resigned, only to retain its entitlements (appGroups)"
 	unzip -q -o SideStore.xcarchive/Products/Applications/SideStore.app/AltBackup.ipa -d SideStore.xcarchive/Products/Applications/SideStore.app/
@@ -200,7 +200,7 @@ fakesign-altbackup:
 	popd  > /dev/null
 	@rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Payload
 
-fakesign: fakesign-apps fakesign-altbackup				
+fakesign: fakesign-apps fakesign-altbackup
 
 
 ipa:
@@ -301,7 +301,7 @@ copy-altbackup: checkPaths
 # 	@echo ""
 	
 # ipa-altbackup:
-ipa-altbackup: checkPaths copy-altbackup 
+ipa-altbackup: checkPaths copy-altbackup
 # ipa-altbackup: checkPaths copy-altbackup fakesign-altbackup
 	@echo "  Creating IPA for AltBackup"
 	@rm -rf 	"$(ALT_APP_PAYLOAD_DST)"

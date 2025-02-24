@@ -47,6 +47,9 @@
 		19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19104DB42909C06D00C49C7B /* EmotionalDamage.swift */; };
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */; };
+		799A0C0C2D63008B00114109 /* StoreCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799A0C0B2D63008B00114109 /* StoreCollectionViewController.swift */; };
+		799A0C0E2D6300EF00114109 /* SimplifiedCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799A0C0D2D6300EF00114109 /* SimplifiedCollectionViewController.swift */; };
+		799A0C192D630CB500114109 /* WebCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799A0C182D630CB500114109 /* WebCollectionViewController.swift */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
 		A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */; };
 		A8087E752D2D2958002DB21B /* ImportExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8087E742D2D2958002DB21B /* ImportExport.swift */; };
@@ -441,6 +444,90 @@
 			remoteGlobalIDString = 191E5FAA290A5D92001A3B7C;
 			remoteInfo = minimuxer;
 		};
+		799A0BED2D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 59733A21051E78DCC3300A29260196FD;
+			remoteInfo = "AppCenter-AppCenter";
+		};
+		799A0BEF2D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8766F6745EE57029FBDFE2757850B89F;
+			remoteInfo = "AppCenter-AppCenterAnalytics";
+		};
+		799A0BF12D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C8DA55B2078EB45C624220566ED3E8EC;
+			remoteInfo = "AppCenter-AppCenterCrashes";
+		};
+		799A0BF32D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E8EE7F078656FABB8F6821D10FF994BB;
+			remoteInfo = KeychainAccess;
+		};
+		799A0BF52D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DAD7D76FC007F48AE48F2FD15BF01BB;
+			remoteInfo = Nuke;
+		};
+		799A0BF72D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A444C51407C51AB3AF06B6129DEC9BF4;
+			remoteInfo = "Pods-AltStoreCore";
+		};
+		799A0BF92D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0DF07B2CFE119943214F36D7177B0446;
+			remoteInfo = "Pods-SideStore";
+		};
+		799A0BFB2D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 891B2270823847ED23F2ECFC28F935EC;
+			remoteInfo = Starscream;
+		};
+		799A0BFD2D62FB5000114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 90DF440CB562947BB255E9A3E9B29568;
+			remoteInfo = "Starscream-Starscream_Privacy";
+		};
+		799A0C052D62FB7D00114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BFADAFF819AE7BB70050CF31;
+			remoteInfo = Roxas;
+		};
+		799A0C072D62FB7D00114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF8624801BB742E700C12EEE;
+			remoteInfo = RoxasTV;
+		};
+		799A0C092D62FB7D00114109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BFADB00319AE7BB80050CF31;
+			remoteInfo = RoxasTests;
+		};
 		A809F68D2D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */;
@@ -626,6 +713,14 @@
 		37C39DA99ADEE21E3BDD056F /* Pods-AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.debug.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.debug.xcconfig"; sourceTree = "<group>"; };
 		707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7935E4499B2FC11DA8BAB2CC /* Pods-AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltStoreCore.release.xcconfig"; path = "Target Support Files/Pods-AltStoreCore/Pods-AltStoreCore.release.xcconfig"; sourceTree = "<group>"; };
+		797D3A322D6C6C6C0072E1F0 /* Pods */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pods; sourceTree = "<group>"; };
+		799A0BDE2D62FAF400114109 /* SideStore */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SideStore; sourceTree = "<group>"; };
+		799A0BDF2D62FB1000114109 /* AltSign */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AltSign; path = SideStore/AltSign; sourceTree = "<group>"; };
+		799A0BE02D62FB5000114109 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Roxas.xcodeproj; path = Dependencies/Roxas/Roxas.xcodeproj; sourceTree = "<group>"; };
+		799A0C0B2D63008B00114109 /* StoreCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCollectionViewController.swift; sourceTree = "<group>"; };
+		799A0C0D2D6300EF00114109 /* SimplifiedCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplifiedCollectionViewController.swift; sourceTree = "<group>"; };
+		799A0C182D630CB500114109 /* WebCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebCollectionViewController.swift; sourceTree = "<group>"; };
 		A800F7032CE28E2F00208744 /* View+AltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AltWidget.swift"; sourceTree = "<group>"; };
 		A805C3CC2D0C316A00E76BDD /* Pods_SideStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_SideStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8087E742D2D2958002DB21B /* ImportExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExport.swift; sourceTree = "<group>"; };
@@ -1151,6 +1246,32 @@
 			);
 			name = "libimobiledevice-glue";
 			path = "libimobiledevice-glue/src";
+			sourceTree = "<group>";
+		};
+		799A0BE12D62FB5000114109 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				799A0BEE2D62FB5000114109 /* AppCenter-AppCenter */,
+				799A0BF02D62FB5000114109 /* AppCenter-AppCenterAnalytics */,
+				799A0BF22D62FB5000114109 /* AppCenter-AppCenterCrashes */,
+				799A0BF42D62FB5000114109 /* KeychainAccess */,
+				799A0BF62D62FB5000114109 /* Nuke */,
+				799A0BF82D62FB5000114109 /* Pods-AltStoreCore */,
+				799A0BFA2D62FB5000114109 /* Pods-SideStore */,
+				799A0BFC2D62FB5000114109 /* Starscream */,
+				799A0BFE2D62FB5000114109 /* Starscream-Starscream_Privacy */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		799A0C002D62FB7D00114109 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				799A0C062D62FB7D00114109 /* Roxas.framework */,
+				799A0C082D62FB7D00114109 /* Roxas.framework */,
+				799A0C0A2D62FB7D00114109 /* RoxasTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		A800F6FE2CE28DE300208744 /* Extensions */ = {
@@ -1848,6 +1969,7 @@
 				BFB6B21D231870160022A802 /* NewsViewController.swift */,
 				BFB6B21F231870B00022A802 /* NewsCollectionViewCell.swift */,
 				BFB6B22323187A3D0022A802 /* NewsCollectionViewCell.xib */,
+				799A0C0B2D63008B00114109 /* StoreCollectionViewController.swift */,
 			);
 			path = News;
 			sourceTree = "<group>";
@@ -1874,6 +1996,7 @@
 				D5A0537229B91DB400997551 /* SourceDetailContentViewController.swift */,
 				D5390C3B2AC3A43900D17E62 /* AddSourceViewController.swift */,
 				D50107ED2ADF2E310069F2A1 /* Components */,
+				799A0C182D630CB500114109 /* WebCollectionViewController.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1960,6 +2083,11 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				797D3A322D6C6C6C0072E1F0 /* Pods */,
+				799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */,
+				799A0BE02D62FB5000114109 /* Pods.xcodeproj */,
+				799A0BDF2D62FB1000114109 /* AltSign */,
+				799A0BDE2D62FAF400114109 /* SideStore */,
 				A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */,
 				B343F86C295F759E002B1159 /* libresolv.tbd */,
 				D533E8B62727841800A9B5DD /* libAppleArchive.tbd */,
@@ -2061,6 +2189,7 @@
 				D56D213F2B7D9942007641C5 /* AltAppIconsViewController.swift */,
 				D589170128C7D93500E39C8B /* Error Log */,
 				B3EE16B52925E27D00B3B1F5 /* AnisetteManager.swift */,
+				799A0C0D2D6300EF00114109 /* SimplifiedCollectionViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2576,6 +2705,14 @@
 					ProductGroup = A809F68A2D04D71200F0F0F3 /* Products */;
 					ProjectRef = A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */;
 				},
+				{
+					ProductGroup = 799A0BE12D62FB5000114109 /* Products */;
+					ProjectRef = 799A0BE02D62FB5000114109 /* Pods.xcodeproj */;
+				},
+				{
+					ProductGroup = 799A0C002D62FB7D00114109 /* Products */;
+					ProjectRef = 799A0BFF2D62FB7D00114109 /* Roxas.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2591,6 +2728,99 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		799A0BEE2D62FB5000114109 /* AppCenter-AppCenter */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = "AppCenter-AppCenter";
+			path = AppCenter.bundle;
+			remoteRef = 799A0BED2D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BF02D62FB5000114109 /* AppCenter-AppCenterAnalytics */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = "AppCenter-AppCenterAnalytics";
+			path = AppCenterAnalytics.bundle;
+			remoteRef = 799A0BEF2D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BF22D62FB5000114109 /* AppCenter-AppCenterCrashes */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = "AppCenter-AppCenterCrashes";
+			path = AppCenterCrashes.bundle;
+			remoteRef = 799A0BF12D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BF42D62FB5000114109 /* KeychainAccess */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = KeychainAccess;
+			path = KeychainAccess.framework;
+			remoteRef = 799A0BF32D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BF62D62FB5000114109 /* Nuke */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = Nuke;
+			path = Nuke.framework;
+			remoteRef = 799A0BF52D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BF82D62FB5000114109 /* Pods-AltStoreCore */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = "Pods-AltStoreCore";
+			path = Pods_AltStoreCore.framework;
+			remoteRef = 799A0BF72D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BFA2D62FB5000114109 /* Pods-SideStore */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = "Pods-SideStore";
+			path = Pods_SideStore.framework;
+			remoteRef = 799A0BF92D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BFC2D62FB5000114109 /* Starscream */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = Starscream;
+			path = Starscream.framework;
+			remoteRef = 799A0BFB2D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0BFE2D62FB5000114109 /* Starscream-Starscream_Privacy */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = "Starscream-Starscream_Privacy";
+			path = Starscream_Privacy.bundle;
+			remoteRef = 799A0BFD2D62FB5000114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0C062D62FB7D00114109 /* Roxas.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Roxas.framework;
+			remoteRef = 799A0C052D62FB7D00114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0C082D62FB7D00114109 /* Roxas.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Roxas.framework;
+			remoteRef = 799A0C072D62FB7D00114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		799A0C0A2D62FB7D00114109 /* RoxasTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RoxasTests.xctest;
+			remoteRef = 799A0C092D62FB7D00114109 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3074,6 +3304,7 @@
 				A8C38C242D206A3A00E83DBD /* ConsoleLogger.swift in Sources */,
 				A8C38C262D206A3A00E83DBD /* ConsoleLog.swift in Sources */,
 				D5935AED29C39DE300C157EF /* SourceComponents.swift in Sources */,
+				799A0C0E2D6300EF00114109 /* SimplifiedCollectionViewController.swift in Sources */,
 				D5935AED29C39DE300C157EF /* SourceComponents.swift in Sources */,
 				A8B516E62D2668170047047C /* DateTimeUtil.swift in Sources */,
 				A8FD917C2D0478D200322782 /* VerificationError.swift in Sources */,
@@ -3094,6 +3325,7 @@
 				BF44EEFC246B4550002A52F2 /* RemoveAppOperation.swift in Sources */,
 				BF3D64B022E8D4B800E9056B /* AppContentViewControllerCells.swift in Sources */,
 				BFC57A6E2416FC5D00EB891E /* InstalledAppsCollectionHeaderView.swift in Sources */,
+				799A0C192D630CB500114109 /* WebCollectionViewController.swift in Sources */,
 				B3EE16B62925E27D00B3B1F5 /* AnisetteManager.swift in Sources */,
 				D5927D6629DCC89000D6898E /* UINavigationBarAppearance+TintColor.swift in Sources */,
 				BF88F97224F8727D00BB75DF /* AppManagerErrors.swift in Sources */,
@@ -3107,6 +3339,7 @@
 				BFE338E822F10E56002E24B9 /* LaunchViewController.swift in Sources */,
 				BFA8172B23C5633D001B5953 /* FetchAnisetteDataOperation.swift in Sources */,
 				A8FD91602D046F5200322782 /* UserInfoValue.swift in Sources */,
+				799A0C0C2D63008B00114109 /* StoreCollectionViewController.swift in Sources */,
 				D552B1D82A042A740066216F /* AppPermissionsCard.swift in Sources */,
 				BFD6B03322DFF20800B86064 /* MyAppsComponents.swift in Sources */,
 				BF41B808233433C100C593A3 /* LoadingState.swift in Sources */,
@@ -3652,7 +3885,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3C39607284F4C8400DA9E2F /* Build.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				APP_DISPLAY_NAME = AppFlex;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -3686,7 +3920,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EAGER_LINKING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3705,7 +3939,8 @@
 				LLVM_LTO = YES_THIN;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				NEW_SETTING = "";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-Wno-module-import-in-extern-c",
@@ -3723,7 +3958,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3C39607284F4C8400DA9E2F /* Build.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				APP_DISPLAY_NAME = AppFlex;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -3756,8 +3992,9 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EAGER_LINKING = YES;
-				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_NS_ASSERTIONS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
@@ -3771,6 +4008,8 @@
 				LLVM_LTO = YES_THIN;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-Wno-module-import-in-extern-c",

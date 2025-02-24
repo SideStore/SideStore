@@ -257,20 +257,20 @@ struct AppPermissionsCard_Previews: PreviewProvider
         let tintColor = Color(uiColor: .deltaPrimary!)
         
         return ForEach(1...8, id: \.self) { index in
-                AppPermissionsCard(title: "Privacy",
-                                   description: "Delta may request access to the following:",
-                                   tintColor: tintColor,
-                                   permissions: Array(appPermissions.prefix(index)))
-                    .frame(width: 350)
-                    .previewLayout(.sizeThatFits)
+            AppPermissionsCard(title: "隐私",
+                               description: "Delta 可能会请求访问以下内容：",
+                               tintColor: tintColor,
+                               permissions: Array(appPermissions.prefix(index)))
+                .frame(width: 350)
+                .previewLayout(.sizeThatFits)
 
-                AppPermissionsCard(title: "Privacy",
-                                   description: "Delta may request access to the following:",
-                                   tintColor: tintColor,
-                                   permissions: Array(appPermissions.prefix(index)),
-                                   selectedPermission: appPermissions.first)
-                    .frame(width: 350)
-                    .previewLayout(.sizeThatFits)
+            AppPermissionsCard(title: "隐私",
+                               description: "Delta 可能会请求访问以下内容：",
+                               tintColor: tintColor,
+                               permissions: Array(appPermissions.prefix(index)),
+                               selectedPermission: appPermissions.first)
+                .frame(width: 350)
+                .previewLayout(.sizeThatFits)
             }
     }
 }

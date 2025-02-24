@@ -144,7 +144,24 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(filename)")
         if fm.fileExists(atPath: documentsPath.path), let contents = try? String(contentsOf: documentsPath), !contents.isEmpty {
             print("Loaded ALTPairingFile from \(documentsPath.path)")
+            print("文件内容：\n\(contents)")
+            // 使用正则表达式提取 UDID
+                  let pattern = "<key>UDID</key>\\s*<string>(.*?)</string>"
+                  if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
+                      let range = NSRange(contents.startIndex..<contents.endIndex, in: contents)
+                      if let match = regex.firstMatch(in: contents, options: [], range: range) {
+                          let udidRange = match.range(at: 1) // 1 为第一个捕获组，即 <string> 标签中的内容
+                          if let udid = Range(udidRange, in: contents) {
+                              let udidString = String(contents[udid])
+                              globalDeviceUUID = udidString // 给全局变量赋值
+                                 print("全局变量 UDID: \(globalDeviceUUID)")  // 打印提取的 UDID
+                              
+             
+                          }
+                      }
+                  }
             return contents
+           
         } else if
             let appResourcePath = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
             fm.fileExists(atPath: appResourcePath.path),
@@ -153,17 +170,32 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             !contents.isEmpty,
             !UserDefaults.standard.isPairingReset {
             print("Loaded ALTPairingFile from \(appResourcePath.path)")
+            print("文件内容：\n\(contents)")
             return contents
         } else if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String, !plistString.isEmpty, !plistString.contains("insert pairing file here"), !UserDefaults.standard.isPairingReset{
             print("Loaded ALTPairingFile from Info.plist")
+            print("文件内容：\n\(plistString)")
+            let pattern = "<key>UDID</key>\\s*<string>(.*?)</string>"
+            if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
+                let range = NSRange(plistString.startIndex..<plistString.endIndex, in: plistString)
+                if let match = regex.firstMatch(in: plistString, options: [], range: range) {
+                    let udidRange = match.range(at: 1) // 1 为第一个捕获组，即 <string> 标签中的内容
+                    if let udid = Range(udidRange, in: plistString) {
+                        let udidString = String(plistString[udid])
+                        globalDeviceUUID = udidString // 给全局变量赋值
+                           print("全局变量 UDID: \(globalDeviceUUID)")  // 打印提取的 UDID
+
+                    }
+                }
+            }
             return plistString
         } else {
             // Show an alert explaining the pairing file
             // Create new Alert
-            let dialogMessage = UIAlertController(title: "Pairing File", message: "Select the pairing file or select \"Help\" for help.", preferredStyle: .alert)
+            let dialogMessage = UIAlertController(title: "配对文件", message: "选择配对文件或选择 \"帮助\" 获取帮助。", preferredStyle: .alert)
             
             // Create OK button with action handler
-            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+            let ok = UIAlertAction(title: "确认", style: .default, handler: { (action) -> Void in
                 // Try to load it from a file picker
                 var types = UTType.types(tag: "plist", tagClass: UTTagClass.filenameExtension, conformingTo: nil)
                 types.append(contentsOf: UTType.types(tag: "mobiledevicepairing", tagClass: UTTagClass.filenameExtension, conformingTo: UTType.data))
@@ -176,8 +208,8 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
              })
             
             //Add "help" button to take user to wiki
-            let wikiOption = UIAlertAction(title: "Help", style: .default) { (action) in
-                let wikiURL: String = "https://docs.sidestore.io/docs/getting-started/pairing-file"
+            let wikiOption = UIAlertAction(title: "帮助", style: .default) { (action) in
+                let wikiURL: String = "https://cloudmantoub.online/89/"
                 if let url = URL(string: wikiURL) {
                     UIApplication.shared.open(url)
                 }
@@ -192,7 +224,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             // Present Alert to
             self.present(dialogMessage, animated: true, completion: nil)
 
-            let dialogMessage2 = UIAlertController(title: "Analytics", message: "This app contains anonymous analytics for research and project development. By continuing to use this app, you are consenting to this data collection", preferredStyle: .alert)
+            let dialogMessage2 = UIAlertController(title: "分析", message: "本应用包含匿名分析数据，用于研究和项目开发。继续使用本应用即表示您同意收集这些数据", preferredStyle: .alert)
 
             let ok2 = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in})
             
@@ -206,8 +238,7 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     func displayError(_ msg: String) {
         print(msg)
         // Create a new alert
-        let dialogMessage = UIAlertController(title: "Error launching SideStore", message: msg, preferredStyle: .alert)
-
+        let dialogMessage = UIAlertController(title: "启动 AppFlex 错误", message: msg, preferredStyle: .alert)
         // Present alert to user
         self.present(dialogMessage, animated: true, completion: nil)
     }
@@ -221,17 +252,30 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
             let data1 = try Data(contentsOf: urls[0])
             let pairing_string = String(bytes: data1, encoding: .utf8)
             if pairing_string == nil {
-                displayError("Unable to read pairing file")
+                displayError("无法读取配对文件")
             }
             
             // Save to a file for next launch
             let pairingFile = FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)")
             try pairing_string?.write(to: pairingFile, atomically: true, encoding: String.Encoding.utf8)
-            
+            print("文件内容为：\n\(pairing_string!)")
+            let pattern = "<key>UDID</key>\\s*<string>(.*?)</string>"
+            if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
+                let range = NSRange(pairing_string!.startIndex..<pairing_string!.endIndex, in: pairing_string!)
+                if let match = regex.firstMatch(in: pairing_string!, options: [], range: range) {
+                    let udidRange = match.range(at: 1) // 1 为第一个捕获组，即 <string> 标签中的内容
+                    if let udid = Range(udidRange, in: pairing_string!) {
+                        let udidString = String(pairing_string![udid])
+                        globalDeviceUUID = udidString // 给全局变量赋值
+                           print("全局变量 UDID: \(globalDeviceUUID)")  // 打印提取的 UDID
+
+                    }
+                }
+            }
             // Start minimuxer now that we have a file
             start_minimuxer_threads(pairing_string!)
         } catch {
-            displayError("Unable to read pairing file")
+            displayError("无法读取配对文件")
         }
         
         if (isSecuredURL) {
@@ -241,19 +285,17 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        displayError("Choosing a pairing file was cancelled. Please re-open the app and try again.")
+        displayError("选择配对文件被取消。请重新打开应用并重试。")
     }
     
     func start_minimuxer_threads(_ pairing_file: String) {
         target_minimuxer_address()
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
-            // enable minimuxer console logging only if enabled in settings
-            let isMinimuxerConsoleLoggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
-            try minimuxer.startWithLogger(pairing_file, documentsDirectory, isMinimuxerConsoleLoggingEnabled)
+            try start(pairing_file, documentsDirectory)
         } catch {
             try! FileManager.default.removeItem(at: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)"))
-            displayError("minimuxer failed to start, please restart SideStore. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR!!!!!! REPORT TO GITHUB ISSUES!")")
+            displayError("minimuxer 启动失败, 请重启 AppFlex. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR!!!!!! REPORT TO GITHUB ISSUES!")")
         }
         if #available(iOS 17, *) {
             // TODO: iOS 17 and above have a new JIT implementation that is completely broken in SideStore :(
@@ -277,7 +319,7 @@ extension LaunchViewController
         }
         catch let error as NSError
         {
-            let title = error.userInfo[NSLocalizedFailureErrorKey] as? String ?? NSLocalizedString("Unable to Launch SideStore", comment: "")
+            let title = error.userInfo[NSLocalizedFailureErrorKey] as? String ?? NSLocalizedString("无法启动 AppFlex", comment: "")
             
             let errorDescription: String
             
@@ -311,17 +353,9 @@ extension LaunchViewController
         
         AppManager.shared.updateAllSources { result in
             guard case .failure(let error) = result else { return }
-            Logger.main.error("Failed to update sources on launch. \(error.localizedDescription, privacy: .public)")
+            Logger.main.error("启动时更新源失败 \(error.localizedDescription, privacy: .public)")
             
-            let errorDesc = ErrorProcessing(.fullError).getDescription(error: error as NSError)
-            print("Failed to update sources on launch. \(errorDesc)")
-            
-            var mode: ToastView.InfoMode = .fullError
-            if String(describing: error).contains("The Internet connection appears to be offline"){
-                mode = .localizedDescription    // dont make noise!
-            }
-            
-            let toastView = ToastView(error: error, mode: mode)
+            let toastView = ToastView(error: error)
             toastView.addTarget(self.destinationViewController, action: #selector(TabBarController.presentSources), for: .touchUpInside)
             toastView.show(in: self.destinationViewController.selectedViewController ?? self.destinationViewController)
         }

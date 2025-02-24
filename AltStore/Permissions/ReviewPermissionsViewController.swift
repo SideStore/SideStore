@@ -80,7 +80,7 @@ class ReviewPermissionsViewController: UICollectionViewController
         appearance.buttonAppearance = buttonAppearance
         self.navigationItem.standardAppearance = appearance
         
-        self.title = NSLocalizedString("Review Permissions", comment: "")
+        self.title = NSLocalizedString("查看权限", comment: "")
         
         let collectionViewLayout = self.makeLayout()
         self.collectionView.collectionViewLayout = collectionViewLayout
@@ -189,15 +189,17 @@ extension ReviewPermissionsViewController
                 
                 switch self.permissionsMode
                 {
-                case .all: configuration.secondaryText = String(localized: "“\(self.app.name)” will be automatically given these permissions once installed.")
-                case .added: configuration.secondaryText = String(localized: "This version of “\(self.app.name)” requires additional permissions.")
+                case .all:
+                    configuration.secondaryText = String(localized: "“\(self.app.name)” 安装后将自动获得这些权限。")
+                case .added:
+                    configuration.secondaryText = String(localized: "此版本的 “\(self.app.name)” 需要额外的权限。")
                 case .none: break
                 }
-                
+
             case .unknown:
-                configuration.text = NSLocalizedString("Additional Permissions", comment: "")
-                configuration.secondaryText = String(format: NSLocalizedString("These are permissions required by “%@” that SideStore does not recognize. Make sure you understand them before continuing.", comment: ""), self.app.name)
-                
+                configuration.text = NSLocalizedString("额外权限", comment: "")
+                configuration.secondaryText = String(format: NSLocalizedString("这些是 “%@” 所需的权限，SideStore 无法识别它们。继续操作前，请确保您理解这些权限。", comment: ""), self.app.name)
+
             case .approve: break
             }
             
@@ -215,7 +217,7 @@ extension ReviewPermissionsViewController
             let cell = cell as! UICollectionViewListCell
             
             var config = cell.defaultContentConfiguration()
-            config.text = NSLocalizedString("Approve", comment: "")
+            config.text = NSLocalizedString("批准", comment: "")
             config.textProperties.color = .white
             config.textProperties.font = .preferredFont(forTextStyle: .headline)
             config.textProperties.alignment = .center

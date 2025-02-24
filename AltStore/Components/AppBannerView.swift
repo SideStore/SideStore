@@ -164,7 +164,7 @@ extension AppBannerView
         }
         else
         {
-            self.subtitleLabel.text = NSLocalizedString("Sideloaded", comment: "")
+            self.subtitleLabel.text = NSLocalizedString("AppFlex内侧版本", comment: "")
             self.accessibilityLabel = values.name
         }
         
@@ -289,9 +289,9 @@ extension AppBannerView
                     
                     if storeApp.isPledged
                     {
-                        let buttonTitle = NSLocalizedString("Install", comment: "")
+                        let buttonTitle = NSLocalizedString("安装", comment: "")
                         self.button.setTitle(buttonTitle.uppercased(), for: .normal)
-                        self.button.accessibilityLabel = String(format: NSLocalizedString("Install %@", comment: ""), app.name)
+                        self.button.accessibilityLabel = String(format: NSLocalizedString("安装%@", comment: ""), app.name)
                         self.button.accessibilityValue = buttonTitle
                     }
                     else if let amount = storeApp.pledgeAmount, let currencyCode = storeApp.pledgeCurrency, !storeApp.prefersCustomPledge, #available(iOS 15, *)
@@ -315,9 +315,9 @@ extension AppBannerView
                 {
                     // Free app
                     
-                    let buttonTitle = NSLocalizedString("Free", comment: "")
+                    let buttonTitle = NSLocalizedString("免费", comment: "")
                     self.button.setTitle(buttonTitle.uppercased(), for: .normal)
-                    self.button.accessibilityLabel = String(format: NSLocalizedString("Download %@", comment: ""), app.name)
+                    self.button.accessibilityLabel = String(format: NSLocalizedString("下载 %@", comment: ""), app.name)
                     self.button.accessibilityValue = buttonTitle
                 }
                 

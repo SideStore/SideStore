@@ -63,8 +63,8 @@ final class SourcesViewController: UICollectionViewController
         
         self.placeholderView = RSTPlaceholderView(frame: .zero)
         self.placeholderView.translatesAutoresizingMaskIntoConstraints = false
-        self.placeholderView.textLabel.text = NSLocalizedString("Add More Sources!", comment: "")
-        self.placeholderView.detailTextLabel.text = NSLocalizedString("Sources determine what apps are available in SideStore. The more sources you add, the better your SideStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!", comment: "")
+        self.placeholderView.textLabel.text = NSLocalizedString("添加更多源！", comment: "")
+        self.placeholderView.detailTextLabel.text = NSLocalizedString("源决定了 SideStore 中可用的应用。添加更多源，您的 SideStore 使用体验会更好。\n\n不知道从哪里开始？试试添加我们推荐的源之一！", comment: "")
         self.placeholderView.detailTextLabel.textAlignment = .natural
         backgroundView.addSubview(self.placeholderView)
         
@@ -423,7 +423,7 @@ private extension SourcesViewController
     
     func showSourceDetails(for source: Source)
     {
-        self.performSegue(withIdentifier: "showSourceDetails", sender: source)
+//        self.performSegue(withIdentifier: "showSourceDetails", sender: source)
     }
     
     func update()

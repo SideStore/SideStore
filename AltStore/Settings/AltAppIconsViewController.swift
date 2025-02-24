@@ -72,7 +72,7 @@ class AltAppIconsViewController: UICollectionViewController
     {
         super.viewDidLoad()
         
-        self.title = NSLocalizedString("Change App Icon", comment: "")
+        self.title = NSLocalizedString("更改App图标", comment: "")
         
         let collectionViewLayout = self.makeLayout()
         self.collectionView.collectionViewLayout = collectionViewLayout

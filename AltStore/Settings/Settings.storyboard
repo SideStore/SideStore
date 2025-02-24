@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5Rz-4h-jJ8">
-    <device id="retina6_3" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5Rz-4h-jJ8">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -14,28 +14,28 @@
         <!--Settings-->
         <scene sceneID="f7E-cU-41o">
             <objects>
-                <tableViewController id="aMk-Xp-UL8" customClass="SettingsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="aMk-Xp-UL8" customClass="SettingsViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="static" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="MuO-1I-cKW">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" name="SettingsBackground"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="separatorColor" white="1" alpha="0.25" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <stackView key="tableFooterView" opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" spacing="15" id="48g-cT-stR">
-                            <rect key="frame" x="0.0" y="1986.3333377838135" width="402" height="125"/>
+                            <rect key="frame" x="0.0" y="1899.6666698455811" width="393" height="125"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="900" text="Follow SideStore for updates" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XFa-MY-7cV">
-                                    <rect key="frame" x="91.666666666666671" y="0.0" width="218.66666666666663" height="20.333333333333332"/>
+                                    <rect key="frame" x="87.333333333333329" y="0.0" width="218.66666666666669" height="20.333333333333332"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" white="1" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="hru-pm-ZI3">
-                                    <rect key="frame" x="102" y="46" width="198" height="34.666666666666657"/>
+                                    <rect key="frame" x="97.666666666666686" y="46" width="198" height="34.666666666666657"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B8Q-e7-beR" userLabel="Mastodon">
-                                            <rect key="frame" x="0.0" y="0.0" width="34.666666666666664" height="34.666666666666664"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="34.333333333333336" height="34.666666666666664"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="B8Q-e7-beR" secondAttribute="height" id="gaj-Mb-oSa"/>
                                                 <constraint firstAttribute="width" constant="34.5" id="kjw-36-Rjk"/>
@@ -49,7 +49,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AWk-yE-9LI" userLabel="Threads">
-                                            <rect key="frame" x="54.666666666666657" y="0.0" width="34.333333333333343" height="34.666666666666664"/>
+                                            <rect key="frame" x="54.333333333333329" y="0.0" width="34.666666666666671" height="34.666666666666664"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="34.5" id="3o9-57-KDr"/>
                                                 <constraint firstAttribute="width" secondItem="AWk-yE-9LI" secondAttribute="height" id="QuX-po-kv7"/>
@@ -63,7 +63,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uYZ-Vu-RzK" userLabel="Twitter">
-                                            <rect key="frame" x="109" y="0.0" width="34.666666666666657" height="34.666666666666664"/>
+                                            <rect key="frame" x="108.99999999999999" y="0.0" width="34.333333333333329" height="34.666666666666664"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="34.5" id="LKG-L3-APj"/>
                                                 <constraint firstAttribute="width" secondItem="uYZ-Vu-RzK" secondAttribute="height" id="UyA-cy-ol3"/>
@@ -77,7 +77,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oqj-4S-I9l" userLabel="GitHub">
-                                            <rect key="frame" x="163.66666666666669" y="0.0" width="34.333333333333343" height="34.666666666666664"/>
+                                            <rect key="frame" x="163.33333333333331" y="0.0" width="34.666666666666657" height="34.666666666666664"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="34.5" id="BEp-uf-a6X"/>
                                                 <constraint firstAttribute="width" secondItem="oqj-4S-I9l" secondAttribute="height" id="ye3-ez-e16"/>
@@ -93,7 +93,7 @@
                                     </subviews>
                                 </stackView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="900" text="Version 0.6.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5u7-mb-jJj">
-                                    <rect key="frame" x="159" y="108" width="84" height="17"/>
+                                    <rect key="frame" x="154.66666666666666" y="108" width="84" height="17"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <color key="textColor" white="1" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <nil key="highlightedColor"/>
@@ -103,15 +103,15 @@
                         <sections>
                             <tableViewSection headerTitle="" id="flW-d4-bco">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="7lu-Yk-87t" rowHeight="51" style="IBUITableViewCellStyleDefault" id="DzJ-TL-jvR" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="22.333333969116211" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="7lu-Yk-87t" rowHeight="51" style="IBUITableViewCellStyleDefault" id="DzJ-TL-jvR" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="22.333333969116211" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="DzJ-TL-jvR" id="XnZ-bO-peM">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Sign in with Apple ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7lu-Yk-87t">
-                                                    <rect key="frame" x="30" y="0.0" width="342" height="51"/>
+                                                    <rect key="frame" x="30" y="0.0" width="333" height="51"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -133,11 +133,11 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="CAI-9J-8fR">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="xvY-lN-Toz" detailTextLabel="CnN-M1-AYK" rowHeight="51" style="IBUITableViewCellStyleValue1" id="kCH-yh-bMk" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="113.66666793823242" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="xvY-lN-Toz" detailTextLabel="CnN-M1-AYK" rowHeight="51" style="IBUITableViewCellStyleValue1" id="kCH-yh-bMk" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="113.66666793823242" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kCH-yh-bMk" id="MQ9-Qn-bWg">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xvY-lN-Toz">
@@ -148,7 +148,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Side Team" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="CnN-M1-AYK">
-                                                    <rect key="frame" x="289.66666666666669" y="15.999999999999998" width="82.333333333333329" height="20.333333333333332"/>
+                                                    <rect key="frame" x="280.66666666666669" y="15.999999999999998" width="82.333333333333329" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -165,11 +165,11 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="rAc-lQ-B1k" detailTextLabel="0uP-Cd-tNX" rowHeight="51" style="IBUITableViewCellStyleValue1" id="q11-3k-oIm" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="164.66666793823242" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="rAc-lQ-B1k" detailTextLabel="0uP-Cd-tNX" rowHeight="51" style="IBUITableViewCellStyleValue1" id="q11-3k-oIm" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="164.66666793823242" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="q11-3k-oIm" id="QCY-a8-Lhx">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" alpha="0.80000001192092896" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rAc-lQ-B1k">
@@ -180,7 +180,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="sideteam@sidestore.io" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="0uP-Cd-tNX">
-                                                    <rect key="frame" x="190" y="15.999999999999998" width="182" height="20.333333333333332"/>
+                                                    <rect key="frame" x="181" y="15.999999999999998" width="182" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -197,11 +197,11 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Sge-cM-Fw9" detailTextLabel="434-MW-Den" rowHeight="51" style="IBUITableViewCellStyleValue1" id="vuc-eX-w3f" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="215.66666793823242" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Sge-cM-Fw9" detailTextLabel="434-MW-Den" rowHeight="51" style="IBUITableViewCellStyleValue1" id="vuc-eX-w3f" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="215.66666793823242" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vuc-eX-w3f" id="wpD-YB-mrf">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" alpha="0.80000001192092896" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Sge-cM-Fw9">
@@ -212,7 +212,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Developers" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="434-MW-Den">
-                                                    <rect key="frame" x="282.33333333333331" y="15.999999999999998" width="89.666666666666671" height="20.333333333333332"/>
+                                                    <rect key="frame" x="273.33333333333331" y="15.999999999999998" width="89.666666666666671" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -233,11 +233,11 @@
                             </tableViewSection>
                             <tableViewSection id="YHi-gR-wed">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="R1C-Gr-xD4" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="302.66666793823242" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="R1C-Gr-xD4" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="302.66666793823242" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R1C-Gr-xD4" id="Ojx-7f-z7E">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Support the team" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Il-5a-5Zp">
@@ -247,7 +247,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ksV-TB-cmH">
-                                                    <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
+                                                    <rect key="frame" x="347.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
                                             </subviews>
@@ -274,11 +274,11 @@
                             </tableViewSection>
                             <tableViewSection id="RpS-Hn-sQU">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="9dU-Hl-NiJ" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="389.66666793823242" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="9dU-Hl-NiJ" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="389.66666793823242" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9dU-Hl-NiJ" id="w62-f1-Ody">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Change App Icon" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y4l-PD-ev9">
@@ -288,7 +288,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wmy-RF-obD">
-                                                    <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
+                                                    <rect key="frame" x="347.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
                                             </subviews>
@@ -315,11 +315,11 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="2dM-lg-cRI">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="Rra-U5-kCd" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="481.00000190734863" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="Rra-U5-kCd" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="481.00000190734863" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Rra-U5-kCd" id="8gV-kx-lGe">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Background Refresh" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EbG-HB-IOn">
@@ -329,7 +329,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DPu-zD-Als">
-                                                    <rect key="frame" x="323" y="10" width="51" height="31"/>
+                                                    <rect key="frame" x="314" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleIsBackgroundRefreshEnabled:" destination="aMk-Xp-UL8" eventType="valueChanged" id="gK5-Wr-8Hh"/>
                                                     </connections>
@@ -350,11 +350,11 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="GYp-O0-pse" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="532.00000190734863" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="GYp-O0-pse" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="532.00000190734863" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GYp-O0-pse" id="vDG-ZV-xRS">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disable Idle Timeout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PCh-Up-aJJ">
@@ -364,7 +364,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iQA-wm-5ag">
-                                                    <rect key="frame" x="323" y="10" width="51" height="31"/>
+                                                    <rect key="frame" x="314" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleNoIdleTimeoutEnabled:" destination="aMk-Xp-UL8" eventType="valueChanged" id="WSl-Jc-g5J"/>
                                                     </connections>
@@ -385,11 +385,11 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="amC-sE-8O0" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="583.00000190734863" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="amC-sE-8O0" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="583.00000190734863" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="amC-sE-8O0" id="GEO-2e-E4k">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Allow Siri To Refresh Apps…" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6K-fI-CVr">
@@ -413,11 +413,11 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="7PQ-AW-GcV" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="634.00000190734863" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="7PQ-AW-GcV" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="634.00000190734863" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7PQ-AW-GcV" id="wQ8-9w-iiw">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disable App Limit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W95-fD-NAd" userLabel="Disable App Limit">
@@ -427,7 +427,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1aa-og-ZXD">
-                                                    <rect key="frame" x="323" y="10" width="51" height="31"/>
+                                                    <rect key="frame" x="314" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleDisableAppLimit:" destination="aMk-Xp-UL8" eventType="valueChanged" id="zYc-B2-JPg"/>
                                                     </connections>
@@ -452,11 +452,11 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="eHy-qI-w5w">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="30h-59-88f" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="725.33333587646484" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="30h-59-88f" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="725.33333587646484" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="30h-59-88f" id="7qD-DW-Jls">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How it works" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2CC-iw-3bd">
@@ -466,7 +466,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WtV-Dt-sDn">
-                                                    <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
+                                                    <rect key="frame" x="347.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
                                             </subviews>
@@ -493,11 +493,11 @@
                             </tableViewSection>
                             <tableViewSection id="1fc-f1-ALD">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="7Ek-Ls-QVO" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="812.33333587646484" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="7Ek-Ls-QVO" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="812.33333587646484" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7Ek-Ls-QVO" id="KjD-M3-oNg">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="View Error Log" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vH6-7i-tCE">
@@ -530,11 +530,11 @@
                                             <segue destination="g8a-Rf-zWa" kind="show" identifier="showErrorLog" id="z7r-Rq-qJY"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="hFh-X1-ZAi" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="863.33333587646484" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="hFh-X1-ZAi" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="863.33333587646484" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hFh-X1-ZAi" id="nCs-Ro-A6t">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Clear Cache…" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j4e-Mz-DlL">
@@ -562,11 +562,11 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="J90-vn-u2O">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="i4T-2q-jF3" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="954.66666984558105" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="i4T-2q-jF3" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="954.66666984558105" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="i4T-2q-jF3" id="VTQ-H4-aCM">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Developers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hRA-OK-Vjw">
@@ -607,11 +607,11 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="oHX-oR-nwJ" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1005.6666698455811" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="oHX-oR-nwJ" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1005.6666698455811" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oHX-oR-nwJ" id="hN4-i5-igu">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="UI Designer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oqY-wY-1Vf">
@@ -652,11 +652,11 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="0MT-ht-Sit" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1056.6666698455811" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="0MT-ht-Sit" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1056.6666698455811" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0MT-ht-Sit" id="OZp-WM-5H7">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Asset Designer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fGU-Fp-XgM">
@@ -697,11 +697,11 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="O5R-Al-lGj" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1071.6666698455811" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="O5R-Al-lGj" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1107.6666698455811" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="O5R-Al-lGj" id="CrG-Mr-xQq">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Licenses" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D6b-cd-pVK">
@@ -738,20 +738,20 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="OMa-EK-hRI">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="FMZ-as-Ljo" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1163.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="FMZ-as-Ljo" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1199.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FMZ-as-Ljo" id="JzL-Of-A3T">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Feedback" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pMI-Aj-nQF">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Send Feedback" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pMI-Aj-nQF">
                                                     <rect key="frame" x="29.999999999999993" y="15.333333333333334" width="125.33333333333331" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jyy-x0-Owj">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jyy-x0-Owj">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -772,20 +772,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="Qca-pU-sJh" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1214.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="Qca-pU-sJh" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1250.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Qca-pU-sJh" id="QtU-8J-VQN">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View Refresh Attempts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sni-07-q0M">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="View Refresh Attempts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sni-07-q0M">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="187.66666666666666" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4d3-me-Hqc">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4d3-me-Hqc">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -809,20 +809,20 @@
                                             <segue destination="GBh-rB-juy" kind="show" identifier="showRefreshAttempts" id="K2i-nF-6qa"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="VrV-qI-zXF" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1265.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="VrV-qI-zXF" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1301.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VrV-qI-zXF" id="w1r-uY-4pD">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SideJITServer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46q-DB-5nc">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="SideJITServer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46q-DB-5nc">
                                                     <rect key="frame" x="29.999999999999993" y="15.333333333333334" width="115.33333333333331" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wvD-eZ-nQI">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wvD-eZ-nQI">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -843,20 +843,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="VNn-u4-cN8" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1316.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="VNn-u4-cN8" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1352.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VNn-u4-cN8" id="4bh-qe-l2N">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Pairing File" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ysS-9s-dXm">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Reset Pairing File" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ysS-9s-dXm">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="140" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="r09-mH-pOD">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r09-mH-pOD">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -877,20 +877,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="e7s-hL-kv9" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1367.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="e7s-hL-kv9" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1403.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="e7s-hL-kv9" id="yjL-Mu-HTk">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Anisette Servers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eds-Dj-36y">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Anisette Servers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eds-Dj-36y">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="135.66666666666666" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0dh-yd-7i9">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0dh-yd-7i9">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -911,20 +911,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="XW5-Zc-nXH" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1418.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="XW5-Zc-nXH" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1454.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XW5-Zc-nXH" id="AtM-bL-8pS">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable Beta Updates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2px-HD-0UT">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Enable Beta Updates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2px-HD-0UT">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="169" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e32-w4-5fk">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e32-w4-5fk">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleEnableBetaUpdates:" destination="aMk-Xp-UL8" eventType="valueChanged" id="uxG-df-7GK"/>
@@ -946,20 +946,20 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="qbY-8c-LYT" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1469.0000038146973" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="qbY-8c-LYT" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1505.0000038146973" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qbY-8c-LYT" id="NxK-qB-w7Q">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Beta Updates Track" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5J9-vR-vhX" userLabel="Beta Track Label">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Beta Updates Track" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5J9-vR-vhX" userLabel="Beta Track Label">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="159.66666666666666" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oct-iT-NwP" userLabel="Beta Track Drop Down Button">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oct-iT-NwP" userLabel="Beta Track Drop Down Button">
                                                     <rect key="frame" x="301.66666666666669" y="8.3333333333333321" width="70.333333333333314" height="34.333333333333343"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="new-width-constraint"/>
@@ -987,20 +987,20 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="lLQ-K0-XSb">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="daQ-mk-yqC" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1560.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="daQ-mk-yqC" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1596.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="daQ-mk-yqC" id="ZkW-ZR-twy">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disable Response Caching" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jFh-36-AP2">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Disable Response Caching" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jFh-36-AP2">
                                                     <rect key="frame" x="30.000000000000014" y="15.333333333333334" width="215.33333333333337" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AAh-cu-qw8">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AAh-cu-qw8">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleDisableResponseCaching:" destination="aMk-Xp-UL8" eventType="valueChanged" id="lCm-qi-piH"/>
@@ -1022,20 +1022,20 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="hRP-jU-2hd" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1611.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="hRP-jU-2hd" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1647.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hRP-jU-2hd" id="JhE-O4-pRg">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Export Resigned Apps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5F-bf-6kB">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Export Resigned Apps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5F-bf-6kB">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="180" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GYP-qn-wzh">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GYP-qn-wzh">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleResignedAppExport:" destination="aMk-Xp-UL8" eventType="valueChanged" id="Z1k-xh-sjD"/>
@@ -1057,20 +1057,20 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="JoN-Aj-XtZ" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1662.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="JoN-Aj-XtZ" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1698.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JoN-Aj-XtZ" id="v8Q-VQ-Q1h">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable Verbose Ops Logging" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bz-tI-tLY">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Enable Verbose Ops Logging" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bz-tI-tLY">
                                                     <rect key="frame" x="29.999999999999986" y="15.333333333333334" width="232.66666666666663" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q5X-Mo-KpE">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q5X-Mo-KpE">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleVerboseOperationsLogging:" destination="aMk-Xp-UL8" eventType="valueChanged" id="n9N-Gt-OY2"/>
@@ -1092,14 +1092,14 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="QOO-bO-4M5" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1713.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="QOO-bO-4M5" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1749.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="QOO-bO-4M5" id="VTT-z5-C89">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Export Database..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ho1-To-wve" userLabel="Export Database">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Export Database..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ho1-To-wve" userLabel="Export Database">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="151.66666666666666" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1120,14 +1120,14 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="ToB-H7-2lR" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1764.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="ToB-H7-2lR" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1800.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ToB-H7-2lR" id="Acf-xV-Isn">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete Database..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CcF-9x-Eu8" userLabel="Delete Database Label">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Delete Database..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CcF-9x-Eu8" userLabel="Delete Database Label">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="150.33333333333334" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1148,20 +1148,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="xtI-eU-LFb" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1815.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="xtI-eU-LFb" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1851.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xtI-eU-LFb" id="bc9-41-6mE">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Operations Logging Control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LW3-gm-lj5">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Operations Logging Control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LW3-gm-lj5">
                                                     <rect key="frame" x="30.000000000000014" y="15.333333333333334" width="224.33333333333337" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zl4-ti-HTW">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zl4-ti-HTW">
                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
                                                 </imageView>
@@ -1182,20 +1182,20 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="pvu-IV-Poa" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1866.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="pvu-IV-Poa" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1902.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pvu-IV-Poa" id="zck-an-8cK">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recreate Database on Next Start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZRk-8S-kBQ" userLabel="Recreate Database Label">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Recreate Database on Next Start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZRk-8S-kBQ" userLabel="Recreate Database Label">
                                                     <rect key="frame" x="30" y="15.333333333333334" width="265.33333333333331" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uGv-Lb-Ita" userLabel="Recreate DB switch">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uGv-Lb-Ita" userLabel="Recreate DB switch">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleRecreateDatabaseSwitch:" destination="aMk-Xp-UL8" eventType="valueChanged" id="vlf-Iz-kWr"/>
@@ -1217,20 +1217,20 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="9By-QW-Jw9" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1917.3333377838135" width="402" height="51"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="9By-QW-Jw9" customClass="InsetGroupTableViewCell" customModule="AppFlex" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1953.3333377838135" width="393" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9By-QW-Jw9" id="Dzq-gE-zyT">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Minimuxer Console Logging" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jW6-pb-xdP">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Minimuxer Console Logging" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jW6-pb-xdP">
                                                     <rect key="frame" x="30.000000000000014" y="15.333333333333334" width="225.33333333333337" height="20.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="os8-7F-rSm" userLabel="Minimuxer logging Switch">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="os8-7F-rSm" userLabel="Minimuxer logging Switch">
                                                     <rect key="frame" x="323" y="10" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleMinimuxerConsoleLogging:" destination="aMk-Xp-UL8" eventType="valueChanged" id="d0C-kx-aFV"/>
@@ -1290,12 +1290,12 @@
         <!--Settings-->
         <scene sceneID="L0E-XA-SxK">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5Rz-4h-jJ8" customClass="ForwardingNavigationController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5Rz-4h-jJ8" customClass="ForwardingNavigationController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Settings" image="Settings" id="LP8-gK-WC2"/>
                     <toolbarItems/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" largeTitles="YES" id="Jtn-cs-Tvp" customClass="NavigationBar" customModule="SideStore" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="62" width="402" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" largeTitles="YES" id="Jtn-cs-Tvp" customClass="NavigationBar" customModule="AppFlex" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="59" width="393" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" name="SettingsBackground"/>
@@ -1321,24 +1321,24 @@
         <!--Refresh Attempts-->
         <scene sceneID="mm0-Eb-bBO">
             <objects>
-                <tableViewController id="GBh-rB-juy" customClass="RefreshAttemptsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="GBh-rB-juy" customClass="RefreshAttemptsViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="sPX-D2-9uY">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="8Xf-RE-QJx" customClass="RefreshAttemptTableViewCell">
-                                <rect key="frame" x="0.0" y="50" width="402" height="64.666664123535156"/>
+                                <rect key="frame" x="0.0" y="50" width="393" height="64.666664123535156"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="8Xf-RE-QJx" id="r3G-oh-AyQ">
-                                    <rect key="frame" x="0.0" y="0.0" width="402" height="64.666664123535156"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="64.666664123535156"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="SN9-pA-GDU">
-                                            <rect key="frame" x="20" y="10.999999999999996" width="362" height="42.666666666666657"/>
+                                            <rect key="frame" x="20" y="10.999999999999996" width="353" height="42.666666666666657"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="SqJ-wP-gO1">
-                                                    <rect key="frame" x="0.0" y="0.0" width="362" height="20.333333333333332"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="20.333333333333332"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Success" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SWb-Of-t97">
                                                             <rect key="frame" x="0.0" y="0.0" width="67" height="20.333333333333332"/>
@@ -1347,7 +1347,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4MX-Qv-H8V">
-                                                            <rect key="frame" x="331.66666666666669" y="0.0" width="30.333333333333314" height="20.333333333333332"/>
+                                                            <rect key="frame" x="322.66666666666669" y="0.0" width="30.333333333333314" height="20.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
@@ -1355,7 +1355,7 @@
                                                     </subviews>
                                                 </stackView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Could not connect to SideStore." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7L1-AA-2yo">
-                                                    <rect key="frame" x="0.0" y="24.333333333333336" width="362" height="18.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="24.333333333333336" width="353" height="18.333333333333336"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1390,13 +1390,13 @@
         <!--Software Licenses-->
         <scene sceneID="YJd-UT-xxE">
             <objects>
-                <viewController id="m4j-ch-w9Y" customClass="LicensesViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="m4j-ch-w9Y" customClass="LicensesViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5un-bm-kB5">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" contentInsetAdjustmentBehavior="never" indicatorStyle="white" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oQQ-pR-oKc">
-                                <rect key="frame" x="0.0" y="106" width="402" height="685"/>
+                                <rect key="frame" x="0.0" y="103" width="393" height="666"/>
                                 <edgeInsets key="layoutMargins" top="8" left="30" bottom="8" right="30"/>
                                 <string key="text">Jay Freeman (ldid) 
 Copyright (C) 2007-2012 Jay Freeman (saurik)
@@ -1502,9 +1502,9 @@ Settings by i cons from the Noun Project</string>
         <!--Alt App Icons View Controller-->
         <scene sceneID="8H5-Rg-ZU9">
             <objects>
-                <collectionViewController id="1z3-Yk-n8E" customClass="AltAppIconsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="1z3-Yk-n8E" customClass="AltAppIconsViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="zTl-Tz-PHw">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" name="SettingsBackground"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="DJ5-Iz-A0S">
@@ -1528,9 +1528,9 @@ Settings by i cons from the Noun Project</string>
         <!--Support us-->
         <scene sceneID="Lnh-9P-HnL">
             <objects>
-                <collectionViewController id="dp8-8j-vt9" customClass="PatreonViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="dp8-8j-vt9" customClass="PatreonViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="prototypes" id="OTF-Qv-Z5w">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" name="SettingsBackground"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1541,7 +1541,7 @@ Settings by i cons from the Noun Project</string>
                             <inset key="sectionInset" minX="20" minY="8" maxX="20" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="T6v-Rq-ntX" customClass="PatronCollectionViewCell" customModule="SideStore" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="T6v-Rq-ntX" customClass="PatronCollectionViewCell" customModule="AppFlex" customModuleProvider="target">
                                 <rect key="frame" x="20" y="8" width="157" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -1589,25 +1589,25 @@ Settings by i cons from the Noun Project</string>
         <!--Error Log-->
         <scene sceneID="Htu-2V-dbE">
             <objects>
-                <tableViewController id="g8a-Rf-zWa" customClass="ErrorLogViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="g8a-Rf-zWa" customClass="ErrorLogViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="107" sectionHeaderHeight="18" sectionFooterHeight="18" id="BBn-tI-e0e">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="HAm-mA-O78" customClass="ErrorLogTableViewCell">
-                                <rect key="frame" x="20" y="55.333332061767578" width="362" height="107.33333587646484"/>
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="107.33333587646484"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HAm-mA-O78" id="swa-et-rfA">
-                                    <rect key="frame" x="0.0" y="0.0" width="362" height="107.33333587646484"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="107.33333587646484"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="mtw-JM-T70">
-                                            <rect key="frame" x="20" y="11" width="322" height="85.333333333333329"/>
+                                            <rect key="frame" x="20" y="11" width="313" height="85.333333333333329"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="bjU-TX-4lm" userLabel="Compact">
-                                                    <rect key="frame" x="0.0" y="0.0" width="322" height="43.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="313" height="43.333333333333336"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sDZ-ZN-NT1" customClass="AppIconImageView" customModule="SideStore" customModuleProvider="target">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sDZ-ZN-NT1" customClass="AppIconImageView" customModule="AppFlex" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="sDZ-ZN-NT1" secondAttribute="height" multiplier="1:1" id="M8a-Wh-6wd"/>
@@ -1615,10 +1615,10 @@ Settings by i cons from the Noun Project</string>
                                                             </constraints>
                                                         </imageView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="82d-v0-RCp">
-                                                            <rect key="frame" x="51" y="0.0" width="271" height="39"/>
+                                                            <rect key="frame" x="51" y="0.0" width="262" height="39"/>
                                                             <subviews>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Q2j-Tc-bp2">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="271" height="18"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="262" height="18"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Success" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Na7-uj-XYZ">
                                                                             <rect key="frame" x="0.0" y="0.0" width="60" height="18"/>
@@ -1627,7 +1627,7 @@ Settings by i cons from the Noun Project</string>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SGf-pP-RL0">
-                                                                            <rect key="frame" x="240.66666666666669" y="0.0" width="30.333333333333314" height="18"/>
+                                                                            <rect key="frame" x="231.66666666666669" y="0.0" width="30.333333333333314" height="18"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             <nil key="highlightedColor"/>
@@ -1635,7 +1635,7 @@ Settings by i cons from the Noun Project</string>
                                                                     </subviews>
                                                                 </stackView>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error Code" textAlignment="natural" lineBreakMode="headTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="R5a-wv-xHd">
-                                                                    <rect key="frame" x="0.0" y="22" width="271" height="17"/>
+                                                                    <rect key="frame" x="0.0" y="22" width="262" height="17"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                     <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <nil key="highlightedColor"/>
@@ -1644,8 +1644,8 @@ Settings by i cons from the Noun Project</string>
                                                         </stackView>
                                                     </subviews>
                                                 </stackView>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Error Description" textAlignment="natural" selectable="NO" layoutManager="textKit1" translatesAutoresizingMaskIntoConstraints="NO" id="1df-ri-hKN" customClass="CollapsingTextView" customModule="SideStore" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="51.333333333333343" width="322" height="34"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Error Description" textAlignment="natural" selectable="NO" layoutManager="textKit1" translatesAutoresizingMaskIntoConstraints="NO" id="1df-ri-hKN" customClass="CollapsingTextView" customModule="AppFlex" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="51.333333333333343" width="313" height="34"/>
                                                     <accessibility key="accessibilityConfiguration">
                                                         <accessibilityTraits key="traits" staticText="YES"/>
                                                         <bool key="isElement" value="NO"/>
@@ -1657,7 +1657,7 @@ Settings by i cons from the Noun Project</string>
                                             </subviews>
                                         </stackView>
                                         <button opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ba2-EY-tf5" customClass="ErrorLogMenuButton">
-                                            <rect key="frame" x="0.0" y="0.0" width="362" height="107.33333333333333"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="107.33333333333333"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <bool key="isElement" value="NO"/>
                                             </accessibility>
@@ -1726,13 +1726,13 @@ Settings by i cons from the Noun Project</string>
         <!--Error Details View Controller-->
         <scene sceneID="XNO-Yg-I7t">
             <objects>
-                <viewController id="xB2-Se-VVg" customClass="ErrorDetailsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="xB2-Se-VVg" customClass="ErrorDetailsViewController" customModule="AppFlex" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eBQ-se-VIy">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="864"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ctd-NB-4ov">
-                                <rect key="frame" x="0.0" y="0.0" width="402" height="864"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -1770,7 +1770,7 @@ Settings by i cons from the Noun Project</string>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="7gm-d1-zWK" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="dI0-sh-yGf">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1794,7 +1794,7 @@ Settings by i cons from the Noun Project</string>
         <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="trash" catalog="system" width="117" height="128"/>
         <namedColor name="SettingsBackground">
-            <color red="0.45098039215686275" green="0.015686274509803921" blue="0.68627450980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="darkTextColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

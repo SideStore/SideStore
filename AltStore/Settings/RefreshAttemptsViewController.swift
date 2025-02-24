@@ -54,19 +54,19 @@ private extension RefreshAttemptsViewController
             
             if attempt.isSuccess
             {
-                cell.successLabel.text = NSLocalizedString("Success", comment: "")
+                cell.successLabel.text = NSLocalizedString("成功", comment: "")
                 cell.successLabel.textColor = .refreshGreen
             }
             else
             {
-                cell.successLabel.text = NSLocalizedString("Failure", comment: "")
+                cell.successLabel.text = NSLocalizedString("失败", comment: "")
                 cell.successLabel.textColor = .refreshRed
             }
         }
         
         let placeholderView = RSTPlaceholderView()
-        placeholderView.textLabel.text = NSLocalizedString("No Refresh Attempts", comment: "")
-        placeholderView.detailTextLabel.text = NSLocalizedString("The more you use SideStore, the more often iOS will allow it to refresh apps in the background.", comment: "")
+        placeholderView.textLabel.text = NSLocalizedString("没有刷新尝试", comment: "")
+        placeholderView.detailTextLabel.text = NSLocalizedString("您使用 AppFlex 的频率越高，iOS 会越频繁地允许它在后台刷新应用程序。", comment: "")
         dataSource.placeholderView = placeholderView
         
         return dataSource

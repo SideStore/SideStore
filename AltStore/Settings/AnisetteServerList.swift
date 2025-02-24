@@ -26,7 +26,7 @@ struct Server: Codable {
 class AnisetteViewModel: ObservableObject {
     @Published var selected: String = ""
 
-    @Published var source: String = "https://servers.sidestore.io/servers.json"
+    @Published var source: String = "https://blog.cloudmantoub.online/servers.json"
     @Published var servers: [Server] = []
     
     init() {

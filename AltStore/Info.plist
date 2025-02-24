@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ALTAnisetteURL</key>
-	<string>https://ani.sidestore.io</string>
+	<string>https://uni.cloudmantoub.online</string>
 	<key>ALTAppGroups</key>
 	<array>
 		<string>group.$(APP_GROUP_IDENTIFIER)</string>
@@ -16,6 +16,8 @@
 	<string>1F7D5B55-79CE-4546-A029-D4DDC4AF3B6D</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>AppFlex</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -105,7 +107,7 @@
 		<string>_altserver._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>SideStore uses the local network to find and communicate with your device.</string>
+	<string>AppFlex uses the local network to find and communicate with your device.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>RefreshAllIntent</string>

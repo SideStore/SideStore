@@ -54,21 +54,22 @@ struct RefreshAllAppsIntent: AppIntent, CustomIntentMigratedAppIntent, Predictab
 {
     static let intentClassName = "RefreshAllIntent"
     
-    static var title: LocalizedStringResource = "Refresh All Apps"
-    static var description = IntentDescription("Refreshes your sideloaded apps to prevent them from expiring.")
+    static var title: LocalizedStringResource = "刷新所有应用"
+    static var description = IntentDescription("刷新您的侧载应用，以防止它们过期。")
     
     static var parameterSummary: some ParameterSummary {
-        Summary("Refresh All Apps")
+        Summary("刷新所有应用")
     }
     
     static var predictionConfiguration: some IntentPredictionConfiguration {
         IntentPrediction {
             DisplayRepresentation(
-                title: "Refresh All Apps",
+                title: "刷新所有应用",
                 subtitle: ""
             )
         }
     }
+
     
     let presentsNotifications: Bool
     
@@ -124,7 +125,7 @@ struct RefreshAllAppsIntent: AppIntent, CustomIntentMigratedAppIntent, Predictab
                 }
             }
             
-            return .result(dialog: "All apps have been refreshed.")
+            return .result(dialog: "所有应用已刷新。")
         }
         catch
         {

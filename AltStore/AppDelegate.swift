@@ -17,7 +17,7 @@ import Roxas
 import EmotionalDamage
 
 import Nuke
-
+var globalDeviceUUID: String?
 extension UIApplication: LegacyBackgroundFetching {}
 
 extension AppDelegate
