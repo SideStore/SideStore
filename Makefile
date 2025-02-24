@@ -203,10 +203,28 @@ build-and-test:
 	@xcodebuild test \
 		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
 		-resultBundlePath build/tests/test-results.xcresult \
+    	-enableCodeCoverage YES \
 		$(COMMON_BUILD_SETTINGS)
 
-        # code cov probably cause full recompilation of tests even if archive target was just invoked before tests
-    	# -enableCodeCoverage YES \
+build-tests:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building Tests for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a build-for-testing..."
+	@xcodebuild build-for-testing \
+    	-enableCodeCoverage YES \
+		$(COMMON_BUILD_SETTINGS)
+
+run-tests:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Testing for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a test-without-building..."
+	@xcodebuild test-without-building \
+    	-enableCodeCoverage YES \
+		-resultBundlePath build/tests/test-results.xcresult \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+		$(COMMON_BUILD_SETTINGS)
 
 boot-sim-async:
 	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
