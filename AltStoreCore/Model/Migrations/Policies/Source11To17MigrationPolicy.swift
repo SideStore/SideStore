@@ -77,16 +77,23 @@ fileprivate extension NSManagedObject
     }
 }
 
-@objc(Source13To14MigrationPolicy)
-class Source13To14MigrationPolicy: NSEntityMigrationPolicy
+@objc(Source11To17MigrationPolicy)
+class Source11To17MigrationPolicy: NSEntityMigrationPolicy
 {
     override func createRelationships(forDestination dInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws
     {
         try super.createRelationships(forDestination: dInstance, in: mapping, manager: manager)
         
-        guard let sourceURL = dInstance.sourceSourceURL else { return }
+        guard var sourceURL = dInstance.sourceSourceURL else { return }
         
         // Copied from Source.setSourceURL()
+        
+        // sidestore official soruce has been moved to sidestore.io/apps-v2.json
+        // if we don't switch, users will end up with 2 offical sources
+        if sourceURL.absoluteString.contains("apps.sidestore.io")       // if using old source
+        {
+            sourceURL = Source.altStoreSourceURL                        // switch to latest
+        }
         
         let sourceID = try Source.sourceID(from: sourceURL)
         dInstance.setSourceSourceID(sourceID)

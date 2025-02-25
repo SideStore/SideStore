@@ -153,7 +153,7 @@ private struct PatreonParameters: Decodable
 extension StoreApp {
     
     //MARK: - relationships
-    @NSManaged @objc(releaseTracks) private(set) var _releaseTracks: NSOrderedSet?
+    @NSManaged @objc(releaseTracks) public private(set) var _releaseTracks: NSOrderedSet?
     
     private var releaseTracks: [ReleaseTrack]?{
         return _releaseTracks?.array as? [ReleaseTrack]

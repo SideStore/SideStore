@@ -27,7 +27,7 @@ public class AppVersion: BaseEntity, Decodable
     @NSManaged public private(set) var downloadURL: URL
     @NSManaged public private(set) var size: Int64
     @NSManaged public private(set) var sha256: String?
-    @NSManaged @objc(channel) private var _channel: String?
+    @NSManaged @objc(channel) public private(set) var _channel: String?
 
     @nonobjc public var minOSVersion: OperatingSystemVersion? {
         guard let osVersionString = self._minOSVersion else { return nil }
