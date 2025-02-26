@@ -213,6 +213,7 @@ build-tests:
 	@echo "Performing a build-for-testing..."
 	@xcodebuild build-for-testing \
     	-enableCodeCoverage YES \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
 		$(COMMON_BUILD_SETTINGS)
 
 run-tests:
