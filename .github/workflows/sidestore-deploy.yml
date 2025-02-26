@@ -23,6 +23,8 @@ on:
         type: string
       release_channel:
         type: string
+      bundle_id:
+        type: string
     secrets:
       CROSS_REPO_PUSH_KEY:
         required: true

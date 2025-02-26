@@ -56,8 +56,8 @@ jobs:
       is_beta: ${{ inputs.is_beta }}
       is_shared_build_num: ${{ inputs.is_shared_build_num }}
       release_tag: ${{ inputs.release_tag }}
-      bundle_id: ${{ inputs.bundle_id }}
       short_commit: ${{ needs.serialize.outputs.short-commit }}
+      bundle_id: ${{ inputs.bundle_id }}
       bundle_id_suffix: ${{ inputs.bundle_id_suffix }}
     secrets: inherit
 
@@ -94,4 +94,5 @@ jobs:
       short_commit: ${{ needs.serialize.outputs.short-commit }}
       release_channel: ${{ needs.build.outputs.release-channel }}
       marketing_version: ${{ needs.build.outputs.marketing-version }}
+      bundle_id: ${{ inputs.bundle_id }}
     secrets: inherit
