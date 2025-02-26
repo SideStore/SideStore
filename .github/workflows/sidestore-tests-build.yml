@@ -1,0 +1,204 @@
+name: SideStore Tests Build
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        type: string
+      short_commit:
+        type: string
+    secrets:
+      BUILD_LOG_ZIP_PASSWORD:
+        required: false
+
+jobs:
+  tests-build:
+    name: Tests-Build SideStore - ${{ inputs.release_tag }}
+    if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_BUILD == '1' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-15'
+            version: '16.2'
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies - xcbeautify
+        run: |
+          brew install xcbeautify
+        shell: bash
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: '16.2'
+
+      # - name: (Tests-Build) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     # tests shouldn't restore cache unless it is same build
+      #     # restore-keys: xcode-cache-deriveddata-test-${{ github.ref_name }}-
+      #     swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-restore-keys: |
+      #       xcode-cache-sourcedata-test-${{ github.ref_name }}-
+      #     delete-used-deriveddata-cache: true
+
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Exact match)
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Last Available)
+        id: xcode-cache-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-
+
+      - name: (Tests-Build) Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Build) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-
+
+      - name: (Tests-Build) Install CocoaPods
+        run: pod install
+        shell: bash
+
+      - name: (Tests-Build) Save Pods to Cache
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+
+      - name: Clean Derived Data (if required)
+        if: ${{ vars.PERFORM_CLEAN_TESTS_BUILD == '1' }}
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData/
+          make clean
+          xcodebuild clean
+        shell: bash
+
+      - name: (Tests-Build) Clean previous build artifacts
+        run: |
+          make clean
+          mkdir -p build/logs
+        shell: bash
+
+      - name: (Tests-Build) List Files and derived data
+        shell: bash
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          echo ""
+
+      - name: Build SideStore Tests
+        # using 'tee' to intercept stdout and log for detailed build-log
+        shell: bash
+        run: |
+          NSUnbufferedIO=YES make -B build-tests 2>&1 | tee -a build/logs/tests-build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+
+      - name: (Tests-Build) Save Xcode & SwiftPM Cache
+        id: cache-save
+        if: ${{ steps.xcode-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
+        
+      - name: (Tests-Build) List Files and Build artifacts
+        if: always()
+        shell: bash
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          find ~/Library/Developer/Xcode/DerivedData -maxdepth 8 -exec ls -ld {} + | grep "Build/Products"  >> tests-build-deriveddata.txt || true
+          echo ""
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: 
+          name: tests-build-deriveddata-${{ inputs.short_commit }}.txt
+          path: tests-build-deriveddata.txt
+
+      - name: Encrypt tests-build-logs for upload
+        id: encrypt-test-log
+        if: always()
+        shell: bash
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi
+
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-tests-build-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+      
+      - name: Upload encrypted-tests-build-logs.zip
+        id: attach-encrypted-test-log
+        if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-tests-build-logs-${{ inputs.short_commit }}.zip
+          path: encrypted-tests-build-logs.zip

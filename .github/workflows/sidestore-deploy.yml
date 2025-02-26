@@ -1,0 +1,233 @@
+name: SideStore Deploy
+
+on:
+  workflow_call:
+    inputs:
+      is_beta:
+        type: boolean
+      publish:
+        type: boolean
+      release_name:
+        type: string
+      release_tag:
+        type: string
+      upstream_tag:
+        type: string
+      upstream_name:
+        type: string
+      version:
+        type: string
+      short_commit:
+        type: string
+      marketing_version:
+        type: string
+      release_channel:
+        type: string
+    secrets:
+      CROSS_REPO_PUSH_KEY:
+        required: true
+      # GITHUB_TOKEN:
+        # required: true
+
+jobs:
+  deploy:
+    name: Deploy SideStore - ${{ inputs.release_tag }}
+    runs-on: macos-15
+    steps:
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SideStore-${{ inputs.version }}.ipa
+
+      - name: Download dSYM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SideStore-${{ inputs.version }}-dSYMs.zip
+
+      - name: Download encrypted-build-logs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-build-logs-${{ inputs.version }}.zip
+
+      - name: Download encrypted-tests-build-logs artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_BUILD == '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-tests-build-logs-${{ inputs.short_commit }}.zip
+
+      - name: Download encrypted-tests-run-logs artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-tests-run-logs-${{ inputs.short_commit }}.zip
+
+      - name: Download tests-recording artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: tests-recording-${{ inputs.short_commit }}.mp4
+
+      - name: Download test-results artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results-${{ inputs.short_commit }}.zip  
+  
+      - name: Download release-notes.md
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ inputs.short_commit }}.md
+
+      - name: Download update_release_notes.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_release_notes-${{ inputs.short_commit }}.py
+
+      - name: Download update_apps.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_apps-${{ inputs.short_commit }}.py
+
+      - name: Read release notes
+        id: release_notes
+        run: |
+          CONTENT=$(python3 update_release_notes.py --retrieve ${{ inputs.release_tag }})
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: List files before upload
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          find . -maxdepth 4 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+        shell: bash
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -u +'%c')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Get current date in AltStore date form
+        id: date_altstore
+        run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload to releases
+        uses: IsaacShelton/update-existing-release@v1.3.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release: ${{ inputs.release_name }}
+          tag: ${{ inputs.release_tag }}
+          prerelease: ${{ inputs.is_beta }}
+          files: SideStore.ipa SideStore.dSYMs.zip encrypted-build-logs.zip encrypted-tests-build-logs.zip encrypted-tests-run-logs.zip test-results.zip tests-recording.mp4
+          body: |
+              This is an ⚠️ **EXPERIMENTAL** ⚠️ ${{ inputs.release_name }} build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
+
+              ${{ inputs.release_name }} builds are **extremely experimental builds only meant to be used by developers and beta testers. They often contain bugs and experimental features. Use at your own risk!**
+
+              If you want to try out new features early but want a lower chance of bugs, you can look at [SideStore ${{ inputs.upstream_name }}](https://github.com/${{ github.repository }}/releases?q=${{ inputs.upstream_tag }}).
+
+              ## Build Info
+
+              Built at (UTC): `${{ steps.date.outputs.date }}`
+              Built at (UTC date): `${{ steps.date_altstore.outputs.date }}`
+              Commit SHA: `${{ github.sha }}`
+              Version: `${{ inputs.version }}`
+
+              ${{ steps.release_notes.outputs.content }}
+
+      - name: Get formatted date
+        run: |
+          FORMATTED_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "Formatted date: $FORMATTED_DATE"
+          echo "FORMATTED_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Get size of IPA in bytes (macOS/Linux)
+        run: |
+          if [[ "$(uname)" == "Darwin" ]]; then
+            # macOS
+            IPA_SIZE=$(stat -f %z SideStore.ipa)
+          else
+            # Linux
+            IPA_SIZE=$(stat -c %s SideStore.ipa)
+          fi
+          echo "IPA size in bytes: $IPA_SIZE"
+          echo "IPA_SIZE=$IPA_SIZE" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Compute SHA-256 of IPA
+        run: |
+          SHA256_HASH=$(shasum -a 256 SideStore.ipa | awk '{ print $1 }')
+          echo "SHA-256 Hash: $SHA256_HASH"
+          echo "SHA256_HASH=$SHA256_HASH" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set Release Info variables
+        run: |
+          # Format localized description
+          LOCALIZED_DESCRIPTION=$(cat <<EOF
+          This is release for:
+            - version: "${{ inputs.version }}"
+            - revision: "${{ inputs.short_commit }}"
+            - timestamp: "${{ steps.date.outputs.date }}"
+          
+          Release Notes:
+          ${{ steps.release_notes.outputs.content }}
+          EOF
+          )
+
+          echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
+          echo "BUNDLE_IDENTIFIER=${{ inputs.bundle_id }}" >> $GITHUB_ENV
+          echo "VERSION_IPA=${{ inputs.marketing_version }}" >> $GITHUB_ENV
+          echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
+          echo "RELEASE_CHANNEL=${{ inputs.release_channel }}" >> $GITHUB_ENV
+          echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
+          echo "SHA256=$SHA256_HASH" >> $GITHUB_ENV
+          echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/${{ inputs.release_tag }}/SideStore.ipa" >> $GITHUB_ENV
+
+          # multiline strings
+          echo "LOCALIZED_DESCRIPTION<<EOF" >> $GITHUB_ENV
+          echo "$LOCALIZED_DESCRIPTION" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Check if Publish updates is set
+        id: check_publish
+        run: |
+          echo "Publish updates to source.json = ${{ inputs.publish }}"
+        shell: bash
+
+      - name: Checkout SideStore/apps-v2.json
+        if: ${{ inputs.is_beta && inputs.publish }}
+        uses: actions/checkout@v4
+        with:
+          repository: 'SideStore/apps-v2.json'
+          ref: 'main'   # this branch is shared by all beta builds, so beta build workflows are serialized
+          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+          path: 'SideStore/apps-v2.json'
+
+      # for stable builds, let the user manually edit the source.json
+      - name: Publish to SideStore/apps-v2.json
+        if: ${{ inputs.is_beta && inputs.publish }}
+        id: publish-release
+        shell: bash
+        run: |
+          # Copy and execute the update script
+          pushd SideStore/apps-v2.json/
+
+          # Configure Git user (committer details)
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+
+          # update the source.json
+          python3 ../../update_apps.py "./_includes/source.json"
+
+          # Commit changes and push using SSH
+          git add --verbose ./_includes/source.json
+          git commit -m " - updated for ${{ inputs.short_commit }} deployment" || echo "No changes to commit"
+
+          git push --verbose
+          popd

@@ -10,9 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Reuseable-build:
-    # uses: ./.github/workflows/reuseable-workflows/reusable-build-workflow.yml
-    uses: ./.github/workflows/reusable-build-workflow.yml
+  Reusable-build:
+    uses: ./.github/workflows/reusable-sidestore-build.yml
     with:
       # bundle_id: "com.SideStore.SideStore.Alpha"
       bundle_id: "com.SideStore.SideStore"

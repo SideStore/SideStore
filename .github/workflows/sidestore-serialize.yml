@@ -1,0 +1,29 @@
+name: SideStore Serialize
+
+on:
+  workflow_call:
+    outputs:
+      short-commit: 
+        value: ${{ jobs.serialize.outputs.short-commit }}
+
+jobs:
+  serialize:
+    name: Wait for other jobs
+    # since build cache, test-build cache, test-run cache are involved, out of order exec if serialization is on individual jobs will wreak all sorts of havoc
+    # so we serialize on the entire workflow
+    concurrency:                  
+      group: serialize-workflow
+    strategy:
+      fail-fast: false
+    runs-on: 'macos-15'
+    steps:
+      - run: echo "No other contending jobs are running now..."
+      - name: Set short commit hash
+        id: commit-id
+        run: |
+          # SHORT_COMMIT="${{ github.sha }}"
+          SHORT_COMMIT=${GITHUB_SHA:0:7}
+          echo "Short commit hash: $SHORT_COMMIT"
+          echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_OUTPUT
+    outputs:
+      short-commit: ${{ steps.commit-id.outputs.SHORT_COMMIT }}

@@ -58,14 +58,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LAST_SUCCESS: ${{ env.last_success }}
 
-  Reuseable-build:
+  Reusable-build:
     if: |
       always() &&
       (github.event_name == 'push' || 
       (github.event_name == 'schedule' && needs.check-changes.result == 'success' && needs.check-changes.outputs.has_changes == 'true'))
     needs: check-changes
-    # uses: ./.github/workflows/reuseable-workflows/reusable-build-workflow.yml
-    uses: ./.github/workflows/reusable-build-workflow.yml
+    uses: ./.github/workflows/reusable-sidestore-build.yml
     with:
       # bundle_id: "com.SideStore.SideStore.Nightly"
       bundle_id: "com.SideStore.SideStore"

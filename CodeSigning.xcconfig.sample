@@ -4,7 +4,7 @@
 DEVELOPMENT_TEAM = XYZ0123456
 
 // Set this for dev-local xcode builds
-MARKETING_VERSION_SUFFIX = -local
+//MARKETING_VERSION_SUFFIX = -local
 
 // Prefix of unique bundle IDs registered to you in Apple Developer Portal.
 // You need to register:

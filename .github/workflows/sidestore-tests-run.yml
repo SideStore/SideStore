@@ -1,0 +1,235 @@
+name: SideStore Tests Run
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        type: string
+      short_commit:
+        type: string
+    secrets:
+      BUILD_LOG_ZIP_PASSWORD:
+        required: false
+
+jobs:
+  tests-run:
+    name: Tests-Run SideStore - ${{ inputs.release_tag }}
+    if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-15'
+            version: '16.2'
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Boot Simulator async(nohup) for testing
+        run: |
+          mkdir -p build/logs
+          nohup make -B boot-sim-async </dev/null >> build/logs/tests-run.log 2>&1 &
+        shell: bash
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: '16.2'
+
+      # - name: (Tests-Run) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     # This comes from 
+      #     key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
+      
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Exact match) [from tests-build job]
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: (Tests-Run) Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Run) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-
+
+      - name: (Tests-Run) Install CocoaPods
+        run: pod install
+        shell: bash
+
+      - name: (Tests-Run) Save Pods to Cache
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Run) Clean previous build artifacts
+        run: |
+          make clean
+          mkdir -p build/logs
+        shell: bash
+
+      - name: (Tests-Run) List Files and derived data
+        shell: bash
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          find ~/Library/Developer/Xcode/DerivedData -maxdepth 8 -exec ls -ld {} + | grep "Build/Products" >> tests-run-deriveddata.txt || true
+          echo ""
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: 
+          name: tests-run-deriveddata-${{ inputs.short_commit }}.txt
+          path: tests-run-deriveddata.txt
+
+      # we expect simulator to have been booted by now, so exit otherwise
+      - name: Simulator Boot Check
+        run: |
+          mkdir -p build/logs
+          make -B sim-boot-check | tee -a build/logs/tests-run.log
+          exit ${PIPESTATUS[0]}
+        shell: bash
+
+      - name: Start Recording UI tests (if DEBUG_RECORD_TESTS is set to 1)
+        if: ${{ vars.DEBUG_RECORD_TESTS == '1' }}
+        run: |
+          nohup xcrun simctl io booted recordVideo -f tests-recording.mp4 --codec h264 </dev/null > tests-recording.log 2>&1 &
+          RECORD_PID=$!
+          echo "RECORD_PID=$RECORD_PID" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Run SideStore Tests
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          make run-tests 2>&1 | tee -a build/logs/tests-run.log && exit ${PIPESTATUS[0]}
+        # NSUnbufferedIO=YES make -B run-tests 2>&1 | tee build/logs/tests-run.log | xcpretty -r junit --output ./build/tests/test-results.xml && exit ${PIPESTATUS[0]}
+        shell: bash
+
+      - name: Stop Recording tests
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          kill -INT ${{ env.RECORD_PID }}
+        shell: bash
+
+      - name: (Tests-Run) List Files and Build artifacts
+        if: always()
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+        shell: bash
+
+      - name: Encrypt tests-run-logs for upload
+        id: encrypt-test-log
+        if: always()
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi
+
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-tests-run-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+        shell: bash
+
+      - name: Upload encrypted-tests-run-logs.zip
+        id: attach-encrypted-test-log
+        if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-tests-run-logs-${{ inputs.short_commit }}.zip
+          path: encrypted-tests-run-logs.zip
+
+      - name: Print tests-recording.log contents (if exists)
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          if [ -f tests-recording.log ]; then
+            echo "tests-recording.log found. Its contents:"
+            cat tests-recording.log
+          else
+            echo "tests-recording.log not found."
+          fi
+        shell: bash
+
+      - name: Check for tests-recording.mp4 presence
+        id: check-recording
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          if [ -f tests-recording.mp4 ]; then
+            echo "::set-output name=found::true"
+            echo "tests-recording.mp4 found."
+          else
+            echo "tests-recording.mp4 not found, skipping upload."
+            echo "::set-output name=found::false"
+          fi
+        shell: bash
+
+      - name: Upload tests-recording.mp4
+        id: upload-recording
+        if: ${{ always() && steps.check-recording.outputs.found == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-recording-${{ inputs.short_commit }}.mp4
+          path: tests-recording.mp4
+
+      - name: Zip test-results
+        run: zip -r -9 ./test-results.zip ./build/tests
+        shell: bash
+
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ inputs.short_commit }}.zip
+          path: test-results.zip

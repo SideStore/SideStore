@@ -1,0 +1,401 @@
+name: SideStore Build
+
+on:
+  workflow_call:
+    inputs:
+      is_beta:
+        type: boolean
+      is_shared_build_num:
+        type: boolean
+      release_tag:
+        type: string
+      bundle_id:
+        type: string
+      bundle_id_suffix:
+        type: string
+      short_commit:
+        type: string
+    secrets:
+      CROSS_REPO_PUSH_KEY:
+        required: true
+      BUILD_LOG_ZIP_PASSWORD:
+        required: false
+    outputs:
+      version: 
+        value: ${{ jobs.build.outputs.version }}
+      marketing-version: 
+        value: ${{ jobs.build.outputs.marketing-version }}
+      release-channel:
+        value: ${{ jobs.build.outputs.release-channel }}
+          
+jobs:
+  build:
+    name: Build SideStore - ${{ inputs.release_tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-15'
+            version: '16.2'
+    runs-on: ${{ matrix.os }}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      marketing-version: ${{ steps.marketing-version.outputs.MARKETING_VERSION }}
+      release-channel: ${{ steps.release-channel.outputs.RELEASE_CHANNEL }}
+
+    steps:
+      - name: Set beta status
+        run: echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install dependencies - ldid & xcbeautify
+        run: |
+          brew install ldid xcbeautify
+
+      - name: Set ref based on is_shared_build_num
+        if: ${{ inputs.is_beta }}
+        id: set_ref
+        run: |
+          if [ "${{ inputs.is_shared_build_num }}" == "true" ]; then
+            echo "ref=main" >> $GITHUB_ENV
+          else
+            echo "ref=${{ inputs.release_tag }}" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Checkout SideStore/beta-build-num repo
+        if: ${{ inputs.is_beta }}
+        uses: actions/checkout@v4
+        with:
+          repository: 'SideStore/beta-build-num'
+          ref: ${{ env.ref }}
+          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+          path: 'SideStore/beta-build-num'
+
+      - name: Copy build_number.txt to repo root
+        if: ${{ inputs.is_beta }}
+        run: |
+          cp SideStore/beta-build-num/build_number.txt .
+          echo "cat build_number.txt"
+          cat build_number.txt
+        shell: bash
+
+      - name: Echo Build.xcconfig
+        run: |
+          echo "cat Build.xcconfig"
+          cat Build.xcconfig
+        shell: bash
+
+      - name: Set Release Channel info for build number bumper
+        id: release-channel
+        run: |
+          RELEASE_CHANNEL="${{ inputs.release_tag }}"
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}" >> $GITHUB_ENV
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}" >> $GITHUB_OUTPUT
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}"
+        shell: bash
+          
+      - name: Increase build number for beta builds
+        if: ${{ inputs.is_beta }}
+        run: |
+          bash .github/workflows/increase-beta-build-num.sh
+        shell: bash
+
+      - name: Extract MARKETING_VERSION from Build.xcconfig
+        id: version
+        run: |
+          version=$(grep MARKETING_VERSION Build.xcconfig | sed -e 's/MARKETING_VERSION = //g')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "version=$version"
+        shell: bash
+
+      - name: Set MARKETING_VERSION
+        if: ${{ inputs.is_beta }}
+        id: marketing-version
+        run: |
+          # Extract version number (e.g., "0.6.0")
+          version=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          # Extract date (YYYYMMDD) (e.g., "20250205")
+          date=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/.*\.([0-9]{4})\.([0-9]{2})\.([0-9]{2})\..*/\1\2\3/')
+          # Extract build number (e.g., "2")
+          build_num=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/.*\.([0-9]+)\+.*/\1/')
+
+          # Combine them into the final output
+          MARKETING_VERSION="${version}-${date}.${build_num}+${{ inputs.short_commit }}"
+
+          echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_ENV
+          echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_OUTPUT
+          echo "MARKETING_VERSION=$MARKETING_VERSION"
+        shell: bash
+
+      - name: Echo Updated Build.xcconfig, build_number.txt
+        if: ${{ inputs.is_beta }}
+        run: |
+          cat Build.xcconfig
+          cat build_number.txt
+        shell: bash
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: ${{ matrix.version }}
+
+      - name: (Build) Restore Xcode & SwiftPM Cache (Exact match)
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: (Build) Restore Xcode & SwiftPM Cache (Last Available)
+        id: xcode-cache-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-
+
+      # - name: (Build) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     key: xcode-cache-deriveddata-build-${{ github.ref_name }}-${{ github.sha }}
+      #     restore-keys: xcode-cache-deriveddata-build-${{ github.ref_name }}-
+      #     swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-restore-keys: |
+      #       xcode-cache-sourcedata-build-${{ github.ref_name }}-
+
+      - name: (Build) Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+          # restore-keys: |         # commented out to strictly check cache for this particular podfile
+          #   pods-cache-
+
+      - name: (Build) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-build-${{ github.ref_name }}-
+
+
+      - name: (Build) Install CocoaPods
+        run: pod install
+        shell: bash
+
+      - name: (Build) Save Pods to Cache
+        id: save-pods
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
+
+      - name: (Build) Clean previous build artifacts
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          make clean
+          mkdir -p build/logs
+        shell: bash
+
+      - name: (Build) List Files and derived data
+        if: always()
+        shell: bash
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          echo ""
+
+      - name: Set BundleID Suffix for Sidestore build
+        run: |
+          echo "BUNDLE_ID_SUFFIX=${{ inputs.bundle_id_suffix }}" >> $GITHUB_ENV
+        shell: bash
+
+
+      - name: Build SideStore.xcarchive
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          NSUnbufferedIO=YES make -B build 2>&1 | tee -a build/logs/build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+        shell: bash
+
+      - name: Fakesign app
+        run: make fakesign | tee -a build/logs/build.log
+        shell: bash
+
+      - name: Convert to IPA
+        run: make ipa | tee -a build/logs/build.log
+        shell: bash
+
+      - name: (Build) Save Xcode & SwiftPM Cache
+        id: cache-save
+        if: ${{ steps.xcode-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-${{ github.sha }}
+        
+      - name: (Build) List Files and Build artifacts
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore.xcarchive <<<<<<<<<<"
+          find SideStore.xcarchive -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          echo ""
+        shell: bash
+
+      - name: Encrypt build-logs for upload
+        id: encrypt-build-log
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi
+          
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-build-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+        shell: bash
+
+      - name: Upload encrypted-build-logs.zip
+        id: attach-encrypted-build-log
+        if: ${{ always() && steps.encrypt-build-log.outputs.encrypted == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-build-logs-${{ steps.version.outputs.version }}.zip
+          path: encrypted-build-logs.zip
+
+      - name: Upload SideStore.ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}.ipa
+          path: SideStore.ipa
+
+      - name: Zip dSYMs
+        run: zip -r -9 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs
+        shell: bash
+
+      - name: Upload *.dSYM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}-dSYMs.zip
+          path: SideStore.dSYMs.zip
+
+      - name: Keep rolling the build numbers for each successful build
+        if: ${{ inputs.is_beta }}
+        run: |
+          pushd SideStore/beta-build-num/
+  
+          echo "Configure Git user (committer details)"
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          
+          echo "Adding files to commit"
+          git add --verbose build_number.txt
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ inputs.short_commit }} deployment" || echo "No changes to commit"
+
+          echo "Pushing to remote repo"
+          git push --verbose
+          popd
+        shell: bash
+
+      - name: Get last successful commit
+        id: get_last_commit
+        run: |
+          # Try to get the last successful workflow run commit
+          LAST_SUCCESS_SHA=$(gh run list --branch "${{ github.ref_name }}" --status success --json headSha --jq '.[0].headSha')
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_OUTPUT
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+
+      - name: Create release notes
+        run: |
+          LAST_SUCCESS_SHA=${{ steps.get_last_commit.outputs.LAST_SUCCESS_SHA}}
+          echo "Last successful commit SHA: $LAST_SUCCESS_SHA"
+          
+          FROM_COMMIT=$LAST_SUCCESS_SHA
+          # Check if we got a valid SHA
+          if [ -z "$LAST_SUCCESS_SHA" ] || [ "$LAST_SUCCESS_SHA" = "null" ]; then
+            echo "No successful run found, using initial commit of branch"
+            # Get the first commit of the branch (initial commit)
+            FROM_COMMIT=$(git rev-list --max-parents=0 HEAD)
+          fi
+  
+          python3 update_release_notes.py $FROM_COMMIT ${{ inputs.release_tag }} ${{ github.ref_name }}
+          # cat release-notes.md
+        shell: bash
+
+      - name: Upload release-notes.md
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ inputs.short_commit }}.md
+          path: release-notes.md
+
+      - name: Upload update_release_notes.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_release_notes-${{ inputs.short_commit }}.py
+          path: update_release_notes.py
+
+      - name: Upload update_apps.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_apps-${{ inputs.short_commit }}.py
+          path: update_apps.py
