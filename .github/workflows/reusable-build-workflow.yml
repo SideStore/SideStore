@@ -538,11 +538,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Boot Simulator for testing
+      - name: Boot Simulator async(nohup) for testing
         run: |
           mkdir -p build/logs
-          make -B boot-sim-async | tee -a build/logs/tests-run.log
-          exit ${PIPESTATUS[0]}
+          nohup make -B boot-sim-async </dev/null >> build/logs/tests-run.log 2>&1 &
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
