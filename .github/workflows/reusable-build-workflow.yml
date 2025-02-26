@@ -323,17 +323,24 @@ jobs:
           name: SideStore-${{ steps.version.outputs.version }}-dSYMs.zip
           path: SideStore.dSYMs.zip
 
-      - name: Zip beta-beta-build-num & update_apps.py
-        run: |
-          zip -r -9 ./beta-build-num.zip ./SideStore/beta-build-num update_apps.py
-
-      - name: Upload beta-build-num artifact
+      - name: Keep rolling the build numbers for each successful build
         if: ${{ inputs.is_beta }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: beta-build-num-${{ steps.version.outputs.version }}.zip
-          path: beta-build-num.zip
+        run: |
+          pushd SideStore/beta-build-num/
+  
+          echo "Configure Git user (committer details)"
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          
+          echo "Adding files to commit"
+          git add --verbose build_number.txt
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.common.outputs.short-commit }} deployment" || echo "No changes to commit"
 
+          echo "Pushing to remote repo"
+          git push --verbose
+          popd
+  
+  
 
   tests-build:
     name: Tests-Build SideStore - ${{ inputs.release_tag }}
@@ -707,17 +714,7 @@ jobs:
       - name: Download test-results artifact
         uses: actions/download-artifact@v4
         with:
-          name: test-results-${{ needs.common.outputs.short-commit }}.zip
-
-      - name: Download beta-build-num artifact
-        if: ${{ inputs.is_beta }}
-        uses: actions/download-artifact@v4
-        with:
-          name: beta-build-num-${{ needs.build.outputs.version }}.zip
-      - name: Un-Zip beta-beta-build-num & update_apps.py
-        run: |
-          unzip beta-build-num.zip -d .
-  
+          name: test-results-${{ needs.common.outputs.short-commit }}.zip  
   
       - name: List files before upload
         run: |
@@ -754,23 +751,6 @@ jobs:
               Built at (UTC date): `${{ steps.date_altstore.outputs.date }}`
               Commit SHA: `${{ github.sha }}`
               Version: `${{ needs.build.outputs.version }}`
-
-      - name: Publish to SideStore/beta-build-num
-        if: ${{ inputs.is_beta }}
-        run: |
-          pushd SideStore/beta-build-num/
-  
-          echo "Configure Git user (committer details)"
-          git config user.name "GitHub Actions"
-          git config user.email "github-actions@github.com"
-          
-          echo "Adding files to commit"
-          git add --verbose build_number.txt
-          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.common.outputs.short-commit }} deployment" || echo "No changes to commit"
-
-          echo "Pushing to remote repo"
-          git push --verbose
-          popd
 
       - name: Get formatted date
         run: |
