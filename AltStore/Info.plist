@@ -242,6 +242,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>mobiledevicepairing</string>
+					<string>mobiledevicepair</string>
 				</array>
 			</dict>
 		</dict>
