@@ -43,10 +43,10 @@ extension AddSourceViewController
         var sourceAddress: String = ""
         
         @Published
-        var sourceURL: URL?
+        var sourceURLs: [URL] = []
 
         @Published
-        var sourcePreviewResult: SourcePreviewResult?
+        var sourcePreviewResults: [SourcePreviewResult] = []
         
         
         /* State */
@@ -60,6 +60,8 @@ extension AddSourceViewController
 
 class AddSourceViewController: UICollectionViewController 
 {
+    private var stagedForAdd: LinkedHashMap<Source, Bool> = LinkedHashMap()
+    
     private lazy var dataSource = self.makeDataSource()
     private lazy var addSourceDataSource = self.makeAddSourceDataSource()
     private lazy var sourcePreviewDataSource = self.makeSourcePreviewDataSource()
@@ -117,6 +119,7 @@ private extension AddSourceViewController
         layoutConfig.contentInsetsReference = .safeArea
         
         let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            
             guard let self, let section = Section(rawValue: sectionIndex) else { return nil }
             switch section
             {
@@ -140,14 +143,19 @@ private extension AddSourceViewController
                 configuration.showsSeparators = false
                 configuration.backgroundColor = .clear
                 
-                if self.viewModel.sourceURL != nil && self.viewModel.isShowingPreviewStatus
+                if !self.viewModel.sourceURLs.isEmpty && self.viewModel.isShowingPreviewStatus
                 {
-                    switch self.viewModel.sourcePreviewResult
+                    for result in self.viewModel.sourcePreviewResults
                     {
-                    case (_, .success)?: configuration.footerMode = .none
-                    case (_, .failure)?: configuration.footerMode = .supplementary
-                    case nil where self.viewModel.isLoadingPreview: configuration.footerMode = .supplementary
-                    default: configuration.footerMode = .none
+                        switch result
+                        {
+                        case (_, .success): configuration.footerMode = .none
+                        case (_, .failure): configuration.footerMode = .supplementary
+                            break
+//                        case nil where self.viewModel.isLoadingPreview: configuration.footerMode = .supplementary
+//                            break
+//                        default: configuration.footerMode = .none
+                        }
                     }
                 }
                 else
@@ -303,50 +311,71 @@ private extension AddSourceViewController
     {
         /* Pipeline */
         
-        // Map UITextField text -> URL
+        // Map UITextField text -> URLs
         self.viewModel.$sourceAddress
-            .map { [weak self] in self?.sourceURL(from: $0) }
-            .assign(to: &self.viewModel.$sourceURL)
-        
+            .map { [weak self] in
+                guard let self else { return [] }
+                
+                // Preserve order of parsed URLs
+                let lines = $0.split(whereSeparator: { $0.isWhitespace })
+                                .map(String.init)
+                                .compactMap(self.sourceURL)
+                
+                return NSOrderedSet(array: lines).array as! [URL] // de-duplicate while preserving order
+            }
+            .assign(to: &self.viewModel.$sourceURLs)
+
         let showPreviewStatusPublisher = self.viewModel.$isShowingPreviewStatus
             .filter { $0 == true }
         
-        let sourceURLPublisher = self.viewModel.$sourceURL
+        let sourceURLsPublisher = self.viewModel.$sourceURLs
             .removeDuplicates()
             .debounce(for: 0.2, scheduler: RunLoop.main)
             .receive(on: RunLoop.main)
-            .map { [weak self] sourceURL in
+            .map { [weak self] sourceURLs in
                 // Only set sourcePreviewResult to nil if sourceURL actually changes.
-                self?.viewModel.sourcePreviewResult = nil
-                return sourceURL
+                self?.viewModel.sourcePreviewResults = []
+                return sourceURLs
             }
         
         // Map URL -> Source Preview
-        Publishers.CombineLatest(sourceURLPublisher, showPreviewStatusPublisher.prepend(false))
+        Publishers.CombineLatest(sourceURLsPublisher, showPreviewStatusPublisher.prepend(false))
             .receive(on: RunLoop.main)
             .map { $0.0 }
-            .compactMap { [weak self] (sourceURL: URL?) -> AnyPublisher<SourcePreviewResult?, Never>? in
-                guard let self else { return nil }
-                
-                guard let sourceURL else {
-                    // Unlike above guard, this continues the pipeline with nil value.
-                    return Just(nil).eraseToAnyPublisher()
-                }
+            .flatMap { [weak self] (sourceURLs: [URL]) -> AnyPublisher<[SourcePreviewResult?], Never> in
+                guard let self else { return Just([]).eraseToAnyPublisher() }
                 
                 self.viewModel.isLoadingPreview = true
-                return self.fetchSourcePreview(sourceURL: sourceURL).eraseToAnyPublisher()
+                
+                // Create publishers maintaining order
+                let publishers = sourceURLs.enumerated().map { index, sourceURL in
+                    self.fetchSourcePreview(sourceURL: sourceURL)
+                        .map { result in
+                            // Add index to maintain order
+                            (index: index, result: result)
+                        }
+                        .eraseToAnyPublisher()
+                }
+                
+                // since network requests are concurrent, we sort the values when they are received
+                return publishers.isEmpty
+                    ? Just([]).eraseToAnyPublisher()
+                    : Publishers.MergeMany(publishers)
+                        .collect()                                      // await all publishers to emit the results
+                        .map { results in                               // perform sorting of the collected results
+                            // Sort by original index before returning
+                            results.sorted { $0.index < $1.index }
+                                .map { $0.result }
+                        }
+                        .eraseToAnyPublisher()
             }
-            .switchToLatest() // Cancels previous publisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] sourcePreviewResult in
+            .sink { [weak self] sourcePreviewResults in
                 self?.viewModel.isLoadingPreview = false
-                self?.viewModel.sourcePreviewResult = sourcePreviewResult
+                self?.viewModel.sourcePreviewResults = sourcePreviewResults.compactMap{$0}
             }
             .store(in: &self.cancellables)
         
-        
         /* Update UI */
-        
         Publishers.CombineLatest(self.viewModel.$isLoadingPreview.removeDuplicates(),
                                  self.viewModel.$isShowingPreviewStatus.removeDuplicates())
         .sink { [weak self] _ in
@@ -359,7 +388,7 @@ private extension AddSourceViewController
                     
                     if let footerView = self.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: indexPath) as? PlaceholderCollectionReusableView
                     {
-                        self.configure(footerView, with: self.viewModel.sourcePreviewResult)
+                        self.configure(footerView, with: self.viewModel.sourcePreviewResults)
                     }
                     
                     let context = UICollectionViewLayoutInvalidationContext()
@@ -370,27 +399,38 @@ private extension AddSourceViewController
         }
         .store(in: &self.cancellables)
         
-        self.viewModel.$sourcePreviewResult
-            .map { $0?.1 }
-            .map { result -> Managed<Source>? in
-                switch result
-                {
-                case .success(let source): return source
-                case .failure, nil: return nil
+        self.viewModel.$sourcePreviewResults
+            .map { sourcePreviewResults -> [Source] in
+                // Maintain order based on original sourceURLs array
+                let orderedSources = self.viewModel.sourceURLs.compactMap { sourceURL -> Source? in
+                    // Find the preview result matching this URL
+                    guard let previewResult = sourcePreviewResults.first(where: { $0.sourceURL == sourceURL }),
+                          case .success(let managedSource) = previewResult.result
+                    else {
+                        return nil
+                    }
+                    
+                    return managedSource.wrappedValue
                 }
-            }
-            .removeDuplicates { (sourceA: Managed<Source>?, sourceB: Managed<Source>?) in
-                sourceA?.identifier == sourceB?.identifier
+                
+                return orderedSources
             }
             .receive(on: RunLoop.main)
-            .sink { [weak self] source in
-                self?.updateSourcePreview(for: source?.wrappedValue)
+            .sink { [weak self] sources in
+                self?.updateSourcesPreview(for: sources)
             }
             .store(in: &self.cancellables)
+
         
-        let addPublisher = NotificationCenter.default.publisher(for: AppManager.didAddSourceNotification)
-        let removePublisher = NotificationCenter.default.publisher(for: AppManager.didRemoveSourceNotification)
-        Publishers.Merge(addPublisher, removePublisher)
+        let mergedNotificationPublisher = Publishers.Merge(
+            NotificationCenter.default.publisher(for: AppManager.didAddSourceNotification),
+            NotificationCenter.default.publisher(for: AppManager.didRemoveSourceNotification)
+        )
+        .receive(on: RunLoop.main)
+        .share() // Shares the upstream publisher with multiple subscribers
+        
+        // Update recommended sources section when sources are added/removed
+        mergedNotificationPublisher
             .compactMap { notification -> String? in
                 guard let source = notification.object as? Source,
                       let context = source.managedObjectContext
@@ -399,7 +439,6 @@ private extension AddSourceViewController
                 let sourceID = context.performAndWait { source.identifier }
                 return sourceID
             }
-            .receive(on: RunLoop.main)
             .compactMap { [dataSource = recommendedSourcesDataSource] sourceID -> IndexPath? in
                 guard let index = dataSource.items.firstIndex(where: { $0.identifier == sourceID }) else { return nil }
                 
@@ -408,6 +447,32 @@ private extension AddSourceViewController
             }
             .sink { [weak self] indexPath in
                 // Added or removed a recommended source, so make sure to update its state.
+                self?.collectionView.reloadItems(at: [indexPath])
+            }
+            .store(in: &self.cancellables)
+        
+        // Update previews section when sources are added/removed
+//        mergedNotificationPublisher
+//            .sink { [weak self] _ in
+//                // reload the entire of previews section to get latest state
+//                self?.collectionView.reloadSections(IndexSet(integer: Section.preview.rawValue))
+//            }
+//            .store(in: &self.cancellables)
+        
+        mergedNotificationPublisher
+            .compactMap { notification -> String? in
+                guard let source = notification.object as? Source,
+                      let context = source.managedObjectContext
+                else { return nil }
+                return context.performAndWait { source.identifier }
+            }
+            .compactMap { [weak self] sourceID -> IndexPath? in
+                guard let dataSource = self?.sourcePreviewDataSource,
+                      let index = dataSource.items.firstIndex(where: { $0.identifier == sourceID })
+                else { return nil }
+                return IndexPath(item: index, section: Section.preview.rawValue)
+            }
+            .sink { [weak self] indexPath in
                 self?.collectionView.reloadItems(at: [indexPath])
             }
             .store(in: &self.cancellables)
@@ -458,35 +523,51 @@ private extension AddSourceViewController
         })
     }
     
-    func updateSourcePreview(for source: Source?)
-    {
-        let items = [source].compactMap { $0 }
+    func updateSourcesPreview(for sources: [Source]) {
+        // Calculate changes needed to go from current items to new items
+        let currentItemCount = self.sourcePreviewDataSource.items.count
+        let newItemCount = sources.count
         
-        // Have to provide changes in terms of sourcePreviewDataSource.
-        let indexPath = IndexPath(row: 0, section: 0)
+        var changes: [RSTCellContentChange] = []
         
-        if !items.isEmpty && self.sourcePreviewDataSource.items.isEmpty
-        {
-            let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: indexPath)
-            self.sourcePreviewDataSource.setItems(items, with: [change])
-        }
-        else if items.isEmpty && !self.sourcePreviewDataSource.items.isEmpty
-        {
-            let change = RSTCellContentChange(type: .delete, currentIndexPath: indexPath, destinationIndexPath: nil)
-            self.sourcePreviewDataSource.setItems(items, with: [change])
-        }
-        else if !items.isEmpty && !self.sourcePreviewDataSource.items.isEmpty
-        {
-            let change = RSTCellContentChange(type: .update, currentIndexPath: indexPath, destinationIndexPath: indexPath)
-            self.sourcePreviewDataSource.setItems(items, with: [change])
+        if currentItemCount == 0 && newItemCount > 0 {
+            // Insert all items if we currently have none
+            for i in 0..<newItemCount {
+                let indexPath = IndexPath(row: i, section: 0)
+                let change = RSTCellContentChange(type: .insert,
+                                                currentIndexPath: nil,
+                                                destinationIndexPath: indexPath)
+                changes.append(change)
+            }
+        } else if currentItemCount > 0 && newItemCount == 0 {
+            // Delete all items if we're going to have none
+            for i in 0..<currentItemCount {
+                let indexPath = IndexPath(row: i, section: 0)
+                let change = RSTCellContentChange(type: .delete,
+                                                currentIndexPath: indexPath,
+                                                destinationIndexPath: nil)
+                changes.append(change)
+            }
+        } else if currentItemCount != newItemCount {
+            // If counts differ, do a section update
+            let change = RSTCellContentChange(type: .update, sectionIndex: 0)
+            changes = [change]
+        } else {
+            // Update existing items in place
+            for i in 0..<newItemCount {
+                let indexPath = IndexPath(row: i, section: 0)
+                let change = RSTCellContentChange(type: .update,
+                                                currentIndexPath: indexPath,
+                                                destinationIndexPath: indexPath)
+                changes.append(change)
+            }
         }
         
-        if source == nil
-        {
+        self.sourcePreviewDataSource.setItems(sources, with: changes)
+        
+        if sources.isEmpty {
             self.collectionView.reloadSections([Section.preview.rawValue])
-        }
-        else
-        {
+        } else {
             self.collectionView.collectionViewLayout.invalidateLayout()
         }
     }
@@ -510,9 +591,6 @@ private extension AddSourceViewController
         cell.bannerView.iconImageView.isIndicatingActivity = true
         
         let config = UIImage.SymbolConfiguration(scale: .medium)
-        let image = UIImage(systemName: "plus.circle.fill", withConfiguration: config)?.withTintColor(.white, renderingMode: .alwaysOriginal)
-        cell.bannerView.button.setImage(image, for: .normal)
-        cell.bannerView.button.setImage(image, for: .highlighted)
         cell.bannerView.button.setTitle(nil, for: .normal)
         cell.bannerView.button.imageView?.contentMode = .scaleAspectFit
         cell.bannerView.button.contentHorizontalAlignment = .fill // Fill entire button with imageView
@@ -521,28 +599,54 @@ private extension AddSourceViewController
         cell.bannerView.button.tintColor = .clear
         cell.bannerView.button.isHidden = false
         
+        // mark the button with label (useful for accessibility and for UITests)
+        cell.bannerView.button.accessibilityIdentifier = "add"
+        
+        func setButtonIcon()
+        {
+            Task<Void, Never>(priority: .userInitiated) { [weak cell] in
+                guard let cell else { return }
+                
+                var isSourceAlreadyPersisted = false
+                do
+                {
+                    isSourceAlreadyPersisted = try await source.isAdded
+                }
+                catch
+                {
+                    print("Failed to determine if source is added.", error)
+                }
+                    
+                // use the plus icon by default
+                var buttonIcon = UIImage(systemName: "plus.circle.fill", withConfiguration: config)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+                
+                // if the source is already added/staged for adding, use the checkmark icon
+                let isStagedForAdd = self.stagedForAdd[source] == true
+                if isStagedForAdd || isSourceAlreadyPersisted
+                {
+                    buttonIcon = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)?
+                                    .withTintColor(isSourceAlreadyPersisted ? .green : .white, renderingMode: .alwaysOriginal)
+                }
+                cell.bannerView.button.setImage(buttonIcon, for: .normal)
+                cell.bannerView.button.isEnabled = !isSourceAlreadyPersisted
+            }
+        }
+        
+        // set the icon
+        setButtonIcon()
+        
         let action = UIAction(identifier: .addSource) { [weak self] _ in
-            self?.add(source)
+            guard let self else { return }
+            
+            self.stagedForAdd[source, default: false].toggle()
+
+            // update the button icon
+            setButtonIcon()
         }
         cell.bannerView.button.addAction(action, for: .primaryActionTriggered)
-        
-        Task<Void, Never>(priority: .userInitiated) {
-            do
-            {
-                let isAdded = try await source.isAdded
-                if isAdded
-                {
-                    cell.bannerView.button.isHidden = true
-                }
-            }
-            catch
-            {
-                print("Failed to determine if source is added.", error)
-            }
-        }
     }
     
-    func configure(_ footerView: PlaceholderCollectionReusableView, with sourcePreviewResult: SourcePreviewResult?)
+    func configure(_ footerView: PlaceholderCollectionReusableView, with sourcePreviewResults: [SourcePreviewResult?])
     {
         footerView.placeholderView.stackView.isLayoutMarginsRelativeArrangement = false
         
@@ -552,23 +656,33 @@ private extension AddSourceViewController
         
         footerView.placeholderView.detailTextLabel.isHidden = true
         
-        switch sourcePreviewResult
+        var errorText: String? = nil
+        var isError: Bool = false
+        for result in sourcePreviewResults
         {
-        case (let sourceURL, .failure(let previewError))? where self.viewModel.sourceURL == sourceURL && !self.viewModel.isLoadingPreview:
-            // The current URL matches the error being displayed, and we're not loading another preview, so show error.
-            
-            footerView.placeholderView.textLabel.text = (previewError as NSError).localizedDebugDescription ?? previewError.localizedDescription
-            footerView.placeholderView.textLabel.isHidden = false
-            
-            footerView.placeholderView.activityIndicatorView.stopAnimating()
-            
-        default:
-            // The current URL does not match the URL of the source/error being displayed, so show loading indicator.
-            
-            footerView.placeholderView.textLabel.text = nil
-            footerView.placeholderView.textLabel.isHidden = true
-            
+            switch result
+            {
+            case (let sourceURL, .failure(let previewError))? where (self.viewModel.sourceURLs.contains(sourceURL) && !self.viewModel.isLoadingPreview):
+                // The current URL matches the error being displayed, and we're not loading another preview, so show error.
+                
+                errorText = (previewError as NSError).localizedDebugDescription ?? previewError.localizedDescription
+                footerView.placeholderView.textLabel.text = errorText
+                footerView.placeholderView.textLabel.isHidden = false
+                
+                isError = true
+                
+            default:
+                // The current URL does not match the URL of the source/error being displayed, so show loading indicator.
+                errorText = nil
+                footerView.placeholderView.textLabel.isHidden = true
+            }
+        }
+        footerView.placeholderView.textLabel.text = errorText
+        
+        if !isError{
             footerView.placeholderView.activityIndicatorView.startAnimating()
+        } else{
+            footerView.placeholderView.activityIndicatorView.stopAnimating()
         }
     }
     
@@ -652,30 +766,60 @@ private extension AddSourceViewController
         }
     }
     
-    func add(@AsyncManaged _ source: Source)
+    @IBAction func commitChanges(_ sender: UIBarButtonItem)
     {
-        Task<Void, Never> {
-            do
-            {
-                let isRecommended = await $source.isRecommended
-                if isRecommended
-                {
-                    try await AppManager.shared.add(source, message: nil, presentingViewController: self)
-                }
-                else
-                {
-                    // Use default message
-                    try await AppManager.shared.add(source, presentingViewController: self)
-                }
-                
-                self.dismiss()
-                
+        struct StagedSource: Hashable {
+            @AsyncManaged var source: Source
+
+            // Conformance for Equatable/Hashable by comparing the underlying source
+            static func == (lhs: StagedSource, rhs: StagedSource) -> Bool {
+                return lhs.source.identifier == rhs.source.identifier
             }
-            catch is CancellationError {}
-            catch
-            {
-                let errorTitle = NSLocalizedString("Unable to Add Source", comment: "")
-                await self.presentAlert(title: errorTitle, message: error.localizedDescription)
+
+            func hash(into hasher: inout Hasher) {
+                hasher.combine(source)
+            }
+        }
+        
+        Task<Void, Never> {
+            var isCancelled = false
+            // OK: COMMIT the staged changes now
+            // Convert the stagedForAdd dictionary into an array of StagedSource
+            let stagedSources: [StagedSource] = self.stagedForAdd.filter { $0.value }
+                .map { StagedSource(source: $0.key) }
+            
+            for staged in stagedSources {
+                do
+                {
+                    // Use the projected value to safely access isRecommended asynchronously
+                    let isRecommended = await staged.$source.isRecommended
+                    if isRecommended
+                    {
+                        try await AppManager.shared.add(staged.source, message: nil, presentingViewController: self)
+                    }
+                    else
+                    {
+                        // Use default message
+                        try await AppManager.shared.add(staged.source, presentingViewController: self)
+                    }
+                    
+                    // remove this kv pair
+                    _ = self.stagedForAdd.removeValue(forKey: staged.source)
+                }
+                catch is CancellationError {
+                    isCancelled = true
+                    break
+                }
+                catch
+                {
+                    let errorTitle = NSLocalizedString("Unable to Add Source", comment: "")
+                    await self.presentAlert(title: errorTitle, message: error.localizedDescription)
+                }
+            }
+            
+            if !isCancelled {
+                // finally dismiss the sheet/viewcontroller
+                self.dismiss()
             }
         }
     }
@@ -737,7 +881,7 @@ extension AddSourceViewController: UICollectionViewDelegateFlowLayout
         case (.preview, UICollectionView.elementKindSectionFooter):
             let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ReuseID.placeholderFooter.rawValue, for: indexPath) as! PlaceholderCollectionReusableView
             
-            self.configure(footerView, with: self.viewModel.sourcePreviewResult)
+            self.configure(footerView, with: self.viewModel.sourcePreviewResults)
             
             return footerView
                         

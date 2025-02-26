@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "93E5E265-DC67-47F3-A214-8082A3421288",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:AltStore.xcodeproj",
+      "identifier" : "BFD247692284B9A500981D42",
+      "name" : "SideStore"
+    }
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "DataStructuresTests"
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:AltStore.xcodeproj",
+        "identifier" : "A81A8CC42D68BA610086C96F",
+        "name" : "DataStructureTests"
+      }
+    }
+  ],
+  "version" : 2
+}

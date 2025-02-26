@@ -1,4 +1,5 @@
 name: Reusable SideStore Build
+
 on:
   workflow_call:
     inputs:
@@ -44,10 +45,28 @@ on:
         required: false
 
 jobs:
-  build:
-    name: Build and upload SideStore ${{ inputs.release_tag }} releases
+  serialize:
+    name: Wait for other jobs
     concurrency:
       group: build-number-increment   # serialize for build num cache access
+    strategy:
+      fail-fast: false
+    runs-on: 'macos-15'
+    steps:
+    - run: echo "No other contending jobs are running now...Build is ready to start"
+    - name: Set short commit hash
+      id: commit-id
+      run: |
+        # SHORT_COMMIT="${{ github.sha }}"
+        SHORT_COMMIT=${GITHUB_SHA:0:7}
+        echo "Short commit hash: $SHORT_COMMIT"
+        echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_OUTPUT
+    outputs:
+      short-commit: ${{ steps.commit-id.outputs.SHORT_COMMIT }}
+
+  build:
+    name: Build SideStore - ${{ inputs.release_tag }}
+    needs: serialize
     strategy:
       fail-fast: false
       matrix:
@@ -56,8 +75,12 @@ jobs:
             version: '16.1'
 
     runs-on: ${{ matrix.os }}
-    steps:
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      marketing-version: ${{ steps.marketing-version.outputs.MARKETING_VERSION }}
+      release-channel: ${{ steps.release-channel.outputs.RELEASE_CHANNEL }}
 
+    steps:
       - name: Set beta status
         run: echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
 
@@ -67,7 +90,8 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies - ldid & xcbeautify
-        run: brew install ldid xcbeautify
+        run: |
+          brew install ldid xcbeautify
 
       - name: Set ref based on is_shared_build_num
         if: ${{ inputs.is_beta }}
@@ -87,7 +111,7 @@ jobs:
           ref: ${{ env.ref }}
           token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
           path: 'SideStore/beta-build-num'
-          
+
       - name: Copy build_number.txt to repo root
         if: ${{ inputs.is_beta }}
         run: |
@@ -99,13 +123,16 @@ jobs:
         run: |
           echo "cat Build.xcconfig"
           cat Build.xcconfig
-          
+
       - name: Set Release Channel info for build number bumper
+        id: release-channel
         run: |
-          echo "RELEASE_CHANNEL=${{ inputs.release_tag }}" >> $GITHUB_ENV
+          RELEASE_CHANNEL="${{ inputs.release_tag }}"
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}" >> $GITHUB_ENV
+          echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}" >> $GITHUB_OUTPUT
           echo "RELEASE_CHANNEL=${RELEASE_CHANNEL}"
           
-
+          
       - name: Increase build number for beta builds
         if: ${{ inputs.is_beta }}
         run: |
@@ -118,15 +145,9 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "version=$version"
 
-      - name: Get short commit hash
-        run: |
-          # SHORT_COMMIT="${{ github.sha }}"
-          SHORT_COMMIT=${GITHUB_SHA:0:7}
-          echo "Short commit hash: $SHORT_COMMIT"
-          echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_ENV          
-
       - name: Set MARKETING_VERSION
         if: ${{ inputs.is_beta }}
+        id: marketing-version
         run: |
           # Extract version number (e.g., "0.6.0")
           version=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
@@ -136,9 +157,10 @@ jobs:
           build_num=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/.*\.([0-9]+)\+.*/\1/')
 
           # Combine them into the final output
-          MARKETING_VERSION="${version}-${date}.${build_num}+${SHORT_COMMIT}"
+          MARKETING_VERSION="${version}-${date}.${build_num}+${{ needs.serialize.outputs.short-commit }}"
 
           echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_ENV
+          echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_OUTPUT
           echo "MARKETING_VERSION=$MARKETING_VERSION"
 
       - name: Echo Updated Build.xcconfig, build_number.txt
@@ -152,16 +174,16 @@ jobs:
         with:
           xcode-version: ${{ matrix.version }}
 
-      - name: Cache Build
+      - name: (Build) Cache Build
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-
-          swiftpm-cache-key: xcode-cache-sourcedata-${{ github.sha }}
+          key: xcode-cache-deriveddata-build-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-build-
+          swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.sha }}
           swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-
+            xcode-cache-sourcedata-build-
 
-      - name: Restore Pods from Cache (Exact match)
+      - name: (Build) Restore Pods from Cache (Exact match)
         id: pods-restore
         uses: actions/cache/restore@v3
         with:
@@ -169,12 +191,12 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ hashFiles('Podfile') }}
           # restore-keys: |         # commented out to strictly check cache for this particular podfile
           #   pods-cache-
-          
-      - name: Restore Pods from Cache (Last Available)
-        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }} 
+
+      - name: (Build) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
         id: pods-restore-recent
         uses: actions/cache/restore@v3
         with:
@@ -182,13 +204,13 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-
+          key: pods-cache-build-
 
 
-      - name: Install CocoaPods
+      - name: (Build) Install CocoaPods
         run: pod install
 
-      - name: Save Pods to Cache
+      - name: (Build) Save Pods to Cache
         id: save-pods
         if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v3
@@ -197,9 +219,16 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ hashFiles('Podfile') }}
 
-      - name: List Files and derived data
+      - name: (Build) Clean previous build artifacts
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          make clean
+          mkdir -p build/logs
+
+      - name: (Build) List Files and derived data
+        if: always()
         run: |
           echo ">>>>>>>>> Workdir <<<<<<<<<<"
           ls -la .
@@ -221,23 +250,205 @@ jobs:
           ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
           echo ""
 
-
       - name: Set BundleID Suffix for Sidestore build
         run: |
           echo "BUNDLE_ID_SUFFIX=${{ inputs.bundle_id_suffix }}" >> $GITHUB_ENV
 
-      - name: Build SideStore
+
+      - name: Build SideStore.xcarchive
         # using 'tee' to intercept stdout and log for detailed build-log
         run: |
-          NSUnbufferedIO=YES make build 2>&1 | tee build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+          NSUnbufferedIO=YES make -B build 2>&1 | tee -a build/logs/build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
 
       - name: Fakesign app
-        run: make fakesign | tee -a build.log
+        run: make fakesign | tee -a build/logs/build.log
 
       - name: Convert to IPA
-        run: make ipa | tee -a build.log
+        run: make ipa | tee -a build/logs/build.log
 
-      - name: Encrypt build.log generated from SideStore build for upload
+      - name: (Build) List Files and Build artifacts
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore.xcarchive <<<<<<<<<<"
+          find SideStore.xcarchive -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+      - name: Encrypt build-logs for upload
+        id: encrypt-build-log
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi
+          
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-build-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+      
+      - name: Upload encrypted-build-logs.zip
+        id: attach-encrypted-build-log
+        if: ${{ always() && steps.encrypt-build-log.outputs.encrypted == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-build-logs-${{ steps.version.outputs.version }}.zip
+          path: encrypted-build-logs.zip
+
+      - name: Upload SideStore.ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}.ipa
+          path: SideStore.ipa
+
+      - name: Zip dSYMs
+        run: zip -r -9 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs
+  
+      - name: Upload *.dSYM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-${{ steps.version.outputs.version }}-dSYMs.zip
+          path: SideStore.dSYMs.zip
+
+      - name: Zip beta-beta-build-num & update_apps.py
+        run: |
+          zip -r -9 ./beta-build-num.zip ./SideStore/beta-build-num update_apps.py
+
+      - name: Upload beta-build-num artifact
+        if: ${{ inputs.is_beta }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-build-num-${{ steps.version.outputs.version }}.zip
+          path: beta-build-num.zip
+
+
+  tests-build:
+    name: Tests-Build SideStore - ${{ inputs.release_tag }}
+    needs: serialize
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-15'
+            version: '16.1'
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies - xcbeautify
+        run: |
+          brew install xcbeautify
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: '16.1'
+
+      - name: (Tests-Build) Cache Build
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-test-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-test-
+          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
+          swiftpm-cache-restore-keys: |
+            xcode-cache-sourcedata-test-
+
+      - name: (Tests-Build) Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Build) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-
+
+      - name: (Tests-Build) Install CocoaPods
+        run: pod install
+
+      - name: (Tests-Build) Save Pods to Cache
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Build) Clean previous build artifacts
+        run: |
+          make clean
+          mkdir -p build/logs
+
+      - name: (Tests-Build) List Files and derived data
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          echo ""
+
+      - name: Build SideStore Tests
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          NSUnbufferedIO=YES make -B build-tests 2>&1 | tee -a build/logs/tests-build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+
+      - name: (Tests-Build) List Files and Build artifacts
+        if: always()
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+      - name: Encrypt tests-build-logs for upload
+        id: encrypt-test-log
+        if: always()
         run: |
           DEFAULT_BUILD_LOG_PASSWORD=12345
 
@@ -248,19 +459,271 @@ jobs:
             echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
           fi
 
-          if [ ! -f build.log ]; then
-            echo "Warning: build.log is missing, creating a dummy log..."
-            echo "Error: build.log was missing, This is a dummy placeholder file..." > build.log
-          fi
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-tests-build-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+      
+      - name: Upload encrypted-tests-build-logs.zip
+        id: attach-encrypted-test-log
+        if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-tests-build-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          path: encrypted-tests-build-logs.zip
 
-          zip -e -P "$BUILD_LOG_ZIP_PASSWORD" encrypted-build_log.zip build.log
+  tests-run:
+    name: Tests-Run SideStore - ${{ inputs.release_tag }}
+    needs: [serialize, tests-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-15'
+            version: '16.1'
+    runs-on: ${{ matrix.os }}
 
-      - name: List Files after SideStore build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Boot Simulator for testing
+        run: |
+          mkdir -p build/logs
+          make -B boot-sim-async | tee -a build/logs/tests-run.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: '16.1'
+
+      - name: (Tests-Run) Cache Build
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-test-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-test-
+          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
+          swiftpm-cache-restore-keys: |
+            xcode-cache-sourcedata-test-
+
+      - name: (Tests-Run) Restore Pods from Cache (Exact match)
+        id: pods-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Run) Restore Pods from Cache (Last Available)
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        id: pods-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-
+
+      - name: (Tests-Run) Install CocoaPods
+        run: pod install
+
+      - name: (Tests-Run) Save Pods to Cache
+        if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./Podfile.lock
+            ./Pods/
+            ./AltStore.xcworkspace/
+          key: pods-cache-test-${{ hashFiles('Podfile') }}
+
+      - name: (Tests-Run) Clean previous build artifacts
+        run: |
+          make clean
+          mkdir -p build/logs
+
+      - name: (Tests-Run) List Files and derived data
         run: |
           echo ">>>>>>>>> Workdir <<<<<<<<<<"
           ls -la .
           echo ""
 
+          echo ">>>>>>>>> Pods <<<<<<<<<<"
+          find Pods -maxdepth 2 -exec ls -ld {} + || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> SideStore <<<<<<<<<<"
+          find SideStore -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Dependencies <<<<<<<<<<"
+          find Dependencies -maxdepth 2 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          echo ""
+
+      # we expect simulator to have been booted by now, so exit otherwise
+      - name: Simulator Boot Check
+        run: |
+          mkdir -p build/logs
+          make -B sim-boot-check | tee -a build/logs/tests-run.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Start Recording UI tests (if DEBUG_RECORD_TESTS is set to 1)
+        if: ${{ vars.DEBUG_RECORD_TESTS == '1' }}
+        run: |
+          nohup xcrun simctl io booted recordVideo -f tests-recording.mp4 --codec h264 </dev/null > tests-recording.log 2>&1 &
+          RECORD_PID=$!
+          echo "RECORD_PID=$RECORD_PID" >> $GITHUB_ENV
+
+      - name: Run SideStore Tests
+        # using 'tee' to intercept stdout and log for detailed build-log
+        run: |
+          make run-tests 2>&1 | tee -a build/logs/tests-run.log && exit ${PIPESTATUS[0]}
+        # NSUnbufferedIO=YES make -B run-tests 2>&1 | tee build/logs/tests-run.log | xcpretty -r junit --output ./build/tests/test-results.xml && exit ${PIPESTATUS[0]}
+
+      - name: Stop Recording tests
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          kill -INT ${{ env.RECORD_PID }}
+
+      - name: (Tests-Run) List Files and Build artifacts
+        if: always()
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          ls -la .
+          echo ""
+
+          echo ">>>>>>>>> Build <<<<<<<<<<"
+          find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+      - name: Encrypt tests-run-logs for upload
+        id: encrypt-test-log
+        if: always()
+        run: |
+          DEFAULT_BUILD_LOG_PASSWORD=12345
+
+          BUILD_LOG_ZIP_PASSWORD=${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+          BUILD_LOG_ZIP_PASSWORD=${BUILD_LOG_ZIP_PASSWORD:-$DEFAULT_BUILD_LOG_PASSWORD}
+
+          if [ "$BUILD_LOG_ZIP_PASSWORD" == "$DEFAULT_BUILD_LOG_PASSWORD" ]; then
+            echo "Warning: BUILD_LOG_ZIP_PASSWORD is not set. Defaulting to '${DEFAULT_BUILD_LOG_PASSWORD}'."
+          fi
+
+          pushd build/logs && zip -e -P "$BUILD_LOG_ZIP_PASSWORD" ../../encrypted-tests-run-logs.zip * || popd
+          echo "::set-output name=encrypted::true"
+      
+      - name: Upload encrypted-tests-run-logs.zip
+        id: attach-encrypted-test-log
+        if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-tests-run-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          path: encrypted-tests-run-logs.zip
+
+      - name: Print tests-recording.log contents (if exists)
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          if [ -f tests-recording.log ]; then
+            echo "tests-recording.log found. Its contents:"
+            cat tests-recording.log
+          else
+            echo "tests-recording.log not found."
+          fi
+
+      - name: Check for tests-recording.mp4 presence
+        id: check-recording
+        if: ${{ always() && env.RECORD_PID != '' }}
+        run: |
+          if [ -f tests-recording.mp4 ]; then
+            echo "::set-output name=found::true"
+            echo "tests-recording.mp4 found."
+          else
+            echo "tests-recording.mp4 not found, skipping upload."
+            echo "::set-output name=found::false"
+          fi
+
+      - name: Upload tests-recording.mp4
+        id: upload-recording
+        if: ${{ always() && steps.check-recording.outputs.found == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-recording-${{ needs.serialize.outputs.short-commit }}.mp4
+          path: tests-recording.mp4
+
+      - name: Zip test-results
+        run: zip -r -9 ./test-results.zip ./build/tests
+  
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip
+          path: test-results.zip
+
+  deploy:
+    name: Deploy SideStore - ${{ inputs.release_tag }}
+    runs-on: macos-15
+    # needs: [serialize, build]
+    needs: [serialize, build, tests-build, tests-run]
+    steps:
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SideStore-${{ needs.build.outputs.version }}.ipa
+
+      - name: Download dSYM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SideStore-${{ needs.build.outputs.version }}-dSYMs.zip
+
+      - name: Download encrypted-build-logs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-build-logs-${{ needs.build.outputs.version }}.zip
+
+      - name: Download encrypted-tests-build-logs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-tests-build-logs-${{ needs.serialize.outputs.short-commit }}.zip
+
+      - name: Download encrypted-tests-run-logs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: encrypted-tests-run-logs-${{ needs.serialize.outputs.short-commit }}.zip
+
+      - name: Download tests-recording artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tests-recording-${{ needs.serialize.outputs.short-commit }}.mp4
+
+      - name: Download test-results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip
+
+      - name: Download beta-build-num artifact
+        if: ${{ inputs.is_beta }}
+        uses: actions/download-artifact@v4
+        with:
+          name: beta-build-num-${{ needs.build.outputs.version }}.zip
+      - name: Un-Zip beta-beta-build-num & update_apps.py
+        run: |
+          unzip beta-build-num.zip -d .
+  
+  
+      - name: List files before upload
+        run: |
+          echo ">>>>>>>>> Workdir <<<<<<<<<<"
+          find . -maxdepth 4 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+  
       - name: Get current date
         id: date
         run: echo "date=$(date -u +'%c')" >> $GITHUB_OUTPUT
@@ -269,9 +732,6 @@ jobs:
         id: date_altstore
         run: echo "date=$(date -u +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - name: Create dSYMs zip
-        run: zip -r -9 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs/*
-
       - name: Upload to releases
         uses: IsaacShelton/update-existing-release@v1.3.1
         with:
@@ -279,7 +739,7 @@ jobs:
           release: ${{ inputs.release_name }}
           tag: ${{ inputs.release_tag }}
           prerelease: ${{ inputs.is_beta }}
-          files: SideStore.ipa SideStore.dSYMs.zip encrypted-build_log.zip
+          files: SideStore.ipa SideStore.dSYMs.zip encrypted-build-logs.zip encrypted-tests-build-logs.zip encrypted-tests-run-logs.zip test-results.zip tests-recording.mp4
           body: |
               This is an ⚠️ **EXPERIMENTAL** ⚠️ ${{ inputs.release_name }} build for commit [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}).
 
@@ -292,14 +752,11 @@ jobs:
               Built at (UTC): `${{ steps.date.outputs.date }}`
               Built at (UTC date): `${{ steps.date_altstore.outputs.date }}`
               Commit SHA: `${{ github.sha }}`
-              Version: `${{ steps.version.outputs.version }}`
+              Version: `${{ needs.build.outputs.version }}`
 
-      # save it
       - name: Publish to SideStore/beta-build-num
         if: ${{ inputs.is_beta }}
         run: |
-          rm SideStore/beta-build-num/build_number.txt
-          mv build_number.txt SideStore/beta-build-num/build_number.txt
           pushd SideStore/beta-build-num/
   
           echo "Configure Git user (committer details)"
@@ -308,32 +765,11 @@ jobs:
           
           echo "Adding files to commit"
           git add --verbose build_number.txt
-          git commit -m " - updated for ${{ inputs.release_tag }} - $SHORT_COMMIT deployment" || echo "No changes to commit"
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
 
           echo "Pushing to remote repo"
           git push --verbose
           popd
-
-      - name: Add version to IPA file name
-        run: cp SideStore.ipa SideStore-${{ steps.version.outputs.version }}.ipa
-
-      - name: Upload SideStore.ipa Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: SideStore-${{ steps.version.outputs.version }}.ipa
-          path: SideStore-${{ steps.version.outputs.version }}.ipa
-
-      - name: Upload *.dSYM Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: SideStore-${{ steps.version.outputs.version }}-dSYM
-          path: ./SideStore.xcarchive/dSYMs/*
-
-      - name: Upload encrypted-build_log.zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: encrypted-build_log.zip
-          path: encrypted-build_log.zip
 
       - name: Get formatted date
         run: |
@@ -364,15 +800,17 @@ jobs:
           # Format localized description
           LOCALIZED_DESCRIPTION=$(cat <<EOF
           This is release for:
-            - version: "${{ steps.version.outputs.version }}"
-            - revision: "$SHORT_COMMIT"
+            - version: "${{ needs.build.outputs.version }}"
+            - revision: "${{ needs.serialize.outputs.short-commit }}"
             - timestamp: "${{ steps.date.outputs.date }}"
           EOF
           )
 
+          echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
           echo "BUNDLE_IDENTIFIER=${{ inputs.bundle_id }}" >> $GITHUB_ENV
-          echo "VERSION_IPA=$MARKETING_VERSION" >> $GITHUB_ENV
+          echo "VERSION_IPA=${{ needs.build.outputs.marketing-version }}" >> $GITHUB_ENV
           echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
+          echo "RELEASE_CHANNEL=${{ needs.build.outputs.release-channel }}" >> $GITHUB_ENV
           echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
           echo "SHA256=$SHA256_HASH" >> $GITHUB_ENV
           echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/${{ inputs.release_tag }}/SideStore.ipa" >> $GITHUB_ENV
@@ -391,10 +829,10 @@ jobs:
         if: ${{ inputs.is_beta && inputs.publish }}
         uses: actions/checkout@v4
         with:
-            repository: 'SideStore/apps-v2.json'
-            ref: 'main'   # this branch is shared by all beta builds, so beta build workflows are serialized
-            token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
-            path: 'SideStore/apps-v2.json'
+          repository: 'SideStore/apps-v2.json'
+          ref: 'main'   # this branch is shared by all beta builds, so beta build workflows are serialized
+          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+          path: 'SideStore/apps-v2.json'
 
       # for stable builds, let the user manually edit the source.json
       - name: Publish to SideStore/apps-v2.json
@@ -413,7 +851,7 @@ jobs:
 
           # Commit changes and push using SSH
           git add --verbose ./_includes/source.json
-          git commit -m " - updated for $SHORT_COMMIT deployment" || echo "No changes to commit"
+          git commit -m " - updated for ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
 
           git push --verbose
           popd

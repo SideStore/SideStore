@@ -28,18 +28,27 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-<!--      shouldAutocreateTestPlan = "YES"> -->
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:SideStore/Tests/SideStoreTests.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D586D39728EF58B0000E101F"
-               BuildableName = "AltTests.xctest"
-               BlueprintName = "AltTests"
+               BlueprintIdentifier = "A8E2DB202D684CBD009E5D31"
+               BuildableName = "UITests.xctest"
+               BlueprintName = "UITests"
                ReferencedContainer = "container:AltStore.xcodeproj">
             </BuildableReference>
+            <SelectedTests>
+               <Test
+                  Identifier = "UITests/testExample()">
+               </Test>
+            </SelectedTests>
          </TestableReference>
       </Testables>
    </TestAction>

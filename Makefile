@@ -167,22 +167,86 @@ test:
 BUILD_CONFIG ?= Release
 MARKETING_VERSION ?= 
 BUNDLE_ID_SUFFIX ?= 
+# Common build settings for xcodebuild
+COMMON_BUILD_SETTINGS = \
+	-workspace AltStore.xcworkspace \
+	-scheme SideStore \
+	-sdk iphoneos \
+	-configuration $(BUILD_CONFIG) \
+	CODE_SIGNING_REQUIRED=NO \
+	AD_HOC_CODE_SIGNING_ALLOWED=YES \
+	CODE_SIGNING_ALLOWED=NO \
+	DEVELOPMENT_TEAM=XYZ0123456 \
+	ORG_IDENTIFIER=com.SideStore
+
+# Append MARKETING_VERSION if it’s not empty (coz otherwise the blank entry becomes override)
+ifneq ($(strip $(MARKETING_VERSION)),)
+COMMON_BUILD_SETTINGS += MARKETING_VERSION=$(MARKETING_VERSION)
+endif
+
+# Append BUNDLE_ID_SUFFIX if it’s not empty (coz otherwise the blank entry becomes override)
+ifneq ($(strip $(BUNDLE_ID_SUFFIX)),)
+COMMON_BUILD_SETTINGS += BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
+endif
+
 build:
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
-	@xcodebuild -workspace AltStore.xcworkspace \
-				-scheme SideStore \
-				-sdk iphoneos \
-				-configuration $(BUILD_CONFIG) \
-				archive -archivePath ./SideStore \
-				CODE_SIGNING_REQUIRED=NO \
-				AD_HOC_CODE_SIGNING_ALLOWED=YES \
-				CODE_SIGNING_ALLOWED=NO \
-				DEVELOPMENT_TEAM=XYZ0123456 \
-				ORG_IDENTIFIER=com.SideStore \
-				MARKETING_VERSION=$(MARKETING_VERSION) \
-				BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
-#				DWARF_DSYM_FOLDER_PATH="."
+	@xcodebuild archive -archivePath ./SideStore \
+		$(COMMON_BUILD_SETTINGS)
+
+build-and-test:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a build and running tests..."
+	@xcodebuild test \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+		-resultBundlePath build/tests/test-results.xcresult \
+    	-enableCodeCoverage YES \
+		$(COMMON_BUILD_SETTINGS)
+
+build-tests:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building Tests for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a build-for-testing..."
+	@xcodebuild build-for-testing \
+    	-enableCodeCoverage YES \
+		$(COMMON_BUILD_SETTINGS)
+
+run-tests:
+	@rm -rf build/tests/test-results.xcresult
+	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Testing for $(BUILD_CONFIG) mode! <<<<<<<<<<"
+	@echo ""
+	@echo "Performing a test-without-building..."
+	@xcodebuild test-without-building \
+    	-enableCodeCoverage YES \
+		-resultBundlePath build/tests/test-results.xcresult \
+		-destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+		$(COMMON_BUILD_SETTINGS)
+
+boot-sim-async:
+	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
+		echo "Simulator 'iPhone 16 Pro' is already booted."; \
+	else \
+		echo "Booting simulator 'iPhone 16 Pro' asynchronously..."; \
+		xcrun simctl boot "iPhone 16 Pro" & \
+		echo "Simulator boot command dispatched."; \
+	fi
+
+sim-boot-check:
+	@echo "Checking simulator boot status..."
+	@if xcrun simctl list devices "iPhone 16 Pro" | grep -q "Booted"; then \
+		echo "Simulator 'iPhone 16 Pro' is booted."; \
+	else \
+		echo "Simulator bootup failed or is not booted yet."; \
+		exit 1; \
+	fi
+
+clean-build:
+	@echo "Cleaning build artifacts..."
+	@xcodebuild clean -workspace AltStore.xcworkspace -scheme SideStore
 
 fakesign-apps:
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
@@ -308,7 +372,7 @@ ipa-altbackup: checkPaths copy-altbackup
 	@mkdir -p 	"$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
 	@echo " Copying from $(ALT_APP_SRC) into $(ALT_APP_PAYLOAD_DST)"
 	@cp -R -f	"$(ALT_APP_SRC)/." "$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
-	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload && popd
+	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload || popd
 	@cp	   -f	"$(ALT_APP_IPA_DST)" AltStore/Resources
 	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
 
@@ -317,11 +381,8 @@ clean-altbackup:
 	@echo "====> Cleaning up AltBackup related artifacts <===="
 	@rm -rf build/altbackup.xcarchive/
 	@rm -f build/AltBackup.ipa
-	@rm -f AltStore/Resources/AltBackup.ipa
+    #@rm -f AltStore/Resources/AltBackup.ipa
 
 clean: clean-altbackup
-	@rm -rf *.xcarchive/
-	@rm -rf *.dSYM/
 	@rm -rf SideStore.ipa
 	@rm -rf build/
-	@rm -rf Payload/
