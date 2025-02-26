@@ -46,11 +46,16 @@ on:
 
 jobs:
   common:
-    name: Shared Steps
+    name: Wait for other jobs
+    # since build cache, test-build cache, test-run cache are involved, out of order exec if serialization is on individual jobs will wreak all sorts of havoc
+    # so we serialize on the entire workflow
+    concurrency:                  
+      group: serialize-workflow
     strategy:
       fail-fast: false
     runs-on: 'macos-15'
     steps:
+    - run: echo "No other contending jobs are running now..."
     - name: Set short commit hash
       id: commit-id
       run: |
@@ -64,8 +69,6 @@ jobs:
   build:
     name: Build SideStore - ${{ inputs.release_tag }}
     needs: common
-    concurrency:
-      group: build-number-increment   # serialize for build num cache access
     strategy:
       fail-fast: false
       matrix:
@@ -80,8 +83,6 @@ jobs:
       release-channel: ${{ steps.release-channel.outputs.RELEASE_CHANNEL }}
 
     steps:
-      - run: echo "No other contending jobs are running now...Build is ready to start"
-
       - name: Set beta status
         run: echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
 
