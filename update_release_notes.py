@@ -82,11 +82,55 @@ def format_commit_message(msg):
         msg_clean = msg_clean[1:].strip()  # remove leading '-' and spaces
     return f"- {msg_clean}"
 
-def generate_release_notes(last_successful, tag, branch):
+# def generate_release_notes(last_successful, tag, branch):
     """Generate release notes for the given tag."""
     current_commit = get_head_commit()
     messages = get_commit_messages(last_successful, current_commit)
     
+    # Start with the tag header
+    new_section = f"{TAG_MARKER} {tag}\n"
+
+    # What's Changed section (always present)
+    new_section += f"{HEADER_MARKER} What's Changed\n"
+    
+    if not messages or last_successful == current_commit:
+        new_section += "- Nothing...\n"
+    else:
+        for msg in messages:
+            new_section += f"{format_commit_message(msg)}\n"
+    
+    # New Contributors section (only if there are new contributors)
+    all_previous_authors = get_authors_in_range(f"{branch}")
+    recent_authors = get_authors_in_range(f"{last_successful}..{current_commit}")
+    new_contributors = recent_authors - all_previous_authors
+    
+    if new_contributors:
+        new_section += f"\n{HEADER_MARKER} New Contributors\n"
+        for author in sorted(new_contributors):
+            new_section += f"- {format_contributor(author)} made their first contribution\n"
+    
+    # Full Changelog section (only if there are changes)
+    if messages and last_successful != current_commit:
+        repo_url = get_repo_url()
+        changelog_link = f"{repo_url}/compare/{last_successful}...{current_commit}"
+        new_section += f"\n{HEADER_MARKER} Full Changelog: [{last_successful[:8]}...{current_commit[:8]}]({changelog_link})\n"
+    
+    return new_section
+
+def generate_release_notes(last_successful, tag, branch):
+    """Generate release notes for the given tag."""
+    current_commit = get_head_commit()
+    try:
+        # Try to get commit messages using the provided last_successful commit
+        messages = get_commit_messages(last_successful, current_commit)
+    except subprocess.CalledProcessError:
+        # If the range is invalid (e.g. force push made last_successful obsolete),
+        # fall back to using the last 10 commits in the current branch.
+        print("\nInvalid revision range error, using last 10 commits as fallback.\n")
+        fallback_commit = run_command("git rev-parse HEAD~5")
+        messages = get_commit_messages(fallback_commit, current_commit)
+        last_successful = fallback_commit
+
     # Start with the tag header
     new_section = f"{TAG_MARKER} {tag}\n"
 
