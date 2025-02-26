@@ -89,6 +89,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Install dependencies - ldid & xcbeautify
         run: |
@@ -340,7 +341,49 @@ jobs:
           git push --verbose
           popd
   
+      - name: Get last successful commit
+        id: get_last_commit
+        run: |
+          # Try to get the last successful workflow run commit
+          LAST_SUCCESS_SHA=$(gh run list --branch "${{ github.ref_name }}" --status success --json headSha --jq '.[0].headSha')
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_OUTPUT
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create release notes
+        run: |
+          LAST_SUCCESS_SHA=${{ steps.get_last_commit.outputs.LAST_SUCCESS_SHA}}
+          echo "Last successful commit SHA: $LAST_SUCCESS_SHA"
+          
+          FROM_COMMIT=$LAST_SUCCESS_SHA
+          # Check if we got a valid SHA
+          if [ -z "$LAST_SUCCESS_SHA" ] || [ "$LAST_SUCCESS_SHA" = "null" ]; then
+            echo "No successful run found, using initial commit of branch"
+            # Get the first commit of the branch (initial commit)
+            FROM_COMMIT=$(git rev-list --max-parents=0 HEAD)
+          fi
   
+          python3 update_release_notes.py $FROM_COMMIT ${{ inputs.release_tag }} ${{ github.ref_name }}
+          # cat release-notes.md
+
+      - name: Upload release-notes.md
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ needs.common.outputs.short-commit }}.md
+          path: release-notes.md
+
+      - name: Upload update_release_notes.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_release_notes-${{ needs.common.outputs.short-commit }}.py
+          path: update_release_notes.py
+
+      - name: Upload update_apps.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_apps-${{ needs.common.outputs.short-commit }}.py
+          path: update_apps.py
 
   tests-build:
     name: Tests-Build SideStore - ${{ inputs.release_tag }}
@@ -716,6 +759,29 @@ jobs:
         with:
           name: test-results-${{ needs.common.outputs.short-commit }}.zip  
   
+      - name: Download release-notes.md
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ needs.common.outputs.short-commit }}.md
+
+      - name: Download update_release_notes.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_release_notes-${{ needs.common.outputs.short-commit }}.py
+
+      - name: Download update_apps.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_apps-${{ needs.common.outputs.short-commit }}.py
+
+      - name: Read release notes
+        id: release_notes
+        run: |
+          CONTENT=$(python3 update_release_notes.py --retrieve ${{ inputs.release_tag }})
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+  
       - name: List files before upload
         run: |
           echo ">>>>>>>>> Workdir <<<<<<<<<<"
@@ -752,6 +818,8 @@ jobs:
               Commit SHA: `${{ github.sha }}`
               Version: `${{ needs.build.outputs.version }}`
 
+              ${{ steps.release_notes.outputs.content }}
+
       - name: Get formatted date
         run: |
           FORMATTED_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -784,6 +852,9 @@ jobs:
             - version: "${{ needs.build.outputs.version }}"
             - revision: "${{ needs.common.outputs.short-commit }}"
             - timestamp: "${{ steps.date.outputs.date }}"
+          
+          Release Notes:
+          ${{ steps.release_notes.outputs.content }}
           EOF
           )
 
