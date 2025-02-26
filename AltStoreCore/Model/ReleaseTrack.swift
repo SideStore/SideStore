@@ -13,10 +13,10 @@ import CoreData
 public class ReleaseTrack: BaseEntity, Decodable
 {
     // attributes
-    @NSManaged @objc(track) private var _track: String?
+    @NSManaged @objc(track) public private(set) var _track: String?
     
     // RelationShips
-    @NSManaged @objc(releases) private var _releases: NSOrderedSet?
+    @NSManaged @objc(releases) public private(set) var _releases: NSOrderedSet?
     @NSManaged public private(set) var storeApp: StoreApp?
     
     private enum CodingKeys: String, CodingKey, CaseIterable {
