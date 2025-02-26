@@ -45,15 +45,12 @@ on:
         required: false
 
 jobs:
-  serialize:
-    name: Wait for other jobs
-    concurrency:
-      group: build-number-increment   # serialize for build num cache access
+  common:
+    name: Shared Steps
     strategy:
       fail-fast: false
     runs-on: 'macos-15'
     steps:
-    - run: echo "No other contending jobs are running now...Build is ready to start"
     - name: Set short commit hash
       id: commit-id
       run: |
@@ -66,7 +63,9 @@ jobs:
 
   build:
     name: Build SideStore - ${{ inputs.release_tag }}
-    needs: serialize
+    needs: common
+    concurrency:
+      group: build-number-increment   # serialize for build num cache access
     strategy:
       fail-fast: false
       matrix:
@@ -81,6 +80,8 @@ jobs:
       release-channel: ${{ steps.release-channel.outputs.RELEASE_CHANNEL }}
 
     steps:
+      - run: echo "No other contending jobs are running now...Build is ready to start"
+
       - name: Set beta status
         run: echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
 
@@ -157,7 +158,7 @@ jobs:
           build_num=$(echo "${{ steps.version.outputs.version }}" | sed -E 's/.*\.([0-9]+)\+.*/\1/')
 
           # Combine them into the final output
-          MARKETING_VERSION="${version}-${date}.${build_num}+${{ needs.serialize.outputs.short-commit }}"
+          MARKETING_VERSION="${version}-${date}.${build_num}+${{ needs.common.outputs.short-commit }}"
 
           echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_ENV
           echo "MARKETING_VERSION=$MARKETING_VERSION" >> $GITHUB_OUTPUT
@@ -336,7 +337,7 @@ jobs:
 
   tests-build:
     name: Tests-Build SideStore - ${{ inputs.release_tag }}
-    needs: serialize
+    needs: common
     strategy:
       fail-fast: false
       matrix:
@@ -467,12 +468,12 @@ jobs:
         if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: encrypted-tests-build-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          name: encrypted-tests-build-logs-${{ needs.common.outputs.short-commit }}.zip
           path: encrypted-tests-build-logs.zip
 
   tests-run:
     name: Tests-Run SideStore - ${{ inputs.release_tag }}
-    needs: [serialize, tests-build]
+    needs: [common, tests-build]
     strategy:
       fail-fast: false
       matrix:
@@ -625,7 +626,7 @@ jobs:
         if: always() && steps.encrypt-test-log.outputs.encrypted == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: encrypted-tests-run-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          name: encrypted-tests-run-logs-${{ needs.common.outputs.short-commit }}.zip
           path: encrypted-tests-run-logs.zip
 
       - name: Print tests-recording.log contents (if exists)
@@ -655,7 +656,7 @@ jobs:
         if: ${{ always() && steps.check-recording.outputs.found == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: tests-recording-${{ needs.serialize.outputs.short-commit }}.mp4
+          name: tests-recording-${{ needs.common.outputs.short-commit }}.mp4
           path: tests-recording.mp4
 
       - name: Zip test-results
@@ -664,14 +665,14 @@ jobs:
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip
+          name: test-results-${{ needs.common.outputs.short-commit }}.zip
           path: test-results.zip
 
   deploy:
     name: Deploy SideStore - ${{ inputs.release_tag }}
     runs-on: macos-15
-    # needs: [serialize, build]
-    needs: [serialize, build, tests-build, tests-run]
+    # needs: [common, build]
+    needs: [common, build, tests-build, tests-run]
     steps:
       - name: Download IPA artifact
         uses: actions/download-artifact@v4
@@ -691,22 +692,22 @@ jobs:
       - name: Download encrypted-tests-build-logs artifact
         uses: actions/download-artifact@v4
         with:
-          name: encrypted-tests-build-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          name: encrypted-tests-build-logs-${{ needs.common.outputs.short-commit }}.zip
 
       - name: Download encrypted-tests-run-logs artifact
         uses: actions/download-artifact@v4
         with:
-          name: encrypted-tests-run-logs-${{ needs.serialize.outputs.short-commit }}.zip
+          name: encrypted-tests-run-logs-${{ needs.common.outputs.short-commit }}.zip
 
       - name: Download tests-recording artifact
         uses: actions/download-artifact@v4
         with:
-          name: tests-recording-${{ needs.serialize.outputs.short-commit }}.mp4
+          name: tests-recording-${{ needs.common.outputs.short-commit }}.mp4
 
       - name: Download test-results artifact
         uses: actions/download-artifact@v4
         with:
-          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip
+          name: test-results-${{ needs.common.outputs.short-commit }}.zip
 
       - name: Download beta-build-num artifact
         if: ${{ inputs.is_beta }}
@@ -765,7 +766,7 @@ jobs:
           
           echo "Adding files to commit"
           git add --verbose build_number.txt
-          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.common.outputs.short-commit }} deployment" || echo "No changes to commit"
 
           echo "Pushing to remote repo"
           git push --verbose
@@ -801,7 +802,7 @@ jobs:
           LOCALIZED_DESCRIPTION=$(cat <<EOF
           This is release for:
             - version: "${{ needs.build.outputs.version }}"
-            - revision: "${{ needs.serialize.outputs.short-commit }}"
+            - revision: "${{ needs.common.outputs.short-commit }}"
             - timestamp: "${{ steps.date.outputs.date }}"
           EOF
           )
@@ -851,7 +852,7 @@ jobs:
 
           # Commit changes and push using SSH
           git add --verbose ./_includes/source.json
-          git commit -m " - updated for ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
+          git commit -m " - updated for ${{ needs.common.outputs.short-commit }} deployment" || echo "No changes to commit"
 
           git push --verbose
           popd

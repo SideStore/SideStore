@@ -1,8 +1,8 @@
 name: Nightly SideStore Build
 on:
-  push:
-    branches:
-      - develop
+  # push:
+  #   branches:
+  #     - develop
   schedule:
     - cron: '0 0 * * *' # Runs every night at midnight UTC
   workflow_dispatch: # Allows manual trigger
