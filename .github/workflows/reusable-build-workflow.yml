@@ -179,11 +179,11 @@ jobs:
       - name: (Build) Cache Build
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-build-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-build-
-          swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.sha }}
+          key: xcode-cache-deriveddata-build-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-build-${{ github.ref_name }}-
+          swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.ref_name }}-${{ github.sha }}
           swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-build-
+            xcode-cache-sourcedata-build-${{ github.ref_name }}-
 
       - name: (Build) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -193,7 +193,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
           # restore-keys: |         # commented out to strictly check cache for this particular podfile
           #   pods-cache-
 
@@ -206,7 +206,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-
+          key: pods-cache-build-${{ github.ref_name }}-
 
 
       - name: (Build) Install CocoaPods
@@ -221,7 +221,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Build) Clean previous build artifacts
         # using 'tee' to intercept stdout and log for detailed build-log
@@ -414,11 +414,11 @@ jobs:
       - name: (Tests-Build) Cache Build
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-test-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-test-
-          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
+          key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-test-${{ github.ref_name }}-
+          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
           swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-test-
+            xcode-cache-sourcedata-test-${{ github.ref_name }}-
 
       - name: (Tests-Build) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -428,7 +428,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Build) Restore Pods from Cache (Last Available)
         if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
@@ -439,7 +439,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-
+          key: pods-cache-test-${{ github.ref_name }}-
 
       - name: (Tests-Build) Install CocoaPods
         run: pod install
@@ -452,7 +452,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Build) Clean previous build artifacts
         run: |
@@ -551,11 +551,11 @@ jobs:
       - name: (Tests-Run) Cache Build
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-test-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-test-
-          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
+          key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-test-${{ github.ref_name }}-
+          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
           swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-test-
+            xcode-cache-sourcedata-test-${{ github.ref_name }}-
 
       - name: (Tests-Run) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -565,7 +565,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Run) Restore Pods from Cache (Last Available)
         if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
@@ -576,7 +576,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-
+          key: pods-cache-test-${{ github.ref_name }}-
 
       - name: (Tests-Run) Install CocoaPods
         run: pod install
@@ -589,7 +589,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Run) Clean previous build artifacts
         run: |
