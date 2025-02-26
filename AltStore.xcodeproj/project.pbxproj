@@ -678,6 +678,7 @@
 		A8696EE32D34512C00E96389 /* RemoveAppExtensionsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAppExtensionsOperation.swift; sourceTree = "<group>"; };
 		A881E7C62D6EF58C00954AD2 /* AltStore11ToAltStore17.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore11ToAltStore17.xcmappingmodel; sourceTree = "<group>"; };
 		A881E7CA2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreApp11To17MigrationPolicy.swift; sourceTree = "<group>"; };
+		A881E8562D6FBBAF00954AD2 /* DataStructureTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DataStructureTests.xcconfig; sourceTree = "<group>"; };
 		A88B8C482D35AD3200F53F9D /* OperationsLoggingContolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationsLoggingContolView.swift; sourceTree = "<group>"; };
 		A88B8C542D35F1EC00F53F9D /* OperationsLoggingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationsLoggingControl.swift; sourceTree = "<group>"; };
 		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1269,6 +1270,7 @@
 				A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */,
 				A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */,
 				A8E2DB2C2D684D39009E5D31 /* UITests.xcconfig */,
+				A881E8562D6FBBAF00954AD2 /* DataStructureTests.xcconfig */,
 			);
 			path = xcconfigs;
 			sourceTree = "<group>";
@@ -3532,6 +3534,7 @@
 		};
 		A81A8CCA2D68BA610086C96F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A881E8562D6FBBAF00954AD2 /* DataStructureTests.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -3546,7 +3549,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.SideStore.DataStructuresTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -3557,6 +3560,7 @@
 		};
 		A81A8CCB2D68BA610086C96F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A881E8562D6FBBAF00954AD2 /* DataStructureTests.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -3573,7 +3577,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.SideStore.DataStructuresTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3600,7 +3604,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "--PRODUCT-BUNDLE-IDENTIFIER-.UITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -3618,6 +3622,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -3626,7 +3631,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "--PRODUCT-BUNDLE-IDENTIFIER-.UITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
