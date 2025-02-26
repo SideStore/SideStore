@@ -4,6 +4,13 @@ import sys
 import os
 import re
 
+IGNORED_AUTHORS = [
+    "=",        # probably someone used an equalTo ?!  # anyway we are ignoring it!
+]
+
+TAG_MARKER = "###"
+HEADER_MARKER = "####"
+
 def run_command(cmd):
     """Run a shell command and return its trimmed output."""
     return subprocess.check_output(cmd, shell=True, text=True).strip()
@@ -26,7 +33,9 @@ def get_authors_in_range(commit_range, fmt="%an"):
     output = run_command(cmd)
     if not output:
         return set()
-    return set(line.strip() for line in output.splitlines() if line.strip())
+    authors = set(line.strip() for line in output.splitlines() if line.strip())
+    authors = set(authors) - set(IGNORED_AUTHORS)
+    return authors
 
 def get_first_commit_of_repo():
     """Return the first commit in the repository (root commit)."""
@@ -79,10 +88,10 @@ def generate_release_notes(last_successful, tag, branch):
     messages = get_commit_messages(last_successful, current_commit)
     
     # Start with the tag header
-    new_section = f"### {tag}\n"
+    new_section = f"{TAG_MARKER} {tag}\n"
 
     # What's Changed section (always present)
-    new_section += "#### What's Changed\n"
+    new_section += f"{HEADER_MARKER} What's Changed\n"
     
     if not messages or last_successful == current_commit:
         new_section += "- Nothing...\n"
@@ -96,7 +105,7 @@ def generate_release_notes(last_successful, tag, branch):
     new_contributors = recent_authors - all_previous_authors
     
     if new_contributors:
-        new_section += "\n#### New Contributors\n"
+        new_section += f"\n{HEADER_MARKER} New Contributors\n"
         for author in sorted(new_contributors):
             new_section += f"- {format_contributor(author)} made their first contribution\n"
     
@@ -104,13 +113,13 @@ def generate_release_notes(last_successful, tag, branch):
     if messages and last_successful != current_commit:
         repo_url = get_repo_url()
         changelog_link = f"{repo_url}/compare/{last_successful}...{current_commit}"
-        new_section += f"\n#### Full Changelog: [{last_successful[:8]}...{current_commit[:8]}]({changelog_link})\n"
+        new_section += f"\n{HEADER_MARKER} Full Changelog: [{last_successful[:8]}...{current_commit[:8]}]({changelog_link})\n"
     
     return new_section
 
 def update_release_md(existing_content, new_section, tag):
     """
-    Update release.md based on rules:
+    Update input based on rules:
     1. If tag exists, update it
     2. Special tags (alpha, beta, nightly) stay at the top in that order
     3. Numbered tags follow special tags
@@ -125,7 +134,7 @@ def update_release_md(existing_content, new_section, tag):
         return new_section
     
     # Split the content into sections by headers
-    pattern = r'(^## .*$)'
+    pattern = fr'(^{TAG_MARKER} .*$)'
     sections = re.split(pattern, existing_content, flags=re.MULTILINE)
     
     # Create a list to store the processed content
@@ -184,7 +193,7 @@ def update_release_md(existing_content, new_section, tag):
                 if t == tag_lower:
                     break
                 if special_tags_map[t]:
-                    insert_pos = processed_sections.index(f"### {t}")
+                    insert_pos = processed_sections.index(f"{TAG_MARKER} {t}")
                     insert_pos += 2  # Move past the header and content
             
             # Insert at the determined position
@@ -215,7 +224,7 @@ def update_release_md(existing_content, new_section, tag):
                     for prev_tag in special_tags[:i]:
                         if special_tags_map[prev_tag]:
                             # Find the position after this tag
-                            prev_index = processed_sections.index(f"### {prev_tag}")
+                            prev_index = processed_sections.index(f"{TAG_MARKER} {prev_tag}")
                             insert_pos = prev_index + 2  # Skip header and content
             
             processed_sections.insert(insert_pos, new_section)
@@ -236,7 +245,7 @@ def update_release_md(existing_content, new_section, tag):
     # Combine sections ensuring proper spacing
     result = ""
     for i, section in enumerate(processed_sections):
-        if i > 0 and section.startswith("### "):
+        if i > 0 and section.startswith(f"{TAG_MARKER} "):
             # Ensure single blank line before headers
             if not result.endswith("\n\n"):
                 result = result.rstrip("\n") + "\n\n"
@@ -245,7 +254,7 @@ def update_release_md(existing_content, new_section, tag):
     return result.rstrip() + "\n"
 
 
-def retrieve_tag_content(tag, file_path="release.md"):
+def retrieve_tag_content(tag, file_path):
     if not os.path.exists(file_path):
         return ""
     
@@ -253,7 +262,7 @@ def retrieve_tag_content(tag, file_path="release.md"):
         content = f.read()
     
     # Create a pattern for the tag header (case-insensitive)
-    pattern = re.compile(r'^## ' + re.escape(tag) + r'$', re.MULTILINE | re.IGNORECASE)
+    pattern = re.compile(fr'^{TAG_MARKER} ' + re.escape(tag) + r'$', re.MULTILINE | re.IGNORECASE)
     
     # Find the tag header
     match = pattern.search(content)
@@ -268,7 +277,7 @@ def retrieve_tag_content(tag, file_path="release.md"):
         start_pos += 1
     
     # Find the next tag header after the current tag's content
-    next_tag_match = re.search(r'^## ', content[start_pos:], re.MULTILINE)
+    next_tag_match = re.search(fr'^{TAG_MARKER} ', content[start_pos:], re.MULTILINE)
     
     if next_tag_match:
         end_pos = start_pos + next_tag_match.start()
@@ -278,7 +287,7 @@ def retrieve_tag_content(tag, file_path="release.md"):
         return content[start_pos:].strip()
 
 def main():
-    # Update release.md file
+    # Update input file
     release_file = "release-notes.md"
 
     # Usage: python release.py <last_successful_commit> [tag] [branch]
@@ -300,7 +309,7 @@ def main():
         if tag_content:
             print(tag_content)
         else:
-            print(f"Tag '{args[1]}' not found in release.md")
+            print(f"Tag '{args[1]}' not found in '{release_file}'")
         return
     
     # Original functionality for generating release notes
