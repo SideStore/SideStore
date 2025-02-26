@@ -80,7 +80,8 @@ jobs:
     secrets: inherit
 
   deploy:
-    needs: [serialize, build, tests-build, tests-run]
+    needs: [serialize, build, tests-build, tests-run]  # Keep tests-run in needs
+    if: ${{ always() && (needs.tests-run.result == 'skipped' || needs.tests-run.result == 'success') }}
     uses: ./.github/workflows/sidestore-deploy.yml
     with:
       is_beta: ${{ inputs.is_beta }}
