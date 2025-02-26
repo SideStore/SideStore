@@ -47,13 +47,15 @@ on:
 jobs:
   serialize:
     name: Wait for other jobs
-    concurrency:
-      group: build-number-increment   # serialize for build num cache access
+    # since build cache, test-build cache, test-run cache are involved, out of order exec if serialization is on individual jobs will wreak all sorts of havoc
+    # so we serialize on the entire workflow
+    concurrency:                  
+      group: serialize-workflow
     strategy:
       fail-fast: false
     runs-on: 'macos-15'
     steps:
-    - run: echo "No other contending jobs are running now...Build is ready to start"
+    - run: echo "No other contending jobs are running now..."
     - name: Set short commit hash
       id: commit-id
       run: |
@@ -72,7 +74,7 @@ jobs:
       matrix:
         include:
           - os: 'macos-15'
-            version: '16.1'
+            version: '16.2'
 
     runs-on: ${{ matrix.os }}
     outputs:
@@ -88,6 +90,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Install dependencies - ldid & xcbeautify
         run: |
@@ -174,14 +177,32 @@ jobs:
         with:
           xcode-version: ${{ matrix.version }}
 
-      - name: (Build) Cache Build
-        uses: irgaly/xcode-cache@v1
+      - name: (Build) Restore Xcode & SwiftPM Cache (Exact match)
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
         with:
-          key: xcode-cache-deriveddata-build-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-build-
-          swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.sha }}
-          swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-build-
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: (Build) Restore Xcode & SwiftPM Cache (Last Available)
+        id: xcode-cache-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-
+
+      # - name: (Build) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     key: xcode-cache-deriveddata-build-${{ github.ref_name }}-${{ github.sha }}
+      #     restore-keys: xcode-cache-deriveddata-build-${{ github.ref_name }}-
+      #     swiftpm-cache-key: xcode-cache-sourcedata-build-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-restore-keys: |
+      #       xcode-cache-sourcedata-build-${{ github.ref_name }}-
 
       - name: (Build) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -191,7 +212,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
           # restore-keys: |         # commented out to strictly check cache for this particular podfile
           #   pods-cache-
 
@@ -204,7 +225,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-
+          key: pods-cache-build-${{ github.ref_name }}-
 
 
       - name: (Build) Install CocoaPods
@@ -219,7 +240,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-build-${{ hashFiles('Podfile') }}
+          key: pods-cache-build-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Build) Clean previous build artifacts
         # using 'tee' to intercept stdout and log for detailed build-log
@@ -266,6 +287,16 @@ jobs:
       - name: Convert to IPA
         run: make ipa | tee -a build/logs/build.log
 
+      - name: (Build) Save Xcode & SwiftPM Cache
+        id: cache-save
+        if: ${{ steps.xcode-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-build-${{ github.ref_name }}-${{ github.sha }}
+        
       - name: (Build) List Files and Build artifacts
         run: |
           echo ">>>>>>>>> Workdir <<<<<<<<<<"
@@ -282,6 +313,10 @@ jobs:
 
           echo ">>>>>>>>> SideStore.xcarchive <<<<<<<<<<"
           find SideStore.xcarchive -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
+          echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
           echo ""
 
       - name: Encrypt build-logs for upload
@@ -322,19 +357,69 @@ jobs:
           name: SideStore-${{ steps.version.outputs.version }}-dSYMs.zip
           path: SideStore.dSYMs.zip
 
-      - name: Zip beta-beta-build-num & update_apps.py
-        run: |
-          zip -r -9 ./beta-build-num.zip ./SideStore/beta-build-num update_apps.py
-
-      - name: Upload beta-build-num artifact
+      - name: Keep rolling the build numbers for each successful build
         if: ${{ inputs.is_beta }}
+        run: |
+          pushd SideStore/beta-build-num/
+  
+          echo "Configure Git user (committer details)"
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          
+          echo "Adding files to commit"
+          git add --verbose build_number.txt
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
+
+          echo "Pushing to remote repo"
+          git push --verbose
+          popd
+  
+      - name: Get last successful commit
+        id: get_last_commit
+        run: |
+          # Try to get the last successful workflow run commit
+          LAST_SUCCESS_SHA=$(gh run list --branch "${{ github.ref_name }}" --status success --json headSha --jq '.[0].headSha')
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_OUTPUT
+          echo "LAST_SUCCESS_SHA=$LAST_SUCCESS_SHA" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create release notes
+        run: |
+          LAST_SUCCESS_SHA=${{ steps.get_last_commit.outputs.LAST_SUCCESS_SHA}}
+          echo "Last successful commit SHA: $LAST_SUCCESS_SHA"
+          
+          FROM_COMMIT=$LAST_SUCCESS_SHA
+          # Check if we got a valid SHA
+          if [ -z "$LAST_SUCCESS_SHA" ] || [ "$LAST_SUCCESS_SHA" = "null" ]; then
+            echo "No successful run found, using initial commit of branch"
+            # Get the first commit of the branch (initial commit)
+            FROM_COMMIT=$(git rev-list --max-parents=0 HEAD)
+          fi
+  
+          python3 update_release_notes.py $FROM_COMMIT ${{ inputs.release_tag }} ${{ github.ref_name }}
+          # cat release-notes.md
+
+      - name: Upload release-notes.md
         uses: actions/upload-artifact@v4
         with:
-          name: beta-build-num-${{ steps.version.outputs.version }}.zip
-          path: beta-build-num.zip
+          name: release-notes-${{ needs.serialize.outputs.short-commit }}.md
+          path: release-notes.md
 
+      - name: Upload update_release_notes.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_release_notes-${{ needs.serialize.outputs.short-commit }}.py
+          path: update_release_notes.py
+
+      - name: Upload update_apps.py
+        uses: actions/upload-artifact@v4
+        with:
+          name: update_apps-${{ needs.serialize.outputs.short-commit }}.py
+          path: update_apps.py
 
   tests-build:
+    if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_BUILD == '1' }}
     name: Tests-Build SideStore - ${{ inputs.release_tag }}
     needs: serialize
     strategy:
@@ -342,7 +427,7 @@ jobs:
       matrix:
         include:
           - os: 'macos-15'
-            version: '16.1'
+            version: '16.2'
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -358,16 +443,36 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: '16.1'
+          xcode-version: '16.2'
 
-      - name: (Tests-Build) Cache Build
-        uses: irgaly/xcode-cache@v1
+      # - name: (Tests-Build) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     # tests shouldn't restore cache unless it is same build
+      #     # restore-keys: xcode-cache-deriveddata-test-${{ github.ref_name }}-
+      #     swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-restore-keys: |
+      #       xcode-cache-sourcedata-test-${{ github.ref_name }}-
+      #     delete-used-deriveddata-cache: true
+
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Exact match)
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
         with:
-          key: xcode-cache-deriveddata-test-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-test-
-          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
-          swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-test-
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Last Available)
+        id: xcode-cache-restore-recent
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-
 
       - name: (Tests-Build) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -377,7 +482,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Build) Restore Pods from Cache (Last Available)
         if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
@@ -388,7 +493,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-
+          key: pods-cache-test-${{ github.ref_name }}-
 
       - name: (Tests-Build) Install CocoaPods
         run: pod install
@@ -401,8 +506,15 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
+      - name: Clean Derived Data (if required)
+        if: ${{ vars.PERFORM_CLEAN_TESTS_BUILD == '1' }}
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData/
+          make clean
+          xcodebuild clean
+  
       - name: (Tests-Build) Clean previous build artifacts
         run: |
           make clean
@@ -435,6 +547,16 @@ jobs:
         run: |
           NSUnbufferedIO=YES make -B build-tests 2>&1 | tee -a build/logs/tests-build.log | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
 
+      - name: (Tests-Build) Save Xcode & SwiftPM Cache
+        id: cache-save
+        if: ${{ steps.xcode-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
+        
       - name: (Tests-Build) List Files and Build artifacts
         if: always()
         run: |
@@ -445,6 +567,16 @@ jobs:
           echo ">>>>>>>>> Build <<<<<<<<<<"
           find build -maxdepth 3 -exec ls -ld {} +  || true  # List contents if directory exists
           echo ""
+
+          echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
+          find ~/Library/Developer/Xcode/DerivedData -maxdepth 8 -exec ls -ld {} + | grep "Build/Products"  >> tests-build-deriveddata.txt || true
+          echo ""
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: 
+          name: tests-build-deriveddata-${{ needs.serialize.outputs.short-commit }}.txt
+          path: tests-build-deriveddata.txt
 
       - name: Encrypt tests-build-logs for upload
         id: encrypt-test-log
@@ -471,6 +603,7 @@ jobs:
           path: encrypted-tests-build-logs.zip
 
   tests-run:
+    if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
     name: Tests-Run SideStore - ${{ inputs.release_tag }}
     needs: [serialize, tests-build]
     strategy:
@@ -478,7 +611,7 @@ jobs:
       matrix:
         include:
           - os: 'macos-15'
-            version: '16.1'
+            version: '16.2'
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -487,25 +620,31 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Boot Simulator for testing
+      - name: Boot Simulator async(nohup) for testing
         run: |
           mkdir -p build/logs
-          make -B boot-sim-async | tee -a build/logs/tests-run.log
-          exit ${PIPESTATUS[0]}
+          nohup make -B boot-sim-async </dev/null >> build/logs/tests-run.log 2>&1 &
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: '16.1'
+          xcode-version: '16.2'
 
-      - name: (Tests-Run) Cache Build
-        uses: irgaly/xcode-cache@v1
+      # - name: (Tests-Run) Cache Build
+      #   uses: irgaly/xcode-cache@v1.8.1
+      #   with:
+      #     # This comes from 
+      #     key: xcode-cache-deriveddata-test-${{ github.ref_name }}-${{ github.sha }}
+      #     swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.ref_name }}-${{ github.sha }}
+      
+      - name: (Tests-Build) Restore Xcode & SwiftPM Cache (Exact match) [from tests-build job]
+        id: xcode-cache-restore
+        uses: actions/cache/restore@v3
         with:
-          key: xcode-cache-deriveddata-test-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-test-
-          swiftpm-cache-key: xcode-cache-sourcedata-test-${{ github.sha }}
-          swiftpm-cache-restore-keys: |
-            xcode-cache-sourcedata-test-
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-cache-tests-${{ github.ref_name }}-${{ github.sha }}
 
       - name: (Tests-Run) Restore Pods from Cache (Exact match)
         id: pods-restore
@@ -515,7 +654,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Run) Restore Pods from Cache (Last Available)
         if: ${{ steps.pods-restore.outputs.cache-hit != 'true' }}
@@ -526,7 +665,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-
+          key: pods-cache-test-${{ github.ref_name }}-
 
       - name: (Tests-Run) Install CocoaPods
         run: pod install
@@ -539,7 +678,7 @@ jobs:
             ./Podfile.lock
             ./Pods/
             ./AltStore.xcworkspace/
-          key: pods-cache-test-${{ hashFiles('Podfile') }}
+          key: pods-cache-test-${{ github.ref_name }}-${{ hashFiles('Podfile') }}
 
       - name: (Tests-Run) Clean previous build artifacts
         run: |
@@ -565,8 +704,14 @@ jobs:
           echo ""
 
           echo ">>>>>>>>> Xcode-Derived-Data <<<<<<<<<<"
-          ls -la ~/Library/Developer/Xcode/DerivedData || true  # List contents if directory exists
+          find ~/Library/Developer/Xcode/DerivedData -maxdepth 8 -exec ls -ld {} + | grep "Build/Products" >> tests-run-deriveddata.txt || true
           echo ""
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: 
+          name: tests-run-deriveddata-${{ needs.serialize.outputs.short-commit }}.txt
+          path: tests-run-deriveddata.txt
 
       # we expect simulator to have been booted by now, so exit otherwise
       - name: Simulator Boot Check
@@ -689,34 +834,51 @@ jobs:
           name: encrypted-build-logs-${{ needs.build.outputs.version }}.zip
 
       - name: Download encrypted-tests-build-logs artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_BUILD == '1' }}
         uses: actions/download-artifact@v4
         with:
           name: encrypted-tests-build-logs-${{ needs.serialize.outputs.short-commit }}.zip
 
       - name: Download encrypted-tests-run-logs artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
         uses: actions/download-artifact@v4
         with:
           name: encrypted-tests-run-logs-${{ needs.serialize.outputs.short-commit }}.zip
 
       - name: Download tests-recording artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
         uses: actions/download-artifact@v4
         with:
           name: tests-recording-${{ needs.serialize.outputs.short-commit }}.mp4
 
       - name: Download test-results artifact
+        if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
         uses: actions/download-artifact@v4
         with:
-          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip
-
-      - name: Download beta-build-num artifact
-        if: ${{ inputs.is_beta }}
-        uses: actions/download-artifact@v4
-        with:
-          name: beta-build-num-${{ needs.build.outputs.version }}.zip
-      - name: Un-Zip beta-beta-build-num & update_apps.py
-        run: |
-          unzip beta-build-num.zip -d .
+          name: test-results-${{ needs.serialize.outputs.short-commit }}.zip  
   
+      - name: Download release-notes.md
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ needs.serialize.outputs.short-commit }}.md
+
+      - name: Download update_release_notes.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_release_notes-${{ needs.serialize.outputs.short-commit }}.py
+
+      - name: Download update_apps.py
+        uses: actions/download-artifact@v4
+        with:
+          name: update_apps-${{ needs.serialize.outputs.short-commit }}.py
+
+      - name: Read release notes
+        id: release_notes
+        run: |
+          CONTENT=$(python3 update_release_notes.py --retrieve ${{ inputs.release_tag }})
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
   
       - name: List files before upload
         run: |
@@ -754,22 +916,7 @@ jobs:
               Commit SHA: `${{ github.sha }}`
               Version: `${{ needs.build.outputs.version }}`
 
-      - name: Publish to SideStore/beta-build-num
-        if: ${{ inputs.is_beta }}
-        run: |
-          pushd SideStore/beta-build-num/
-  
-          echo "Configure Git user (committer details)"
-          git config user.name "GitHub Actions"
-          git config user.email "github-actions@github.com"
-          
-          echo "Adding files to commit"
-          git add --verbose build_number.txt
-          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ needs.serialize.outputs.short-commit }} deployment" || echo "No changes to commit"
-
-          echo "Pushing to remote repo"
-          git push --verbose
-          popd
+              ${{ steps.release_notes.outputs.content }}
 
       - name: Get formatted date
         run: |
@@ -803,6 +950,9 @@ jobs:
             - version: "${{ needs.build.outputs.version }}"
             - revision: "${{ needs.serialize.outputs.short-commit }}"
             - timestamp: "${{ steps.date.outputs.date }}"
+          
+          Release Notes:
+          ${{ steps.release_notes.outputs.content }}
           EOF
           )
 
