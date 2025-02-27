@@ -235,6 +235,7 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             
             cell.tintColor = app.tintColor ?? .altPrimary
+            cell.versionDescriptionTextView.maximumNumberOfLines = 2
             cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription ?? "nil"
             
             cell.bannerView.iconImageView.image = nil

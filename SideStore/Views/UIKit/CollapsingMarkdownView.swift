@@ -23,6 +23,15 @@ struct MarkdownManager
         static let quote: UIFont    = .italicSystemFont(ofSize: 14)
     }
     
+    struct Color{
+        static let header = UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
+        }
+        static let bold = UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ? UIColor.lightText : UIColor.darkText
+        }
+    }
+    
     static var enabledElements: MarkdownParser.EnabledElements {
         [
             .header,
@@ -36,26 +45,27 @@ struct MarkdownManager
     }
     
     var markdownParser: MarkdownParser {
-        MarkdownParser(font: Self.Fonts.body)
+        MarkdownParser(
+            font: Self.Fonts.body,
+            color: Self.Color.bold
+        )
     }
 }
-
 final class CollapsingMarkdownView: UIView {
     /// Called when the collapse state toggles.
     var didToggleCollapse: (() -> Void)?
-        
     
     // MARK: - Properties
     var isCollapsed = true {
         didSet {
             guard self.isCollapsed != oldValue else { return }
-            self.updateToggleButtonTitle()
             self.updateCollapsedState()
         }
     }
     
     var maximumNumberOfLines = 3 {
         didSet {
+            self.checkIfNeedsCollapsing()
             self.updateCollapsedState()
             self.setNeedsLayout()
         }
@@ -75,11 +85,13 @@ final class CollapsingMarkdownView: UIView {
     }
     
     let toggleButton = UIButton(type: .system)
-        
+    
     private let textView = UITextView()
     private let markdownParser = MarkdownManager().markdownParser
     
     private var previousSize: CGSize?
+    private var actualLineCount: Int = 0
+    private var needsCollapsing = false
     
     // MARK: - Initialization
     
@@ -98,54 +110,46 @@ final class CollapsingMarkdownView: UIView {
         initialize()
     }
     
-    private var needsCollapsing = false
     private func checkIfNeedsCollapsing() {
+        guard bounds.width > 0, let font = textView.font, font.lineHeight > 0 else {
+            needsCollapsing = false
+            return
+        }
+        
+        // Calculate the number of lines in the text
         let textSize = textView.sizeThatFits(CGSize(width: bounds.width, height: .greatestFiniteMagnitude))
-        let lineHeight = textView.font?.lineHeight ?? 0
-        let actualLines = textSize.height / lineHeight
+        let lineHeight = font.lineHeight
         
-        needsCollapsing = actualLines > CGFloat(maximumNumberOfLines)
+        // Safely calculate actual line count
+        actualLineCount = max(1, Int(ceil(textSize.height / lineHeight)))
         
-        // Hide toggle button if no collapsing needed
+        // Only needs collapsing if actual lines exceed the maximum
+        needsCollapsing = actualLineCount > maximumNumberOfLines
+        
+        // Update button visibility
         toggleButton.isHidden = !needsCollapsing
     }
     
     private func updateCollapsedState() {
-        // Disable animations for this update to prevent gradual rearrangement
+        // Disable animations for this update
         UIView.performWithoutAnimation {
             // Update the button title
             let title = isCollapsed ? NSLocalizedString("More", comment: "") : NSLocalizedString("Less", comment: "")
             toggleButton.setTitle(title, for: .normal)
             
-            // Make sure toggle button is only visible when needed
-            toggleButton.isHidden = !needsCollapsing
-            
-            // Update text view constraints
+            // Set max lines based on collapsed state
             if isCollapsed && needsCollapsing {
                 textView.textContainer.maximumNumberOfLines = maximumNumberOfLines
-                
-                // Create exclusion path for button
-                let buttonSize = toggleButton.sizeThatFits(CGSize(width: 1000, height: 1000))
-                let buttonY = (textView.font?.lineHeight ?? 0) * CGFloat(maximumNumberOfLines - 1)
-                
-                let exclusionFrame = CGRect(
-                    x: bounds.width - buttonSize.width - 5, // Add some padding
-                    y: buttonY,
-                    width: buttonSize.width + 10, // Add padding around button
-                    height: (textView.font?.lineHeight ?? 0) + 5
-                )
-                
-                textView.textContainer.exclusionPaths = [UIBezierPath(rect: exclusionFrame)]
             } else {
                 textView.textContainer.maximumNumberOfLines = 0
-                textView.textContainer.exclusionPaths = []
             }
             
-            // Force an immediate layout update
+            // Button is only visible if content needs collapsing
+            toggleButton.isHidden = !needsCollapsing
+            
+            // Force layout updates
             textView.layoutIfNeeded()
             self.layoutIfNeeded()
-            
-            // Invalidate intrinsic content size to ensure proper sizing
             self.invalidateIntrinsicContentSize()
         }
     }
@@ -172,13 +176,10 @@ final class CollapsingMarkdownView: UIView {
         // Add subviews
         addSubview(textView)
         
-        // Configure toggle button instead of more button
+        // Configure toggle button
         toggleButton.addTarget(self, action: #selector(toggleCollapsed(_:)), for: .primaryActionTriggered)
         addSubview(toggleButton)
         
-        // Update the button title based on current state
-        updateToggleButtonTitle()
-               
         setNeedsLayout()
     }
 
@@ -192,78 +193,73 @@ final class CollapsingMarkdownView: UIView {
         markdownParser.bold.font = MarkdownManager.Fonts.bold
         markdownParser.italic.font = MarkdownManager.Fonts.italic
         markdownParser.quote.font = MarkdownManager.Fonts.quote
+        
+        markdownParser.header.color = MarkdownManager.Color.header
+        markdownParser.bold.color =  MarkdownManager.Color.bold
+        markdownParser.list.color =  MarkdownManager.Color.bold
     }
     
-    // Make sure this is called properly
-    private func updateToggleButtonTitle() {
-        let title = isCollapsed ? NSLocalizedString("More", comment: "") : NSLocalizedString("Less", comment: "")
-        toggleButton.setTitle(title, for: .normal)
-    }
-
-
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
         
         UIView.performWithoutAnimation {
-            textView.frame = bounds
+            // Calculate button height (for spacing)
+            let buttonHeight = toggleButton.sizeThatFits(CGSize(width: 1000, height: 1000)).height
             
-            // Check if content needs collapsing when layout changes
+            // Set textView frame to leave space for button
+            textView.frame = CGRect(
+                x: 0,
+                y: 0,
+                width: bounds.width,
+                height: bounds.height - buttonHeight
+            )
+            
+            // Check if layout changed
             if previousSize?.width != bounds.width {
                 checkIfNeedsCollapsing()
+                updateCollapsedState()
                 previousSize = bounds.size
             }
             
-            // Only position toggle button if it's needed
-            if !toggleButton.isHidden {
-                let buttonSize = toggleButton.sizeThatFits(CGSize(width: 1000, height: 1000))
-                
-                if isCollapsed {
-                    let buttonY = (textView.font?.lineHeight ?? 0) * CGFloat(maximumNumberOfLines - 1)
-                    toggleButton.frame = CGRect(
-                        x: bounds.width - buttonSize.width,
-                        y: buttonY,
-                        width: buttonSize.width,
-                        height: textView.font?.lineHeight ?? 0
-                    )
-                } else {
-                    // Position at the end of content when expanded
-                    let textHeight = textView.sizeThatFits(bounds.size).height
-                    let lineHeight = textView.font?.lineHeight ?? 0
-                    toggleButton.frame = CGRect(
-                        x: bounds.width - buttonSize.width,
-                        y: textHeight - lineHeight,
-                        width: buttonSize.width,
-                        height: lineHeight
-                    )
-                }
-            }
+            // Position toggle button at bottom right
+            let buttonSize = toggleButton.sizeThatFits(CGSize(width: 1000, height: 1000))
+            toggleButton.frame = CGRect(
+                x: bounds.width - buttonSize.width,
+                y: textView.frame.maxY,
+                width: buttonSize.width,
+                height: buttonHeight
+            )
         }
     }
     
     @objc private func toggleCollapsed(_ sender: UIButton) {
-        // Toggle the state instantly
         isCollapsed.toggle()
-        
-        // Update the UI without animation
-        UIView.performWithoutAnimation {
-            updateToggleButtonTitle()
-            updateCollapsedState()
-        }
-        
-        // Notify any observer that a toggle occurred
         didToggleCollapse?()
     }
 
     override var intrinsicContentSize: CGSize {
-        if isCollapsed {
-            guard let font = textView.font else { return super.intrinsicContentSize }
-            let height = font.lineHeight * CGFloat(maximumNumberOfLines) + lineSpacing * CGFloat(maximumNumberOfLines - 1)
-            return CGSize(width: UIView.noIntrinsicMetric, height: height)
+        guard bounds.width > 0, let font = textView.font, font.lineHeight > 0 else {
+            return CGSize(width: UIView.noIntrinsicMetric, height: 0)
+        }
+        
+        let lineHeight = font.lineHeight
+        let buttonHeight = toggleButton.sizeThatFits(CGSize(width: 1000, height: 1000)).height
+        
+        // Always add button height to reserve space for it
+        if isCollapsed && needsCollapsing {
+            // When collapsed and needs collapsing, use maximumNumberOfLines
+            let collapsedHeight = lineHeight * CGFloat(maximumNumberOfLines) + 
+                             lineSpacing * CGFloat(max(0, maximumNumberOfLines - 1))
+            return CGSize(width: UIView.noIntrinsicMetric, height: collapsedHeight + buttonHeight)
+        } else if !needsCollapsing {
+            // Text is shorter than max lines - use actual text height
+            let textSize = textView.sizeThatFits(CGSize(width: bounds.width, height: .greatestFiniteMagnitude))
+            return CGSize(width: UIView.noIntrinsicMetric, height: textSize.height + buttonHeight)
         } else {
-            // When expanded, use the full content size of the text view
-            let size = textView.sizeThatFits(CGSize(width: bounds.width, height: .greatestFiniteMagnitude))
-            return CGSize(width: UIView.noIntrinsicMetric, height: size.height)
+            // When expanded and needs collapsing, use full text height plus button
+            let textSize = textView.sizeThatFits(CGSize(width: bounds.width, height: .greatestFiniteMagnitude))
+            return CGSize(width: UIView.noIntrinsicMetric, height: textSize.height + buttonHeight)
         }
     }
 
@@ -286,8 +282,8 @@ final class CollapsingMarkdownView: UIView {
         
         // Check if content needs collapsing after setting text
         checkIfNeedsCollapsing()
+        updateCollapsedState()
     }
-        
 }
 
 extension CollapsingMarkdownView: UITextViewDelegate {

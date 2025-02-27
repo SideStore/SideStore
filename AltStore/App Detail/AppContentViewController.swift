@@ -43,7 +43,8 @@ final class AppContentViewController: UITableViewController
     }()
     
     @IBOutlet private var subtitleLabel: UILabel!
-    @IBOutlet private var descriptionTextView: CollapsingTextView!
+//    @IBOutlet private var descriptionTextView: CollapsingTextView!
+    @IBOutlet private var descriptionTextView: CollapsingMarkdownView!
 //    @IBOutlet private var versionDescriptionTextView: CollapsingTextView!
     @IBOutlet private var versionDescriptionTextView: CollapsingMarkdownView!
     @IBOutlet private var versionLabel: UILabel!
@@ -55,37 +56,6 @@ final class AppContentViewController: UITableViewController
     
     @IBOutlet private(set) var appDetailCollectionViewController: AppDetailCollectionViewController!
     @IBOutlet private var appDetailCollectionViewHeightConstraint: NSLayoutConstraint!
-//    
-//    override func viewDidLoad()
-//    {
-//        super.viewDidLoad()
-//        
-//        self.tableView.contentInset.bottom = 20
-//        
-//        self.subtitleLabel.text = self.app.subtitle
-//        self.descriptionTextView.text = self.app.localizedDescription
-//        
-//        if let version = self.app.latestAvailableVersion
-//        {
-//            self.versionDescriptionTextView.text = version.localizedDescription ?? "nil"
-//            self.versionLabel.text = String(format: NSLocalizedString("Version %@", comment: ""), version.localizedVersion)
-//            self.versionDateLabel.text = Date().relativeDateString(since: version.date)
-//            self.sizeLabel.text = self.byteCountFormatter.string(fromByteCount: version.size)
-//        }
-//        else
-//        {
-//            self.versionDescriptionTextView.text = "nil"
-//            self.versionLabel.text = nil
-//            self.versionDateLabel.text = nil
-//            self.sizeLabel.text = self.byteCountFormatter.string(fromByteCount: 0)
-//        }
-//        
-//        self.descriptionTextView.maximumNumberOfLines = 5
-//        self.descriptionTextView.moreButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
-//        
-//        self.versionDescriptionTextView.maximumNumberOfLines = 3
-//        self.versionDescriptionTextView.toggleButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
-//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +63,8 @@ final class AppContentViewController: UITableViewController
         self.tableView.contentInset.bottom = 20
         
         self.subtitleLabel.text = self.app.subtitle
-        self.descriptionTextView.text = self.app.localizedDescription
+        let desc = self.app.localizedDescription
+        self.descriptionTextView.text = desc
         
         if let version = self.app.latestAvailableVersion {
             self.versionDescriptionTextView.text = version.localizedDescription ?? "nil"
@@ -107,20 +78,11 @@ final class AppContentViewController: UITableViewController
             self.sizeLabel.text = ByteCountFormatter.string(fromByteCount: 0, countStyle: .file)
         }
         
-        // Set maximum number of lines (no extra target-action needed)
         self.descriptionTextView.maximumNumberOfLines = 5
-        self.versionDescriptionTextView.maximumNumberOfLines = 3
+        self.versionDescriptionTextView.maximumNumberOfLines = 5
         
-        // Instead of adding another target for toggle, set the didToggleCollapse callback:
-        self.descriptionTextView.moreButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
-
-        self.versionDescriptionTextView.didToggleCollapse = { [weak self] in
-            guard let self = self else { return }
-            UIView.animate(withDuration: 0.25) {
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
-        }
+        self.descriptionTextView.toggleButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
+        self.versionDescriptionTextView.toggleButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
     }
     
     override func viewDidLayoutSubviews()
@@ -199,37 +161,18 @@ private extension AppContentViewController
         
         switch sender
         {
-        case self.descriptionTextView.moreButton:
+        case self.descriptionTextView.toggleButton:
             indexPath = IndexPath(row: Row.description.rawValue, section: 0)
-            // Toggle the state for the text view
-            self.descriptionTextView.isCollapsed.toggle()
             
         case self.versionDescriptionTextView.toggleButton:
             indexPath = IndexPath(row: Row.versionDescription.rawValue, section: 0)
-            // Toggle the state for the markdown view
-            self.versionDescriptionTextView.isCollapsed.toggle()
-            
+
         default: return
         }
         
-        // First apply the new state to the views
-        switch Row.allCases[indexPath.row] {
-        case .description:
-            self.descriptionTextView.setNeedsLayout()
-            self.descriptionTextView.layoutIfNeeded()
-            
-        case .versionDescription:
-            self.versionDescriptionTextView.setNeedsLayout()
-            self.versionDescriptionTextView.layoutIfNeeded()
-            
-        default: break
-        }
-        
-        // Then reload the row with animation
-        UIView.animate(withDuration: 0.25) {
-            // Force table view to recalculate height
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
+        // Disable animations to prevent some potentially strange ones.
+        UIView.performWithoutAnimation {
+            self.tableView.reloadRows(at: [indexPath], with: .none)
         }
     }
 }
