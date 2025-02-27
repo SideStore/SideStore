@@ -44,43 +44,49 @@ on:
       BUILD_LOG_ZIP_PASSWORD:
         required: false
 
+
+# since build cache, test-build cache, test-run cache are involved, out of order exec if serialization is on individual jobs will wreak all sorts of havoc
+# so we serialize on the entire workflow
+concurrency:                  
+  group: serialize-workflow
+    
 jobs:
-  serialize:
-    uses: ./.github/workflows/sidestore-serialize.yml
+  shared:
+    uses: ./.github/workflows/sidestore-shared.yml
     secrets: inherit
 
   build:
-    needs: serialize
+    needs: shared
     uses: ./.github/workflows/sidestore-build.yml
     with:
       is_beta: ${{ inputs.is_beta }}
       is_shared_build_num: ${{ inputs.is_shared_build_num }}
       release_tag: ${{ inputs.release_tag }}
-      short_commit: ${{ needs.serialize.outputs.short-commit }}
+      short_commit: ${{ needs.shared.outputs.short-commit }}
       bundle_id: ${{ inputs.bundle_id }}
       bundle_id_suffix: ${{ inputs.bundle_id_suffix }}
     secrets: inherit
 
   tests-build:
     if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_BUILD == '1' }}
-    needs: serialize
+    needs: shared
     uses: ./.github/workflows/sidestore-tests-build.yml
     with:
       release_tag: ${{ inputs.release_tag }}
-      short_commit: ${{ needs.serialize.outputs.short-commit }}
+      short_commit: ${{ needs.shared.outputs.short-commit }}
     secrets: inherit
 
   tests-run:
     if: ${{ vars.ENABLE_TESTS == '1' && vars.ENABLE_TESTS_RUN == '1' }}
-    needs: [serialize, tests-build]
+    needs: [shared, tests-build]
     uses: ./.github/workflows/sidestore-tests-run.yml
     with:
       release_tag: ${{ inputs.release_tag }}
-      short_commit: ${{ needs.serialize.outputs.short-commit }}
+      short_commit: ${{ needs.shared.outputs.short-commit }}
     secrets: inherit
 
   deploy:
-    needs: [serialize, build, tests-build, tests-run]  # Keep tests-run in needs
+    needs: [shared, build, tests-build, tests-run]  # Keep tests-run in needs
     if: ${{ always() && (needs.tests-run.result == 'skipped' || needs.tests-run.result == 'success') }}
     uses: ./.github/workflows/sidestore-deploy.yml
     with:
@@ -91,7 +97,7 @@ jobs:
       upstream_tag: ${{ inputs.upstream_tag }}
       upstream_name: ${{ inputs.upstream_name }}
       version: ${{ needs.build.outputs.version }}
-      short_commit: ${{ needs.serialize.outputs.short-commit }}
+      short_commit: ${{ needs.shared.outputs.short-commit }}
       release_channel: ${{ needs.build.outputs.release-channel }}
       marketing_version: ${{ needs.build.outputs.marketing-version }}
       bundle_id: ${{ inputs.bundle_id }}
