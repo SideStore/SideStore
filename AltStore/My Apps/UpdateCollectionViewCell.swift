@@ -92,16 +92,16 @@ extension UpdateCollectionViewCell
         }
     }
     
-    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
-    {
-        // Ensure cell is laid out so it will report correct size.
-        self.versionDescriptionTextView.setNeedsLayout()
-        self.versionDescriptionTextView.layoutIfNeeded()
-        
-        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-        
-        return size
-    }
+//    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
+//    {
+//        // Ensure cell is laid out so it will report correct size.
+//        self.versionDescriptionTextView.setNeedsLayout()
+//        self.versionDescriptionTextView.layoutIfNeeded()
+//        
+//        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+//        
+//        return size
+//    }
 }
 
 private extension UpdateCollectionViewCell

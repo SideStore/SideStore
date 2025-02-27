@@ -64,14 +64,12 @@ final class CollapsingMarkdownView: UIView {
     var text: String = "" {
         didSet {
             self.updateMarkdownContent()
-            self.shouldResetLayout = true
             self.setNeedsLayout()
         }
     }
     
     var lineSpacing: Double = 2 {
         didSet {
-            self.shouldResetLayout = true
             self.setNeedsLayout()
         }
     }
@@ -81,7 +79,6 @@ final class CollapsingMarkdownView: UIView {
     private let textView = UITextView()
     private let markdownParser = MarkdownManager().markdownParser
     
-    private var shouldResetLayout: Bool = false
     private var previousSize: CGSize?
     
     // MARK: - Initialization
@@ -212,9 +209,8 @@ final class CollapsingMarkdownView: UIView {
             textView.frame = bounds
             
             // Check if content needs collapsing when layout changes
-            if shouldResetLayout || previousSize?.width != bounds.width {
+            if previousSize?.width != bounds.width {
                 checkIfNeedsCollapsing()
-                shouldResetLayout = false
                 previousSize = bounds.size
             }
             

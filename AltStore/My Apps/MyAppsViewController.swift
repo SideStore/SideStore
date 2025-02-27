@@ -282,11 +282,8 @@ private extension MyAppsViewController
             }
             
             cell.versionDescriptionTextView.toggleButton.addTarget(self, action: #selector(MyAppsViewController.toggleUpdateCellMode(_:)), for: .primaryActionTriggered)
-            
+
             cell.setNeedsLayout()
-            
-            // Below lines are necessary to avoid "more" button layout issues.
-            cell.versionDescriptionTextView.setNeedsLayout()
             cell.layoutIfNeeded()
         }
         dataSource.prefetchHandler = { (installedApp, indexPath, completionHandler) in
