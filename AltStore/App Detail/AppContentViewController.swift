@@ -43,8 +43,10 @@ final class AppContentViewController: UITableViewController
     }()
     
     @IBOutlet private var subtitleLabel: UILabel!
-    @IBOutlet private var descriptionTextView: CollapsingTextView!
-    @IBOutlet private var versionDescriptionTextView: CollapsingTextView!
+//    @IBOutlet private var descriptionTextView: CollapsingTextView!
+    @IBOutlet private var descriptionTextView: CollapsingMarkdownView!
+//    @IBOutlet private var versionDescriptionTextView: CollapsingTextView!
+    @IBOutlet private var versionDescriptionTextView: CollapsingMarkdownView!
     @IBOutlet private var versionLabel: UILabel!
     @IBOutlet private var versionDateLabel: UILabel!
     @IBOutlet private var sizeLabel: UILabel!
@@ -55,35 +57,32 @@ final class AppContentViewController: UITableViewController
     @IBOutlet private(set) var appDetailCollectionViewController: AppDetailCollectionViewController!
     @IBOutlet private var appDetailCollectionViewHeightConstraint: NSLayoutConstraint!
     
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.contentInset.bottom = 20
         
         self.subtitleLabel.text = self.app.subtitle
-        self.descriptionTextView.text = self.app.localizedDescription
+        let desc = self.app.localizedDescription
+        self.descriptionTextView.text = desc
         
-        if let version = self.app.latestAvailableVersion
-        {
-            self.versionDescriptionTextView.text = version.localizedDescription
+        if let version = self.app.latestAvailableVersion {
+            self.versionDescriptionTextView.text = version.localizedDescription ?? "nil"
             self.versionLabel.text = String(format: NSLocalizedString("Version %@", comment: ""), version.localizedVersion)
             self.versionDateLabel.text = Date().relativeDateString(since: version.date)
-            self.sizeLabel.text = self.byteCountFormatter.string(fromByteCount: version.size)
-        }
-        else
-        {
-            self.versionDescriptionTextView.text = nil
+            self.sizeLabel.text = ByteCountFormatter.string(fromByteCount: version.size, countStyle: .file)
+        } else {
+            self.versionDescriptionTextView.text = "nil"
             self.versionLabel.text = nil
             self.versionDateLabel.text = nil
-            self.sizeLabel.text = self.byteCountFormatter.string(fromByteCount: 0)
+            self.sizeLabel.text = ByteCountFormatter.string(fromByteCount: 0, countStyle: .file)
         }
         
         self.descriptionTextView.maximumNumberOfLines = 5
-        self.descriptionTextView.moreButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
+        self.versionDescriptionTextView.maximumNumberOfLines = 5
         
-        self.versionDescriptionTextView.maximumNumberOfLines = 3
-        self.versionDescriptionTextView.moreButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
+        self.descriptionTextView.toggleButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
+        self.versionDescriptionTextView.toggleButton.addTarget(self, action: #selector(AppContentViewController.toggleCollapsingSection(_:)), for: .primaryActionTriggered)
     }
     
     override func viewDidLayoutSubviews()
@@ -162,8 +161,12 @@ private extension AppContentViewController
         
         switch sender
         {
-        case self.descriptionTextView.moreButton: indexPath = IndexPath(row: Row.description.rawValue, section: 0)
-        case self.versionDescriptionTextView.moreButton: indexPath = IndexPath(row: Row.versionDescription.rawValue, section: 0)
+        case self.descriptionTextView.toggleButton:
+            indexPath = IndexPath(row: Row.description.rawValue, section: 0)
+            
+        case self.versionDescriptionTextView.toggleButton:
+            indexPath = IndexPath(row: Row.versionDescription.rawValue, section: 0)
+
         default: return
         }
         

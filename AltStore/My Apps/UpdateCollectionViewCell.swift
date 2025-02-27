@@ -21,12 +21,19 @@ extension UpdateCollectionViewCell
 {
     var mode: Mode = .expanded {
         didSet {
-            self.update()
+            switch self.mode {
+            case .collapsed:
+                self.versionDescriptionTextView.isCollapsed = true
+            case .expanded:
+                self.versionDescriptionTextView.isCollapsed = false
+            }
+            self.setNeedsLayout()
         }
     }
     
     @IBOutlet var bannerView: AppBannerView!
-    @IBOutlet var versionDescriptionTextView: CollapsingTextView!
+//    @IBOutlet var versionDescriptionTextView: CollapsingTextView!
+    @IBOutlet var versionDescriptionTextView: CollapsingMarkdownView!
     
     @IBOutlet private var blurView: UIVisualEffectView!
     
@@ -85,16 +92,16 @@ extension UpdateCollectionViewCell
         }
     }
     
-    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
-    {
-        // Ensure cell is laid out so it will report correct size.
-        self.versionDescriptionTextView.setNeedsLayout()
-        self.versionDescriptionTextView.layoutIfNeeded()
-        
-        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-        
-        return size
-    }
+//    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
+//    {
+//        // Ensure cell is laid out so it will report correct size.
+//        self.versionDescriptionTextView.setNeedsLayout()
+//        self.versionDescriptionTextView.layoutIfNeeded()
+//        
+//        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+//        
+//        return size
+//    }
 }
 
 private extension UpdateCollectionViewCell

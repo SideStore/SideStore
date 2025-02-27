@@ -13,21 +13,18 @@ final class CollapsingTextView: UITextView
     var isCollapsed = true {
         didSet {
             guard self.isCollapsed != oldValue else { return }
-            self.shouldResetLayout = true
             self.setNeedsLayout()
         }
     }
     
     var maximumNumberOfLines = 2 {
         didSet {
-            self.shouldResetLayout = true
             self.setNeedsLayout()
         }
     }
     
     var lineSpacing: Double = 2 {
         didSet {
-            self.shouldResetLayout = true
             
             if #available(iOS 16, *)
             {
@@ -42,7 +39,6 @@ final class CollapsingTextView: UITextView
     
     override var text: String! {
         didSet {
-            self.shouldResetLayout = true
             
             guard #available(iOS 16, *) else { return }
             self.updateText()
@@ -50,9 +46,6 @@ final class CollapsingTextView: UITextView
     }
     
     let moreButton = UIButton(type: .system)
-    
-    private var shouldResetLayout: Bool = false
-    private var previousSize: CGSize?
     
     override init(frame: CGRect, textContainer: NSTextContainer?)
     {
@@ -115,45 +108,39 @@ final class CollapsingTextView: UITextView
                                      height: font.lineHeight)
         self.moreButton.frame = moreButtonFrame
         
-        if self.shouldResetLayout || self.previousSize != self.bounds.size
+        if self.isCollapsed
         {
-            if self.isCollapsed
+            let boundingSize = self.attributedText.boundingRect(with: CGSize(width: self.textContainer.size.width, height: .infinity), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+            let maximumCollapsedHeight = font.lineHeight * Double(self.maximumNumberOfLines) + self.lineSpacing * Double(self.maximumNumberOfLines - 1)
+            
+            if boundingSize.height.rounded() > maximumCollapsedHeight.rounded()
             {
-                let boundingSize = self.attributedText.boundingRect(with: CGSize(width: self.textContainer.size.width, height: .infinity), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                let maximumCollapsedHeight = font.lineHeight * Double(self.maximumNumberOfLines) + self.lineSpacing * Double(self.maximumNumberOfLines - 1)
+                self.textContainer.maximumNumberOfLines = self.maximumNumberOfLines
                 
-                if boundingSize.height.rounded() > maximumCollapsedHeight.rounded()
-                {
-                    self.textContainer.maximumNumberOfLines = self.maximumNumberOfLines
-                    
-                    var exclusionFrame = moreButtonFrame
-                    exclusionFrame.origin.y += self.moreButton.bounds.midY
-                    exclusionFrame.size.width = self.bounds.width // Extra wide to make sure it wraps to next line.
-                    self.textContainer.exclusionPaths = [UIBezierPath(rect: exclusionFrame)]
-                    
-                    self.moreButton.isHidden = false
-                }
-                else
-                {
-                    self.textContainer.maximumNumberOfLines = 0 // Fixes last line having slightly smaller line spacing.
-                    self.textContainer.exclusionPaths = []
-                    
-                    self.moreButton.isHidden = true
-                }
+                var exclusionFrame = moreButtonFrame
+                exclusionFrame.origin.y += self.moreButton.bounds.midY
+                exclusionFrame.size.width = self.bounds.width // Extra wide to make sure it wraps to next line.
+                self.textContainer.exclusionPaths = [UIBezierPath(rect: exclusionFrame)]
+                
+                self.moreButton.isHidden = false
             }
             else
             {
-                self.textContainer.maximumNumberOfLines = 0
+                self.textContainer.maximumNumberOfLines = 0 // Fixes last line having slightly smaller line spacing.
                 self.textContainer.exclusionPaths = []
                 
                 self.moreButton.isHidden = true
             }
+        }
+        else
+        {
+            self.textContainer.maximumNumberOfLines = 0
+            self.textContainer.exclusionPaths = []
             
-            self.invalidateIntrinsicContentSize()
+            self.moreButton.isHidden = true
         }
         
-        self.shouldResetLayout = false
-        self.previousSize = self.bounds.size
+        self.invalidateIntrinsicContentSize()
     }
 }
 
