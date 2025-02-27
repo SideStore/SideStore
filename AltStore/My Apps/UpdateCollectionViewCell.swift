@@ -21,12 +21,19 @@ extension UpdateCollectionViewCell
 {
     var mode: Mode = .expanded {
         didSet {
-            self.update()
+            switch self.mode {
+            case .collapsed:
+                self.versionDescriptionTextView.isCollapsed = true
+            case .expanded:
+                self.versionDescriptionTextView.isCollapsed = false
+            }
+            self.setNeedsLayout()
         }
     }
     
     @IBOutlet var bannerView: AppBannerView!
-    @IBOutlet var versionDescriptionTextView: CollapsingTextView!
+//    @IBOutlet var versionDescriptionTextView: CollapsingTextView!
+    @IBOutlet var versionDescriptionTextView: CollapsingMarkdownView!
     
     @IBOutlet private var blurView: UIVisualEffectView!
     

@@ -235,7 +235,7 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             
             cell.tintColor = app.tintColor ?? .altPrimary
-            cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription
+            cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription ?? "nil"
             
             cell.bannerView.iconImageView.image = nil
             cell.bannerView.iconImageView.isIndicatingActivity = true
@@ -281,7 +281,7 @@ private extension MyAppsViewController
                 cell.mode = .collapsed
             }
             
-            cell.versionDescriptionTextView.moreButton.addTarget(self, action: #selector(MyAppsViewController.toggleUpdateCellMode(_:)), for: .primaryActionTriggered)
+            cell.versionDescriptionTextView.toggleButton.addTarget(self, action: #selector(MyAppsViewController.toggleUpdateCellMode(_:)), for: .primaryActionTriggered)
             
             cell.setNeedsLayout()
             
@@ -724,22 +724,29 @@ private extension MyAppsViewController
         
         let cell = self.collectionView.cellForItem(at: indexPath) as? UpdateCollectionViewCell
         
+        // Toggle the state
         if self.expandedAppUpdates.contains(installedApp.bundleIdentifier)
         {
             self.expandedAppUpdates.remove(installedApp.bundleIdentifier)
+            // Set collapsed mode on the cell
             cell?.mode = .collapsed
         }
         else
         {
             self.expandedAppUpdates.insert(installedApp.bundleIdentifier)
+            // Set expanded mode on the cell
             cell?.mode = .expanded
         }
         
+        // Clear cached size so it's recalculated
         self.cachedUpdateSizes[installedApp.bundleIdentifier] = nil
         
-        self.collectionView.performBatchUpdates({
-            self.collectionView.collectionViewLayout.invalidateLayout()
-        }, completion: nil)
+        // Animate the change smoothly with a duration
+        UIView.animate(withDuration: 0.25) {
+            self.collectionView.performBatchUpdates({
+                self.collectionView.collectionViewLayout.invalidateLayout()
+            }, completion: nil)
+        }
     }
     
     @IBAction func refreshApp(_ sender: UIButton)

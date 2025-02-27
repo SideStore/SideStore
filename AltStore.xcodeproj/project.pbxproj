@@ -87,6 +87,9 @@
 		A8AD35592D31BF2C003A28B4 /* PageInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AD35582D31BF29003A28B4 /* PageInfoManager.swift */; };
 		A8B516E32D2666CA0047047C /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B516E22D2666CA0047047C /* CoreDataHelper.swift */; };
 		A8B516E62D2668170047047C /* DateTimeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B516E52D2668020047047C /* DateTimeUtil.swift */; };
+		A8B645FC2D70C10300125819 /* CollapsingMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B645FB2D70C10300125819 /* CollapsingMarkdownView.swift */; };
+		A8B645FF2D70C1AD00125819 /* MarkdownKit in Frameworks */ = {isa = PBXBuildFile; productRef = A8B645FE2D70C1AD00125819 /* MarkdownKit */; };
+		A8B646012D70C23E00125819 /* MarkdownKit in Frameworks */ = {isa = PBXBuildFile; productRef = A8B646002D70C23E00125819 /* MarkdownKit */; };
 		A8BB34E52D04EC8E000A8B4D /* minimuxer-helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A52D04DA1900F0F0F3 /* minimuxer-helpers.swift */; };
 		A8C38C242D206A3A00E83DBD /* ConsoleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C38C1D2D206A3A00E83DBD /* ConsoleLogger.swift */; };
 		A8C38C262D206A3A00E83DBD /* ConsoleLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C38C1E2D206A3A00E83DBD /* ConsoleLog.swift */; };
@@ -686,6 +689,7 @@
 		A8AD35582D31BF29003A28B4 /* PageInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageInfoManager.swift; sourceTree = "<group>"; };
 		A8B516E22D2666CA0047047C /* CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelper.swift; sourceTree = "<group>"; };
 		A8B516E52D2668020047047C /* DateTimeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeUtil.swift; sourceTree = "<group>"; };
+		A8B645FB2D70C10300125819 /* CollapsingMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsingMarkdownView.swift; sourceTree = "<group>"; };
 		A8C38C1D2D206A3A00E83DBD /* ConsoleLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogger.swift; sourceTree = "<group>"; };
 		A8C38C1E2D206A3A00E83DBD /* ConsoleLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLog.swift; sourceTree = "<group>"; };
 		A8C38C282D206AC100E83DBD /* OutputStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputStream.swift; sourceTree = "<group>"; };
@@ -1137,6 +1141,7 @@
 			files = (
 				A8C6D5172D1EE95B00DF01F1 /* OpenSSL.xcframework in Frameworks */,
 				A8A543302D04F14400D72399 /* libfragmentzip.a in Frameworks */,
+				A8B646012D70C23E00125819 /* MarkdownKit in Frameworks */,
 				A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */,
 				A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */,
 				A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */,
@@ -1144,6 +1149,7 @@
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
 				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
+				A8B645FF2D70C1AD00125819 /* MarkdownKit in Frameworks */,
 				BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1346,6 +1352,22 @@
 			path = database;
 			sourceTree = "<group>";
 		};
+		A8B645F82D70C0DD00125819 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A8B645FA2D70C0F600125819 /* UIKit */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A8B645FA2D70C0F600125819 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				A8B645FB2D70C10300125819 /* CollapsingMarkdownView.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		A8C38C1C2D2068D100E83DBD /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -1427,6 +1449,7 @@
 		A8F66C072D04C025009689E6 /* SideStore */ = {
 			isa = PBXGroup;
 			children = (
+				A8B645F82D70C0DD00125819 /* Views */,
 				A8E2DB352D6850A9009E5D31 /* Tests */,
 				A8F66C5C2D04D433009689E6 /* minimuxer */,
 				A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */,
@@ -2682,6 +2705,7 @@
 				D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 				D5FB7A2C2AA2859400EF863D /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */,
+				A8B645FD2D70C1AD00125819 /* XCRemoteSwiftPackageReference "MarkdownKit" */,
 			);
 			productRefGroup = BFD2476B2284B9A500981D42 /* Products */;
 			projectDirPath = "";
@@ -3292,6 +3316,7 @@
 				D57FE84428C7DB7100216002 /* ErrorLogViewController.swift in Sources */,
 				A88B8C552D35F1EC00F53F9D /* OperationsLoggingControl.swift in Sources */,
 				D50107EC2ADF2E1A0069F2A1 /* AddSourceTextFieldCell.swift in Sources */,
+				A8B645FC2D70C10300125819 /* CollapsingMarkdownView.swift in Sources */,
 				D5151BD92A8FF64300C96F28 /* RefreshAllAppsIntent.swift in Sources */,
 				BFBE0007250AD0E70080826E /* ViewAppIntentHandler.swift in Sources */,
 				BFDB6A0822AAED73007EA6D6 /* ResignAppOperation.swift in Sources */,
@@ -4259,6 +4284,14 @@
 				minimumVersion = 0.4.0;
 			};
 		};
+		A8B645FD2D70C1AD00125819 /* XCRemoteSwiftPackageReference "MarkdownKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bmoliveira/MarkdownKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
 		D58D5F2C26DFE68E00E55E38 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
@@ -4282,6 +4315,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
 			productName = SemanticVersion;
+		};
+		A8B645FE2D70C1AD00125819 /* MarkdownKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A8B645FD2D70C1AD00125819 /* XCRemoteSwiftPackageReference "MarkdownKit" */;
+			productName = MarkdownKit;
+		};
+		A8B646002D70C23E00125819 /* MarkdownKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A8B645FD2D70C1AD00125819 /* XCRemoteSwiftPackageReference "MarkdownKit" */;
+			productName = MarkdownKit;
 		};
 		A8C6D50B2D1EE87600DF01F1 /* AltSign-Static */ = {
 			isa = XCSwiftPackageProductDependency;
