@@ -141,7 +141,7 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         let latestVer  = SemanticVersion("\(latestSemVer!.major).\(latestSemVer!.minor).\(latestSemVer!.patch)")
         
         // Compare by major.minor.patch
-        if latestVer! > latestVer! {
+        if latestVer! > currentVer! {
             return true
         }
         
