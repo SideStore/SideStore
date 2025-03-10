@@ -15,6 +15,11 @@ fileprivate extension NSManagedObject
         return sourceURL
     }
     
+    var sourceSourceId: String? {
+        let sourceId = self.value(forKey: #keyPath(Source.identifier)) as? String
+        return sourceId
+    }
+    
     var sourceApps: NSOrderedSet? {
         let apps = self.value(forKey: #keyPath(Source._apps)) as? NSOrderedSet
         return apps
@@ -28,9 +33,14 @@ fileprivate extension NSManagedObject
 
 fileprivate extension NSManagedObject
 {
-    func setSourceSourceID(_ sourceID: String)
+    func setSourceId(_ sourceID: String)
     {
         self.setValue(sourceID, forKey: #keyPath(Source.identifier))
+    }
+
+    func setSourceSourceUrl(_ sourceURL: URL)
+    {
+        self.setValue(sourceURL, forKey: #keyPath(Source.sourceURL))
     }
     
     func setStoreAppSourceID(_ sourceID: String)
@@ -52,6 +62,11 @@ fileprivate extension NSManagedObject
     {
         self.setValue(sourceID, forKey: #keyPath(AppPermission.sourceID))
     }
+
+    func setAppPermissionAppBundleID(_ appBundleID: String)
+    {
+        self.setValue(appBundleID, forKey: #keyPath(AppPermission.appBundleID))
+    }
     
     func setAppScreenshotSourceID(_ sourceID: String)
     {
@@ -61,6 +76,11 @@ fileprivate extension NSManagedObject
 
 fileprivate extension NSManagedObject
 {
+    var bundleId: String? {
+        let bundleID = self.value(forKey: #keyPath(StoreApp.bundleIdentifier)) as? String
+        return bundleID
+    }
+    
     var storeAppVersions: NSOrderedSet? {
         let versions = self.value(forKey: #keyPath(StoreApp._versions)) as? NSOrderedSet
         return versions
@@ -88,15 +108,28 @@ class Source11To17MigrationPolicy: NSEntityMigrationPolicy
         
         // Copied from Source.setSourceURL()
         
-        // sidestore official soruce has been moved to sidestore.io/apps-v2.json
+        // sidestore official source has been moved to sidestore.io/apps-v2.json
         // if we don't switch, users will end up with 2 offical sources
-        if sourceURL.absoluteString.contains("apps.sidestore.io")       // if using old source
+        if let host = sourceURL.host,
+           host == "apps.sidestore.io"       // if using old source
         {
             sourceURL = Source.altStoreSourceURL                        // switch to latest
+            dInstance.setSourceSourceUrl(sourceURL)
+        }
+
+        let sourceID: String
+        if let existingID = dInstance.sourceSourceId {
+            sourceID = existingID
+        } else {
+            sourceID = try Source.sourceID(from: sourceURL)
+            dInstance.setSourceId(sourceID)
+        }
+
+        if URL(string: sourceID)?.host == "apps.sidestore.io" || sourceID == Source.altStoreSourceURL.absoluteString
+        {
+            dInstance.setSourceId(Source.altStoreIdentifier)
         }
         
-        let sourceID = try Source.sourceID(from: sourceURL)
-        dInstance.setSourceSourceID(sourceID)
         
         for case let newsItem as NSManagedObject in dInstance.sourceNewsItems ?? []
         {
@@ -117,6 +150,9 @@ class Source11To17MigrationPolicy: NSEntityMigrationPolicy
             for case let permission as NSManagedObject in app.storeAppPermissions ?? []
             {
                 permission.setAppPermissionSourceID(sourceID)
+                if let bundleID = app.bundleId {
+                    permission.setAppPermissionAppBundleID(bundleID)
+                }
             }
             
             for case let screenshot as NSManagedObject in app.storeAppScreenshots ?? []

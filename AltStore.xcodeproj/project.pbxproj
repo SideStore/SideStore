@@ -69,6 +69,7 @@
 		A81A8CD12D68BA9B0086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
 		A81A8CD22D68BAA30086C96F /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
 		A81A8CD42D68BAFF0086C96F /* DataStructureTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */; };
+		A81BF93D2D7FA94D00768940 /* AppPermission11To17MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81BF93C2D7FA94D00768940 /* AppPermission11To17MigrationPolicy.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
 		A8228B5B2D6E2C0C00F7CE0E /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -667,6 +668,7 @@
 		A81A8CC52D68BA610086C96F /* DataStructureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataStructureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A81A8CC72D68BA610086C96F /* DataStructuresTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructuresTests.swift; sourceTree = "<group>"; };
 		A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataStructureTests.xctestplan; sourceTree = "<group>"; };
+		A81BF93C2D7FA94D00768940 /* AppPermission11To17MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPermission11To17MigrationPolicy.swift; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
@@ -1825,6 +1827,7 @@
 				BF66EEAE2501AECA007EE018 /* StoreAppPolicy.swift */,
 				D5F99A1928D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift */,
 				A881E7CA2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift */,
+				A81BF93C2D7FA94D00768940 /* AppPermission11To17MigrationPolicy.swift */,
 			);
 			path = Policies;
 			sourceTree = "<group>";
@@ -3110,6 +3113,7 @@
 				BFAECC522501B0A400528F27 /* CodableError.swift in Sources */,
 				A8FD915F2D046F5200322782 /* UserInfoValue.swift in Sources */,
 				D5F9821D2AB900060045751F /* AppScreenshot.swift in Sources */,
+				A81BF93D2D7FA94D00768940 /* AppPermission11To17MigrationPolicy.swift in Sources */,
 				BF66EE9E2501AEC1007EE018 /* Fetchable.swift in Sources */,
 				BF66EEDF2501AECA007EE018 /* PatreonAccount.swift in Sources */,
 				BFAECC532501B0A400528F27 /* ServerProtocol.swift in Sources */,
