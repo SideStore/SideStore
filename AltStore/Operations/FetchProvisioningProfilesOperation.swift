@@ -360,13 +360,6 @@ extension FetchProvisioningProfilesOperation
     }
 }
 
-class FetchProvisioningProfilesRefreshOperation: FetchProvisioningProfilesOperation, @unchecked Sendable {
-    override init(context: AppOperationContext)
-    {
-        super.init(context: context)
-    }
-}
-
 class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperation, @unchecked Sendable{
     override init(context: AppOperationContext)
     {
@@ -611,5 +604,16 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 }
             }
         }
+    }
+}
+
+// <TEST> : users were reporting that refresh (though seemed like it refreshed the app becomes no longer available)
+//          possibly, this is caused since refesh was not updating appFeatures and AppGroups in the new profile? not sure.
+//          for now we are reverting by keeping same operation that happens during fetch in install path to see if it fixes issue #893
+// class FetchProvisioningProfilesRefreshOperation: FetchProvisioningProfilesOperation, @unchecked Sendable {
+class FetchProvisioningProfilesRefreshOperation: FetchProvisioningProfilesInstallOperation, @unchecked Sendable {
+    override init(context: AppOperationContext)
+    {
+        super.init(context: context)
     }
 }
