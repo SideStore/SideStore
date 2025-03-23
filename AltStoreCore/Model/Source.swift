@@ -11,7 +11,7 @@ import UIKit
 
 public extension Source
 {
-    static let altStoreIdentifier = "com.SideStore.SideStore"
+    static let altStoreIdentifier = try! Source.sourceID(from: Source.altStoreSourceURL)
     
     #if STAGING
     
@@ -280,8 +280,6 @@ public class Source: BaseEntity, Decodable
         case news
         case featuredApps
         case userInfo
-        
-        case identifier
     }
     
     private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
@@ -305,9 +303,6 @@ public class Source: BaseEntity, Decodable
             
             // use sourceversion = 1 by default if not specified in source json
             self.version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
-            
-            // use sourceURL as identifier is one is not present for backwards compatibility
-            self.identifier = try container.decodeIfPresent(String.self, forKey: .identifier) ?? Source.sourceID(from: sourceURL)
             
             self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
             self.websiteURL = try container.decodeIfPresent(URL.self, forKey: .websiteURL)
@@ -456,10 +451,9 @@ public extension Source
 {
     func setSourceURL(_ sourceURL: URL) throws
     {
-        // commented out to retain source id as-is (independent of sourceURL)
-//        let identifier = try Source.sourceID(from: sourceURL)
-//        self.identifier = identifier
-        
+        let identifier = try Source.sourceID(from: sourceURL)
+
+        self.identifier = identifier
         self.sourceURL = sourceURL
         
         for app in self.apps

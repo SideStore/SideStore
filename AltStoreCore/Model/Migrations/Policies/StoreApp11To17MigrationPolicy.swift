@@ -106,10 +106,9 @@ class StoreApp11To17MigrationPolicy: NSEntityMigrationPolicy {
             return
         }
         
-        
         // Create a new ReleaseTrack entity
         let context = dInstance.managedObjectContext!
-        let releaseTrack = NSEntityDescription.insertNewObject(forEntityName: ReleaseTrack.entity().name! ?? ReleaseTrack.description(), into: context)
+        let releaseTrack = NSEntityDescription.insertNewObject(forEntityName: ReleaseTrack.entity().name!, into: context)
         releaseTrack.setValue(defaultChannel, forKey: #keyPath(ReleaseTrack._track))
 
         // Connect the releaseTrack to the destination StoreApp
@@ -117,7 +116,7 @@ class StoreApp11To17MigrationPolicy: NSEntityMigrationPolicy {
 
 
         // Find the mapping name for AppVersion (make sure this exactly matches your mapping model)
-        let appVersionMappingName = findEntityMappingName(for: AppVersion.entity().name ?? AppVersion.description(), in: manager)
+        let appVersionMappingName = findEntityMappingName(for: AppVersion.entity().name!, in: manager)
         
         // Create a mutable ordered set for the destination AppVersion objects
         let destinationVersionsSet = NSMutableOrderedSet()
@@ -146,4 +145,5 @@ class StoreApp11To17MigrationPolicy: NSEntityMigrationPolicy {
 //        dInstance.setValue(NSOrderedSet(), forKey: #keyPath(StoreApp._versions))
         dInstance.setValue(nil, forKey: #keyPath(StoreApp._versions))
     }
+
 }

@@ -222,6 +222,11 @@
         <attribute name="track" optional="YES" attributeType="String"/>
         <relationship name="releases" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="AppVersion" inverseName="releaseTrack" inverseEntity="AppVersion"/>
         <relationship name="storeApp" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoreApp" inverseName="releaseTracks" inverseEntity="StoreApp"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="track"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="Source" representedClassName="Source" syncable="YES">
         <attribute name="error" optional="YES" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>
