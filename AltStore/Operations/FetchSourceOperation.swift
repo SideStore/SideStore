@@ -246,9 +246,13 @@ private extension FetchSourceOperation
             #endif
         }
         
-        if let previousSourceID = self.$source.identifier
+        
+        let incomingSourceID = try! Source.sourceID(from: source.sourceURL)
+        let previousSourceID = self.$source.identifier
+        
+        if incomingSourceID != previousSourceID
         {
-            guard source.identifier == previousSourceID else { throw SourceError.changedID(source.identifier, previousID: previousSourceID, source: source) }
+            throw SourceError.changedID(source.identifier, previousID: self.$source.identifier ?? "nil", source: source)
         }
     }
     
