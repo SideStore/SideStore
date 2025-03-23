@@ -514,27 +514,27 @@ extension SourcesViewController: NSFetchedResultsControllerDelegate
     let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
     context.performAndWait {
         _ = Source.make(name: "OatmealDome's AltStore Source",
-                        identifier: "me.oatmealdome.altstore",
+                        groupID: "me.oatmealdome.altstore",
                         sourceURL: URL(string: "https://altstore.oatmealdome.me")!,
                         context: context)
         
         _ = Source.make(name: "UTM Repository",
-                        identifier: "com.utmapp.repos.UTM",
+                        groupID: "com.utmapp.repos.UTM",
                         sourceURL: URL(string: "https://alt.getutm.app")!,
                         context: context)
         
         _ = Source.make(name: "Flyinghead",
-                        identifier: "com.flyinghead.source",
+                        groupID: "com.flyinghead.source",
                         sourceURL: URL(string: "https://flyinghead.github.io/flycast-builds/altstore.json")!,
                         context: context)
         
         _ = Source.make(name: "Provenance",
-                        identifier: "org.provenance-emu.AltStore",
+                        groupID: "org.provenance-emu.AltStore",
                         sourceURL: URL(string: "https://provenance-emu.com/apps.json")!,
                         context: context)
         
         _ = Source.make(name: "PojavLauncher Repository",
-                        identifier: "dev.crystall1ne.repos.PojavLauncher",
+                        groupID: "dev.crystall1ne.repos.PojavLauncher",
                         sourceURL: URL(string: "http://alt.crystall1ne.dev")!,
                         context: context)
         
