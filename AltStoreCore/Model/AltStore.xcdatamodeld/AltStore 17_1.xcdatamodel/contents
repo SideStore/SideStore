@@ -35,31 +35,31 @@
         <relationship name="app" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoreApp" inverseName="permissions" inverseEntity="StoreApp"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="appBundleID"/>
                 <constraint value="sourceID"/>
+                <constraint value="appBundleID"/>
                 <constraint value="type"/>
                 <constraint value="permission"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
     <entity name="AppScreenshot" representedClassName="AppScreenshot" syncable="YES">
-        <attribute name="appBundleID" attributeType="String"/>
+        <attribute name="appBundleID" optional="YES" attributeType="String"/>
         <attribute name="deviceType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="height" optional="YES" attributeType="Integer 16" usesScalarValueType="NO"/>
         <attribute name="imageURL" attributeType="URI"/>
-        <attribute name="sourceID" attributeType="String"/>
+        <attribute name="sourceID" optional="YES" attributeType="String"/>
         <attribute name="width" optional="YES" attributeType="Integer 16" usesScalarValueType="NO"/>
         <relationship name="app" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoreApp" inverseName="screenshots" inverseEntity="StoreApp"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="appBundleID"/>
                 <constraint value="sourceID"/>
+                <constraint value="appBundleID"/>
                 <constraint value="imageURL"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
     <entity name="AppVersion" representedClassName="AppVersion" syncable="YES">
-        <attribute name="appBundleID" attributeType="String"/>
+        <attribute name="appBundleID" optional="YES" attributeType="String"/>
         <attribute name="buildVersion" optional="YES" attributeType="String"/>
         <attribute name="channel" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
@@ -76,8 +76,8 @@
         <relationship name="releaseTrack" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReleaseTrack" inverseName="releases" inverseEntity="ReleaseTrack"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="appBundleID"/>
                 <constraint value="sourceID"/>
+                <constraint value="appBundleID"/>
                 <constraint value="version"/>
                 <constraint value="buildVersion"/>
             </uniquenessConstraint>
@@ -220,9 +220,16 @@
     <entity name="ReleaseTrack" representedClassName="ReleaseTrack" syncable="YES">
         <attribute name="appBundleID" optional="YES" attributeType="String"/>
         <attribute name="sourceID" optional="YES" attributeType="String"/>
-        <attribute name="track" optional="YES" attributeType="String"/>
+        <attribute name="track" attributeType="String"/>
         <relationship name="releases" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="AppVersion" inverseName="releaseTrack" inverseEntity="AppVersion"/>
         <relationship name="storeApp" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoreApp" inverseName="releaseTracks" inverseEntity="StoreApp"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="sourceID"/>
+                <constraint value="appBundleID"/>
+                <constraint value="track"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="Source" representedClassName="Source" syncable="YES">
         <attribute name="error" optional="YES" attributeType="Transformable" valueTransformerName="ALTSecureValueTransformer"/>

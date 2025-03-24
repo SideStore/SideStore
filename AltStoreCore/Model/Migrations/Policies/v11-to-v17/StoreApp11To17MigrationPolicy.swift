@@ -108,7 +108,7 @@ class StoreApp11To17MigrationPolicy: NSEntityMigrationPolicy {
         
         // Create a new ReleaseTrack entity
         let context = dInstance.managedObjectContext!
-        let releaseTrack = NSEntityDescription.insertNewObject(forEntityName: ReleaseTrack.entity().name! ?? ReleaseTrack.description(), into: context)
+        let releaseTrack = NSEntityDescription.insertNewObject(forEntityName: ReleaseTrack.entity().name ?? ReleaseTrack.description(), into: context)
         releaseTrack.setValue(defaultChannel, forKey: #keyPath(ReleaseTrack._track))
 
         // Connect the releaseTrack to the destination StoreApp

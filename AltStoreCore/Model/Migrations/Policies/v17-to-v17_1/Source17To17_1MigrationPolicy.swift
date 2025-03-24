@@ -156,29 +156,35 @@ class Source17To17_1MigrationPolicy: NSEntityMigrationPolicy
         try super.createRelationships(forDestination: dInstance, in: mapping, manager: manager)
         
         guard let sourceID = dInstance.sourceSourceId else { return }
-                
+        
+        for case let newsItem as NSManagedObject in dInstance.sourceNewsItems ?? []
+        {
+            newsItem.setNewsItemSourceID(sourceID)
+        }
+
         for case let app as NSManagedObject in dInstance.sourceApps ?? []
         {
             app.setStoreAppSourceID(sourceID)
-            
-            for case let version as NSManagedObject in app.storeAppVersions ?? []
-            {
-                version.setAppVersionSourceID(sourceID)
-            }
-            
-            for case let permission as NSManagedObject in app.storeAppPermissions ?? []
-            {
-                permission.setAppPermissionSourceID(sourceID)
-            }
             
             for case let screenshot as NSManagedObject in app.storeAppScreenshots ?? []
             {
                 screenshot.setAppScreenshotSourceID(sourceID)
             }
-
-            for case let tracks as NSManagedObject in app.storeAppReleaseTracks ?? []
+            
+            for case let track as NSManagedObject in app.storeAppReleaseTracks ?? []
             {
-                tracks.setReleaseTracksSourceID(sourceID)
+//                print("Source_17_1MigrationPolicy: processing track \(track.value(forKey: "track")!)")
+                track.setValue(sourceID, forKey: #keyPath(ReleaseTrack._sourceID))
+                
+                guard let releases = track.value(forKey: #keyPath(ReleaseTrack._releases)) as? NSOrderedSet else {
+//                    print("Source_17_1MigrationPolicy: releases not found for track: \(track.value(forKey: "track")!)")
+                    continue
+                }
+                
+                for case let version as NSManagedObject in releases {
+//                    print("Source_17_1MigrationPolicy: updating sourceID for version: \(version.value(forKey: "version")!)")
+                    version.setValue(sourceID, forKey: #keyPath(AppVersion.sourceID))
+                }
             }
         }
     }

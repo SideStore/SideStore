@@ -1,5 +1,5 @@
 //
-//  AppPermission11To17_1MigrationPolicy.swift
+//  AppPermission17to17_1MigrationPolicy.swift
 //  AltStore
 //
 //  Created by Magesh K on 15/03/25.
@@ -9,13 +9,20 @@
 import CoreData
 
 @objc(AppPermission11To17_1MigrationPolicy)
-class AppPermission11To17_1MigrationPolicy: AppPermission17To17_1MigrationPolicy
-{
+class AppPermission11To17_1MigrationPolicy: AppPermission17To17_1MigrationPolicy {
+    
     override func createDestinationInstances(forSource sInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
+        // Let the default implementation create the basic destination AppPermission
         try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
     }
-
-    override func createRelationships(forDestination dInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
+    
+    
+    
+    override func createRelationships(
+        forDestination dInstance: NSManagedObject,
+        in mapping: NSEntityMapping,
+        manager: NSMigrationManager
+    ) throws {
         try super.createRelationships(forDestination: dInstance, in: mapping, manager: manager)
     }
 }
