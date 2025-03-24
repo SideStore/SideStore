@@ -32,12 +32,26 @@ class ReleaseTrack17To17_1MigrationPolicy: NSEntityMigrationPolicy {
         
         // set initial values copied from source as-is to satisfy unique constraints
         // (will be updated by StoreApp and Source migration policy in its createRelationship() method)
-        if let appBundle = storeApp.value(forKey: #keyPath(StoreApp.bundleIdentifier)) as? String{
+        let appBundle = storeApp.value(forKey: #keyPath(StoreApp.bundleIdentifier)) as? String
+        let sourceID = storeApp.value(forKey: #keyPath(StoreApp.sourceIdentifier)) as? String
+        
+        if let appBundle {
             dInstance.setValue(appBundle, forKey: #keyPath(ReleaseTrack._appBundleID))
         }
 
-        if let sourceID = storeApp.value(forKey: #keyPath(StoreApp.sourceIdentifier)) as? String {
+        if let sourceID {
             dInstance.setValue(sourceID, forKey: #keyPath(ReleaseTrack._sourceID))
+        }
+        
+        if let releases = dInstance.value(forKey: #keyPath(ReleaseTrack._releases)) as? NSOrderedSet {
+            for case let version as NSManagedObject in releases {
+                if let appBundle {
+                    version.setValue(appBundle, forKey: #keyPath(AppVersion.appBundleID))
+                }
+                if let sourceID {
+                    version.setValue(sourceID, forKey: #keyPath(AppVersion.sourceID))
+                }
+            }
         }
     }
 }
