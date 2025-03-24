@@ -59,6 +59,15 @@
 		A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */; };
 		A80D790D2D2F20AF00A40F40 /* PaginationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */; };
 		A80D790F2D2F217000A40F40 /* PaginationDataHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */; };
+		A815AA952D90D2A100929A9E /* StoreApp17To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AA942D90D2A100929A9E /* StoreApp17To17_1MigrationPolicy.swift */; };
+		A815AA972D90E16400929A9E /* ReleaseTrack17To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AA962D90E16400929A9E /* ReleaseTrack17To17_1MigrationPolicy.swift */; };
+		A815AA992D90E5E500929A9E /* AltStore17ToAltStore17_1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = A815AA982D90E5E500929A9E /* AltStore17ToAltStore17_1.xcmappingmodel */; };
+		A815AA9F2D9104DD00929A9E /* BuildInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AA9E2D9104DD00929A9E /* BuildInfo.swift */; };
+		A815AAA12D9108BC00929A9E /* AltStore11ToAltStore17_1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = A815AAA02D9108BC00929A9E /* AltStore11ToAltStore17_1.xcmappingmodel */; };
+		A815AAA72D9108CB00929A9E /* ReleaseTrack11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AAA42D9108CB00929A9E /* ReleaseTrack11To17_1MigrationPolicy.swift */; };
+		A815AAA82D9108CB00929A9E /* AppPermission11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AAA52D9108CB00929A9E /* AppPermission11To17_1MigrationPolicy.swift */; };
+		A815AAA92D9108CB00929A9E /* Source11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AAA22D9108CB00929A9E /* Source11To17_1MigrationPolicy.swift */; };
+		A815AAAA2D9108CB00929A9E /* StoreApp11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A815AAA32D9108CB00929A9E /* StoreApp11To17_1MigrationPolicy.swift */; };
 		A81A8CB92D68B30B0086C96F /* SingletonGenericMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868CFE32D319988002F1201 /* SingletonGenericMap.swift */; };
 		A81A8CBA2D68B3110086C96F /* TreeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CB02D68B0320086C96F /* TreeMap.swift */; };
 		A81A8CBD2D68B43F0086C96F /* LinkedHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */; };
@@ -71,17 +80,12 @@
 		A81A8CD42D68BAFF0086C96F /* DataStructureTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = A81A8CD32D68BAFF0086C96F /* DataStructureTests.xctestplan */; };
 		A81BF9E52D84CB0C00768940 /* AppPermission17To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81BF9E22D84CB0C00768940 /* AppPermission17To17_1MigrationPolicy.swift */; };
 		A81BF9E72D84CB0C00768940 /* Source17To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81BF9E32D84CB0C00768940 /* Source17To17_1MigrationPolicy.swift */; };
-		A81BF9ED2D84CF5900768940 /* ReleaseTrack17To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81BF9EC2D84CF5900768940 /* ReleaseTrack17To17_1MigrationPolicy.swift */; };
 		A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5708416292448DA00D42D34 /* OperatingSystemVersion+Comparable.swift */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
 		A8228B5B2D6E2C0C00F7CE0E /* (null) in Sources */ = {isa = PBXBuildFile; };
 		A8228B5D2D6E361F00F7CE0E /* (null) in Sources */ = {isa = PBXBuildFile; };
 		A859ED5C2D1EE827003DCC58 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; };
 		A859ED5D2D1EE827003DCC58 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A85E436C2D8AF6CD00E89240 /* Source11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85E436B2D8AF6CD00E89240 /* Source11To17_1MigrationPolicy.swift */; };
-		A85E436E2D8AF72F00E89240 /* StoreApp11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85E436D2D8AF72F00E89240 /* StoreApp11To17_1MigrationPolicy.swift */; };
-		A85E43702D8AF77A00E89240 /* AppPermission11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85E436F2D8AF77A00E89240 /* AppPermission11To17_1MigrationPolicy.swift */; };
-		A85E43722D8AF7F100E89240 /* ReleaseTrack11To17_1MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85E43712D8AF7F100E89240 /* ReleaseTrack11To17_1MigrationPolicy.swift */; };
 		A86315DF2D3EB2DE0048FA40 /* ErrorProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86315DE2D3EB2D80048FA40 /* ErrorProcessing.swift */; };
 		A8696EE42D34512C00E96389 /* RemoveAppExtensionsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8696EE32D34512C00E96389 /* RemoveAppExtensionsOperation.swift */; };
 		A881E7CB2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A881E7CA2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift */; };
@@ -110,8 +114,6 @@
 		A8C6D5172D1EE95B00DF01F1 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; };
 		A8C6D5182D1EE95B00DF01F1 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A8C924242D8E73B1009D9953 /* AltStore11ToAltStore17.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = A8C924232D8E73B1009D9953 /* AltStore11ToAltStore17.xcmappingmodel */; };
-		A8C924282D8E7463009D9953 /* AltStore11ToAltStore17_1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = A8C924272D8E7463009D9953 /* AltStore11ToAltStore17_1.xcmappingmodel */; };
-		A8C9242A2D8E75AD009D9953 /* AltStore17ToAltStore17_1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = A8C924292D8E75AD009D9953 /* AltStore17ToAltStore17_1.xcmappingmodel */; };
 		A8D484D82D0CD306002C691D /* AltBackup.ipa in Resources */ = {isa = PBXBuildFile; fileRef = A8D484D72D0CD306002C691D /* AltBackup.ipa */; };
 		A8D49F532D3D2F9400844B92 /* ProcessInfo+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D49F522D3D2F9400844B92 /* ProcessInfo+AltStore.swift */; };
 		A8E2DB312D684E2A009E5D31 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E2DB2E2D684E2A009E5D31 /* UITests.swift */; };
@@ -669,6 +671,15 @@
 		A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack.swift; sourceTree = "<group>"; };
 		A80D790C2D2F20AF00A40F40 /* PaginationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationIntent.swift; sourceTree = "<group>"; };
 		A80D790E2D2F217000A40F40 /* PaginationDataHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationDataHolder.swift; sourceTree = "<group>"; };
+		A815AA942D90D2A100929A9E /* StoreApp17To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreApp17To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
+		A815AA962D90E16400929A9E /* ReleaseTrack17To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack17To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
+		A815AA982D90E5E500929A9E /* AltStore17ToAltStore17_1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore17ToAltStore17_1.xcmappingmodel; sourceTree = "<group>"; };
+		A815AA9E2D9104DD00929A9E /* BuildInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildInfo.swift; sourceTree = "<group>"; };
+		A815AAA02D9108BC00929A9E /* AltStore11ToAltStore17_1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore11ToAltStore17_1.xcmappingmodel; sourceTree = "<group>"; };
+		A815AAA22D9108CB00929A9E /* Source11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
+		A815AAA32D9108CB00929A9E /* StoreApp11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreApp11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
+		A815AAA42D9108CB00929A9E /* ReleaseTrack11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
+		A815AAA52D9108CB00929A9E /* AppPermission11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPermission11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
 		A81A8CB02D68B0320086C96F /* TreeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeMap.swift; sourceTree = "<group>"; };
 		A81A8CB42D68B2180086C96F /* TreeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeMapTests.swift; sourceTree = "<group>"; };
 		A81A8CBC2D68B43F0086C96F /* LinkedHashMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedHashMap.swift; sourceTree = "<group>"; };
@@ -679,7 +690,6 @@
 		A81BF9E12D84C9E900768940 /* AltStore 17_1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AltStore 17_1.xcdatamodel"; sourceTree = "<group>"; };
 		A81BF9E22D84CB0C00768940 /* AppPermission17To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPermission17To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
 		A81BF9E32D84CB0C00768940 /* Source17To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source17To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
-		A81BF9EC2D84CF5900768940 /* ReleaseTrack17To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack17To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
 		A859ED5B2D1EE80D003DCC58 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = SideStore/AltSign/Dependencies/OpenSSL/Frameworks/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A85ACB8E2D1F31C400AA3DE7 /* AltBackup.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltBackup.xcconfig; sourceTree = "<group>"; };
 		A85ACB8F2D1F31C400AA3DE7 /* AltStore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.debug.xcconfig; sourceTree = "<group>"; };
@@ -687,10 +697,6 @@
 		A85ACB912D1F31C400AA3DE7 /* AltStoreCore.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.debug.xcconfig; sourceTree = "<group>"; };
 		A85ACB922D1F31C400AA3DE7 /* AltStoreCore.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.release.xcconfig; sourceTree = "<group>"; };
 		A85ACB932D1F31C400AA3DE7 /* AltWidgetExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltWidgetExtension.xcconfig; sourceTree = "<group>"; };
-		A85E436B2D8AF6CD00E89240 /* Source11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
-		A85E436D2D8AF72F00E89240 /* StoreApp11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreApp11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
-		A85E436F2D8AF77A00E89240 /* AppPermission11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPermission11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
-		A85E43712D8AF7F100E89240 /* ReleaseTrack11To17_1MigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseTrack11To17_1MigrationPolicy.swift; sourceTree = "<group>"; };
 		A86202322D1F35640091187B /* AltStore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStore.xcconfig; sourceTree = "<group>"; };
 		A86202332D1F35640091187B /* AltStoreCore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AltStoreCore.xcconfig; sourceTree = "<group>"; };
 		A86315DE2D3EB2D80048FA40 /* ErrorProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorProcessing.swift; sourceTree = "<group>"; };
@@ -713,8 +719,6 @@
 		A8C38C312D206B2500E83DBD /* FileOutputStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOutputStream.swift; sourceTree = "<group>"; };
 		A8C38C372D2084D000E83DBD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
 		A8C924232D8E73B1009D9953 /* AltStore11ToAltStore17.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore11ToAltStore17.xcmappingmodel; sourceTree = "<group>"; };
-		A8C924272D8E7463009D9953 /* AltStore11ToAltStore17_1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore11ToAltStore17_1.xcmappingmodel; sourceTree = "<group>"; };
-		A8C924292D8E75AD009D9953 /* AltStore17ToAltStore17_1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = AltStore17ToAltStore17_1.xcmappingmodel; sourceTree = "<group>"; };
 		A8D484D72D0CD306002C691D /* AltBackup.ipa */ = {isa = PBXFileReference; lastKnownFileType = file; path = AltBackup.ipa; sourceTree = "<group>"; };
 		A8D49F522D3D2F9400844B92 /* ProcessInfo+AltStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+AltStore.swift"; sourceTree = "<group>"; };
 		A8E2DB212D684CBD009E5D31 /* UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1265,6 +1269,17 @@
 			path = Intents;
 			sourceTree = "<group>";
 		};
+		A815AAA62D9108CB00929A9E /* v11-to-v17_1 */ = {
+			isa = PBXGroup;
+			children = (
+				A815AAA22D9108CB00929A9E /* Source11To17_1MigrationPolicy.swift */,
+				A815AAA32D9108CB00929A9E /* StoreApp11To17_1MigrationPolicy.swift */,
+				A815AAA42D9108CB00929A9E /* ReleaseTrack11To17_1MigrationPolicy.swift */,
+				A815AAA52D9108CB00929A9E /* AppPermission11To17_1MigrationPolicy.swift */,
+			);
+			path = "v11-to-v17_1";
+			sourceTree = "<group>";
+		};
 		A81A8CB22D68B2030086C96F /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1303,8 +1318,8 @@
 		A85E43732D8AF82100E89240 /* v11-to-v17 */ = {
 			isa = PBXGroup;
 			children = (
-				A881E7CA2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift */,
 				D5185B812AE1E71D00646E33 /* Source11To17MigrationPolicy.swift */,
+				A881E7CA2D6EF5AB00954AD2 /* StoreApp11To17MigrationPolicy.swift */,
 			);
 			path = "v11-to-v17";
 			sourceTree = "<group>";
@@ -1313,21 +1328,11 @@
 			isa = PBXGroup;
 			children = (
 				A81BF9E32D84CB0C00768940 /* Source17To17_1MigrationPolicy.swift */,
+				A815AA942D90D2A100929A9E /* StoreApp17To17_1MigrationPolicy.swift */,
+				A815AA962D90E16400929A9E /* ReleaseTrack17To17_1MigrationPolicy.swift */,
 				A81BF9E22D84CB0C00768940 /* AppPermission17To17_1MigrationPolicy.swift */,
-				A81BF9EC2D84CF5900768940 /* ReleaseTrack17To17_1MigrationPolicy.swift */,
 			);
 			path = "v17-to-v17_1";
-			sourceTree = "<group>";
-		};
-		A85E43752D8AF86400E89240 /* v11-to-v17_1 */ = {
-			isa = PBXGroup;
-			children = (
-				A85E436B2D8AF6CD00E89240 /* Source11To17_1MigrationPolicy.swift */,
-				A85E436D2D8AF72F00E89240 /* StoreApp11To17_1MigrationPolicy.swift */,
-				A85E436F2D8AF77A00E89240 /* AppPermission11To17_1MigrationPolicy.swift */,
-				A85E43712D8AF7F100E89240 /* ReleaseTrack11To17_1MigrationPolicy.swift */,
-			);
-			path = "v11-to-v17_1";
 			sourceTree = "<group>";
 		};
 		A86315DD2D3EB2BD0048FA40 /* errors */ = {
@@ -1442,6 +1447,7 @@
 		A8C38C272D206AA500E83DBD /* common */ = {
 			isa = PBXGroup;
 			children = (
+				A815AA9E2D9104DD00929A9E /* BuildInfo.swift */,
 				A8B516E52D2668020047047C /* DateTimeUtil.swift */,
 				A8C38C282D206AC100E83DBD /* OutputStream.swift */,
 				A8C38C312D206B2500E83DBD /* FileOutputStream.swift */,
@@ -1873,8 +1879,8 @@
 				BF66EEAE2501AECA007EE018 /* StoreAppPolicy.swift */,
 				D5F99A1928D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift */,
 				A85E43732D8AF82100E89240 /* v11-to-v17 */,
-				A85E43752D8AF86400E89240 /* v11-to-v17_1 */,
 				A85E43742D8AF84200E89240 /* v17-to-v17_1 */,
+				A815AAA62D9108CB00929A9E /* v11-to-v17_1 */,
 			);
 			path = Policies;
 			sourceTree = "<group>";
@@ -1882,8 +1888,8 @@
 		BF66EEB02501AECA007EE018 /* Mapping Models */ = {
 			isa = PBXGroup;
 			children = (
-				A8C924292D8E75AD009D9953 /* AltStore17ToAltStore17_1.xcmappingmodel */,
-				A8C924272D8E7463009D9953 /* AltStore11ToAltStore17_1.xcmappingmodel */,
+				A815AAA02D9108BC00929A9E /* AltStore11ToAltStore17_1.xcmappingmodel */,
+				A815AA982D90E5E500929A9E /* AltStore17ToAltStore17_1.xcmappingmodel */,
 				A8C924232D8E73B1009D9953 /* AltStore11ToAltStore17.xcmappingmodel */,
 				D5F99A1728D11DB500476A16 /* AltStore10ToAltStore11.xcmappingmodel */,
 				D5CA0C4D280E249E00469595 /* AltStore9ToAltStore10.xcmappingmodel */,
@@ -3150,6 +3156,7 @@
 				A82067842D03DC0600645C0D /* OperatingSystemVersion+Comparable.swift in Sources */,
 				D5FB28EE2ADDF89800A1C337 /* KnownSource.swift in Sources */,
 				BF66EED32501AECA007EE018 /* AltStore2ToAltStore3.xcmappingmodel in Sources */,
+				A815AA972D90E16400929A9E /* ReleaseTrack17To17_1MigrationPolicy.swift in Sources */,
 				BF66EEA52501AEC5007EE018 /* Benefit.swift in Sources */,
 				D52B4ABF2AF183F0005991C3 /* WebViewController.swift in Sources */,
 				BF66EED22501AECA007EE018 /* AltStore4ToAltStore5.xcmappingmodel in Sources */,
@@ -3165,6 +3172,7 @@
 				D5F9821D2AB900060045751F /* AppScreenshot.swift in Sources */,
 				BF66EE9E2501AEC1007EE018 /* Fetchable.swift in Sources */,
 				BF66EEDF2501AECA007EE018 /* PatreonAccount.swift in Sources */,
+				A815AAA12D9108BC00929A9E /* AltStore11ToAltStore17_1.xcmappingmodel in Sources */,
 				BFAECC532501B0A400528F27 /* ServerProtocol.swift in Sources */,
 				A81BF9E52D84CB0C00768940 /* AppPermission17To17_1MigrationPolicy.swift in Sources */,
 				A81BF9E72D84CB0C00768940 /* Source17To17_1MigrationPolicy.swift in Sources */,
@@ -3172,11 +3180,15 @@
 				BF66EE9D2501AEC1007EE018 /* AppProtocol.swift in Sources */,
 				D519AD46292D665B004B12F9 /* Managed.swift in Sources */,
 				D52A2F972ACB40F700BDF8E3 /* Logger+AltStore.swift in Sources */,
+				A815AA952D90D2A100929A9E /* StoreApp17To17_1MigrationPolicy.swift in Sources */,
+				A815AAA72D9108CB00929A9E /* ReleaseTrack11To17_1MigrationPolicy.swift in Sources */,
+				A815AAA82D9108CB00929A9E /* AppPermission11To17_1MigrationPolicy.swift in Sources */,
+				A815AAA92D9108CB00929A9E /* Source11To17_1MigrationPolicy.swift in Sources */,
+				A815AAAA2D9108CB00929A9E /* StoreApp11To17_1MigrationPolicy.swift in Sources */,
 				BFC712C42512D5F100AB5EBE /* XPCConnection.swift in Sources */,
 				D5CA0C4B280E141900469595 /* ManagedPatron.swift in Sources */,
 				BF66EE8C2501AEB2007EE018 /* Keychain.swift in Sources */,
 				BF66EED42501AECA007EE018 /* AltStore5ToAltStore6.xcmappingmodel in Sources */,
-				A85E436C2D8AF6CD00E89240 /* Source11To17_1MigrationPolicy.swift in Sources */,
 				BF66EE972501AEBC007EE018 /* ALTAppPermissions.m in Sources */,
 				BFAECC552501B0A400528F27 /* Connection.swift in Sources */,
 				BF66EEDA2501AECA007EE018 /* RefreshAttempt.swift in Sources */,
@@ -3185,7 +3197,6 @@
 				BF66EEA92501AEC5007EE018 /* Tier.swift in Sources */,
 				A8228B5B2D6E2C0C00F7CE0E /* (null) in Sources */,
 				BF66EEDB2501AECA007EE018 /* StoreApp.swift in Sources */,
-				A85E436E2D8AF72F00E89240 /* StoreApp11To17_1MigrationPolicy.swift in Sources */,
 				BF66EEDE2501AECA007EE018 /* AppID.swift in Sources */,
 				BF66EECF2501AECA007EE018 /* AltStoreToAltStore2.xcmappingmodel in Sources */,
 				BF66EEA82501AEC5007EE018 /* Patron.swift in Sources */,
@@ -3212,12 +3223,10 @@
 				D5F48B4C29CD0C48002B52A4 /* AsyncManaged.swift in Sources */,
 				BFAECC5C2501B0A400528F27 /* CFNotificationName+AltStore.m in Sources */,
 				BF66EED82501AECA007EE018 /* SecureValueTransformer.swift in Sources */,
-				A85E43702D8AF77A00E89240 /* AppPermission11To17_1MigrationPolicy.swift in Sources */,
 				BF8B17EB250AC40000F8157F /* FileManager+SharedDirectories.swift in Sources */,
 				BF66EEE02501AECA007EE018 /* Account.swift in Sources */,
 				BF66EED52501AECA007EE018 /* AltStore.xcdatamodeld in Sources */,
 				BFAECC582501B0A400528F27 /* ALTConstants.m in Sources */,
-				A81BF9ED2D84CF5900768940 /* ReleaseTrack17To17_1MigrationPolicy.swift in Sources */,
 				D5F99A1A28D12B1400476A16 /* StoreApp10ToStoreApp11Policy.swift in Sources */,
 				BFAECC562501B0A400528F27 /* ALTServerError+Conveniences.swift in Sources */,
 				A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */,
@@ -3236,15 +3245,13 @@
 				D5A645232AF5B5C50047D980 /* PatreonAPI+Responses.swift in Sources */,
 				D5185B822AE1E71D00646E33 /* Source11To17MigrationPolicy.swift in Sources */,
 				BF66EECE2501AECA007EE018 /* InstalledAppPolicy.swift in Sources */,
-				A8C9242A2D8E75AD009D9953 /* AltStore17ToAltStore17_1.xcmappingmodel in Sources */,
 				BF1FE359251A9FB000C3CE09 /* NSXPCConnection+MachServices.swift in Sources */,
 				BF66EEA62501AEC5007EE018 /* PatreonAPI.swift in Sources */,
 				BF66EED02501AECA007EE018 /* AltStore6ToAltStore7.xcmappingmodel in Sources */,
 				BF66EEDC2501AECA007EE018 /* MergePolicy.swift in Sources */,
 				BF66EEE22501AECA007EE018 /* InstalledExtension.swift in Sources */,
-				A85E43722D8AF7F100E89240 /* ReleaseTrack11To17_1MigrationPolicy.swift in Sources */,
-				A8C924282D8E7463009D9953 /* AltStore11ToAltStore17_1.xcmappingmodel in Sources */,
 				BF66EED62501AECA007EE018 /* NewsItem.swift in Sources */,
+				A815AA992D90E5E500929A9E /* AltStore17ToAltStore17_1.xcmappingmodel in Sources */,
 				BF66EEA72501AEC5007EE018 /* Campaign.swift in Sources */,
 				D52C8F032AFC56F000CA0BDD /* StoreCategory.swift in Sources */,
 				BF66EE992501AEBC007EE018 /* ALTSourceUserInfoKey.m in Sources */,
@@ -3393,6 +3400,7 @@
 				BF0C4EBD22A1BD8B009A2DD7 /* AppManager.swift in Sources */,
 				BF2901312318F7A800D88A45 /* AppBannerView.swift in Sources */,
 				0EE7FDC42BE8BC7900D1E390 /* ALTLocalizedError.swift in Sources */,
+				A815AA9F2D9104DD00929A9E /* BuildInfo.swift in Sources */,
 				BFF00D342501BDCF00746320 /* IntentHandler.swift in Sources */,
 				BFDBBD80246CB84F004ED2F3 /* RemoveAppBackupOperation.swift in Sources */,
 				A8C38C2A2D206AC100E83DBD /* OutputStream.swift in Sources */,

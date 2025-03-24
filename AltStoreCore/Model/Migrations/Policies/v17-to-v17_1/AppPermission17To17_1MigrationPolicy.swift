@@ -1,5 +1,5 @@
 //
-//  AppPermission17To17_1MigrationPolicy.swift
+//  AppPermission17to17_1MigrationPolicy.swift
 //  AltStore
 //
 //  Created by Magesh K on 15/03/25.
@@ -23,9 +23,12 @@ class AppPermission17To17_1MigrationPolicy: NSEntityMigrationPolicy {
         
         // Extract the type value from source
         if let type = sInstance.value(forKey: #keyPath(AppPermission.type)) as? String {
-            // In the new model, "permission" is the actual permission string, which needs to be derived from the old "type"
-            let permission = self.derivePermissionFromType(type)
-            destinationPermission.setValue(permission, forKey: #keyPath(AppPermission._permission))
+            // this is for backwards compatibility <0.5.10
+            // if older type was a valid permission, then consider it as "privacy" in the newer "type".
+            if let permission = self.derivePermissionFromType(type) {
+                destinationPermission.setValue(permission, forKey: #keyPath(AppPermission._permission))
+                destinationPermission.setValue("privacy", forKey: #keyPath(AppPermission.type))
+            }
         }
         
         // set initial values copied from source as-is
@@ -48,16 +51,12 @@ class AppPermission17To17_1MigrationPolicy: NSEntityMigrationPolicy {
         in mapping: NSEntityMapping,
         manager: NSMigrationManager
     ) throws {
-        // Retrieve the corresponding source instance for the destination StoreApp
-        let sourceInstances = manager.sourceInstances(forEntityMappingName: mapping.name, destinationInstances: [dInstance])
-        guard let sInstance = sourceInstances.first else {
-            print("No source instance found for destination: \(dInstance)")
-            return
-        }
-        
+
+        try super.createRelationships(forDestination: dInstance, in: mapping, manager: manager)
+                
         // Retrieve the source storeApp from the source appPermission
-        guard let storeApp = sInstance.value(forKey: #keyPath(AppPermission.app)) as? NSManagedObject else {
-            print("Source \(AppPermission.description()) has no storeApp")
+        guard let storeApp = dInstance.value(forKey: #keyPath(AppPermission.app)) as? NSManagedObject else {
+            print("Destination \(AppPermission.description()) has no storeApp")
             return
         }
         
@@ -73,7 +72,8 @@ class AppPermission17To17_1MigrationPolicy: NSEntityMigrationPolicy {
     }
     
     // Helper method to derive permission string from type
-    private func derivePermissionFromType(_ type: String) -> String {
+    private func derivePermissionFromType(_ type: String) -> String? {
+        
         // Based on the code in the documents, we need to map the ALTAppPermissionType to permission strings
         switch type {
         case "photos": return "NSPhotosUsageDescription"
@@ -93,9 +93,8 @@ class AppPermission17To17_1MigrationPolicy: NSEntityMigrationPolicy {
         case "faceID": return "NSFaceIDUsageDescription"
         case "siri": return "NSSiriUsageDescription"
         case "motion": return "NSMotionUsageDescription"
-        case "entitlement": return type // For entitlements, we might keep the raw value
-        case "privacy": return type // For privacy permissions, we might keep the raw value
-        default: return type // Default fallback
+        
+        default: return nil // Default fallback
         }
     }
 }

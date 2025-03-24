@@ -213,10 +213,10 @@ extension MergePolicy{
                 }
                 
             default:
-                break
+//                break
                 // Unknown context-level conflict.
 //                assertionFailure("MergePolicy is only intended to work with database-level conflicts.")
-//                assertionFailure("Context Conflict Detected: is there ambigious data in your incoming sources?\nConflict:\(conflict)")
+                assertionFailure("Context Conflict Detected: is there ambigious data in your incoming sources?\nConflict:\(conflict)")
             }
         }
     }

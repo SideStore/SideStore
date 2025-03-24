@@ -9,13 +9,18 @@
 import CoreData
 
 @objc(ReleaseTrack11To17_1MigrationPolicy)
-class ReleaseTrack11To17_1MigrationPolicy: ReleaseTrack17To17_1MigrationPolicy
-{
+class ReleaseTrack11To17_1MigrationPolicy: ReleaseTrack17To17_1MigrationPolicy {
+    
     override func createDestinationInstances(forSource sInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
         try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
     }
-
-    override func createRelationships(forDestination dInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
+    
+    
+    override func createRelationships(
+        forDestination dInstance: NSManagedObject,
+        in mapping: NSEntityMapping,
+        manager: NSMigrationManager
+    ) throws {
         try super.createRelationships(forDestination: dInstance, in: mapping, manager: manager)
     }
 }
