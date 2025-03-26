@@ -14,7 +14,9 @@ public class ReleaseTrack: BaseEntity, Decodable
 {
     // attributes
     @NSManaged @objc(track) public private(set) var _track: String?
-    
+    @NSManaged @objc(appBundleID) public private(set) var _appBundleID: String?
+    @NSManaged @objc(sourceID) public private(set) var _sourceID: String?
+
     // RelationShips
     @NSManaged @objc(releases) public private(set) var _releases: NSOrderedSet?
     @NSManaged public private(set) var storeApp: StoreApp?
@@ -89,7 +91,7 @@ public extension ReleaseTrack{
                 }
                 
                 // update it into the appVersion
-                _ = version.mutateForData(channel: track, appBundleID: storeApp.bundleIdentifier)
+                _ = version.mutateForData(channel: track, appBundleID: storeApp.bundleIdentifier, sourceID: storeApp.sourceIdentifier)
             }
     }
     
@@ -109,6 +111,10 @@ public extension ReleaseTrack{
         if key == NSExpression(forKeyPath: #keyPath(ReleaseTrack.storeApp)).keyPath
         {
             updateVersions(for: storeApp)
+            
+            // update unique constraint attribs
+            self._appBundleID = storeApp?.bundleIdentifier
+            self._sourceID = storeApp?.sourceIdentifier
         }
     }
 }

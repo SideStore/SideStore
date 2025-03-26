@@ -11,6 +11,7 @@ import CoreData
 
 import AltStoreCore
 import Roxas
+import SemanticVersion
 
 @objc(FetchSourceOperation)
 final class FetchSourceOperation: ResultOperation<Source>
@@ -246,9 +247,20 @@ private extension FetchSourceOperation
             #endif
         }
         
-        if let previousSourceID = self.$source.identifier
+        let incomingSourceID = source.identifier
+        if let previousSourceID = self.$source.identifier,
+           incomingSourceID != previousSourceID
         {
-            guard source.identifier == previousSourceID else { throw SourceError.changedID(source.identifier, previousID: previousSourceID, source: source) }
+//            if let version = BuildInfo().marketing_version,
+//               SemanticVersion(version)! <= SemanticVersion("0.6.1")!
+//            {
+//                // delete the source, so that incoming will be saved.
+//                self.source?.managedObjectContext?.delete(self.source!)
+//            }
+//            else
+//            {
+                throw SourceError.changedID(source.identifier, previousID: self.$source.identifier ?? "nil", source: source)
+//            }
         }
     }
     

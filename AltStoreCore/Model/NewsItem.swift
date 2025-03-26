@@ -75,6 +75,9 @@ public class NewsItem: BaseEntity, Decodable
         self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         self.externalURL = try container.decodeIfPresent(URL.self, forKey: .externalURL)
         
+        // TODO: app specific news should be moved to appEntity (via refactoring)
+        //       This can be done by: 1. having two newsItem schema, one for source and one for StoreApp
+        //                            2. move this appID field into the newItem schema which is under StoreApp.
         self.appID = try container.decodeIfPresent(String.self, forKey: .appID)
         
         let notify = try container.decodeIfPresent(Bool.self, forKey: .notify) ?? false

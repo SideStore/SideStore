@@ -1,5 +1,5 @@
 //
-//  SourceMigrationPolicy.swift
+//  Source11To17MigrationPolicy.swift
 //  AltStoreCore
 //
 //  Created by Riley Testut on 10/19/23.

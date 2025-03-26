@@ -33,7 +33,7 @@ public class AppPermission: BaseEntity
         default: return UnknownAppPermission(rawValue: self._permission)
         }
     }
-    @NSManaged @objc(permission) private var _permission: String
+    @NSManaged @objc(permission) private(set) public var _permission: String
     
     // Set by StoreApp.
     @NSManaged public var appBundleID: String
