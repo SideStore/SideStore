@@ -212,10 +212,6 @@ private extension PatchAppOperation
             #if targetEnvironment(simulator)
             throw PatchAppError.unsupportedOperatingSystemVersion(ProcessInfo.processInfo.operatingSystemVersion)
             #else
-            let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
-            let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
-
-            UIApplication.shared.open(shortcutURLoff, options: [:], completionHandler: nil)
             let spotlightPath = "Applications/Spotlight.app/Spotlight"
             let spotlightFileURL = self.patchDirectory.appendingPathComponent(spotlightPath)
             

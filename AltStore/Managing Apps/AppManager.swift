@@ -953,13 +953,11 @@ extension AppManager
         let context = Context(bundleIdentifier: originalBundleID, authenticatedContext: authContext)
         context.resignedApp = resignedApp
         
-        let patchAppOperation = PatchAppOperation(context: context)
-        /*
         let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
         let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
 
         UIApplication.shared.open(shortcutURLoff, options: [:], completionHandler: nil)
-         */
+        let patchAppOperation = PatchAppOperation(context: context)
         let sendAppOperation = SendAppOperation(context: context)
         let installOperation = InstallAppOperation(context: context)
         
