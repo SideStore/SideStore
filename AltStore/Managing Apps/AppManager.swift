@@ -954,6 +954,11 @@ extension AppManager
         context.resignedApp = resignedApp
         
         let patchAppOperation = PatchAppOperation(context: context)
+        
+        let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
+        let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
+
+        UIApplication.shared.open(shortcutURLoff, options: [:], completionHandler: nil)
         let sendAppOperation = SendAppOperation(context: context)
         let installOperation = InstallAppOperation(context: context)
         
@@ -993,6 +998,7 @@ extension AppManager
             case .failure(let error): completionHandler(.failure(error))
             case .success(let installedApp): completionHandler(.success(installedApp))
             }
+            UIApplication.shared.open(shortcutURLon, options: [:], completionHandler: nil)
         }
         installOperation.addDependency(sendAppOperation)
         
