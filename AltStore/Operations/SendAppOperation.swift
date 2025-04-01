@@ -41,9 +41,13 @@ final class SendAppOperation: ResultOperation<()>
         }
                 
         // self.context.resignedApp.fileURL points to the app bundle, but we want the .ipa.
+        let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
+        let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
+
+        UIApplication.shared.open(shortcutURLoff, options: [:], completionHandler: nil)
+        
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL, storeApp: nil)
         let fileURL = InstalledApp.refreshedIPAURL(for: app)
-        
         print("AFC App `fileURL`: \(fileURL.absoluteString)")
         
         if let data = NSData(contentsOf: fileURL) {

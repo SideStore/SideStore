@@ -959,10 +959,6 @@ extension AppManager
         
         let installationProgress = Progress.discreteProgress(totalUnitCount: 100)
         installationProgress.addChild(sendAppOperation.progress, withPendingUnitCount: 40)
-        let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
-        let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
-
-        UIApplication.shared.open(shortcutURLoff, options: [:], completionHandler: nil)
         installationProgress.addChild(installOperation.progress, withPendingUnitCount: 60)
         
         /* Patch */
