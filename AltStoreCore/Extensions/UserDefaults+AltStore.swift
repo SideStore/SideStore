@@ -36,6 +36,8 @@ public extension UserDefaults
     @NSManaged var isExportResignedAppEnabled: Bool
     @NSManaged var isVerboseOperationsLoggingEnabled: Bool
     @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
+    @NSManaged var isMinimuxerStatusCheckEnabled: Bool
+
     @NSManaged var recreateDatabaseOnNextStart: Bool
     @NSManaged var isPairingReset: Bool
     @NSManaged var isDebugModeEnabled: Bool
@@ -132,6 +134,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.isDebugModeEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): false, // minimuxer logging is disabled by default for console loggin
+            #keyPath(UserDefaults.isMinimuxerStatusCheckEnabled): false, // minimuxer status check is disabled by default to support stosVPN based cellular refresh
             #keyPath(UserDefaults.recreateDatabaseOnNextStart): false, 
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,

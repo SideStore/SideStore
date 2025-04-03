@@ -166,8 +166,10 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     @IBAction func unwindToMyAppsViewController(_ segue: UIStoryboardSegue)
     {
     }
+
     var minimuxerStatus: Bool {
-        guard minimuxer.ready() else {
+        // added isMinimuxerStatusCheckEnabled to forcefully ignore minimuxer status if status check is disabled in settings
+        guard !UserDefaults.standard.isMinimuxerStatusCheckEnabled || minimuxer.ready() else {
             ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No WiFi or VPN!")).show(in: self)
             return false
         }
