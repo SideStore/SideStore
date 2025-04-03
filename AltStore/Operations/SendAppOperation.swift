@@ -39,7 +39,6 @@ final class SendAppOperation: ResultOperation<()>
         }
 
         let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
-        let shortcutURLon = URL(string: "shortcuts://run-shortcut?name=TurnOnData")!
 
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL, storeApp: nil)
         let fileURL = InstalledApp.refreshedIPAURL(for: app)
