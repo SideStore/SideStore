@@ -553,6 +553,11 @@ private extension SettingsViewController
         UserDefaults.standard.isMinimuxerConsoleLoggingEnabled = sender.isOn
     }
 
+    @IBAction func toggleMinimuxerStatusCheck(_ sender: UISwitch) {
+        // update it in database
+        UserDefaults.standard.isMinimuxerStatusCheckEnabled = sender.isOn
+    }
+
     @IBAction func toggleRecreateDatabaseSwitch(_ sender: UISwitch) {
         // Update the setting in UserDefaults
         UserDefaults.standard.recreateDatabaseOnNextStart = sender.isOn
