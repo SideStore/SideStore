@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 
 import AltStoreCore
-import EmotionalDamage
 import minimuxer
 
 typealias RefreshError = RefreshErrorCode.Error
@@ -99,7 +98,6 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
             self.finish(.failure(RefreshError(.noInstalledApps)))
             return
         }
-        start_em_proxy(bind_addr: Consts.Proxy.serverURL)
         target_minimuxer_address()
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {

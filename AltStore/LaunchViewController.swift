@@ -8,7 +8,6 @@
 
 import UIKit
 import Roxas
-import EmotionalDamage
 import minimuxer
 import WidgetKit
 
@@ -88,7 +87,6 @@ final class LaunchViewController: RSTLaunchViewController, UIDocumentPickerDeleg
         
         
         #if !targetEnvironment(simulator)
-        start_em_proxy(bind_addr: Consts.Proxy.serverURL)
         
         guard let pf = fetchPairingFile() else {
             displayError("Device pairing file not found.")

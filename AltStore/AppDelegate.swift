@@ -14,7 +14,6 @@ import Intents
 import AltStoreCore
 import AltSign
 import Roxas
-import EmotionalDamage
 
 import Nuke
 
@@ -139,7 +138,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication)
     {
         AppManager.shared.update()
-        start_em_proxy(bind_addr: Consts.Proxy.serverURL)
 
         PatreonAPI.shared.refreshPatreonAccount()
     }
