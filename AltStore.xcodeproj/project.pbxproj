@@ -44,7 +44,6 @@
 		0EE7FDC92BE8D07400D1E390 /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C336124197D700034FD24 /* NSError+AltStore.swift */; };
 		0EE7FDCB2BE8D12B00D1E390 /* ALTLocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE7FDC32BE8BC7900D1E390 /* ALTLocalizedError.swift */; };
 		0EE7FDCD2BE9124400D1E390 /* ErrorDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE7FDCC2BE9124400D1E390 /* ErrorDetailsViewController.swift */; };
-		19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19104DB42909C06D00C49C7B /* EmotionalDamage.swift */; };
 		19B9B7452845E6DF0076EF69 /* SelectTeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */; };
 		551A15E55999499418AC1022 /* Pods_AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 707E746318F0B6F1A44935D3 /* Pods_AltStoreCore.framework */; };
 		A800F7042CE28E3800208744 /* View+AltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A800F7032CE28E2F00208744 /* View+AltWidget.swift */; };
@@ -53,7 +52,6 @@
 		A8096D182D30AD4F000C39C6 /* WidgetUpdateIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8096D172D30AD4F000C39C6 /* WidgetUpdateIntent.swift */; };
 		A8096D1C2D30ADA9000C39C6 /* ActiveAppsTimelineProvider+Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8096D1B2D30ADA9000C39C6 /* ActiveAppsTimelineProvider+Simulator.swift */; };
 		A809F69E2D04D7AC00F0F0F3 /* libminimuxer_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */; };
-		A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */; };
 		A809F6A82D04DA1900F0F0F3 /* minimuxer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A32D04DA1900F0F0F3 /* minimuxer.swift */; };
 		A809F6A92D04DA1900F0F0F3 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809F6A72D04DA1900F0F0F3 /* SwiftBridgeCore.swift */; };
 		A80D60D32D3DD85100CEF65D /* ReleaseTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D60D12D3D705F00CEF65D /* ReleaseTrack.swift */; };
@@ -120,7 +118,6 @@
 		A8E2DB322D684E2A009E5D31 /* UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E2DB2F2D684E2A009E5D31 /* UITestsLaunchTests.swift */; };
 		A8E2DB342D68507F009E5D31 /* SideStoreTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = A8E2DB332D68507F009E5D31 /* SideStoreTests.xctestplan */; };
 		A8EA195F2D4982D600DC6322 /* BaseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EA195E2D4982D600DC6322 /* BaseEntity.swift */; };
-		A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */; };
 		A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191E5FAB290A5D92001A3B7C /* libminimuxer.a */; };
 		A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF45872B2298D31600BD7491 /* libimobiledevice.a */; };
 		A8FD915E2D046F5200322782 /* UserInfoValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD915D2D046F5200322782 /* UserInfoValue.swift */; };
@@ -130,7 +127,6 @@
 		A8FD917C2D0478D200322782 /* VerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CF56812A0D83F9006D93E2 /* VerificationError.swift */; };
 		B33FFBAA295F8F78002259E6 /* preboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBA9295F8F78002259E6 /* preboard.c */; };
 		B33FFBAC295F8F98002259E6 /* companion_proxy.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FFBAB295F8F98002259E6 /* companion_proxy.c */; };
-		B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B343F86C295F759E002B1159 /* libresolv.tbd */; };
 		B343F87C295F7C5D002B1159 /* opack.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F872295F7C5C002B1159 /* opack.c */; };
 		B343F87D295F7C5D002B1159 /* cbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F873295F7C5C002B1159 /* cbuf.c */; };
 		B343F87E295F7C5D002B1159 /* collection.c in Sources */ = {isa = PBXBuildFile; fileRef = B343F874295F7C5D002B1159 /* collection.c */; };
@@ -451,13 +447,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		19104DB92909C0F200C49C7B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFD247622284B9A500981D42 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 19104DB12909C06C00C49C7B;
-			remoteInfo = EmotionalDamage;
-		};
 		191E5FB2290A5D9B001A3B7C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFD247622284B9A500981D42 /* Project object */;
@@ -471,20 +460,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = CA609C732349C7AAD9FA67C4;
 			remoteInfo = "minimuxer-staticlib";
-		};
-		A809F6932D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA60C44C93D7916DE57E6EBD;
-			remoteInfo = "em_proxy-staticlib";
-		};
-		A809F6952D04D71200F0F0F3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA60058A9FBE4D17AF51A7D5;
-			remoteInfo = "run-bin";
 		};
 		A809F6A02D04D7CB00F0F0F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -649,8 +624,6 @@
 		0EE7FDC22BE8BC4200D1E390 /* ALTWrappedError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTWrappedError.h; sourceTree = "<group>"; };
 		0EE7FDC32BE8BC7900D1E390 /* ALTLocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALTLocalizedError.swift; sourceTree = "<group>"; };
 		0EE7FDCC2BE9124400D1E390 /* ErrorDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDetailsViewController.swift; sourceTree = "<group>"; };
-		19104DB22909C06C00C49C7B /* libEmotionalDamage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEmotionalDamage.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		19104DB42909C06D00C49C7B /* EmotionalDamage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionalDamage.swift; sourceTree = "<group>"; };
 		191E5FAB290A5D92001A3B7C /* libminimuxer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminimuxer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		19B9B7442845E6DF0076EF69 /* SelectTeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTeamViewController.swift; sourceTree = "<group>"; };
 		32741831F952989EC7E74FFA /* Pods-SideStore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SideStore.debug.xcconfig"; path = "Target Support Files/Pods-SideStore/Pods-SideStore.debug.xcconfig"; sourceTree = "<group>"; };
@@ -727,14 +700,12 @@
 		A8E2DB2F2D684E2A009E5D31 /* UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A8E2DB332D68507F009E5D31 /* SideStoreTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SideStoreTests.xctestplan; sourceTree = "<group>"; };
 		A8EA195E2D4982D600DC6322 /* BaseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEntity.swift; sourceTree = "<group>"; };
-		A8F66C3C2D04D433009689E6 /* em_proxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = em_proxy.h; sourceTree = "<group>"; };
 		A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minimuxer.xcodeproj; sourceTree = "<group>"; };
 		A8FD915B2D046EF100322782 /* ProcessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessError.swift; sourceTree = "<group>"; };
 		A8FD915D2D046F5200322782 /* UserInfoValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoValue.swift; sourceTree = "<group>"; };
 		A8FD917A2D0472DD00322782 /* DeprecatedAPIs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeprecatedAPIs.swift; sourceTree = "<group>"; };
 		B33FFBA9295F8F78002259E6 /* preboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = preboard.c; path = src/preboard.c; sourceTree = "<group>"; };
 		B33FFBAB295F8F98002259E6 /* companion_proxy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = companion_proxy.c; path = src/companion_proxy.c; sourceTree = "<group>"; };
-		B343F84D295F6323002B1159 /* em_proxy.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = em_proxy.xcodeproj; path = SideStore/em_proxy.xcodeproj; sourceTree = SOURCE_ROOT; };
 		B343F86C295F759E002B1159 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libresolv.tbd; sourceTree = DEVELOPER_DIR; };
 		B343F872295F7C5C002B1159 /* opack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opack.c; sourceTree = "<group>"; };
 		B343F873295F7C5C002B1159 /* cbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbuf.c; sourceTree = "<group>"; };
@@ -1090,15 +1061,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		19104DAF2909C06C00C49C7B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A809F69F2D04D7B300F0F0F3 /* libem_proxy_static.a in Frameworks */,
-				B343F86D295F759E002B1159 /* libresolv.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		191E5FA8290A5D92001A3B7C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1167,7 +1129,6 @@
 				A8B646012D70C23E00125819 /* MarkdownKit in Frameworks */,
 				A805C3CD2D0C316A00E76BDD /* Pods_SideStore.framework in Frameworks */,
 				A8F838942D048ECE00ED425D /* libimobiledevice.a in Frameworks */,
-				A8F838922D048E8F00ED425D /* libEmotionalDamage.a in Frameworks */,
 				A8F838932D048E8F00ED425D /* libminimuxer.a in Frameworks */,
 				D533E8B72727841800A9B5DD /* libAppleArchive.tbd in Frameworks */,
 				D533E8BE2727BBF800A9B5DD /* libcurl.a in Frameworks */,
@@ -1190,14 +1151,6 @@
 				0EE7FDC22BE8BC4200D1E390 /* ALTWrappedError.h */,
 			);
 			path = Errors;
-			sourceTree = "<group>";
-		};
-		19104DB32909C06D00C49C7B /* EmotionalDamage */ = {
-			isa = PBXGroup;
-			children = (
-				19104DB42909C06D00C49C7B /* EmotionalDamage.swift */,
-			);
-			path = EmotionalDamage;
 			sourceTree = "<group>";
 		};
 		191E5FF4290B2663001A3B7C /* libimobiledevice-glue */ = {
@@ -1247,15 +1200,6 @@
 			isa = PBXGroup;
 			children = (
 				A809F68E2D04D71200F0F0F3 /* libminimuxer_static.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A809F68F2D04D71200F0F0F3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */,
-				A809F6962D04D71200F0F0F3 /* run */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1508,21 +1452,10 @@
 				A8E2DB352D6850A9009E5D31 /* Tests */,
 				A8F66C5C2D04D433009689E6 /* minimuxer */,
 				A8F66C602D04D464009689E6 /* minimuxer.xcodeproj */,
-				A8F66C412D04D433009689E6 /* em_proxy */,
-				B343F84D295F6323002B1159 /* em_proxy.xcodeproj */,
-				19104DB32909C06D00C49C7B /* EmotionalDamage */,
 				B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */,
 				A8C38C1C2D2068D100E83DBD /* Utils */,
 			);
 			path = SideStore;
-			sourceTree = "<group>";
-		};
-		A8F66C412D04D433009689E6 /* em_proxy */ = {
-			isa = PBXGroup;
-			children = (
-				A8F66C3C2D04D433009689E6 /* em_proxy.h */,
-			);
-			path = em_proxy;
 			sourceTree = "<group>";
 		};
 		A8F66C5C2D04D433009689E6 /* minimuxer */ = {
@@ -2071,7 +2004,6 @@
 				BF58047B246A28F7008AE704 /* AltBackup.app */,
 				BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */,
 				BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */,
-				19104DB22909C06C00C49C7B /* libEmotionalDamage.a */,
 				191E5FAB290A5D92001A3B7C /* libminimuxer.a */,
 				D586D39828EF58B0000E101F /* AltTests.xctest */,
 				A8E2DB212D684CBD009E5D31 /* UITests.xctest */,
@@ -2523,22 +2455,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		19104DB12909C06C00C49C7B /* EmotionalDamage */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 19104DB62909C06D00C49C7B /* Build configuration list for PBXNativeTarget "EmotionalDamage" */;
-			buildPhases = (
-				19104DAE2909C06C00C49C7B /* Sources */,
-				19104DAF2909C06C00C49C7B /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = EmotionalDamage;
-			productName = EmotionalDamage;
-			productReference = 19104DB22909C06C00C49C7B /* libEmotionalDamage.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		191E5FAA290A5D92001A3B7C /* minimuxer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 191E5FAF290A5D92001A3B7C /* Build configuration list for PBXNativeTarget "minimuxer" */;
@@ -2691,7 +2607,6 @@
 			dependencies = (
 				A8E00D3E2D0C95B5000DD2C7 /* PBXTargetDependency */,
 				191E5FB3290A5D9B001A3B7C /* PBXTargetDependency */,
-				19104DBA2909C0F200C49C7B /* PBXTargetDependency */,
 				BF66EE842501AE50007EE018 /* PBXTargetDependency */,
 				BF989176250AABF4002ACF50 /* PBXTargetDependency */,
 			);
@@ -2710,9 +2625,6 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = SideStore;
 				TargetAttributes = {
-					19104DB12909C06C00C49C7B = {
-						CreatedOnToolsVersion = 14.0;
-					};
 					191E5FAA290A5D92001A3B7C = {
 						CreatedOnToolsVersion = 14.0;
 					};
@@ -2769,10 +2681,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A809F68F2D04D71200F0F0F3 /* Products */;
-					ProjectRef = B343F84D295F6323002B1159 /* em_proxy.xcodeproj */;
-				},
-				{
 					ProductGroup = A8A543222D04F0C100D72399 /* Products */;
 					ProjectRef = B343F886295F7F9B002B1159 /* libfragmentzip.xcodeproj */;
 				},
@@ -2788,7 +2696,6 @@
 				BF58047A246A28F7008AE704 /* AltBackup */,
 				BF66EE7D2501AE50007EE018 /* AltStoreCore */,
 				BF989166250AABF3002ACF50 /* AltWidgetExtension */,
-				19104DB12909C06C00C49C7B /* EmotionalDamage */,
 				191E5FAA290A5D92001A3B7C /* minimuxer */,
 				A8E2DB202D684CBD009E5D31 /* UITests */,
 				A81A8CC42D68BA610086C96F /* DataStructureTests */,
@@ -2802,20 +2709,6 @@
 			fileType = archive.ar;
 			path = libminimuxer_static.a;
 			remoteRef = A809F68D2D04D71200F0F0F3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A809F6942D04D71200F0F0F3 /* libem_proxy_static.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libem_proxy_static.a;
-			remoteRef = A809F6932D04D71200F0F0F3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A809F6962D04D71200F0F0F3 /* run */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = run;
-			remoteRef = A809F6952D04D71200F0F0F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A8A543292D04F0C100D72399 /* libfragmentzip */ = {
@@ -3019,14 +2912,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		19104DAE2909C06C00C49C7B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				19104DB52909C06D00C49C7B /* EmotionalDamage.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		191E5FA7290A5D92001A3B7C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3438,11 +3323,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		19104DBA2909C0F200C49C7B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 19104DB12909C06C00C49C7B /* EmotionalDamage */;
-			targetProxy = 19104DB92909C0F200C49C7B /* PBXContainerItemProxy */;
-		};
 		191E5FB3290A5D9B001A3B7C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 191E5FAA290A5D92001A3B7C /* minimuxer */;
@@ -3508,68 +3388,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		19104DB72909C06D00C49C7B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_WARN_DUPLICATE_LIBRARIES = YES;
-				LD_WARN_UNUSED_DYLIBS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/SideStore/em_proxy",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = SideStore/em_proxy/em_proxy.h;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 15.0;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
-			};
-			name = Debug;
-		};
-		19104DB82909C06D00C49C7B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_WARN_DUPLICATE_LIBRARIES = YES;
-				LD_WARN_UNUSED_DYLIBS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/SideStore/em_proxy",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = SideStore/em_proxy/em_proxy.h;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 15.0;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
-			};
-			name = Release;
-		};
 		191E5FB0290A5D92001A3B7C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4252,15 +4070,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		19104DB62909C06D00C49C7B /* Build configuration list for PBXNativeTarget "EmotionalDamage" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				19104DB72909C06D00C49C7B /* Debug */,
-				19104DB82909C06D00C49C7B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		191E5FAF290A5D92001A3B7C /* Build configuration list for PBXNativeTarget "minimuxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
