@@ -11,7 +11,11 @@ import UIKit
 
 public extension Source
 {
-    static let altStoreIdentifier = try! Source.sourceID(from: Source.altStoreSourceURL)
+    #if ALPHA
+    static let altStoreGroupIdentifier = Bundle.Info.appbundleIdentifier
+    #else
+    static let altStoreGroupIdentifier = Bundle.Info.appbundleIdentifier
+    #endif
     
     #if STAGING
     
@@ -24,13 +28,15 @@ public extension Source
     #else
     
     #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
+    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
     #else
-//    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!       // using v2 for alpha releases
+    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
     #endif
     
     #endif
+    
+    // normalized url is the source identifier (or) p-key!
+    static let altStoreIdentifier = try! Source.sourceID(from: altStoreSourceURL)
 }
 
 // public struct AppPermissionFeed: Codable {
@@ -205,7 +211,8 @@ public class Source: BaseEntity, Decodable
     /* Properties */
     @NSManaged public var version: Int
     @NSManaged public var name: String
-    @NSManaged public private(set) var identifier: String
+    @NSManaged public private(set) var identifier: String       // NOTE: sourceID is just normalized sourceURL
+    @NSManaged public private(set) var groupID: String?
     @NSManaged public var sourceURL: URL
     
     /* Source Detail */
@@ -280,6 +287,9 @@ public class Source: BaseEntity, Decodable
         case news
         case featuredApps
         case userInfo
+        
+//        case identifier
+        case groupID = "identifier"
     }
     
     private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
@@ -359,6 +369,24 @@ public class Source: BaseEntity, Decodable
             
             // Updates identifier + apps & newsItems
             try self.setSourceURL(sourceURL)
+            
+            
+            // NOTE: Source ID is just normalized sourceURL. coz normalized url is the primary key which needs to be unique
+            //       Hence if a source's URL changed, then it means it is a different source now.
+            //       This also means that the identifier field in the source is irrelevant (if any)
+            
+            // if we want grouping of sources from same author or something like that then we should have used groupID (a new field)
+            // shouldn't use the existing "identifier" field, hence the following is commented out
+            
+//            // if an explicit identifier is present, then use it
+//            if let identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+//            {
+//                self.identifier = identifier
+//            }
+            
+            // if an explicit (group)identifier is present, then use it as groupID else use sourceID as groupID too
+            self.groupID = try container.decodeIfPresent(String.self, forKey: .groupID) ?? self.identifier
+            
         }
         catch
         {
@@ -405,7 +433,7 @@ public extension Source
         
         // TODO: Support alternate URLs
         let isRecommended = recommendedSources.contains { source in
-            return source.identifier == self.identifier || source.sourceURL?.absoluteString.lowercased() == self.sourceURL.absoluteString
+            return source.identifier == self.identifier || source.sourceURL?.absoluteString.lowercased() == self.sourceURL.absoluteString.lowercased()
         }
         return isRecommended
     }
@@ -418,14 +446,17 @@ public extension Source
     }
 }
 
-internal extension Source
+public extension Source
 {
     class func sourceID(from sourceURL: URL) throws -> String
     {
         let sourceID = try sourceURL.normalized()
         return sourceID
     }
-    
+}
+
+internal extension Source
+{
     func setFeaturedApps(_ featuredApps: [StoreApp]?)
     {
         // Explicitly update relationships for all apps to ensure featuredApps merges correctly.
@@ -451,17 +482,23 @@ public extension Source
 {
     func setSourceURL(_ sourceURL: URL) throws
     {
-        let identifier = try Source.sourceID(from: sourceURL)
-
-        self.identifier = identifier
         self.sourceURL = sourceURL
+        
+        // update the normalized sourceURL as the identifier
+        let identifier = try Source.sourceID(from: sourceURL)
+        try self.setSourceID(identifier)
+    }
+
+    func setSourceID(_ identifier: String) throws
+    {
+        self.identifier = identifier
         
         for app in self.apps
         {
             app.sourceIdentifier = identifier
         }
         
-        for newsItem in self.newsItems 
+        for newsItem in self.newsItems
         {
             newsItem.sourceIdentifier = identifier
         }
@@ -479,6 +516,7 @@ public extension Source
     {
         let source = Source(context: context)
         source.name = "SideStore Offical"
+        source.groupID = Source.altStoreGroupIdentifier
         source.identifier = Source.altStoreIdentifier
         try! source.setSourceURL(Source.altStoreSourceURL)
         
@@ -491,13 +529,14 @@ public extension Source
         return source
     }
     
-    class func make(name: String, identifier: String, sourceURL: URL, context: NSManagedObjectContext) -> Source
+    class func make(name: String, groupID: String, sourceURL: URL, context: NSManagedObjectContext) -> Source
     {
         let source = Source(context: context)
         source.name = name
-        source.identifier = identifier
         source.sourceURL = sourceURL
-        
+        source.sourceURL = sourceURL
+        source.identifier = try! Source.sourceID(from: sourceURL)
+
         return source
     }
 }
