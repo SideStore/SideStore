@@ -949,7 +949,7 @@ extension SettingsViewController
                 
                 // Option 2: Discord
                 alertController.addAction(UIAlertAction(title: "Discord", style: .default) { _ in
-                    if let discordURL = URL(string: "https://discord.gg/sidestore") {
+                    if let discordURL = URL(string: "https://discord.gg/sidestore-949183273383395328") {
                         let safariViewController = SFSafariViewController(url: discordURL)
                         safariViewController.preferredControlTintColor = .altPrimary
                         self.present(safariViewController, animated: true, completion: nil)
