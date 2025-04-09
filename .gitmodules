@@ -50,10 +50,6 @@
     path = SideStore/minimuxer
     url = https://github.com/SideStore/minimuxer
     branch = master
-[submodule "SideStore/em_proxy"]
-    path = SideStore/em_proxy
-    url = https://github.com/SideStore/em_proxy
-    branch = master
 [submodule "SideStore/libfragmentzip"]
     path = SideStore/libfragmentzip
     url = https://github.com/SideStore/libfragmentzip
