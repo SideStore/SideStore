@@ -350,6 +350,38 @@ extension MinimuxerError: LocalizedError {
             return NSLocalizedString("Unable to manage profiles on the device", comment: "")
         case .ProfileRemove:
             return NSLocalizedString("Unable to manage profiles on the device", comment: "")
+        case .CreateLockdown:
+            return NSLocalizedString("Unable to connect to lockdown", comment: "")
+        case .CreateCoreDevice:
+            return NSLocalizedString("Unable to connect to core device proxy", comment: "")
+        case .CreateSoftwareTunnel:
+            return NSLocalizedString("Unable to create software tunnel", comment: "")
+        case .CreateRemoteServer:
+            return NSLocalizedString("Unable to connect to remote server", comment: "")
+        case .CreateProcessControl:
+            return NSLocalizedString("Unable to connect to process control", comment: "")
+        case .GetLockdownValue:
+            return NSLocalizedString("Unable to get value from lockdown", comment: "")
+        case .Connect:
+            return NSLocalizedString("Unable to connect to TCP port", comment: "")
+        case .Close:
+            return NSLocalizedString("Unable to close TCP port", comment: "")
+        case .XpcHandshake:
+            return NSLocalizedString("Unable to get services from XPC", comment: "")
+        case .NoService:
+            return NSLocalizedString("Device did not contain service", comment: "")
+        case .InvalidProductVersion:
+            return NSLocalizedString("Service version was in an unexpected format", comment: "")
+        case .CreateFolder:
+            return NSLocalizedString("Unable to create DDI folder", comment: "")
+        case .DownloadImage:
+            return NSLocalizedString("Unable to download DDI", comment: "")
+        case .ImageLookup:
+            return NSLocalizedString("Unable to lookup DDI images", comment: "")
+        case .ImageRead:
+            return NSLocalizedString("Unable to read images to memory", comment: "")
+        case .Mount:
+            return NSLocalizedString("Mount failed", comment: "")
         }
     }
     

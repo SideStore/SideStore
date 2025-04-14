@@ -1487,15 +1487,6 @@ private extension MyAppsViewController
             guard minimuxerStatus else { return }
         }
         
-        if #available(iOS 17, *), !sidejitenabled {
-            let error = OperationError.tooNewError as NSError
-            let localizedError = error.withLocalizedTitle("No iOS 17 On Device JIT!")
-            
-            ToastView(error: localizedError, opensLog: true).show(in: self)
-            AppManager.shared.log(error, operation: .enableJIT, app: installedApp)
-            return
-        }
-        
         AppManager.shared.enableJIT(for: installedApp) { result in
             DispatchQueue.main.async {
                 switch result {
