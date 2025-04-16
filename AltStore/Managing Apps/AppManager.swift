@@ -993,6 +993,7 @@ extension AppManager
             case .failure(let error): completionHandler(.failure(error))
             case .success(let installedApp): completionHandler(.success(installedApp))
             }
+            //UIApplication.shared.open(shortcutURLon, options: [:], completionHandler: nil)
         }
         installOperation.addDependency(sendAppOperation)
         
