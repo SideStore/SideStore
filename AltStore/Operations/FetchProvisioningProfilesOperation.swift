@@ -404,6 +404,11 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
             entitlements[key] = value
         }
         
+        for (key, value) in [ALTEntitlement.increasedMemoryLimit : true]
+        {
+            entitlements[key] = value
+        }
+        
         let requiredFeatures = entitlements.compactMap { (entitlement, value) -> (ALTFeature, Any)? in
             guard let feature = ALTFeature(entitlement: entitlement) else { return nil }
             return (feature, value)
