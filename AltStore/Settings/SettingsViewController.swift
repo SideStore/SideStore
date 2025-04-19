@@ -143,6 +143,7 @@ final class SettingsViewController: UITableViewController
         
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openPatreonSettings(_:)), name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openErrorLog(_:)), name: ToastView.openErrorLogNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openExportCertificateConfirm(_:)), name: AppDelegate.exportCertificateNotification, object: nil)
     }
     
     
@@ -760,6 +761,48 @@ private extension SettingsViewController
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             self.performSegue(withIdentifier: "showErrorLog", sender: nil)
         }
+    }
+    
+    @objc func openExportCertificateConfirm(_ notification: Notification)
+    {
+        func export()
+        {
+            guard let template = notification.userInfo?[AppDelegate.exportCertificateCallbackTemplateKey] as? String,
+                  template.contains("$(BASE64_CERT)") else {
+                let toastView = ToastView(text: NSLocalizedString("No $(BASE64_CERT) placeholder found", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            guard let data = Keychain.shared.signingCertificate,
+            let password = Keychain.shared.signingCertificatePassword else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to find certificate or password", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            let base64encodedCert = data.base64EncodedString()
+            var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
+            allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
+            guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to encode certificate!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            var urlStr = template.replacingOccurrences(of: "$(BASE64_CERT)", with: encodedCert, options: .literal, range: nil)
+            urlStr = urlStr.replacingOccurrences(of: "$(PASSWORD)", with: password, options: .literal, range: nil)
+            
+            print(urlStr)
+            guard let callbackUrl = URL(string: urlStr) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            UIApplication.shared.open(callbackUrl)
+        }
+        
+        let alertController = UIAlertController(title: NSLocalizedString("Export Certificate", comment: ""), message: NSLocalizedString("Do you want to export your certificate to an external app? That app will be able to sign apps using your certificate.", comment: ""), preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
+        alertController.addAction(.cancel)
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
