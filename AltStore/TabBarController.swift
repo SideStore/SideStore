@@ -36,6 +36,7 @@ final class TabBarController: UITabBarController
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.openPatreonSettings(_:)), name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.importApp(_:)), name: AppDelegate.importAppDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.presentSources(_:)), name: AppDelegate.addSourceDeepLinkNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.exportCertificate(_:)), name: AppDelegate.exportCertificateNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.openErrorLog(_:)), name: ToastView.openErrorLogNotification, object: nil)
     }
     
@@ -138,6 +139,11 @@ private extension TabBarController
     }
 
     @objc func openErrorLog(_ notification: Notification)
+    {
+        self.selectedIndex = Tab.settings.rawValue
+    }
+    
+    @objc func exportCertificate(_ notification: Notification)
     {
         self.selectedIndex = Tab.settings.rawValue
     }
