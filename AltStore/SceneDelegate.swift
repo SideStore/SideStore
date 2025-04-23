@@ -149,7 +149,7 @@ private extension SceneDelegate
                 }
                 
                 DispatchQueue.main.async {
-                    openExportPairingFileConfirm(callbackTemplate)
+                    self.openExportPairingFileConfirm(callbackTemplate)
                     NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
                 
