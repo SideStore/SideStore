@@ -93,7 +93,7 @@ private extension SceneDelegate
             guard let components = URLComponents(url: context.url, resolvingAgainstBaseURL: false) else { return }
             guard let host = components.host?.lowercased() else { return }
             
-            Logger.main.info("\(context.url.absoluteString)")
+            Logger.main.info("\(components)")
             
             switch host
             {
