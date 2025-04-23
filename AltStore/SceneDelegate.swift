@@ -143,13 +143,9 @@ private extension SceneDelegate
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
                 Logger.main.info("queryItems \(queryItems)")
-                guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding else {
-                    Logger.main.info("ohno")
-                    return
-                }
+                guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding else { return }
                 
                 DispatchQueue.main.async {
-                    self.openExportPairingFileConfirm(callbackTemplate)
                     NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
                 
@@ -163,51 +159,6 @@ private extension SceneDelegate
 
             default: break
             }
-        }
-    }
-    
-    func openExportPairingFileConfirm(_ template: String)
-    {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first, let viewcontroller = window.rootViewController {
-            func export()
-            {
-                
-                let fm = FileManager.default
-                let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
-                
-                
-                guard let data = try? Data(contentsOf: documentsPath) else {
-                    let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
-                    toastView.show(in: viewcontroller)
-                    return
-                }
-                
-                let base64encodedCert = data.base64EncodedString()
-                var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
-                allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
-                guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
-                    let toastView = ToastView(text: NSLocalizedString("Failed to encode pairingFile!", comment: ""), detailText: nil)
-                    toastView.show(in: viewcontroller)
-                    return
-                }
-                
-                var urlStr = "\(template)://pairingFile?data=$(BASE64_PAIRING)"
-                let finished = urlStr.replacingOccurrences(of: "$(BASE64_PAIRING)", with: encodedCert, options: .literal, range: nil)
-                
-                print(finished)
-                guard let callbackUrl = URL(string: finished) else {
-                    let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
-                    toastView.show(in: viewcontroller)
-                    return
-                }
-                UIApplication.shared.open(callbackUrl)
-            }
-            
-            let alertController = UIAlertController(title: NSLocalizedString("Export Pairing File?", comment: ""), message: NSLocalizedString("Do you want to export your pairing file to an external app? That app will be able to access your device with StosVPN (open apps, sideload, enable JIT, etc).", comment: ""), preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
-            alertController.addAction(.cancel)
-            viewcontroller.present(alertController, animated: true, completion: nil)
         }
     }
 }
