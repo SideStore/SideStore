@@ -297,7 +297,7 @@ private extension AppDelegate
                 guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return false }
                 
                 DispatchQueue.main.async {
-                    export(callbackTemplate)
+                    exportPairingFile(callbackTemplate)
                 }
                 
                 return true

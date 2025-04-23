@@ -146,7 +146,7 @@ private extension SceneDelegate
                 guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding else { return }
                 
                 DispatchQueue.main.async {
-                    export(callbackTemplate)
+                    exportPairingFile(callbackTemplate)
                 }
                 
             case "certificate":
@@ -164,7 +164,7 @@ private extension SceneDelegate
 }
 
 
-func export(_ urlname: String) {
+func exportPairingFile(_ urlname: String) {
     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
        let window = windowScene.windows.first, let viewcontroller = window.rootViewController {
         let fm = FileManager.default
