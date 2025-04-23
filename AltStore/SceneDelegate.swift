@@ -143,7 +143,7 @@ private extension SceneDelegate
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
                 Logger.main.info("queryItems \(queryItems)")
-                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else {
+                guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding else {
                     Logger.main.info("ohno")
                     return
                 }
