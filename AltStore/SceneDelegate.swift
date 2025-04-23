@@ -171,7 +171,7 @@ private extension SceneDelegate
     func openExportPairingFileConfirm(_ template: String)
     {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first, let viewcontroller = window.rootViewController? {
+           let window = windowScene.windows.first, let viewcontroller = window.rootViewController {
             func export()
             {
                 
