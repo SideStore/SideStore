@@ -814,6 +814,7 @@ private extension SettingsViewController
                 toastView.show(in: self)
                 return
             }
+
             let fm = FileManager.default
             let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
             
