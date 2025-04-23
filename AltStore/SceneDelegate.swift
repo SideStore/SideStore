@@ -142,10 +142,13 @@ private extension SceneDelegate
                 
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
-                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return }
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else {
+                    print("ohno")
+                    return
+                }
                 
                 DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: AppDelegate.exportPairimgFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
+                    NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
                 
             case "certificate":
