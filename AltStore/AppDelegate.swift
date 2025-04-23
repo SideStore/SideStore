@@ -28,10 +28,13 @@ extension AppDelegate
     static let appBackupDidFinish = Notification.Name(Bundle.Info.appbundleIdentifier + ".AppBackupDidFinish")
     static let exportCertificateNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".ExportCertificateNotification")
     
+    static let exportPairimgFileNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".ExportPairimgFileNotification")
+    
     static let importAppDeepLinkURLKey = "fileURL"
     static let appBackupResultKey = "result"
     static let addSourceDeepLinkURLKey = "sourceURL"
     static let exportCertificateCallbackTemplateKey = "callback"
+    static let exportPairingCallbackTemplateKey = "exampleApp"
 }
 
 @UIApplicationMain
@@ -288,6 +291,16 @@ private extension AppDelegate
                 
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.addSourceDeepLinkNotification, object: nil, userInfo: [AppDelegate.addSourceDeepLinkURLKey: sourceURL])
+                }
+                
+                return true
+                
+            case "pairing":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return false }
+                
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: AppDelegate.exportPairimgFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
                 
                 return true

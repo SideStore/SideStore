@@ -804,6 +804,52 @@ private extension SettingsViewController
         alertController.addAction(.cancel)
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    @objc func openExportPairingFileConfirm(_ notification: Notification)
+    {
+        func export()
+        {
+            guard let template = notification.userInfo?[AppDelegate.exportPairingCallbackTemplateKey] as? String else {
+                let toastView = ToastView(text: NSLocalizedString("No App found!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            let fm = FileManager.default
+            let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
+            
+            
+            guard let data = Data(contentsOf: documentsPath) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            
+            let base64encodedCert = data.base64EncodedString()
+            var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
+            allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
+            guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to encode pairingFile!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            
+            var urlStr = "\(template)://pairingFile?data=$(BASE64_PAIRING)"
+            let finished = urlStr.replacingOccurrences(of: "$(BASE64_PAIRING)", with: encodedCert, options: .literal, range: nil)
+            
+            print(finished)
+            guard let callbackUrl = URL(string: finished) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            UIApplication.shared.open(callbackUrl)
+        }
+        
+        let alertController = UIAlertController(title: NSLocalizedString("Export Pairing File?", comment: ""), message: NSLocalizedString("Do you want to export your pairing file to an external app? That app will be able to access your device with StosVPN (open apps, sideload, enable JIT, etc).", comment: ""), preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
+        alertController.addAction(.cancel)
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension SettingsViewController

@@ -140,6 +140,14 @@ private extension SceneDelegate
                     NotificationCenter.default.post(name: AppDelegate.addSourceDeepLinkNotification, object: nil, userInfo: [AppDelegate.addSourceDeepLinkURLKey: sourceURL])
                 }
                 
+            case "pairing":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return }
+                
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: AppDelegate.exportPairimgFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
+                }
+                
             case "certificate":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
                 guard let callbackTemplate = queryItems["callback_template"]?.removingPercentEncoding else { return }
