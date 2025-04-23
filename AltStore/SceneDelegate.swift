@@ -93,6 +93,8 @@ private extension SceneDelegate
             guard let components = URLComponents(url: context.url, resolvingAgainstBaseURL: false) else { return }
             guard let host = components.host?.lowercased() else { return }
             
+            print(context.url.absoluteString)
+            
             switch host
             {
             case "patreon":
