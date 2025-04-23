@@ -146,7 +146,7 @@ private extension SceneDelegate
                 guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding else { return }
                 
                 DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
+                    export(callbackTemplate)
                 }
                 
             case "certificate":
@@ -160,5 +160,41 @@ private extension SceneDelegate
             default: break
             }
         }
+    }
+}
+
+
+func export(_ urlname: String) {
+    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+       let window = windowScene.windows.first, let viewcontroller = window.rootViewController {
+        let fm = FileManager.default
+        let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
+        
+        
+        guard let data = try? Data(contentsOf: documentsPath) else {
+            let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
+            toastView.show(in: viewcontroller)
+            return
+        }
+        
+        let base64encodedCert = data.base64EncodedString()
+        var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
+        allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
+        guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
+            let toastView = ToastView(text: NSLocalizedString("Failed to encode pairingFile!", comment: ""), detailText: nil)
+            toastView.show(in: viewcontroller)
+            return
+        }
+        
+        var urlStr = "\(urlname)://pairingFile?data=$(BASE64_PAIRING)"
+        let finished = urlStr.replacingOccurrences(of: "$(BASE64_PAIRING)", with: encodedCert, options: .literal, range: nil)
+        
+        print(finished)
+        guard let callbackUrl = URL(string: finished) else {
+            let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
+            toastView.show(in: viewcontroller)
+            return
+        }
+        UIApplication.shared.open(callbackUrl)
     }
 }
