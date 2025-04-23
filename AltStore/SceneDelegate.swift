@@ -23,7 +23,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
         
         if let context = connectionOptions.urlContexts.first
         {
-            // self.open(context)
+            self.open(context)
         }
     }
 
@@ -71,14 +71,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
     {
-        // guard let context = URLContexts.first else { return }
-        // self.open(context)
+        guard let context = URLContexts.first else { return }
+        self.open(context)
     }
 }
 
 private extension SceneDelegate
 {
-    func open1(_ context: UIOpenURLContext)
+    func open(_ context: UIOpenURLContext)
     {
         if context.url.isFileURL
         {
