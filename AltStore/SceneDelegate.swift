@@ -93,8 +93,6 @@ private extension SceneDelegate
             guard let components = URLComponents(url: context.url, resolvingAgainstBaseURL: false) else { return }
             guard let host = components.host?.lowercased() else { return }
             
-            Logger.main.info("\(components)")
-            
             switch host
             {
             case "patreon":
@@ -144,16 +142,16 @@ private extension SceneDelegate
                 
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                Logger.main.info("queryItems \(queryItems)")
                 guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else {
                     Logger.main.info("ohno")
                     return
                 }
                 
                 DispatchQueue.main.async {
+                    openExportPairingFileConfirm(callbackTemplate)
                     NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
-                
-                openExportPairingFileConfirm(callbackTemplate)
                 
             case "certificate":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
