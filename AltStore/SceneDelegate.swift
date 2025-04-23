@@ -78,7 +78,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
 
 private extension SceneDelegate
 {
-    func open(_ context: UIOpenURLContext)
+    func open1(_ context: UIOpenURLContext)
     {
         if context.url.isFileURL
         {
