@@ -242,7 +242,7 @@ private extension AppDelegate
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
             guard let host = components.host?.lowercased() else { return false }
             
-            print(url.absoluteString)
+            Logger.main.info(url.absoluteString)
             
             switch host
             {
@@ -299,7 +299,10 @@ private extension AppDelegate
                 
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
-                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return false }
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else {
+                    Logger.main.info("ohno")
+                    return false
+                }
                 
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])

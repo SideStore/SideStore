@@ -144,7 +144,6 @@ final class SettingsViewController: UITableViewController
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openPatreonSettings(_:)), name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openErrorLog(_:)), name: ToastView.openErrorLogNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openExportCertificateConfirm(_:)), name: AppDelegate.exportCertificateNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openExportPairingFileConfirm(_:)), name: AppDelegate.exportPairingFileNotification, object: nil)
     }
     
     

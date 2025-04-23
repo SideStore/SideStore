@@ -93,7 +93,7 @@ private extension SceneDelegate
             guard let components = URLComponents(url: context.url, resolvingAgainstBaseURL: false) else { return }
             guard let host = components.host?.lowercased() else { return }
             
-            print(context.url.absoluteString)
+            Logger.main.info(context.url.absoluteString)
             
             switch host
             {
@@ -145,13 +145,15 @@ private extension SceneDelegate
             case "pairing":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
                 guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else {
-                    print("ohno")
+                    Logger.main.info("ohno")
                     return
                 }
                 
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.exportPairingFileNotification, object: nil, userInfo: [AppDelegate.exportPairingCallbackTemplateKey: callbackTemplate])
                 }
+                
+                openExportPairingFileConfirm(callbackTemplate)
                 
             case "certificate":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
@@ -163,6 +165,51 @@ private extension SceneDelegate
 
             default: break
             }
+        }
+    }
+    
+    func openExportPairingFileConfirm(_ template: String)
+    {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            func export()
+            {
+                
+                let fm = FileManager.default
+                let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
+                
+                
+                guard let data = try? Data(contentsOf: documentsPath) else {
+                    let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
+                    toastView.show(in: self)
+                    return
+                }
+                
+                let base64encodedCert = data.base64EncodedString()
+                var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
+                allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
+                guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
+                    let toastView = ToastView(text: NSLocalizedString("Failed to encode pairingFile!", comment: ""), detailText: nil)
+                    toastView.show(in: self)
+                    return
+                }
+                
+                var urlStr = "\(template)://pairingFile?data=$(BASE64_PAIRING)"
+                let finished = urlStr.replacingOccurrences(of: "$(BASE64_PAIRING)", with: encodedCert, options: .literal, range: nil)
+                
+                print(finished)
+                guard let callbackUrl = URL(string: finished) else {
+                    let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
+                    toastView.show(in: self)
+                    return
+                }
+                UIApplication.shared.open(callbackUrl)
+            }
+            
+            let alertController = UIAlertController(title: NSLocalizedString("Export Pairing File?", comment: ""), message: NSLocalizedString("Do you want to export your pairing file to an external app? That app will be able to access your device with StosVPN (open apps, sideload, enable JIT, etc).", comment: ""), preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
+            alertController.addAction(.cancel)
+            window.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
 }
