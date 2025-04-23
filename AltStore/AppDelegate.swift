@@ -242,7 +242,7 @@ private extension AppDelegate
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
             guard let host = components.host?.lowercased() else { return false }
             
-            Logger.main.info(url.absoluteString)
+            Logger.main.info("\(url.absoluteString)")
             
             switch host
             {

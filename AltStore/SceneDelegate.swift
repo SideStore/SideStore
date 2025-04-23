@@ -93,7 +93,7 @@ private extension SceneDelegate
             guard let components = URLComponents(url: context.url, resolvingAgainstBaseURL: false) else { return }
             guard let host = components.host?.lowercased() else { return }
             
-            Logger.main.info(context.url.absoluteString)
+            Logger.main.info("\(context.url.absoluteString)")
             
             switch host
             {
@@ -171,7 +171,7 @@ private extension SceneDelegate
     func openExportPairingFileConfirm(_ template: String)
     {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
+           let window = windowScene.windows.first, let viewcontroller = window.rootViewController? {
             func export()
             {
                 
@@ -181,7 +181,7 @@ private extension SceneDelegate
                 
                 guard let data = try? Data(contentsOf: documentsPath) else {
                     let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
-                    toastView.show(in: self)
+                    toastView.show(in: viewcontroller)
                     return
                 }
                 
@@ -190,7 +190,7 @@ private extension SceneDelegate
                 allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
                 guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
                     let toastView = ToastView(text: NSLocalizedString("Failed to encode pairingFile!", comment: ""), detailText: nil)
-                    toastView.show(in: self)
+                    toastView.show(in: viewcontroller)
                     return
                 }
                 
@@ -200,7 +200,7 @@ private extension SceneDelegate
                 print(finished)
                 guard let callbackUrl = URL(string: finished) else {
                     let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
-                    toastView.show(in: self)
+                    toastView.show(in: viewcontroller)
                     return
                 }
                 UIApplication.shared.open(callbackUrl)
@@ -209,7 +209,7 @@ private extension SceneDelegate
             let alertController = UIAlertController(title: NSLocalizedString("Export Pairing File?", comment: ""), message: NSLocalizedString("Do you want to export your pairing file to an external app? That app will be able to access your device with StosVPN (open apps, sideload, enable JIT, etc).", comment: ""), preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
             alertController.addAction(.cancel)
-            window.rootViewController?.present(alertController, animated: true, completion: nil)
+            viewcontroller.present(alertController, animated: true, completion: nil)
         }
     }
 }
