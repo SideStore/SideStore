@@ -818,7 +818,7 @@ private extension SettingsViewController
             let documentsPath = fm.documentsDirectory.appendingPathComponent("ALTPairingFile.mobiledevicepairing")
             
             
-            guard let data = Data(contentsOf: documentsPath) else {
+            guard let data = try? Data(contentsOf: documentsPath) else {
                 let toastView = ToastView(text: NSLocalizedString("Failed to find Pairing File!", comment: ""), detailText: nil)
                 toastView.show(in: self)
                 return
