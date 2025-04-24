@@ -220,7 +220,7 @@ struct OperationError: ALTLocalizedError {
         case .openAppFailed:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
             return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), appName)
-        case .noWiFi: return NSLocalizedString("You do not appear to be connected to WiFi and/or the WireGuard VPN!\nSideStore will never be able to install or refresh applications without WiFi and the WireGuard VPN.", comment: "")
+        case .noWiFi: return NSLocalizedString("You do not appear to be connected to WiFi and/or StosVPN!\nSideStore will never be able to install or refresh applications without WiFi and the StosVPN.", comment: "")
         case .tooNewError: return NSLocalizedString("iOS 17 has changed how JIT is enabled therefore SideStore cannot enable it without SideJITServer at this time, sorry for any inconvenience.\nWe will let everyone know once we have a solution!", comment: "")
         case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer Please check that you are on the Same Wi-Fi and your Firewall has been set correctly", comment: "")
         case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice Please make sure you have paired your Device by doing 'SideJITServer -y' or try Refreshing SideJITServer from Settings", comment: "")
@@ -308,7 +308,7 @@ extension MinimuxerError: LocalizedError {
         case .NoDevice:
             return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
         case .NoConnection:
-            return NSLocalizedString("Unable to connect to the device, make sure Wireguard is enabled and you're connected to WiFi. This could mean an invalid pairing.", comment: "")
+            return NSLocalizedString("Unable to connect to the device, make sure StosVPN is enabled and you're connected to WiFi. This could mean an invalid pairing.", comment: "")
         case .PairingFile:
             return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use jitterbugpair to generate it", comment: "")
             

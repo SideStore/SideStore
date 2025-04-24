@@ -291,10 +291,20 @@ private extension AppDelegate
                 }
                 
                 return true
+                
+            case "pairing":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return false }
+                
+                DispatchQueue.main.async {
+                    exportPairingFile(callbackTemplate)
+                }
+                
+                return true
             
             case "certificate":
                 let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
-                guard let callbackTemplate = queryItems["callback"]?.removingPercentEncoding else { return false }
+                guard let callbackTemplate = queryItems["callback_template"]?.removingPercentEncoding else { return false }
                 
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.exportCertificateNotification, object: nil, userInfo: [AppDelegate.exportCertificateCallbackTemplateKey: callbackTemplate])
