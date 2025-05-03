@@ -286,6 +286,32 @@ public extension InstalledApp
     class func supportedUpdatesFetchRequest() -> NSFetchRequest<InstalledApp> 
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
+
+        let predicateFormat = [
+            // isActive && storeApp != nil && latestSupportedVersion != nil
+            "%K == YES AND %K != nil AND %K != nil",
+            
+            "AND",
+            
+            // latestSupportedVersion.version != installedApp.version || latestSupportedVersion.buildVersion != installedApp.storeBuildVersion
+            //
+            // We have to also check (latestSupportedVersion.buildVersion != '' && installedApp.storeBuildVersion == nil) + !(latestSupportedVersion.buildVersion == '' && installedApp.storeBuildVersion == nil)
+            // because latestSupportedVersion.buildVersion stores an empty string for nil, while installedApp.storeBuildVersion uses NULL.
+            "(%K != %K OR (%K != '' AND %K == nil) OR (%K != %K AND NOT (%K == '' AND %K == nil)))",
+            
+            "AND",
+            
+            // !isPledgeRequired || isPledged
+            "(%K == NO OR %K == YES)"
+        ].joined(separator: " ")
+        
+        let predicate = NSPredicate(format: predicateFormat,
+                                    #keyPath(InstalledApp.isActive), #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.latestSupportedVersion),
+                                    #keyPath(InstalledApp.storeApp.latestSupportedVersion.version), #keyPath(InstalledApp.version),
+                                    #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+                                    #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+                                    #keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion), #keyPath(InstalledApp.storeBuildVersion),
+                                    #keyPath(InstalledApp.storeApp.isPledgeRequired), #keyPath(InstalledApp.storeApp.isPledged))
         
         fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(InstalledApp.hasUpdate))
         
