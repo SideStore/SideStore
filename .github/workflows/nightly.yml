@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ensure full history
+          fetch-depth: 0 # Ensure full history 
 
       - name: Get last successful workflow run
         id: get_last_success
