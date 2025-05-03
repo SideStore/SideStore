@@ -37,8 +37,8 @@ on:
         type: string
 
     secrets:
-    #   GITHUB_TOKEN:
-    #     required: true
+      GITHUB_TOKEN:
+       required: true
       CROSS_REPO_PUSH_KEY:
         required: true
       BUILD_LOG_ZIP_PASSWORD:
@@ -53,8 +53,7 @@ concurrency:
 jobs:
   shared:
     uses: ./.github/workflows/sidestore-shared.yml
-    secrets:
-      gh_actions_pat: ${{ secrets.gh_actions_pat }}
+    secrets: inherit
   build:
     needs: shared
     uses: ./.github/workflows/sidestore-build.yml
