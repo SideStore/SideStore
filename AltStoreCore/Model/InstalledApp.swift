@@ -301,7 +301,7 @@ public extension InstalledApp
             
             "AND",
             
-            // !isPledgeRequired || isPledged
+            // !isPledgeRequired || isPledged 
             "(%K == NO OR %K == YES)"
         ].joined(separator: " ")
         
