@@ -53,8 +53,8 @@ concurrency:
 jobs:
   shared:
     uses: ./.github/workflows/sidestore-shared.yml
-    secrets: inherit
-
+    secrets:
+      gh_actions_pat: ${{ secrets.gh_actions_pat }}
   build:
     needs: shared
     uses: ./.github/workflows/sidestore-build.yml
