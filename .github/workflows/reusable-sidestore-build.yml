@@ -37,8 +37,8 @@ on:
         type: string
 
     secrets:
-      GITHUB_TOKEN:
-       required: true
+      # GITHUB_TOKEN:
+      #  required: true
       CROSS_REPO_PUSH_KEY:
         required: true
       BUILD_LOG_ZIP_PASSWORD:
