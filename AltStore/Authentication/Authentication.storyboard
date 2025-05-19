@@ -431,7 +431,7 @@
             </objects>
             <point key="canvasLocation" x="1353" y="736"/>
         </scene>
-        <!--Refresh AltStore-->
+        <!--Refresh SideStore-->
         <scene sceneID="9Vh-dM-OqX">
             <objects>
                 <viewController storyboardIdentifier="refreshAltStoreViewController" id="aoK-yE-UVT" customClass="RefreshAltStoreViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
@@ -485,7 +485,7 @@
                             <constraint firstItem="tDQ-ao-1Jg" firstAttribute="leading" secondItem="R83-kV-365" secondAttribute="leadingMargin" id="zEt-Xr-kJx"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Refresh AltStore" largeTitleDisplayMode="always" id="5nk-NR-jtV"/>
+                    <navigationItem key="navigationItem" title="Refresh SideStore" largeTitleDisplayMode="always" id="5nk-NR-jtV"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="placeholderView" destination="fpO-Bf-gFY" id="q7d-au-d94"/>
