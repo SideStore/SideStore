@@ -9,11 +9,11 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>TPucbY</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>20A5354i</string>
+	<string>21G72</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A8189n</string>
+	<string>14C18</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>12.0</string>
+	<string>14.2</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
@@ -22,7 +22,7 @@
 			<key>INIntentConfigurable</key>
 			<true/>
 			<key>INIntentDescription</key>
-			<string>Select App</string>
+			<string>Start app with JIT</string>
 			<key>INIntentDescriptionID</key>
 			<string>sb9c7F</string>
 			<key>INIntentEligibleForWidgets</key>
@@ -100,7 +100,7 @@
 				</array>
 			</dict>
 			<key>INIntentTitle</key>
-			<string>View App</string>
+			<string>Start With JIT</string>
 			<key>INIntentTitleID</key>
 			<string>7aGoWn</string>
 			<key>INIntentType</key>
