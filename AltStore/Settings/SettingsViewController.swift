@@ -16,6 +16,8 @@ import IntentsUI
 import SemanticVersion
 
 import AltStoreCore
+import CAltSign
+import UniformTypeIdentifiers
 
 extension SettingsViewController
 {
@@ -30,6 +32,7 @@ extension SettingsViewController
         case techyThings
         case credits
         case advancedSettings
+        case signing
         // diagnostics section, will be enabled on release builds only on swipe down with 3 fingers 3 times
         case diagnostics
         // case macDirtyCow
@@ -78,6 +81,11 @@ extension SettingsViewController
         case betaUpdates
         case betaTrack
 //        case hiddenSettings
+    }
+    
+    fileprivate enum SigningSettingsRow: Int, CaseIterable {
+        case importCert
+        case exportCert
     }
 
     fileprivate enum DiagnosticsRow: Int, CaseIterable
@@ -434,7 +442,19 @@ private extension SettingsViewController
             
         case .advancedSettings:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("ADVANCED SETTINGS", comment: "")
+            
+        case .signing:
+            // FIXME: Why "Enable Background Refresh ..." appear here if secondaryLabel is not specified???
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("SIGNING", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("", comment: "")
+            }
 
+            
         case .diagnostics:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("DIAGNOSTICS", comment: "")
             
@@ -875,7 +895,7 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         case .account where self.activeTeam == nil: return nil
-        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .diagnostics /* ,.macDirtyCow */:
+        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .signing ,.diagnostics /* ,.macDirtyCow */:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(headerView, for: section, isHeader: true)
             return headerView
@@ -892,7 +912,7 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         // case .signIn, .patreon, .display, .appRefresh, .techyThings, .macDirtyCow:
-        case .signIn, .patreon, .display, .appRefresh, .techyThings:
+        case .signIn, .patreon, .display, .appRefresh, .techyThings, .signing:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -910,7 +930,7 @@ extension SettingsViewController
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0
         // case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .macDirtyCow, .advanced:
-        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .diagnostics:
+        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .signing, .diagnostics:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: true)
             return height
             
@@ -927,7 +947,7 @@ extension SettingsViewController
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0            
         // case .signIn, .patreon, .display, .appRefresh, .techyThings, .macDirtyCow:
-        case .signIn, .patreon, .display, .appRefresh, .techyThings, .diagnostics:
+        case .signIn, .patreon, .display, .appRefresh, .techyThings, .signing, .diagnostics:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
@@ -1202,7 +1222,135 @@ extension SettingsViewController
             case .refreshAttempts, .betaUpdates, .betaTrack: break
 
             }
-        
+        case .signing:
+            let row = SigningSettingsRow.allCases[indexPath.row]
+            switch row {
+            case .importCert:
+                Task {
+                    let certUrl = await withUnsafeContinuation { c in
+                        let importVc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType(filenameExtension: "p12")!], asCopy: false)
+                        ImportExport.documentPickerHandler = DocumentPickerHandler { url in
+                            c.resume(returning: url)
+                        }
+                        importVc.delegate = ImportExport.documentPickerHandler
+
+                        self.present(importVc, animated: true)
+                        
+                    }
+                    guard let certUrl else {
+                        return
+                    }
+                    
+                    let password = await withUnsafeContinuation { (c: UnsafeContinuation<String?,Never>) in
+                        let alertController = UIAlertController(title: NSLocalizedString("Please enter the password for the certificate.", comment: ""), message: nil, preferredStyle: .alert)
+                        
+                        alertController.addTextField { (textField) in
+                            textField.autocorrectionType = .no
+                            textField.autocapitalizationType = .none
+                        }
+                        
+                        let submitAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { (action) in
+                            let textField = alertController.textFields?.first
+                            
+                            let code = textField?.text ?? ""
+                            c.resume(returning: code)
+                        }
+                        alertController.addAction(submitAction)
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                            c.resume(returning: nil)
+                        })
+                        
+                        self.present(alertController, animated: true)
+                    }
+                    
+                    guard let password else {
+                        return
+                    }
+                    let _ = certUrl.startAccessingSecurityScopedResource()
+                    defer {
+                        certUrl.stopAccessingSecurityScopedResource()
+                    }
+                    let certData : Data
+                    do {
+                        certData = try Data(contentsOf: certUrl)
+                    } catch {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: error.localizedDescription)
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    guard let altCert = ALTCertificate(p12Data: certData, password: password) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    Keychain.shared.signingCertificate = altCert.encryptedP12Data(withPassword: "")!
+                    let toastView = ToastView(text: NSLocalizedString("Certificate imported successfully!", comment: ""), detailText: nil)
+                    toastView.show(in: self)
+                }
+
+                break
+            case .exportCert:
+                Task {
+                    guard let certData = Keychain.shared.signingCertificate else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Certificate not found.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    let password = await withUnsafeContinuation { (c: UnsafeContinuation<String?,Never>) in
+                        let alertController = UIAlertController(title: NSLocalizedString("Please enter the password for the certificate.", comment: ""), message: nil, preferredStyle: .alert)
+                        
+                        alertController.addTextField { (textField) in
+                            textField.autocorrectionType = .no
+                            textField.autocapitalizationType = .none
+                        }
+                        
+                        let submitAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { (action) in
+                            let textField = alertController.textFields?.first
+                            
+                            let code = textField?.text ?? ""
+                            c.resume(returning: code)
+                        }
+                        alertController.addAction(submitAction)
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                            c.resume(returning: nil)
+                        })
+                        
+                        self.present(alertController, animated: true)
+                    }
+                    
+                    guard let password else {
+                        return
+                    }
+                    
+                    guard let altCert = ALTCertificate(p12Data: certData, password: nil) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    guard let newCertData = altCert.encryptedP12Data(withPassword: password) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Failed to encrypt  ALTCertificate.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    let newCertTmpPath = FileManager.default.temporaryDirectory.appendingPathComponent("SideStoreSigningCertificate.p12")
+                    do {
+                        try newCertData.write(to: newCertTmpPath)
+                    } catch {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: error.localizedDescription)
+                        toastView.show(in: self)
+                        return
+                    }
+                    let exportVC = UIDocumentPickerViewController(forExporting: [newCertTmpPath], asCopy: false)
+                    self.present(exportVC, animated: true)
+                }
+                break
+            }
+            
         case .diagnostics:
             let row = DiagnosticsRow.allCases[indexPath.row]
             switch row {
