@@ -67,20 +67,22 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
                 
                 let dispatchGroup = DispatchGroup()
                 
-                for appExtension in app.appExtensions
-                {
-                    dispatchGroup.enter()
-                    
-                    self.prepareProvisioningProfile(for: appExtension, parentApp: app, team: team, session: session) { (result) in
-                        switch result
-                        {
-                        case .failure(let e): error = e
-                        case .success(let profile): profiles[appExtension.bundleIdentifier] = profile
+                if !self.context.useMainProfile {
+                    for appExtension in app.appExtensions
+                    {
+                        dispatchGroup.enter()
+                        
+                        self.prepareProvisioningProfile(for: appExtension, parentApp: app, team: team, session: session) { (result) in
+                            switch result
+                            {
+                            case .failure(let e): error = e
+                            case .success(let profile): profiles[appExtension.bundleIdentifier] = profile
+                            }
+                            
+                            dispatchGroup.leave()
+                            
+                            self.progress.completedUnitCount += 1
                         }
-                        
-                        dispatchGroup.leave()
-                        
-                        self.progress.completedUnitCount += 1
                     }
                 }
                 

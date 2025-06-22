@@ -136,7 +136,11 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { (action) in
             self.finish(.failure(OperationError.cancelled))
         }))
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Keep App Extensions", comment: ""), style: .default) { (action) in
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Keep App Extensions (Use Main Profile)", comment: ""), style: .default) { (action) in
+            self.context.useMainProfile = true
+            self.finish(.success(()))
+        })
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Keep App Extensions (Register App ID for Each Extension)", comment: ""), style: .default) { (action) in
             self.finish(.success(()))
         })
         alertController.addAction(UIAlertAction(title: NSLocalizedString("Remove App Extensions", comment: ""), style: .destructive) { (action) in

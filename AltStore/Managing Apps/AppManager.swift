@@ -1519,6 +1519,24 @@ private extension AppManager
         patchAppOperation.addDependency(deactivateAppsOperation)
         
 
+        let modifyAppExBundleIdOperation = RSTAsyncBlockOperation { operation in
+            if !context.useMainProfile {
+                operation.finish()
+                return
+            }
+            
+            if let app = context.app, let profile = context.provisioningProfiles?[app.bundleIdentifier] {
+                var appexBundleIds: [String: String] = [:]
+                for appex in app.appExtensions {
+                    appexBundleIds[appex.bundleIdentifier] = appex.bundleIdentifier.replacingOccurrences(of: app.bundleIdentifier, with: profile.bundleIdentifier)
+                }
+                context.appexBundleIds = appexBundleIds
+            }
+            operation.finish()
+            
+        }
+        modifyAppExBundleIdOperation.addDependency(fetchProvisioningProfilesOperation)
+        
         /* Resign */
         let resignAppOperation = ResignAppOperation(context: context)
         resignAppOperation.resultHandler = { (result) in
@@ -1533,6 +1551,7 @@ private extension AppManager
             }
         }
         resignAppOperation.addDependency(patchAppOperation)
+        resignAppOperation.addDependency(modifyAppExBundleIdOperation)
         progress.addChild(resignAppOperation.progress, withPendingUnitCount: 20)
         
         
@@ -1586,6 +1605,7 @@ private extension AppManager
             patchAppOperation,
             refreshAnisetteDataOperation,
             fetchProvisioningProfilesOperation,
+            modifyAppExBundleIdOperation,
             resignAppOperation,
             sendAppOperation,
             installOperation

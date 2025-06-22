@@ -55,7 +55,7 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
         let prepareAppProgress = Progress.discreteProgress(totalUnitCount: 2)
         self.progress.addChild(prepareAppProgress, withPendingUnitCount: 3)
         
-        let prepareAppBundleProgress = self.prepareAppBundle(for: app, profiles: profiles) { (result) in
+        let prepareAppBundleProgress = self.prepareAppBundle(for: app, profiles: profiles, appexBundleIds: context.appexBundleIds ?? [:]) { (result) in
             guard let appBundleURL = self.process(result) else { return }
             
             // Resign app bundle
@@ -107,7 +107,7 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
 
 private extension ResignAppOperation
 {
-    func prepareAppBundle(for app: ALTApplication, profiles: [String: ALTProvisioningProfile], completionHandler: @escaping (Result<URL, Error>) -> Void) -> Progress
+    func prepareAppBundle(for app: ALTApplication, profiles: [String: ALTProvisioningProfile], appexBundleIds: [String: String], completionHandler: @escaping (Result<URL, Error>) -> Void) -> Progress
     {
         let progress = Progress.discreteProgress(totalUnitCount: 1)
         
@@ -119,10 +119,15 @@ private extension ResignAppOperation
         func prepare(_ bundle: Bundle, additionalInfoDictionaryValues: [String: Any] = [:]) throws
         {
             guard let identifier = bundle.bundleIdentifier else { throw ALTError(.missingAppBundle) }
-            guard let profile = profiles[identifier] else { throw ALTError(.missingProvisioningProfile) }
+            guard let profile = context.useMainProfile ? profiles.values.first : profiles[identifier] else { throw ALTError(.missingProvisioningProfile) }
             guard var infoDictionary = bundle.completeInfoDictionary else { throw ALTError(.missingInfoPlist) }
             
-            infoDictionary[kCFBundleIdentifierKey as String] = profile.bundleIdentifier
+            if let forcedBundleIdentifier = appexBundleIds[identifier] {
+                infoDictionary[kCFBundleIdentifierKey as String] = forcedBundleIdentifier
+            } else {
+                infoDictionary[kCFBundleIdentifierKey as String] = profile.bundleIdentifier
+            }
+
             infoDictionary[Bundle.Info.altBundleID] = identifier
             infoDictionary[Bundle.Info.devicePairingString] = "<insert pairing file here>"
             infoDictionary.removeValue(forKey: "DTXcode")
