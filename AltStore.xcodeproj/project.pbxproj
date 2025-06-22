@@ -4158,8 +4158,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftPackageIndex/SemanticVersion";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.0;
+				kind = exactVersion;
+				version = 0.4.0;
 			};
 		};
 		A8B645FD2D70C1AD00125819 /* XCRemoteSwiftPackageReference "MarkdownKit" */ = {
