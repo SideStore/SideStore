@@ -72,6 +72,8 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             }
             
             installedApp.update(resignedApp: resignedApp, certificateSerialNumber: certificate.serialNumber, storeBuildVersion: storeBuildVersion)
+            installedApp.useMainProfile = self.context.useMainProfile
+
             installedApp.needsResign = false
             
             if let team = DatabaseManager.shared.activeTeam(in: backgroundContext)

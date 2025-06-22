@@ -1685,8 +1685,8 @@ private extension AppManager
         
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
-        
-       // Since this doesn't involve modifying app bundle which will cause re-install, this is safe  in refresh path 
+        context.useMainProfile = app.useMainProfile
+       // Since this doesn't involve modifying app bundle which will cause re-install, this is safe  in refresh path
        //App-Extensions: Ensure DB data and disk state must match
        let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
        let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
