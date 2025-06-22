@@ -30,7 +30,7 @@
     url = https://github.com/rileytestut/Roxas.git
 [submodule "Dependencies/libimobiledevice"]
     path = Dependencies/libimobiledevice
-    url = https://github.com/libimobiledevice/libimobiledevice
+    url = https://github.com/SideStore/libimobiledevice
 [submodule "Dependencies/libusbmuxd"]
     path = Dependencies/libusbmuxd
     url = https://github.com/libimobiledevice/libusbmuxd.git
