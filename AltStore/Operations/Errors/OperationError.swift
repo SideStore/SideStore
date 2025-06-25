@@ -220,16 +220,16 @@ struct OperationError: ALTLocalizedError {
         case .openAppFailed:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
             return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), appName)
-        case .noWiFi: return NSLocalizedString("You do not appear to be connected to WiFi and/or StosVPN!\nSideStore will never be able to install or refresh applications without WiFi and the StosVPN.", comment: "")
-        case .tooNewError: return NSLocalizedString("iOS 17 has changed how JIT is enabled therefore SideStore cannot enable it without SideJITServer at this time, sorry for any inconvenience.\nWe will let everyone know once we have a solution!", comment: "")
-        case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer Please check that you are on the Same Wi-Fi and your Firewall has been set correctly", comment: "")
-        case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice Please make sure you have paired your Device by doing 'SideJITServer -y' or try Refreshing SideJITServer from Settings", comment: "")
-        case .wrongSideJITIP: return NSLocalizedString("Incorrect SideJITServer IP Please make sure that you are on the Samw Wifi as SideJITServer", comment: "")
-        case .refreshsidejit: return NSLocalizedString("Unable to find App Please try Refreshing SideJITServer from Settings", comment: "")
-        case .anisetteV1Error: return NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: "")
-        case .provisioningError: return NSLocalizedString("An error occurred when provisioning: %@ %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
-        case .anisetteV3Error: return NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
-        case .cacheClearError: return NSLocalizedString("An error occurred while clearing cache: %@", comment: "")
+        case .noWiFi: return NSLocalizedString("You do not appear to be connected to Wi-Fi and/or StosVPN!\nSideStore will never be able to install or refresh applications without Wi-Fi and StosVPN.", comment: "")
+        case .tooNewError: return NSLocalizedString("iOS 17 has changed how JIT is enabled, therefore, SideStore cannot enable JIT without SideJITServer, StikDebug, or SideStore-nightly at this time, sorry for any inconvenience.", comment: "")
+        case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer. Please check that you are on the same Wi-Fi of and your Firewall has been set correctly on your server", comment: "")
+        case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice. Please make sure you have paired your Device by running 'SideJITServer -y', or try refreshing SideJITServer from Settings", comment: "")
+        case .wrongSideJITIP: return NSLocalizedString("Incorrect SideJITServer IP. Please make sure that you are on the same Wi-Fi as SideJITServer", comment: "")
+        case .refreshsidejit: return NSLocalizedString("Unable to find app; Please try refreshing SideJITServer from Settings", comment: "")
+        case .anisetteV1Error: return NSLocalizedString("An error occurred while getting anisette data from a V1 server: %@. Try using another anisette server.", comment: "")
+        case .provisioningError: return NSLocalizedString("An error occurred while provisioning: %@ %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
+        case .anisetteV3Error: return NSLocalizedString("An error occurred while getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
+        case .cacheClearError: return NSLocalizedString("An error occurred while clearing the cache: %@", comment: "")
         case .SideJITIssue: return NSLocalizedString("An error occurred while using SideJIT: %@", comment: "")
             
         case .refreshAppFailed:
@@ -260,7 +260,7 @@ struct OperationError: ALTLocalizedError {
     var recoverySuggestion: String? {
         switch self.code
         {
-        case .noWiFi: return NSLocalizedString("Make sure the VPN is toggled on and you are connected to any WiFi network!", comment: "")
+        case .noWiFi: return NSLocalizedString("Make sure StosVPN is toggled on and you are connected to any Wi-Fi network!", comment: "")
         case .serverNotFound: return NSLocalizedString("Make sure you're on the same Wi-Fi network as a computer running AltServer, or try connecting this device to your computer via USB.", comment: "")
         case .maximumAppIDLimitReached:
             let baseMessage = NSLocalizedString("Delete sideloaded apps to free up App ID slots.", comment: "")
@@ -308,7 +308,7 @@ extension MinimuxerError: LocalizedError {
         case .NoDevice:
             return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
         case .NoConnection:
-            return NSLocalizedString("Unable to connect to the device, make sure StosVPN is enabled and you're connected to WiFi. This could mean an invalid pairing.", comment: "")
+            return NSLocalizedString("Unable to connect to the device, make sure StosVPN is enabled and you're connected to Wi-Fi. This could mean an invalid pairing.", comment: "")
         case .PairingFile:
             return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use idevice_pair to regenerate it", comment: "")
             
