@@ -25,10 +25,6 @@
       "sourceURL": "https://alt.getutm.app"
     },
     {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
-    },
-    {
       "identifier": "dev.crystall1ne.repos.PojavLauncher",
       "sourceURL": "https://alt.crystall1ne.dev"
     },
@@ -43,10 +39,6 @@
     {
       "identifier": "stream.yattee",
       "sourceURL": "https://repos.yattee.stream/alt/apps.json"
-    },
-    {
-      "identifier": "com.litritt.litsource",
-      "sourceURL": "https://altstore.ignitedemulator.com/"
     },
     {
       "identifier": "thatstel.la.altsource",
@@ -78,10 +70,6 @@
       "sourceURL": "https://alt.getutm.app"
     },
     {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
-    },
-    {
       "identifier": "dev.crystall1ne.repos.PojavLauncher",
       "sourceURL": "https://alt.crystall1ne.dev"
     },
@@ -96,10 +84,6 @@
     {
       "identifier": "stream.yattee",
       "sourceURL": "https://repos.yattee.stream/alt/apps.json"
-    },
-    {
-      "identifier": "com.litritt.litsource",
-      "sourceURL": "https://altstore.ignitedemulator.com/"
     },
     {
       "identifier": "thatstel.la.altsource",
