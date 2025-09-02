@@ -13,7 +13,7 @@ jobs:
       matrix:
         include:
           - os: 'macos-15'
-            version: '26.0.0'
+            version: '26.0-beta'
 
     runs-on: ${{ matrix.os }}
     steps:
