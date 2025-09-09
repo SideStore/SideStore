@@ -573,17 +573,29 @@ extension SourcesViewController: NSFetchedResultsControllerDelegate
 }
 
 extension Source: @retroactive UIActivityItemSource {
+    var deepLinkSourceURL: URL? {
+        var components = URLComponents(string: "sidestore://source")
+        components?.queryItems = [
+            URLQueryItem(name: "url", value: sourceURL.absoluteString)
+        ]
+        return components?.url
+    }
     public func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
         sourceURL
     }
 
     public func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-        sourceURL
+        if [.copyToPasteboard].contains(activityType) {
+            return sourceURL
+        } else {
+            // Share deep link when sending to somewhere else, like AirDrop
+            return deepLinkSourceURL
+        }
     }
 
     public func activityViewControllerLinkMetadata(_: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
-        metadata.originalURL = sourceURL
+        metadata.originalURL = deepLinkSourceURL
         metadata.url = metadata.originalURL
         metadata.title = name
         if let effectiveIconURL, let image = ImageCache.shared[effectiveIconURL]?.image {
