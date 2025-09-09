@@ -158,6 +158,7 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
         let sourceAboutView = SourceHeaderView(frame: CGRect(x: 0, y: 0, width: 375, height: 200))
         sourceAboutView.configure(for: self.source)
         sourceAboutView.websiteButton.addTarget(self, action: #selector(SourceDetailViewController.showWebsite), for: .primaryActionTriggered)
+        sourceAboutView.shareButton.addTarget(self, action: #selector(SourceDetailViewController.shareSource), for: .primaryActionTriggered)
         return sourceAboutView
     }
     
@@ -261,7 +262,12 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
             self.viewModel.isAddingSource = false
         }
     }
-    
+
+    @objc private func shareSource()
+    {
+        _ = AppManager.shared.share(source, presentingViewController: self)
+    }
+
     @objc private func showWebsite()
     {
         guard let websiteURL = self.source.websiteURL else { return }

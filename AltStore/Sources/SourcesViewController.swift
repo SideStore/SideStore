@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreData
-
+import LinkPresentation
 import AltStoreCore
 import Roxas
 import Nuke
@@ -153,7 +153,17 @@ private extension SourcesViewController
                 
                 actions.append(removeAction)
             }
-            
+
+            if source.isShareable {
+                let shareAction = UIContextualAction(style: .normal,
+                                                      title: NSLocalizedString("Share", comment: "")) { _, _, completion in
+                    self.share(source, completionHandler: completion)
+                }
+                shareAction.image = UIImage(systemName: "square.and.arrow.up.fill")
+                shareAction.backgroundColor = source.effectiveTintColor
+                actions.append(shareAction)
+            }
+
             if let error = source.error
             {
                 let viewErrorAction = UIContextualAction(style: .normal,
@@ -399,7 +409,13 @@ private extension SourcesViewController
         alertController.addAction(.ok)
         self.present(alertController, animated: true, completion: nil)
     }
-    
+
+    func share(_ source: Source, completionHandler: ((Bool) -> Void)? = nil)
+    {
+        let result = AppManager.shared.share(source, presentingViewController: self)
+        completionHandler?(result)
+    }
+
     func remove(_ source: Source, completionHandler: ((Bool) -> Void)? = nil)
     {
         Task<Void, Never> {
@@ -554,4 +570,28 @@ extension SourcesViewController: NSFetchedResultsControllerDelegate
     }
     
     return sourcesViewController
+}
+
+extension Source: @retroactive UIActivityItemSource {
+    public func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        sourceURL
+    }
+
+    public func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+        sourceURL
+    }
+
+    public func activityViewControllerLinkMetadata(_: UIActivityViewController) -> LPLinkMetadata? {
+        let metadata = LPLinkMetadata()
+        metadata.originalURL = sourceURL
+        metadata.url = metadata.originalURL
+        metadata.title = name
+        if let effectiveIconURL, let image = ImageCache.shared[effectiveIconURL]?.image {
+            metadata.iconProvider = NSItemProvider(object: image)
+        }
+        if let effectiveHeaderImageURL, let image = ImageCache.shared[effectiveHeaderImageURL]?.image {
+            metadata.imageProvider = NSItemProvider(object: image)
+        }
+        return metadata
+    }
 }

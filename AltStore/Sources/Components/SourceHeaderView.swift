@@ -16,6 +16,7 @@ import Nuke
 class SourceHeaderView: RSTNibView
 {
     @IBOutlet private(set) var titleLabel: UILabel!
+    @IBOutlet private(set) var subtitleContainer: UIView!
     @IBOutlet private(set) var subtitleLabel: UILabel!
     @IBOutlet private(set) var iconImageView: UIImageView!
     @IBOutlet private(set) var websiteButton: UIButton!
@@ -25,7 +26,8 @@ class SourceHeaderView: RSTNibView
     @IBOutlet private var websiteImageView: UIImageView!
     
     @IBOutlet private var widthConstraint: NSLayoutConstraint!
-    
+
+    private(set) lazy var shareButton = UIButton(type: .system, primaryAction: nil)
     override init(frame: CGRect)
     {
         super.init(frame: frame)
@@ -60,6 +62,17 @@ class SourceHeaderView: RSTNibView
         
         self.websiteButtonContainerView.clipsToBounds = true
         self.websiteButtonContainerView.layer.cornerRadius = 14 // 22 - inset (8)
+
+        if let iconContainer = iconImageView.superview {
+            let image = UIImage(systemName: "square.and.arrow.up.fill", withConfiguration: UIImage.SymbolConfiguration(font: titleFont))
+            shareButton.setImage(image, for: .normal)
+            addSubview(shareButton)
+            shareButton.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                shareButton.centerYAnchor.constraint(equalTo: iconImageView.centerYAnchor),
+                shareButton.trailingAnchor.constraint(equalTo: iconContainer.trailingAnchor),
+            ])
+        }
     }
     
     override func layoutSubviews()
@@ -83,7 +96,9 @@ extension SourceHeaderView
     {
         self.titleLabel.text = source.name
         self.subtitleLabel.text = source.subtitle
-        
+        // hide subtitle for better alignment when subtitle is missing or empty
+        self.subtitleContainer.isHidden = self.subtitleLabel.text?.isEmpty != true
+
         self.websiteImageView.tintColor = source.effectiveTintColor
         
         if let websiteURL = source.websiteURL
@@ -102,5 +117,8 @@ extension SourceHeaderView
         }
         
         Nuke.loadImage(with: source.effectiveIconURL, into: self.iconImageView)
+
+        shareButton.isHidden = !source.isShareable
+        shareButton.tintColor = titleLabel.textColor
     }
 }

@@ -203,6 +203,10 @@ public extension Source
      var effectiveFeaturedApps: [StoreApp] {
          return self.featuredApps ?? self.apps
      }
+
+     var isShareable: Bool {
+         identifier != Source.altStoreIdentifier
+     }
  }
 
 @objc(Source)

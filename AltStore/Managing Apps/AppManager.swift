@@ -405,6 +405,13 @@ extension AppManager
         
         NotificationCenter.default.post(name: AppManager.didRemoveSourceNotification, object: source)
     }
+
+    func share(_ source: Source, presentingViewController: UIViewController) -> Bool
+    {
+        let shareSheet = UIActivityViewController(activityItems: [source], applicationActivities: nil)
+        presentingViewController.present(shareSheet, animated:true)
+        return true
+    }
     
     @discardableResult
     func installAsync<T: AppProtocol>(@AsyncManaged _ app: T, presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(),
