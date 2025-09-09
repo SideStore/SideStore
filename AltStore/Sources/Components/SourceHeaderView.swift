@@ -15,6 +15,8 @@ import Nuke
 
 class SourceHeaderView: RSTNibView
 {
+    @IBOutlet private(set) var infoContainer: UIView!
+
     @IBOutlet private(set) var titleLabel: UILabel!
     @IBOutlet private(set) var subtitleContainer: UIView!
     @IBOutlet private(set) var subtitleLabel: UILabel!
@@ -63,16 +65,14 @@ class SourceHeaderView: RSTNibView
         self.websiteButtonContainerView.clipsToBounds = true
         self.websiteButtonContainerView.layer.cornerRadius = 14 // 22 - inset (8)
 
-        if let iconContainer = iconImageView.superview {
-            let image = UIImage(systemName: "square.and.arrow.up.fill", withConfiguration: UIImage.SymbolConfiguration(font: titleFont))
-            shareButton.setImage(image, for: .normal)
-            addSubview(shareButton)
-            shareButton.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                shareButton.centerYAnchor.constraint(equalTo: iconImageView.centerYAnchor),
-                shareButton.trailingAnchor.constraint(equalTo: iconContainer.trailingAnchor),
-            ])
-        }
+        let image = UIImage(systemName: "square.and.arrow.up.fill", withConfiguration: UIImage.SymbolConfiguration(font: titleFont))
+        shareButton.setImage(image, for: .normal)
+        addSubview(shareButton)
+        shareButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            shareButton.centerYAnchor.constraint(equalTo: iconImageView.centerYAnchor),
+            shareButton.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+        ])
     }
     
     override func layoutSubviews()

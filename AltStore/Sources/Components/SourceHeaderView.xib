@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SourceHeaderView" customModule="AltStore" customModuleProvider="target">
             <connections>
                 <outlet property="iconImageView" destination="rfC-wI-8JY" id="1FW-GN-WDa"/>
+                <outlet property="infoContainer" destination="hfp-yJ-gcH" id="hUa-dC-yco"/>
                 <outlet property="subtitleContainer" destination="7WA-03-aKF" id="5Zr-M3-Df1"/>
                 <outlet property="subtitleLabel" destination="IUL-qI-QAg" id="RyD-ax-OtJ"/>
                 <outlet property="titleLabel" destination="FsG-Wm-6xP" id="huW-re-9G0"/>
