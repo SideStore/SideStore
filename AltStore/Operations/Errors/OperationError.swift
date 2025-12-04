@@ -220,7 +220,7 @@ struct OperationError: ALTLocalizedError {
         case .openAppFailed:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
             return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), appName)
-        case .noWiFi: return NSLocalizedString("You do not appear to be connected to Wi-Fi and/or StosVPN!\nSideStore cannot install or refresh applications without Wi-Fi and StosVPN. If both are connected, replace your pairing with iloader.", comment: "")
+        case .noWiFi: return NSLocalizedString("You do not appear to be connected to Wi-Fi and/or LocalDevVPN!\nSideStore cannot install or refresh applications without Wi-Fi and LocalDevVPN. If both are connected, replace your pairing with iloader.", comment: "")
         case .tooNewError: return NSLocalizedString("iOS 17.0-17.3.1 changed how JIT is enabled so SideStore cannot enable JIT without SideJITServer on these versions, sorry for any inconvenience.", comment: "")
         case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer. Please check that you are on the same Wi-Fi of and your Firewall has been set correctly on your server.", comment: "")
         case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice. Please make sure you have paired your iDevice by running 'SideJITServer -y', or try refreshing SideJITServer from Settings.", comment: "")
@@ -260,7 +260,7 @@ struct OperationError: ALTLocalizedError {
     var recoverySuggestion: String? {
         switch self.code
         {
-        case .noWiFi: return NSLocalizedString("Make sure StosVPN is toggled on and you are connected to any Wi-Fi network!", comment: "")
+        case .noWiFi: return NSLocalizedString("Make sure LocalDevVPN is connected and that you are connected to any Wi-Fi network!", comment: "")
         case .serverNotFound: return NSLocalizedString("Make sure you're on the same Wi-Fi network as a computer running AltServer, or try connecting this device to your computer via USB.", comment: "")
         case .maximumAppIDLimitReached:
             let baseMessage = NSLocalizedString("Delete sideloaded apps to free up App ID slots.", comment: "")
@@ -308,7 +308,7 @@ extension MinimuxerError: LocalizedError {
         case .NoDevice:
             return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
         case .NoConnection:
-            return NSLocalizedString("Unable to connect to the device, make sure StosVPN is enabled and you're connected to Wi-Fi. This could mean an invalid pairing.", comment: "")
+            return NSLocalizedString("Unable to connect to the device, make sure LocalDevVPN is enabled and you're connected to Wi-Fi. This could mean an invalid pairing.", comment: "")
         case .PairingFile:
             return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use iloader to replace it.", comment: "")
             
@@ -338,7 +338,7 @@ extension MinimuxerError: LocalizedError {
         case .CreateAfc:
             return self.createService(name: "AFC")
         case .RwAfc:
-            return NSLocalizedString("AFC was unable to manage files on the device. Ensure Wi-Fi and StosVPN are connected. If they both are, replace your pairing using iloader.", comment: "")
+            return NSLocalizedString("AFC was unable to manage files on the device. Ensure Wi-Fi and LocalDevVPN are connected. If they both are, replace your pairing using iloader.", comment: "")
         case .InstallApp(let message):
             return NSLocalizedString("Unable to install the app: \(message.toString())", comment: "")
         case .UninstallApp:
