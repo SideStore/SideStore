@@ -9,6 +9,14 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
+    },
+    {
+      "identifier": "com.livecontainer.source",
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/blob/main/apps.json?raw=true"
+    },
+    {
       "identifier": "org.provenance-emu.provenance",
       "sourceURL": "https://provenance-emu.com/apps.json"
     },
@@ -23,10 +31,6 @@
     {
       "identifier": "com.utmapp.repos.UTM",
       "sourceURL": "https://alt.getutm.app"
-    },
-    {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
     },
     {
       "identifier": "dev.crystall1ne.alt",
@@ -62,6 +66,14 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
+    },
+    {
+      "identifier": "com.livecontainer.source",
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/blob/main/apps.json?raw=true"
+    },
+    {
       "identifier": "org.provenance-emu.provenance",
       "sourceURL": "https://provenance-emu.com/apps.json"
     },
@@ -76,10 +88,6 @@
     {
       "identifier": "com.utmapp.repos.UTM",
       "sourceURL": "https://alt.getutm.app"
-    },
-    {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
     },
     {
       "identifier": "dev.crystall1ne.alt",
