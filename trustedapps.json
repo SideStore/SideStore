@@ -14,7 +14,11 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://github.com/LiveContainer/LiveContainer/blob/main/apps.json?raw=true"
+      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+    },
+    {
+      "identifier": "com.stossy11.MeloNX",
+      "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json?ref_type=heads"
     },
     {
       "identifier": "org.provenance-emu.provenance",
@@ -71,7 +75,11 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://github.com/LiveContainer/LiveContainer/blob/main/apps.json?raw=true"
+      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+    },
+    {
+      "identifier": "com.stossy11.MeloNX",
+      "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json?ref_type=heads"
     },
     {
       "identifier": "org.provenance-emu.provenance",
