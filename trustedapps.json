@@ -9,12 +9,16 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
-      "identifier": "com.aoshuang.manicemu",
-      "sourceURL": "https://apps.manicemu.site/altstore"
+      "identifier": "com.stik.stikdebug",
+      "sourceURL": "https://stikdebug.xyz/index.json"
     },
     {
       "identifier": "com.livecontainer.source",
       "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+    },
+    {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
     },
     {
       "identifier": "com.stossy11.MeloNX",
@@ -70,12 +74,16 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
-      "identifier": "com.aoshuang.manicemu",
-      "sourceURL": "https://apps.manicemu.site/altstore"
+      "identifier": "com.stik.stikdebug",
+      "sourceURL": "https://stikdebug.xyz/index.json"
     },
     {
       "identifier": "com.livecontainer.source",
       "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+    },
+    {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
     },
     {
       "identifier": "com.stossy11.MeloNX",
