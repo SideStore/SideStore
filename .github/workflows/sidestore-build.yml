@@ -68,7 +68,13 @@ jobs:
             echo "ref=${{ inputs.release_tag }}" >> $GITHUB_ENV
           fi
         shell: bash
-
+      - name: Checkout SideStore/beta-build-num repo
+        if: ${{ inputs.is_beta }}
+        uses: actions/checkout@v4
+        with:
+          repository: 'SideStore/beta-build-num'
+          ref: ${{ env.ref }}
+          path: 'SideStore/beta-build-num'
 
       - name: Copy build_number.txt to repo root
         if: ${{ inputs.is_beta }}
