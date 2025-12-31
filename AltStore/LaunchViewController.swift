@@ -138,10 +138,12 @@ final class LaunchViewController: UIViewController, UIDocumentPickerDelegate {
     
     func importAccountAtFile(_ file: URL, remove: Bool = false) {
         _ = file.startAccessingSecurityScopedResource()
-        if try? Data(contentsOf: file) == nil {
+        if try? Data(contentsOf: file) != nil {
+            print("all is well")
+        } else {
             let toastView = ToastView(text: NSLocalizedString("Account.sideconf not found, but thats ok!", comment: ""), detailText: "File does not exist. Proceeding")
             return toastView.show(in: self)
-        } 
+        }
         defer { file.stopAccessingSecurityScopedResource() }
         guard let accountD = try? Data(contentsOf: file) else {
             let toastView = ToastView(text: NSLocalizedString("Could not read data from file!", comment: ""), detailText: "\(file)")
