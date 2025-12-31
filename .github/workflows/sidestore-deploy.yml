@@ -237,7 +237,6 @@ jobs:
         with:
           repository: 'SideStore/apps-v2.json'
           ref: 'main'   # this branch is shared by all beta builds, so beta build workflows are serialized
-          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
           path: 'SideStore/apps-v2.json'
 
       # for stable builds, let the user manually edit the source.json
