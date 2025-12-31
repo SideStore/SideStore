@@ -17,7 +17,7 @@ on:
         type: string
     secrets:
       CROSS_REPO_PUSH_KEY:
-        required: true
+        required: false
       BUILD_LOG_ZIP_PASSWORD:
         required: false
     outputs:
