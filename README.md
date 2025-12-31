@@ -14,7 +14,7 @@ SideStore is an iOS application that allows you to sideload apps onto your iOS d
 
 SideStore's goal is to provide an untethered sideloading experience. It's a community driven fork of [AltStore](https://github.com/rileytestut/AltStore), and has already implemented some of the community's most-requested features.
 
-(Contributions are welcome! 🙂)
+(Contributions are welcome! 😁)
 
 ## Requirements
 - Xcode 15
