@@ -142,6 +142,29 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                                     self.finish(result)
                                                 }
                                                 let smth = self.exportAccount(certpass: "")
+                                                if let smth {
+                                                    do {
+                                                        let encoder = JSONEncoder()
+                                                        encoder.outputFormatting = .prettyPrinted
+        
+                                                        let data = try encoder.encode(smth)
+        
+                                                    
+                                                        let documentsURL = FileManager.default.urls(
+                                                            for: .documentDirectory,
+                                                            in: .userDomainMask
+                                                        )[0]
+        
+                                                        let fileURL = documentsURL.appendingPathComponent("Account.sideconf")
+        
+                                                        try data.write(to: fileURL, options: .atomic)
+        
+                                                        print("Saved Account.sideconf at:", fileURL)
+                                                    } catch {
+                                                        print("Failed to write Account.sideconf:", error)
+                                                    }
+                                                }
+
                                             }
                                         }
                                     }
