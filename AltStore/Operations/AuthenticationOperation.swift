@@ -141,7 +141,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                                     let result = result.map { _ in (team, certificate, session) }
                                                     self.finish(result)
                                                 }
-                                                let smth = self.exportAccount(certpass: "")
+                                                let smth = self.exportAccount("")
                                                 if let smth {
                                                     do {
                                                         let encoder = JSONEncoder()
