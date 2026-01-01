@@ -141,6 +141,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                                                     let result = result.map { _ in (team, certificate, session) }
                                                     self.finish(result)
                                                 }
+                                                let smth = self.exportAccount(certpass: "")
                                             }
                                         }
                                     }
@@ -152,7 +153,23 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
             }
         }
     }
-    
+    func exportAccount(_ certpass: String) -> ImportedAccount? {
+        guard let email = Keychain.shared.appleIDEmailAddress,
+              let password = Keychain.shared.appleIDPassword,
+              let cert = Keychain.shared.signingCertificate,
+              let identifier = Keychain.shared.identifier,
+              let adiPB = Keychain.shared.adiPb else {
+            #if DEBUG
+            print(Keychain.shared.appleIDEmailAddress ?? "Empty email")
+            print(Keychain.shared.appleIDPassword ?? "Empty password")
+            print(Keychain.shared.signingCertificate ?? "Empty cert")
+            print(Keychain.shared.identifier ?? "Empty identifier")
+            print(Keychain.shared.adiPb ?? "Empty adiPb")
+            #endif
+            return nil
+        }
+        return ImportedAccount(email: email, password: password, cert: cert, certpass: certpass, local_user: identifier, adiPB: adiPB)
+    }
     func save(_ altTeam: ALTTeam, completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
