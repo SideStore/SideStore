@@ -196,34 +196,6 @@ jobs:
           echo "SHA256_HASH=$SHA256_HASH" >> $GITHUB_ENV
         shell: bash
 
-      - name: Set Release Info variables
-        run: |
-          # Format localized description
-          LOCALIZED_DESCRIPTION=$(cat <<EOF
-          This is release for:
-            - version: "${{ inputs.version }}"
-            - revision: "${{ inputs.short_commit }}"
-            - timestamp: "${{ steps.date.outputs.date }}"
-          
-          Release Notes:
-          ${{ steps.release_notes.outputs.content }}
-          EOF
-          )
-
-          echo "IS_BETA=${{ inputs.is_beta }}" >> $GITHUB_ENV
-          echo "BUNDLE_IDENTIFIER=${{ inputs.bundle_id }}" >> $GITHUB_ENV
-          echo "VERSION_IPA=${{ inputs.marketing_version }}" >> $GITHUB_ENV
-          echo "VERSION_DATE=$FORMATTED_DATE" >> $GITHUB_ENV
-          echo "RELEASE_CHANNEL=${{ inputs.release_channel }}" >> $GITHUB_ENV
-          echo "SIZE=$IPA_SIZE" >> $GITHUB_ENV
-          echo "SHA256=$SHA256_HASH" >> $GITHUB_ENV
-          echo "DOWNLOAD_URL=https://github.com/SideStore/SideStore/releases/download/${{ inputs.release_tag }}/SideStore.ipa" >> $GITHUB_ENV
-
-          # multiline strings
-          echo "LOCALIZED_DESCRIPTION<<EOF" >> $GITHUB_ENV
-          echo "$LOCALIZED_DESCRIPTION" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        shell: bash
 
       - name: Check if Publish updates is set
         id: check_publish
