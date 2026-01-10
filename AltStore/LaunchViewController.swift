@@ -364,7 +364,7 @@ final class PairingFileManager {
     private func presentPairingFileAlert(on vc: UIViewController) {
         let alert = UIAlertController(title: "Pairing File", message: "Select the pairing file or select \"Help\" for help.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Help", style: .default) { _ in
-            if let url = URL(string: "https://docs.sidestore.io/docs/installation/pairing-file") { UIApplication.shared.open(url) }
+            if let url = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file") { UIApplication.shared.open(url) }
             sleep(2); exit(0)
         })
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
