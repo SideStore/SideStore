@@ -40,7 +40,7 @@ on:
     #   GITHUB_TOKEN:
     #     required: true
       CROSS_REPO_PUSH_KEY:
-        required: false
+        required: true
       BUILD_LOG_ZIP_PASSWORD:
         required: false
 
