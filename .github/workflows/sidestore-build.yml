@@ -17,7 +17,7 @@ on:
         type: string
     secrets:
       CROSS_REPO_PUSH_KEY:
-        required: false
+        required: true
       BUILD_LOG_ZIP_PASSWORD:
         required: false
     outputs:
@@ -68,12 +68,14 @@ jobs:
             echo "ref=${{ inputs.release_tag }}" >> $GITHUB_ENV
           fi
         shell: bash
+
       - name: Checkout SideStore/beta-build-num repo
         if: ${{ inputs.is_beta }}
         uses: actions/checkout@v4
         with:
           repository: 'SideStore/beta-build-num'
           ref: ${{ env.ref }}
+          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
           path: 'SideStore/beta-build-num'
 
       - name: Copy build_number.txt to repo root
@@ -290,6 +292,24 @@ jobs:
         with:
           name: SideStore-${{ steps.version.outputs.version }}-dSYMs.zip
           path: SideStore.dSYMs.zip
+
+      - name: Keep rolling the build numbers for each successful build
+        if: ${{ inputs.is_beta }}
+        run: |
+          pushd SideStore/beta-build-num/
+  
+          echo "Configure Git user (committer details)"
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          
+          echo "Adding files to commit"
+          git add --verbose build_number.txt
+          git commit -m " - updated for ${{ inputs.release_tag }} - ${{ inputs.short_commit }} deployment" || echo "No changes to commit"
+
+          echo "Pushing to remote repo"
+          git push --verbose
+          popd
+        shell: bash
 
       - name: Get last successful commit
         id: get_last_commit
