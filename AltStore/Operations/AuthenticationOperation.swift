@@ -84,71 +84,87 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
             self.finish(.failure(error))
             return
         }
-                
-        // Sign In
-        self.signIn() { (result) in
-            guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
-            
-            switch result
+
+        Task {
+            // try to use cached session
+            if
+                let certificate = Keychain.shared.certificate,
+                let session = Keychain.shared.session,
+                let team = Keychain.shared.team
             {
-            case .failure(let error): self.finish(.failure(error))
-            case .success((let account, let session)):
-                self.context.session = session
-                self.progress.completedUnitCount += 1
-                
-                // Fetch Team
-                self.fetchTeam(for: account, session: session) { (result) in
-                    guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
-                    
-                    switch result
-                    {
-                    case .failure(let error): self.finish(.failure(error))
-                    case .success(let team):
-                        self.context.team = team
-                        self.progress.completedUnitCount += 1
-                        
-                        // Fetch Certificate
-                        self.fetchCertificate(for: team, session: session) { (result) in
-                            guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
-                            
-                            switch result
-                            {
-                            case .failure(let error): self.finish(.failure(error))
-                            case .success(let certificate):
-                                self.context.certificate = certificate
-                                self.progress.completedUnitCount += 1
-                                       
-                                // Register Device
-                                self.registerCurrentDevice(for: team, session: session) { (result) in
-                                    guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
-                                    
-                                    switch result
-                                    {
-                                    case .failure(let error): self.finish(.failure(error))
-                                    case .success:
-                                        self.progress.completedUnitCount += 1
-                                        
-                                        // Save account/team to disk.
-                                        self.save(team) { (result) in
-                                            guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
-                                            
-                                            switch result
-                                            {
-                                            case .failure(let error): self.finish(.failure(error))
-                                            case .success:
-                                                // Must cache App IDs _after_ saving account/team to disk.
-                                                self.cacheAppIDs(team: team, session: session) { (result) in
-                                                    let result = result.map { _ in (team, certificate, session) }
-                                                    self.finish(result)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                if session.anisetteData.date.timeIntervalSinceNow < -40.0 {
+                    let anisetteData = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<ALTAnisetteData, any Error>) in
+                        let fetchAnisetteDataOperation = FetchAnisetteDataOperation(context: self.context)
+                        fetchAnisetteDataOperation.resultHandler = { (result) in
+                            c.resume(with: result)
                         }
+                        self.operationQueue.addOperation(fetchAnisetteDataOperation)
+                    }
+                    session.anisetteData = anisetteData
+                }
+                self.context.team = team
+                self.context.session = session
+                self.context.certificate = certificate
+                self.finish(.success((team, certificate, session)))
+                return
+            }
+            
+            // new login
+            do {
+                let (account, session) = try await withUnsafeThrowingContinuation { c in
+                    self.signIn() { (result) in
+                        c.resume(with: result)
                     }
                 }
+                self.context.session = session
+                self.progress.completedUnitCount += 1
+                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
+                
+                let team = try await withUnsafeThrowingContinuation { c in
+                    self.fetchTeam(for: account, session: session) { (result) in
+                        c.resume(with: result)
+                    }
+                }
+                self.context.team = team
+                self.progress.completedUnitCount += 1
+                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
+                
+                let certificate = try await withUnsafeThrowingContinuation { c in
+                    self.fetchCertificate(for: team, session: session) { (result) in
+                        c.resume(with: result)
+                    }
+                }
+                self.context.certificate = certificate
+                self.progress.completedUnitCount += 1
+                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
+                
+                let _ = try await withUnsafeThrowingContinuation { c in
+                    self.registerCurrentDevice(for: team, session: session) { (result) in
+                        c.resume(with: result)
+                    }
+                }
+                self.progress.completedUnitCount += 1
+                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
+                
+                try await withUnsafeThrowingContinuation { c in
+                    self.save(team) { (result) in
+                        c.resume(with: result)
+                    }
+                }
+                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
+                
+                try await withUnsafeThrowingContinuation { c in
+                    self.cacheAppIDs(team: team, session: session) { (result) in
+                        c.resume(with: result)
+                    }
+                }
+                Keychain.shared.team = team
+                Keychain.shared.certificate = certificate
+                Keychain.shared.session = session
+                self.finish(.success((team, certificate, session)))
+
+            } catch {
+                self.finish(.failure(error))
             }
         }
     }
@@ -359,6 +375,30 @@ private extension AuthenticationOperation
             }
         }
         
+        if let adsid = Keychain.shared.appleIDAdsid, let xcodeToken = Keychain.shared.appleIDXcodeToken {
+            Logger.sideload.notice("Authenticating Apple ID with tokens...")
+            let semaphore = DispatchSemaphore(value: 0)
+            var shouldContinue = true
+            Task {
+                defer {
+                    semaphore.signal()
+                }
+                do {
+                    let (account, session) = try await self.authenticateWithToken(adsid: adsid, xcodeToken: xcodeToken)
+                    completionHandler(.success((account, session)))
+                    shouldContinue = false
+                } catch {
+                    print("Autentication failed with token: \(error)")
+                    
+                }
+            }
+            
+            semaphore.wait()
+            if !shouldContinue {
+                return
+            }
+        }
+        
         if let appleID = Keychain.shared.appleIDEmailAddress, let password = Keychain.shared.appleIDPassword
         {
             Logger.sideload.notice("Authenticating Apple ID...")
@@ -382,6 +422,25 @@ private extension AuthenticationOperation
         {
             authenticate()
         }
+    }
+    
+    func authenticateWithToken(adsid: String, xcodeToken: String) async throws -> (ALTAccount, ALTAppleAPISession) {
+        let anisetteData = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<ALTAnisetteData, any Error>) in
+            let fetchAnisetteDataOperation = FetchAnisetteDataOperation(context: self.context)
+            fetchAnisetteDataOperation.resultHandler = { (result) in
+                c.resume(with: result)
+            }
+            self.operationQueue.addOperation(fetchAnisetteDataOperation)
+        }
+        
+        let session = ALTAppleAPISession(dsid: adsid, authToken: xcodeToken, anisetteData: anisetteData)
+        let account = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<ALTAccount, any Error>) in
+            ALTAppleAPI.shared.fetchAccount2(session: session) { result in
+                c.resume(with: result)
+            }
+        }
+        
+        return (account, session)
     }
     
     func authenticate(appleID: String, password: String, completionHandler: @escaping (Result<(ALTAccount, ALTAppleAPISession), Swift.Error>) -> Void)
@@ -444,6 +503,8 @@ private extension AuthenticationOperation
                                                 verificationHandler: verificationHandler) { (account, session, error) in
                     if let account = account, let session = session
                     {
+                        Keychain.shared.appleIDAdsid = session.dsid
+                        Keychain.shared.appleIDXcodeToken = session.authToken
                         completionHandler(.success((account, session)))
                     }
                     else
@@ -745,5 +806,32 @@ extension AuthenticationOperation
         guard let textField = notification.object as? UITextField else { return }
         
         self.submitCodeAction?.isEnabled = (textField.text ?? "").count == 6
+    }
+}
+
+
+extension ALTAppleAPI {
+    func fetchAccount2(session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAccount, Error>) -> Void)
+    {
+        let url = URL(string: "viewDeveloper.action", relativeTo: self.baseURL)!
+        
+        self.sendRequest(with: url, additionalParameters: nil, session: session, team: nil) { (responseDictionary, requestError) in
+            do
+            {
+                guard let responseDictionary = responseDictionary else { throw requestError ?? ALTAppleAPIError.unknown() }
+                
+                guard let account = try self.processResponse(responseDictionary, parseHandler: { () -> Any? in
+                    guard let dictionary = responseDictionary["developer"] as? [String: Any] else { return nil }
+                    let account = ALTAccount(responseDictionary: dictionary)
+                    return account
+                }, resultCodeHandler: nil) as? ALTAccount else {
+                    throw ALTAppleAPIError.unknown()
+                }
+
+                completionHandler(.success(account))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
     }
 }

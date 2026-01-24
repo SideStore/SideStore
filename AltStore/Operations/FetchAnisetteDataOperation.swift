@@ -198,7 +198,7 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
                 let formatter = DateFormatter()
                 formatter.locale = Locale(identifier: "en_US_POSIX")
                 formatter.calendar = Calendar(identifier: .gregorian)
-                formatter.timeZone = TimeZone.current
+                formatter.timeZone = TimeZone.init(secondsFromGMT: 0)
                 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
                 let dateString = formatter.string(from: Date())
                 formattedJSON["date"] = dateString
