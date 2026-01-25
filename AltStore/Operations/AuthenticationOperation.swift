@@ -388,8 +388,7 @@ private extension AuthenticationOperation
                     completionHandler(.success((account, session)))
                     shouldContinue = false
                 } catch {
-                    print("Autentication failed with token: \(error)")
-                    
+                    Logger.sideload.notice("Authentication failed with token. Fall back to email and password login: \(error)")
                 }
             }
             
