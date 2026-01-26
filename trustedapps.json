@@ -25,6 +25,14 @@
       "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
     },
     {
+      "identifier": "com.chachirie.source"
+      "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
+    },
+    {
+      "identifier": "org.geode-sdk.altsource"
+      "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
+    },
+    {
       "identifier": "org.provenance-emu.provenance",
       "sourceURL": "https://provenance-emu.com/apps.json"
     },
@@ -88,6 +96,14 @@
     {
       "identifier": "com.stossy11.MeloNX",
       "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
+    },
+    {
+      "identifier": "com.chachirie.source"
+      "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
+    },
+    {
+      "identifier": "org.geode-sdk.altsource"
+      "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
     },
     {
       "identifier": "org.provenance-emu.provenance",
