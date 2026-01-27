@@ -25,11 +25,11 @@
       "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
     },
     {
-      "identifier": "com.chachirie.source"
+      "identifier": "com.chachirie.source",
       "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
     },
     {
-      "identifier": "org.geode-sdk.altsource"
+      "identifier": "org.geode-sdk.altsource",
       "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
     },
     {
@@ -98,11 +98,11 @@
       "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
     },
     {
-      "identifier": "com.chachirie.source"
+      "identifier": "com.chachirie.source",
       "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
     },
     {
-      "identifier": "org.geode-sdk.altsource"
+      "identifier": "org.geode-sdk.altsource",
       "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
     },
     {
