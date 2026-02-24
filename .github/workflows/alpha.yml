@@ -13,9 +13,9 @@ jobs:
   build:
     runs-on: macos-26
     env:
-      REF_NAME: Alpha
+      RELEASE_NAME: Alpha
       CHANNEL: alpha
-      UPSTREAM_CHANNEL: 'nightly'
+      UPSTREAM_CHANNEL: "nightly"
 
     steps:
       - uses: actions/checkout@v4

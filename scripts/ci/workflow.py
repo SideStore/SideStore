@@ -376,7 +376,7 @@ def upload_release(release_name, release_tag, commit_sha, repo, upstream_recomme
 
     meta = json.loads(metadata_path.read_text())
 
-    marketing_version = bool(meta.get("version_ipa"))
+    marketing_version = meta.get("version_ipa")
     is_beta = bool(meta.get("is_beta"))
     build_datetime = meta.get("version_date")
 
@@ -433,7 +433,7 @@ def upload_release(release_name, release_tag, commit_sha, repo, upstream_recomme
 
     run(
         f'gh release upload "{release_tag}" '
-        f'SideStore.ipa SideStore.dSYMs.zip '
+        f'SideStore.ipa SideStore.dSYMs.zip encrypted-build-logs.zip'
         f'--clobber'
     )
 
