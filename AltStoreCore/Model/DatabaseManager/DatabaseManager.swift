@@ -399,6 +399,40 @@ private extension DatabaseManager
                 // For backwards compatibility reasons, we cannot use localApp's buildVersion as storeBuildVersion,
                 // or else the latest update will _always_ be considered new because we don't use buildVersions in our source (yet).
                 installedApp = InstalledApp(resignedApp: localApp, originalBundleIdentifier: StoreApp.altstoreAppID, certificateSerialNumber: serialNumber, storeBuildVersion: nil, context: context)
+                
+                // figure out if the current AltStoreApp is signed with "Use Main Profie" option
+                // by checking if the first extension's entitlement's application-identifier matches current one
+                repeat {
+                    guard let pluginURL = Bundle.main.builtInPlugInsURL else {
+                        installedApp.useMainProfile = true
+                        break
+                    }
+                    guard let pluginFolders = try? FileManager.default.contentsOfDirectory(at: pluginURL, includingPropertiesForKeys: nil) else {
+                        installedApp.useMainProfile = true
+                        break
+                    }
+                    
+                    guard let pluginFolder = pluginFolders.first, let altPluginApp = ALTApplication(fileURL: pluginFolder) else {
+                        installedApp.useMainProfile = true
+                        break
+                    }
+                    
+                    let entitlements = altPluginApp.entitlements
+                    guard let appId = entitlements[ALTEntitlement.applicationIdentifier] as? String else {
+                        installedApp.useMainProfile = false
+                        print("no ALTEntitlementApplicationIdentifier???")
+                        break
+                    }
+                    
+                    if appId.hasSuffix(Bundle.main.bundleIdentifier!) {
+                        installedApp.useMainProfile = true
+                    } else {
+                        installedApp.useMainProfile = false
+                    }
+                    
+                    
+                } while(false)
+                
                 installedApp.storeApp = storeApp
             }
             

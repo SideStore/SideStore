@@ -176,6 +176,13 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             
             var installing = true
             if installedApp.storeApp?.bundleIdentifier.range(of: Bundle.Info.appbundleIdentifier) != nil {
+                do {
+                    // we need to flush changes to the disk now in case the changes are lost when iOS kills current process
+                    try installedApp.managedObjectContext?.save()
+                } catch {
+                    print("Failed to flush installedApp to disk: \(error)")
+                }
+                
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     if UIApplication.shared.applicationState != .active {
