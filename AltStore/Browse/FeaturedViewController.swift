@@ -368,7 +368,7 @@ private extension FeaturedViewController
             #keyPath(StoreApp._source._apps),
             #keyPath(StoreApp.bundleIdentifier),
             StoreApp.altstoreAppID,
-            #keyPath(StoreApp.installedApp),
+            #keyPath(StoreApp.installedApp)
         )
         
         let primaryFetchRequest = fetchRequest.copy() as! NSFetchRequest<StoreApp>
