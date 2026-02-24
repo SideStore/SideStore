@@ -144,9 +144,9 @@ def get_marketing_version():
 
 def set_marketing_version(qualified):
     run(
-        f"sed -E "
+        f"sed -E -i '' "
         f"'s/^MARKETING_VERSION = .*/MARKETING_VERSION = {qualified}/' "
-        f"-i '' {ROOT}/Build.xcconfig"
+        f"{ROOT}/Build.xcconfig"
     )
 
 def compute_qualified_version(marketing, build_num, channel, short):
