@@ -7,7 +7,7 @@ from pathlib import Path
 import time
 import json
 import inspect
-
+import re
 
 # REPO ROOT relative to script dir
 ROOT = Path(__file__).resolve().parents[2]
@@ -390,6 +390,13 @@ def upload_release(release_name, release_tag, commit_sha, repo, upstream_recomme
         f"python3 {SCRIPTS}/generate_release_notes.py "
         f"--retrieve {release_tag} "
         f"--output-dir {ROOT}"
+    )
+    # normalize section header
+    release_notes = re.sub(
+        r'^\s*#{1,6}\s*what(?:\'?s|\s+is)?\s+(?:new|changed).*',
+        "## What's Changed",
+        release_notes,
+        flags=re.IGNORECASE | re.MULTILINE,
     )
 
     upstream_block = ""
