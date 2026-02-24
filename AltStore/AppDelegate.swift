@@ -93,7 +93,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         self.setTintColor()
-        self.setTintColor()
         self.prepareImageCache()
 
         // TODO: @mahee96: find if we need to start em_proxy as in altstore?

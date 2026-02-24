@@ -55,7 +55,8 @@ func yeetAppAFC(_ bundleId: String, _ rawBytes: Data) throws {
     #if targetEnvironment(simulator)
     print("yeetAppAFC(\(bundleId), \(rawBytes)) is no-op on simulator")
     #else
-    try minimuxer.yeet_app_afc(bundleId, rawBytes.toRustByteSlice().forRust())
+    let slice = rawBytes.toRustByteSlice()
+    try minimuxer.yeet_app_afc(bundleId, slice.forRust())
     #endif
 }
 
