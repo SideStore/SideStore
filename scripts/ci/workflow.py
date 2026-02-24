@@ -961,7 +961,7 @@ def upload_release(release_name, release_tag, commit_sha, repo, upstream_recomme
 
     run(
         f'gh release upload "{release_tag}" '
-        f'SideStore.ipa SideStore.dSYMs.zip encrypted-build-logs.zip'
+        f'SideStore.ipa SideStore.dSYMs.zip encrypted-build-logs.zip '
         f'--clobber'
     )
 
@@ -1055,21 +1055,6 @@ def main():
     if result is not None:
         sys.stdout.write(str(result))
         sys.stdout.flush()
-
-
-if __name__ == "__main__":
-    main() 
-        raise SystemExit(f"Usage: workflow.py {cmd}{suffix}")
-
-    args = sys.argv[2:2 + argc]
-
-    result = func(*args) if argc else func()
-
-    # ONLY real outputs go to stdout
-    if result is not None:
-        sys.stdout.write(str(result))
-        sys.stdout.flush()
-
 
 if __name__ == "__main__":
     main()
