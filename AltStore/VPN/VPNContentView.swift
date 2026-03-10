@@ -210,20 +210,17 @@ final class TunnelManager: ObservableObject {
             manager.localizedDescription = "LocalDevVPN"
             let proto = NETunnelProviderProtocol()
             proto.providerBundleIdentifier = self.tunnelBundleId
-            proto.serverAddress = "LocalDevVPN's Local Network Tunnel"
+            proto.serverAddress = "127.0.0.1"
             manager.protocolConfiguration = proto
-            let rule = NEOnDemandRuleEvaluateConnection()
-            rule.interfaceTypeMatch = .any
-            rule.connectionRules = [
-                NEEvaluateConnectionRule(matchDomains: ["10.7.0.0", "10.7.0.1"], andAction: .connectIfNeeded)
-            ]
-            manager.onDemandRules = [rule]
-            manager.isOnDemandEnabled = true
+            // On-demand is disabled: LocalDevVPN is manually started by the user.
+            // NEEvaluateConnectionRule.matchDomains requires hostnames, not IPs,
+            // so on-demand rules with IP addresses cause saveToPreferences to fail.
+            manager.isOnDemandEnabled = false
             manager.isEnabled = true
             manager.saveToPreferences { error in
                 DispatchQueue.main.async {
                     if let error {
-                        VPNLogger.shared.log("Error creating config: \(error.localizedDescription)")
+                        VPNLogger.shared.log("Error creating VPN config: \(error.localizedDescription)")
                         completion(nil); return
                     }
                     completion(manager)
@@ -311,7 +308,11 @@ final class TunnelManager: ObservableObject {
                 return
             }
             self.createLocalDevVPNConfiguration { [weak self] manager in
-                guard let self, let manager else { return }
+                guard let self else { return }
+                guard let manager else {
+                    DispatchQueue.main.async { self.tunnelStatus = .error }
+                    return
+                }
                 DispatchQueue.main.async { self.vpnManager = manager }
                 self.startExistingVPN(manager: manager)
             }
@@ -520,13 +521,26 @@ struct VPNStatusOverviewCard: View {
                 }
                 Divider()
                 HStack {
-                    Label { Text(statusTip) } icon: { Image(systemName: "info.circle") }
-                        .font(.caption).foregroundColor(.secondary)
+                    Label { Text(statusTip) } icon: { Image(systemName: statusIcon) }
+                        .font(.caption).foregroundColor(tunnelManager.tunnelStatus == .error ? .red : .secondary)
                     Spacer()
-                    Text(Date(), style: .time).font(.caption).foregroundColor(.secondary)
+                    if tunnelManager.tunnelStatus == .error {
+                        SwiftUI.Button("Open Settings") {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                        .font(.caption).foregroundColor(.accentColor)
+                    } else {
+                        Text(Date(), style: .time).font(.caption).foregroundColor(.secondary)
+                    }
                 }
             }
         }
+    }
+
+    private var statusIcon: String {
+        tunnelManager.tunnelStatus == .error ? "exclamationmark.triangle" : "info.circle"
     }
 
     private var statusTip: String {
@@ -534,7 +548,7 @@ struct VPNStatusOverviewCard: View {
         case .connected:     return NSLocalizedString("connected_to_10.7.0.1", comment: "")
         case .connecting:    return NSLocalizedString("macos_might_ask_you_to_approve_the_vpn", comment: "")
         case .disconnecting: return NSLocalizedString("disconnecting_safely", comment: "")
-        case .error:         return NSLocalizedString("open_settings_to_review_details", comment: "")
+        case .error:         return "VPN configuration failed. Tap 'Open Settings' to grant VPN permission, then try again."
         default:             return NSLocalizedString("tap_connect_to_create_the_tunnel", comment: "")
         }
     }
