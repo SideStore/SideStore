@@ -1,8 +1,6 @@
 name: Nightly SideStore Build
 
 on:
-  push:
-    branches: [develop]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -54,6 +52,10 @@ jobs:
 
       - run: brew install ldid xcbeautify
         if: steps.build_gate.outputs.should_skip != 'true'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+          HOMEBREW_NO_ANALYTICS: 1
 
       # --------------------------------------------------
       # runtime env setup
@@ -85,7 +87,7 @@ jobs:
       - name: Restore Cache (exact)
         if: steps.build_gate.outputs.should_skip != 'true'
         id: xcode-cache-exact
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -97,7 +99,7 @@ jobs:
           steps.build_gate.outputs.should_skip != 'true' &&
           steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -150,8 +152,9 @@ jobs:
       - name: Save Cache
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
+          steps.xcode-cache-exact.outputs.cache-hit != 'true' &&
           steps.xcode-cache-fallback.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData

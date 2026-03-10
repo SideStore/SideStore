@@ -38,6 +38,10 @@ jobs:
           echo "LAST_SUCCESSFUL_COMMIT=$LAST_SUCCESSFUL_COMMIT" | tee -a $GITHUB_ENV
 
       - run: brew install ldid xcbeautify
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+          HOMEBREW_NO_ANALYTICS: 1
 
       - name: Setup Env
         run: |
@@ -68,7 +72,7 @@ jobs:
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -78,7 +82,7 @@ jobs:
       - name: Restore Cache (last)
         if: steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -95,8 +99,10 @@ jobs:
           exit $STATUS
 
       - name: Save Cache
-        if: ${{ steps.xcode-cache-fallback.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v3
+        if: >
+          steps.xcode-cache-exact.outputs.cache-hit != 'true' &&
+          steps.xcode-cache-fallback.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData

@@ -6,7 +6,6 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 import Foundation
-import Network
 import AltStoreCore
 
 @objc(SendAppOperation)
@@ -36,19 +35,12 @@ final class SendAppOperation: ResultOperation<()>
             return self.finish(.failure(OperationError.invalidParameters("SendAppOperation.main: self.resignedApp is nil")))
         }
 
-        let shortcutURLoff = URL(string: "shortcuts://run-shortcut?name=TurnOffData")!
-
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL, storeApp: nil)
         let fileURL = InstalledApp.refreshedIPAURL(for: app)
         print("AFC App `fileURL`: \(fileURL.absoluteString)")
 
-        // Wait for Shortcut to Finish Before Proceeding
-        UIApplication.shared.open(shortcutURLoff, options: [:]) { _ in
-            print("Shortcut finished execution. Proceeding with file transfer.")
-
-            DispatchQueue.global().async {
-                self.processFile(at: fileURL, for: app.bundleIdentifier)
-            }
+        DispatchQueue.global().async {
+            self.processFile(at: fileURL, for: app.bundleIdentifier)
         }
     }
 
