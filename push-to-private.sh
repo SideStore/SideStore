@@ -6,7 +6,7 @@
 #      - Classic token: check "repo" scope
 #      - Fine-grained token: grant read+write access to OofMini/Minis-Store
 #   2. Export your token before running:
-#        export GITHUB_TOKEN=ghp_yourTokenHere
+#        export MINIS_STORE_TOKEN=ghp_yourTokenHere
 #   3. Run this script:
 #        bash push-to-private.sh
 
@@ -16,11 +16,11 @@ PRIVATE_REMOTE_NAME="minis-store"
 PRIVATE_REPO_OWNER="OofMini"
 PRIVATE_REPO_NAME="Minis-Store"
 
-# Resolve token
-TOKEN="${GITHUB_TOKEN:-}"
+# Resolve token (use MINIS_STORE_TOKEN; GITHUB_TOKEN is reserved by GitHub Actions)
+TOKEN="${MINIS_STORE_TOKEN:-}"
 if [ -z "$TOKEN" ]; then
-  echo "Error: GITHUB_TOKEN is not set."
-  echo "Export it first:  export GITHUB_TOKEN=ghp_yourTokenHere"
+  echo "Error: MINIS_STORE_TOKEN is not set."
+  echo "Export it first:  export MINIS_STORE_TOKEN=ghp_yourTokenHere"
   exit 1
 fi
 

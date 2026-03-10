@@ -24,5 +24,5 @@ jobs:
           # Add a secret named MINIS_STORE_TOKEN in this repo's Settings → Secrets.
           # Use a Classic PAT with 'repo' scope, or a fine-grained token with
           # read+write access to OofMini/Minis-Store.
-          GITHUB_TOKEN: ${{ secrets.MINIS_STORE_TOKEN }}
+          MINIS_STORE_TOKEN: ${{ secrets.MINIS_STORE_TOKEN }}
         run: bash push-to-private.sh
