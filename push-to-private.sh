@@ -42,8 +42,7 @@ git fetch --all --prune
 # Push every branch from origin/* to the private remote
 echo ""
 echo "Pushing all branches to $PRIVATE_REPO_OWNER/$PRIVATE_REPO_NAME ..."
-git push "$PRIVATE_REMOTE_NAME" 'refs/remotes/origin/*:refs/heads/*' --force-with-lease 2>/dev/null || \
-git push "$PRIVATE_REMOTE_NAME" 'refs/remotes/origin/*:refs/heads/*'
+git push "$PRIVATE_REMOTE_NAME" 'refs/remotes/origin/*:refs/heads/*' --force
 
 echo ""
 echo "Done! All branches are now in your private repo."
