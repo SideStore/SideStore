@@ -38,7 +38,7 @@ class PreviewAppScreenshotsViewController: UICollectionViewController
         let tintColor = self.app.tintColor ?? .altPrimary
         self.navigationController?.view.tintColor = tintColor
         
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .altBackground
         self.collectionView.backgroundColor = nil
         
         let collectionViewLayout = self.makeLayout()
