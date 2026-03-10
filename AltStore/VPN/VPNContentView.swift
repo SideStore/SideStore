@@ -698,6 +698,11 @@ struct VPNConnectionStatsView: View {
         .onReceive(timer) { _ in
             if timerActive { elapsedSeconds += 1 }
         }
+        .onChange(of: tunnelManager.tunnelStatus) { status in
+            if status == .disconnected || status == .error {
+                elapsedSeconds = 0
+            }
+        }
     }
 
     private var formattedTime: String {
