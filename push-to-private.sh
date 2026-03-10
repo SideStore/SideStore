@@ -37,12 +37,12 @@ fi
 
 # Verify the remote is reachable before pushing
 echo "Checking access to https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME} ..."
-if ! git ls-remote "$PRIVATE_REMOTE_NAME" HEAD &>/dev/null; then
+if ! git ls-remote "$PRIVATE_REMOTE_NAME" HEAD 2>&1; then
   echo ""
   echo "Error: Cannot reach https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}"
-  echo "Check that:"
-  echo "  1. The repo exists at https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}"
-  echo "  2. Your PAT has 'repo' scope (classic) or write access to that repo (fine-grained)"
+  echo "  - If 'Repository not found': repo doesn't exist yet or your token lacks access"
+  echo "  - If 'bad credentials': token is wrong or expired"
+  echo "  - Create the private repo first at https://github.com/new"
   exit 1
 fi
 echo "Remote accessible."
