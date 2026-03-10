@@ -93,6 +93,7 @@ public extension UserDefaults
     
     @NSManaged var permissionCheckingDisabled: Bool
     @NSManaged var responseCachingDisabled: Bool
+    @NSManaged var isOLEDModeEnabled: Bool
     
     // Default track for beta updates when beta-updates are enabled
     static let defaultBetaUpdatesTrack: String = ReleaseTracks.nightly.rawValue
@@ -148,6 +149,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io",
             #keyPath(UserDefaults.isCowExploitSupported): isMacDirtyCowSupported,
             #keyPath(UserDefaults.permissionCheckingDisabled): permissionCheckingDisabled,
+            #keyPath(UserDefaults.isOLEDModeEnabled): false,
             #keyPath(UserDefaults._preferredAppSorting): preferredAppSorting.rawValue,
             #keyPath(UserDefaults.betaUdpatesTrack): defaultBetaUpdatesTrack,
         ] as [String: Any]

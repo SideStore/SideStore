@@ -303,13 +303,48 @@
                                         <edgeInsets key="layoutMargins" top="8" left="30" bottom="8" right="30"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="style">
-                                                <integer key="value" value="0"/>
+                                                <integer key="value" value="1"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <segue destination="1z3-Yk-n8E" kind="show" identifier="" id="7I2-qT-zAU"/>
                                         </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="51" id="oLd-BG-sw1" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="431.33333206176758" width="402" height="51"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oLd-BG-sw1" id="oLd-BG-cv1">
+                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OLED Background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oLd-BG-lb1">
+                                                    <rect key="frame" x="30" y="15.333333333333334" width="160" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oLd-BG-sw2">
+                                                    <rect key="frame" x="311" y="11.666666666666664" width="63" height="28"/>
+                                                    <connections>
+                                                        <action selector="toggleOLEDBackground:" destination="aMk-Xp-UL8" eventType="valueChanged" id="oLd-BG-ac1"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="oLd-BG-sw2" firstAttribute="centerY" secondItem="oLd-BG-cv1" secondAttribute="centerY" id="oLd-BG-c1"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="oLd-BG-sw2" secondAttribute="trailing" id="oLd-BG-c2"/>
+                                                <constraint firstItem="oLd-BG-lb1" firstAttribute="leading" secondItem="oLd-BG-cv1" secondAttribute="leadingMargin" id="oLd-BG-c3"/>
+                                                <constraint firstItem="oLd-BG-lb1" firstAttribute="centerY" secondItem="oLd-BG-cv1" secondAttribute="centerY" id="oLd-BG-c4"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="1" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <edgeInsets key="layoutMargins" top="8" left="30" bottom="8" right="30"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="style">
+                                                <integer key="value" value="3"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1503,6 +1538,7 @@
                         <outlet property="mastodonButton" destination="B8Q-e7-beR" id="Kbe-Og-rsg"/>
                         <outlet property="minimuxerConsoleLoggingSwitch" destination="os8-7F-rSm" id="gxg-Gx-xwO"/>
                         <outlet property="noIdleTimeoutSwitch" destination="iQA-wm-5ag" id="jHC-js-q0Y"/>
+                        <outlet property="oledBackgroundSwitch" destination="oLd-BG-sw2" id="oLd-BG-ol1"/>
                         <outlet property="recreateDatabaseSwitch" destination="uGv-Lb-Ita" id="BMU-cK-0ee"/>
                         <outlet property="threadsButton" destination="AWk-yE-9LI" id="SOc-ei-4gK"/>
                         <outlet property="twitterButton" destination="uYZ-Vu-RzK" id="anA-jh-w4z"/>
