@@ -139,7 +139,6 @@ public class Source: BaseEntity, Decodable
         case patreonURL
         
         case apps
-        case news
         case featuredApps
         case userInfo
         
@@ -196,27 +195,6 @@ public class Source: BaseEntity, Decodable
                 app.sortIndex = Int32(index)
             }
             self._apps = NSMutableOrderedSet(array: apps)
-            
-            let newsItems = try container.decodeIfPresent([NewsItem].self, forKey: .news) ?? []
-            for (index, item) in newsItems.enumerated()
-            {
-                item.sortIndex = Int32(index)
-            }
-                                
-            for newsItem in newsItems
-            {
-                guard let appID = newsItem.appID else { continue }
-                
-                if let storeApp = appsByID[appID]
-                {
-                    newsItem.storeApp = storeApp
-                }
-                else
-                {
-                    newsItem.storeApp = nil
-                }
-            }
-            self._newsItems = NSMutableOrderedSet(array: newsItems)
             
             let featuredAppBundleIDs = try container.decodeIfPresent([String].self, forKey: .featuredApps)
             let featuredApps = featuredAppBundleIDs?.compactMap { appsByID[$0] }

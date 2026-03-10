@@ -112,39 +112,12 @@
                     </collectionView>
                     <navigationItem key="navigationItem" id="SsY-RM-EFx"/>
                     <connections>
-                        <segue destination="MVH-oB-c8m" kind="show" identifier="showAllNews" destinationCreationSelector="makeNewsViewController:" id="txA-ay-P7p"/>
                         <segue destination="Nhf-Gw-Ukx" kind="show" identifier="showAllApps" destinationCreationSelector="makeBrowseViewController:" id="On0-GP-kaE"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KEz-hK-u3f" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2509" y="-13"/>
-        </scene>
-        <!--All News-->
-        <scene sceneID="avV-5f-uNE">
-            <objects>
-                <collectionViewController storyboardIdentifier="newsViewController" id="MVH-oB-c8m" customClass="NewsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" id="p9p-rr-fbF">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="40" minimumInteritemSpacing="40" id="3cD-ax-3h6">
-                            <size key="itemSize" width="375" height="300"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="40" maxX="0.0" maxY="13"/>
-                        </collectionViewFlowLayout>
-                        <cells/>
-                        <connections>
-                            <outlet property="dataSource" destination="MVH-oB-c8m" id="tji-Ko-dBy"/>
-                            <outlet property="delegate" destination="MVH-oB-c8m" id="fcy-SK-PkD"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" title="All News" id="FGB-cd-Vkd"/>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="7f5-vn-JrS" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3404" y="-711"/>
         </scene>
         <!--Sources-->
         <scene sceneID="w2v-ek-6dY">
