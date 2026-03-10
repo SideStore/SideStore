@@ -81,7 +81,7 @@ jobs:
       # build and test
       # --------------------------------------------------
       - name: Clean
-        if: contains(github.event.head_commit.message, '[--clean-build]')
+        if: github.event_name == 'push' && contains(github.event.head_commit.message, '[--clean-build]')
         run: |
           python3 scripts/ci/workflow.py clean
           python3 scripts/ci/workflow.py clean-derived-data
