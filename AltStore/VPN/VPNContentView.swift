@@ -121,8 +121,9 @@ final class TunnelManager: ObservableObject {
             guard let self else { return }
             DispatchQueue.main.async {
                 if let error {
+                    // A load error just means no profile exists yet — not a hard error.
+                    // Leave status as .disconnected so the user can still tap Connect.
                     VPNLogger.shared.log("Error loading preferences: \(error.localizedDescription)")
-                    self.tunnelStatus = .error
                     self.waitingOnSettings = true
                     return
                 }
@@ -245,6 +246,20 @@ final class TunnelManager: ObservableObject {
 
     func toggleVPNConnection() {
         tunnelStatus == .connected || tunnelStatus == .connecting ? stopVPN() : startVPN()
+    }
+
+    /// Triggers the native iOS "Add VPN Configuration" system alert on first use.
+    /// Call this from the setup/onboarding flow so iOS prompts the user immediately.
+    func setupVPNProfile(completion: @escaping (Bool) -> Void) {
+        if isSimulator { completion(false); return }
+        createLocalDevVPNConfiguration { [weak self] manager in
+            DispatchQueue.main.async {
+                if let manager {
+                    self?.vpnManager = manager
+                }
+                completion(manager != nil)
+            }
+        }
     }
 
     func startVPN() {
@@ -553,6 +568,7 @@ struct VPNStatusGlyphView: View {
 
 struct VPNConnectivityControlsCard: View {
     @Binding var autoConnect: Bool
+    @AppStorage("autoEnableVPNOnRefreshOrInstall") private var autoEnableOnRefreshOrInstall = false
     let action: () -> Void
 
     var body: some View {
@@ -567,6 +583,13 @@ struct VPNConnectivityControlsCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("auto-connect_on_launch").fontWeight(.semibold)
                         Text("resume_your_last_state_automatically").font(.caption).foregroundColor(.secondary)
+                    }
+                }
+                .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+                Toggle(isOn: $autoEnableOnRefreshOrInstall) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Auto-enable on refresh or install").fontWeight(.semibold)
+                        Text("Automatically connect the VPN when refreshing or installing apps").font(.caption).foregroundColor(.secondary)
                     }
                 }
                 .toggleStyle(SwitchToggleStyle(tint: .accentColor))
@@ -884,6 +907,17 @@ struct VPNSetupView: View {
 
                     SwiftUI.Button {
                         hasNotCompletedSetup = false
+                        // Trigger the native iOS "Add VPN Configuration" system alert.
+                        // If the user taps Allow, the profile is added and the VPN is ready.
+                        TunnelManager.shared.setupVPNProfile { success in
+                            if !success {
+                                // If profile creation failed (e.g. user denied), open
+                                // iOS Settings > VPN so they can add it manually.
+                                if let url = URL(string: "App-Prefs:root=General&path=VPN") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                        }
                         onComplete()
                         dismiss()
                     } label: {
