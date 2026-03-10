@@ -2955,6 +2955,14 @@
 				AltStoreFree.entitlements,
 			);
 		};
+		C100000100000000000000AA /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = C1000001000000000000001F /* Resources */;
+			membershipExceptions = (
+				Info.plist,
+				TunnelProv.entitlements,
+			);
+		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -2976,7 +2984,7 @@
 		A8EEC3D92F4B0FC800F2436D /* AltBackup */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3E22F4B0FC800F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltBackup; sourceTree = "<group>"; };
 		A8EEC71D2F4B10D900F2436D /* xcconfigs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = xcconfigs; sourceTree = "<group>"; };
 		A8EEC8412F4B146A00F2436D /* AltStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC8CB2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC8CC2F4B146B00F2436D /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, A8FAC1FE2F4B52F40061A851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC8CD2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltStore; sourceTree = "<group>"; };
-		C1000001000000000000001A /* TunnelProv */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TunnelProv; sourceTree = "<group>"; };
+		C1000001000000000000001A /* TunnelProv */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C100000100000000000000AA /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TunnelProv; sourceTree = "<group>"; };
 		A8EECF2A2F4B195000F2436D /* SideStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EECF492F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EECF4A2F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SideStore; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
