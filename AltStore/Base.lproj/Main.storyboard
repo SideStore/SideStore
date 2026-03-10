@@ -38,7 +38,6 @@
                     <connections>
                         <segue destination="bTL-bY-9Yq" kind="presentation" identifier="finishJailbreak" id="cIc-Ta-uNk"/>
                         <segue destination="HCK-G6-KdY" kind="relationship" relationship="viewControllers" id="X0t-T6-JeA"/>
-                        <segue destination="faz-B4-Sub" kind="relationship" relationship="viewControllers" id="OLu-kM-z1J"/>
                         <segue destination="3Ew-ox-i4n" kind="relationship" relationship="viewControllers" id="phQ-Pc-pqw"/>
                         <segue destination="p3d-dP-Swg" kind="relationship" relationship="viewControllers" id="cQE-Az-fdo"/>
                     </connections>
@@ -46,32 +45,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="0.0" y="0.0"/>
-        </scene>
-        <!--Browse-->
-        <scene sceneID="rXq-UR-qQp">
-            <objects>
-                <collectionViewController storyboardIdentifier="browseViewController" id="e3L-BF-iXp" customClass="BrowseViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="CaT-1q-qnx">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" name="Background"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="50" minimumInteritemSpacing="10" id="e0H-IH-rng">
-                            <size key="itemSize" width="375" height="400"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="8" maxX="0.0" maxY="20"/>
-                        </collectionViewFlowLayout>
-                        <cells/>
-                        <connections>
-                            <outlet property="dataSource" destination="e3L-BF-iXp" id="ARv-GZ-Gc2"/>
-                            <outlet property="delegate" destination="e3L-BF-iXp" id="Mdp-x4-hZe"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" title="Browse" id="pUx-6k-rtr"/>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="cMN-i4-Bxk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2730" y="-373"/>
         </scene>
         <!--App View Controller-->
         <scene sceneID="TgT-LO-3Er">
@@ -495,27 +468,6 @@
             </objects>
             <point key="canvasLocation" x="233" y="550"/>
         </scene>
-        <!--Browse-->
-        <scene sceneID="VHa-uP-bFU">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="faz-B4-Sub" customClass="ForwardingNavigationController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Browse" image="Browse" id="Uwh-Bg-Ymq"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="dIv-qd-9L5" customClass="NavigationBar" customModule="SideStore" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" name="Primary"/>
-                        <edgeInsets key="layoutMargins" top="8" left="20" bottom="8" right="8"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="KKu-kI-2kg" kind="relationship" relationship="rootViewController" id="2Dm-Oy-wu0"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OkH-49-O0J" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="962" y="-17"/>
-        </scene>
         <!--PatchApp-->
         <scene sceneID="vdC-wt-hvX">
             <objects>
@@ -711,55 +663,6 @@
             </objects>
             <point key="canvasLocation" x="1729" y="716"/>
         </scene>
-        <!--Featured View Controller-->
-        <scene sceneID="1eF-L7-aZz">
-            <objects>
-                <collectionViewController storyboardIdentifier="featuredViewController" id="KKu-kI-2kg" customClass="FeaturedViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="2HL-eH-weG">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="PI1-YC-d4l">
-                            <size key="itemSize" width="128" height="128"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="Eo1-84-9m0">
-                                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="4ra-vw-qNw">
-                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </collectionViewCellContentView>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="KKu-kI-2kg" id="tXR-fi-SxU"/>
-                            <outlet property="delegate" destination="KKu-kI-2kg" id="XC4-MP-Zdr"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" id="zft-Mo-I7C"/>
-                    <connections>
-                        <segue destination="e3L-BF-iXp" kind="show" identifier="showBrowseViewController" destinationCreationSelector="makeBrowseViewController:sender:" id="qDq-A7-sdW"/>
-                        <segue destination="177-gr-dJU" kind="show" identifier="showSourceDetails" destinationCreationSelector="makeSourceDetailViewController:sender:" id="dmC-aP-9Hg"/>
-                    </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Hwb-Di-x8C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1729" y="-19"/>
-        </scene>
-        <!--sourceDetailViewController-->
-        <scene sceneID="nDc-kS-RDF">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Sources" referencedIdentifier="sourceDetailViewController" id="177-gr-dJU" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="7hT-A6-bBi"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bhw-oh-Eeq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2730" y="-21"/>
-        </scene>
         <!--App IDs-->
         <scene sceneID="kvf-US-rRe">
             <objects>
@@ -896,7 +799,6 @@
     <color key="tintColor" name="Primary"/>
     <resources>
         <image name="Back" width="18" height="18"/>
-        <image name="Browse" width="128" height="128"/>
         <image name="MyApps" width="20" height="20"/>
         <image name="Settings" width="20" height="20"/>
         <namedColor name="Background">

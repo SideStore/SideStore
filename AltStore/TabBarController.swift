@@ -14,7 +14,6 @@ extension TabBarController
     private enum Tab: Int, CaseIterable
     {
         case sources
-        case browse
         case vpn
         case myApps
         case settings
@@ -39,16 +38,13 @@ final class TabBarController: UITabBarController
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.openErrorLog(_:)), name: ToastView.openErrorLogNotification, object: nil)
     }
     
-    override func viewDidLoad() 
+    override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        // The storyboard only knows about 4 tabs (sources, browse, myApps, settings).
-        // Insert the VPN tab at index 2 before accessing any controllers by index.
-        setupVPNTab()
 
-        let browseNavigationController = self.viewControllers![Tab.browse.rawValue] as! UINavigationController
-        browseNavigationController.tabBarItem.image = UIImage(systemName: "bag")
+        // The storyboard knows about 3 tabs (sources, myApps, settings).
+        // Insert the VPN tab at index 1 (between Sources and My Apps).
+        setupVPNTab()
 
         let sourcesNavigationController = self.viewControllers![Tab.sources.rawValue] as! UINavigationController
         self.sourcesViewController = sourcesNavigationController.viewControllers.first as? SourcesViewController
@@ -69,7 +65,7 @@ final class TabBarController: UITabBarController
         )
         vpnNav.navigationBar.prefersLargeTitles = true
 
-        // Tab.vpn.rawValue == 2, inserting between Browse (1) and My Apps (originally 2→3)
+        // Tab.vpn.rawValue == 1, inserting between Sources (0) and My Apps (originally 1→2)
         controllers.insert(vpnNav, at: Tab.vpn.rawValue)
         setViewControllers(controllers, animated: false)
     }
