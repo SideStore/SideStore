@@ -2389,7 +2389,7 @@
 		};
 		C1000001000000000000002E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BFD247652284B9A500981D42 /* Project object */;
+			containerPortal = BFD247622284B9A500981D42 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C1000001000000000000002A;
 			remoteInfo = TunnelProv;
