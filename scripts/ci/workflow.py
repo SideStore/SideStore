@@ -148,7 +148,7 @@ def build():
     )
     run("make fakesign | tee -a build/logs/build.log")
     run("make ipa | tee -a build/logs/build.log")
-    run("zip -r -9 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs")
+    run("zip -r -1 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs")
 
 # ----------------------------------------------------------
 # TESTS BUILD
