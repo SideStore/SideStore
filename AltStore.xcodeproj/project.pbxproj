@@ -36,7 +36,9 @@
 		BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF580497246A3D19008AE704 /* UIKit.framework */; };
 		BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
 		BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C1000001000000000000001C /* TunnelProv.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C1000001000000000000001B /* TunnelProv.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BF989177250AABF4002ACF50 /* AltWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C1000001000000000000001B /* TunnelProv.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TunnelProv.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF615A82510042B00484D3B /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -2431,8 +2433,31 @@
 			dstSubfolderSpec = 13;
 			files = (
 				BF989177250AABF4002ACF50 /* AltWidgetExtension.appex in Embed Foundation Extensions */,
+				C1000001000000000000001C /* TunnelProv.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		C1000001000000000000001D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1000001000000000000001E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1000001000000000000001F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2965,6 +2990,7 @@
 		A8EEC3D92F4B0FC800F2436D /* AltBackup */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3E22F4B0FC800F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltBackup; sourceTree = "<group>"; };
 		A8EEC71D2F4B10D900F2436D /* xcconfigs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = xcconfigs; sourceTree = "<group>"; };
 		A8EEC8412F4B146A00F2436D /* AltStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC8CB2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC8CC2F4B146B00F2436D /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, A8FAC1FE2F4B52F40061A851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC8CD2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltStore; sourceTree = "<group>"; };
+		C1000001000000000000001A /* TunnelProv */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (); explicitFileTypes = {}; explicitFolders = (); path = TunnelProv; sourceTree = "<group>"; };
 		A8EECF2A2F4B195000F2436D /* SideStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EECF492F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EECF4A2F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SideStore; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -4748,6 +4774,7 @@
 				BF58047B246A28F7008AE704 /* AltBackup.app */,
 				BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */,
 				BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */,
+				C1000001000000000000001B /* TunnelProv.appex */,
 				191E5FAB290A5D92001A3B7C /* libminimuxer_swift.a */,
 				A8FABA492F4B50D00061A851 /* libimobiledevice.a */,
 				A8FABA4A2F4B50D00061A851 /* libem_proxy_swift.a */,
@@ -4930,6 +4957,7 @@
 				BF66EE842501AE50007EE018 /* PBXTargetDependency */,
 				BF989176250AABF4002ACF50 /* PBXTargetDependency */,
 				A85A51592F4B48DE002E2E11 /* PBXTargetDependency */,
+				C1000001000000000000002F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A8A5AFC32F4C33D800572B4A /* libcurl */,
@@ -4939,6 +4967,27 @@
 			productName = AltStore;
 			productReference = BFD2476A2284B9A500981D42 /* SideStore.app */;
 			productType = "com.apple.product-type.application";
+		};
+
+		C1000001000000000000002A /* TunnelProv */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1000001000000000000002D /* Build configuration list for PBXNativeTarget "TunnelProv" */;
+			buildPhases = (
+				C1000001000000000000001D /* Sources */,
+				C1000001000000000000001E /* Frameworks */,
+				C1000001000000000000001F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C1000001000000000000001A /* TunnelProv */,
+			);
+			name = TunnelProv;
+			productName = TunnelProv;
+			productReference = C1000001000000000000001B /* TunnelProv.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -5717,6 +5766,7 @@
 			projectRoot = "";
 			targets = (
 				BFD247692284B9A500981D42 /* SideStore */,
+				C1000001000000000000002A /* TunnelProv */,
 				BF66EE7D2501AE50007EE018 /* AltStoreCore */,
 				BF58047A246A28F7008AE704 /* AltBackup */,
 				BF989166250AABF3002ACF50 /* AltWidgetExtension */,
@@ -8166,6 +8216,19 @@
 			target = BF66EE7D2501AE50007EE018 /* AltStoreCore */;
 			targetProxy = BFF615AA2510042B00484D3B /* PBXContainerItemProxy */;
 		};
+
+		C1000001000000000000002E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD247652284B9A500981D42 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C1000001000000000000002A;
+			remoteInfo = TunnelProv;
+		};
+		C1000001000000000000002F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C1000001000000000000002A /* TunnelProv */;
+			targetProxy = C1000001000000000000002E /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -8821,6 +8884,61 @@
 			};
 			name = Release;
 		};
+
+		C1000001000000000000002B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = A8EEC71D2F4B10D900F2436D /* xcconfigs */;
+			baseConfigurationReferenceRelativePath = TunnelProv.xcconfig;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TunnelProv/TunnelProv.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(inherited)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				INFOPLIST_FILE = TunnelProv/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C1000001000000000000002C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = A8EEC71D2F4B10D900F2436D /* xcconfigs */;
+			baseConfigurationReferenceRelativePath = TunnelProv.xcconfig;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TunnelProv/TunnelProv.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(inherited)";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				INFOPLIST_FILE = TunnelProv/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -8892,6 +9010,16 @@
 			buildConfigurations = (
 				BFD2477F2284B9A700981D42 /* Debug */,
 				BFD247802284B9A700981D42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+
+		C1000001000000000000002D /* Build configuration list for PBXNativeTarget "TunnelProv" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1000001000000000000002B /* Debug */,
+				C1000001000000000000002C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

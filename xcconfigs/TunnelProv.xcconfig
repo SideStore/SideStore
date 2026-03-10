@@ -1,0 +1,4 @@
+#include "../Build.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM).TunnelProv
+PRODUCT_BUNDLE_IDENTIFIER[config=Release] = $(ORG_IDENTIFIER).SideStore.TunnelProv

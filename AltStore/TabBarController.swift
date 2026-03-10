@@ -15,6 +15,7 @@ extension TabBarController
     {
         case sources
         case browse
+        case vpn
         case myApps
         case settings
     }
@@ -42,11 +43,35 @@ final class TabBarController: UITabBarController
     {
         super.viewDidLoad()
         
+        // The storyboard only knows about 4 tabs (sources, browse, myApps, settings).
+        // Insert the VPN tab at index 2 before accessing any controllers by index.
+        setupVPNTab()
+
         let browseNavigationController = self.viewControllers![Tab.browse.rawValue] as! UINavigationController
         browseNavigationController.tabBarItem.image = UIImage(systemName: "bag")
-        
+
         let sourcesNavigationController = self.viewControllers![Tab.sources.rawValue] as! UINavigationController
         self.sourcesViewController = sourcesNavigationController.viewControllers.first as? SourcesViewController
+    }
+
+    // MARK: - VPN Tab Setup
+
+    private func setupVPNTab()
+    {
+        guard var controllers = viewControllers else { return }
+
+        let vpnVC  = VPNHostingViewController()
+        let vpnNav = UINavigationController(rootViewController: vpnVC)
+        vpnNav.tabBarItem = UITabBarItem(
+            title: "VPN",
+            image: UIImage(systemName: "network.badge.shield.half.filled"),
+            selectedImage: UIImage(systemName: "checkmark.shield.fill")
+        )
+        vpnNav.navigationBar.prefersLargeTitles = true
+
+        // Tab.vpn.rawValue == 2, inserting between Browse (1) and My Apps (originally 2→3)
+        controllers.insert(vpnNav, at: Tab.vpn.rawValue)
+        setViewControllers(controllers, animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool)
