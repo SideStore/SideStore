@@ -75,12 +75,12 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
         var serverUrls = UserDefaults.standard.menuAnisetteServersList
         let currentServer = UserDefaults.standard.menuAnisetteURL
 
-        // Prioritize the current server by moving it to the top of the list
-        if let currentServerIndex = serverUrls.firstIndex(of: currentServer) {
-            serverUrls.remove(at: currentServerIndex)
-            serverUrls.insert(currentServer, at: 0)
-        }
-        
+        // Always ensure the current/default server is at position 0 so it is tried
+        // first.  If the server list is empty (e.g. first launch before the remote
+        // list has been fetched) this guarantees at least one server to try.
+        serverUrls.removeAll { $0 == currentServer }
+        serverUrls.insert(currentServer, at: 0)
+
         tryNextServer(from: serverUrls, viewContext, currentIndex: 0, completion: completion)
     }
     

@@ -10,7 +10,6 @@
 //
 
 import Foundation
-import NetworkExtension
 
 #if canImport(AppIntents)
 import AppIntents
