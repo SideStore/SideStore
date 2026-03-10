@@ -12,7 +12,7 @@ import AppIntents
 public struct ShortcutsProvider: AppShortcutsProvider
 {
     public static var appShortcuts: [AppShortcut] {
-        AppShortcut(intent: RefreshAllAppsIntent(), 
+        AppShortcut(intent: RefreshAllAppsIntent(),
                     phrases: [
                         "Refresh \(.applicationName)",
                         "Refresh \(.applicationName) apps",
@@ -21,8 +21,28 @@ public struct ShortcutsProvider: AppShortcutsProvider
                     ],
                     shortTitle: "Refresh All Apps",
                     systemImageName: "arrow.triangle.2.circlepath")
+        AppShortcut(
+            intent: StartLocalDevVPNIntent(),
+            phrases: [
+                "Start \(.applicationName)",
+                "Connect \(.applicationName)",
+                "Enable \(.applicationName) tunnel",
+            ],
+            shortTitle: "Start LocalDevVPN",
+            systemImageName: "checkmark.shield.fill"
+        )
+        AppShortcut(
+            intent: StopLocalDevVPNIntent(),
+            phrases: [
+                "Stop \(.applicationName)",
+                "Disconnect \(.applicationName)",
+                "Disable \(.applicationName) tunnel",
+            ],
+            shortTitle: "Stop LocalDevVPN",
+            systemImageName: "xmark.shield.fill"
+        )
     }
-    
+
     public static var shortcutTileColor: ShortcutTileColor {
         return .teal
     }

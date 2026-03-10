@@ -41,29 +41,5 @@ struct StopLocalDevVPNIntent: AppIntent {
     }
 }
 
-@available(iOS 16.0, *)
-struct LocalDevVPNActions: AppShortcutsProvider {
-    static var appShortcuts: [AppShortcut] {
-        AppShortcut(
-            intent: StartLocalDevVPNIntent(),
-            phrases: [
-                "Start \(.applicationName)",
-                "Connect \(.applicationName)",
-                "Enable \(.applicationName) tunnel",
-            ],
-            shortTitle: "Start LocalDevVPN",
-            systemImageName: "checkmark.shield.fill"
-        )
-        AppShortcut(
-            intent: StopLocalDevVPNIntent(),
-            phrases: [
-                "Stop \(.applicationName)",
-                "Disconnect \(.applicationName)",
-                "Disable \(.applicationName) tunnel",
-            ],
-            shortTitle: "Stop LocalDevVPN",
-            systemImageName: "xmark.shield.fill"
-        )
-    }
-}
+
 #endif
