@@ -94,6 +94,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.setTintColor()
         self.prepareImageCache()
+        self.observeOLEDBackgroundSetting()
 
         // TODO: @mahee96: find if we need to start em_proxy as in altstore?
         if UserDefaults.standard.enableEMPforWireguard {
@@ -196,6 +197,32 @@ private extension AppDelegate
     func setTintColor()
     {
         self.window?.tintColor = .altPrimary
+    }
+
+    func observeOLEDBackgroundSetting()
+    {
+        NotificationCenter.default.addObserver(forName: .oledBackgroundSettingChanged, object: nil, queue: .main) { [weak self] _ in
+            self?.refreshBackgroundColors()
+        }
+    }
+
+    func refreshBackgroundColors()
+    {
+        guard let window = self.window else { return }
+        self.updateViewColors(in: window)
+    }
+
+    private func updateViewColors(in view: UIView)
+    {
+        if view.backgroundColor != nil {
+            // Re-set to force UIKit to re-resolve the dynamic color with current UserDefaults
+            let current = view.backgroundColor
+            view.backgroundColor = nil
+            view.backgroundColor = current
+        }
+        for subview in view.subviews {
+            updateViewColors(in: subview)
+        }
     }
     
     func prepareImageCache()

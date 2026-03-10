@@ -123,6 +123,7 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var accountEmailLabel: UILabel!
     @IBOutlet private var accountTypeLabel: UILabel!
     
+    @IBOutlet private var oledBackgroundSwitch: UISwitch!
     @IBOutlet private var backgroundRefreshSwitch: UISwitch!
     @IBOutlet private var enableEMPforWireguard: UISwitch!
     @IBOutlet private var noIdleTimeoutSwitch: UISwitch!
@@ -471,6 +472,9 @@ private extension SettingsViewController
             self.activeTeam = nil
         }
         
+        // DisplayRow
+        self.oledBackgroundSwitch.isOn = UserDefaults.standard.isOLEDModeEnabled
+
         // AppRefreshRow
         self.backgroundRefreshSwitch.isOn = UserDefaults.standard.isBackgroundRefreshEnabled
         self.enableEMPforWireguard.isOn = UserDefaults.standard.enableEMPforWireguard
@@ -693,6 +697,11 @@ private extension SettingsViewController
         self.present(alertController, animated: true, completion: nil)
     }
     
+    @IBAction func toggleOLEDBackground(_ sender: UISwitch) {
+        UserDefaults.standard.isOLEDModeEnabled = sender.isOn
+        NotificationCenter.default.post(name: .oledBackgroundSettingChanged, object: nil)
+    }
+
     @IBAction func toggleDisableAppLimit(_ sender: UISwitch) {
         if UserDefaults.standard.isCowExploitSupported || !ProcessInfo().sparseRestorePatched {
             // accept state change only when valid

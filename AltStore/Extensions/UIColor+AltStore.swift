@@ -7,10 +7,23 @@
 //
 
 import UIKit
+import AltStoreCore
+
+extension NSNotification.Name
+{
+    static let oledBackgroundSettingChanged = NSNotification.Name("AltStore.OLEDBackgroundSettingChanged")
+}
 
 extension UIColor
 {
-    static let altBackground = UIColor(named: "Background")!
+    static var altBackground: UIColor {
+        UIColor { traits in
+            if traits.userInterfaceStyle == .dark && UserDefaults.standard.isOLEDModeEnabled {
+                return .black
+            }
+            return UIColor(named: "Background")!.resolvedColor(with: traits)
+        }
+    }
 }
 
 extension UIColor
