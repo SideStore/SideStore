@@ -141,11 +141,20 @@ def clean_spm_cache():
 
 def build():
     run("mkdir -p build/logs")
-    run(
-        "set -o pipefail && "
-        "NSUnbufferedIO=YES make -B build "
-        "2>&1 | tee -a build/logs/build.log | xcbeautify --renderer github-actions"
-    )
+    try:
+        run(
+            "set -o pipefail && "
+            "NSUnbufferedIO=YES make -B build "
+            "2>&1 | tee -a build/logs/build.log | xcbeautify --renderer github-actions"
+        )
+    except subprocess.CalledProcessError:
+        # Dump raw build log so the actual Xcode error is visible in CI output
+        log_path = ROOT / "build/logs/build.log"
+        if log_path.exists():
+            print("\n\n===== RAW BUILD LOG (last 200 lines) =====", file=sys.stderr, flush=True)
+            run(f"tail -200 '{log_path}'", check=False)
+            print("===== END RAW BUILD LOG =====\n", file=sys.stderr, flush=True)
+        raise
     run("make fakesign | tee -a build/logs/build.log")
     run("make ipa | tee -a build/logs/build.log")
     run("zip -r -1 ./SideStore.dSYMs.zip ./SideStore.xcarchive/dSYMs")
