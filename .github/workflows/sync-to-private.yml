@@ -12,9 +12,6 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # Skip the entire job silently if the secret isn't configured yet.
-    # Once you add MINIS_STORE_TOKEN to this repo's Settings → Secrets, it will run automatically.
-    if: ${{ secrets.MINIS_STORE_TOKEN != '' }}
     steps:
       - name: Checkout full repo (all branches)
         uses: actions/checkout@v4
@@ -25,6 +22,8 @@ jobs:
         run: git fetch --all
 
       - name: Push to OofMini/Minis-Store
+        # Skip silently if the secret isn't configured yet.
+        if: ${{ secrets.MINIS_STORE_TOKEN != '' }}
         env:
           MINIS_STORE_TOKEN: ${{ secrets.MINIS_STORE_TOKEN }}
         run: bash push-to-private.sh
