@@ -17,23 +17,7 @@ public extension Source
     static let altStoreGroupIdentifier = Bundle.Info.appbundleIdentifier
     #endif
     
-    #if STAGING
-    
-    #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
-    #else
-    static let altStoreSourceURL = URL(string: "https://apps.sidestore.io/")!
-    #endif
-    
-    #else
-    
-    #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
-    #else
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
-    #endif
-    
-    #endif
+    static let altStoreSourceURL = URL(string: "https://OofMini.github.io/Minis-Repo/mini.json")!
     
     // normalized url is the source identifier (or) p-key!
     static let altStoreIdentifier = try! Source.sourceID(from: altStoreSourceURL)
@@ -348,7 +332,7 @@ public extension Source
     class func makeAltStoreSource(in context: NSManagedObjectContext) -> Source
     {
         let source = Source(context: context)
-        source.name = "SideStore Offical"
+        source.name = "Mini's Repo"
         source.groupID = Source.altStoreGroupIdentifier
         source.identifier = Source.altStoreIdentifier
         try! source.setSourceURL(Source.altStoreSourceURL)
