@@ -72,7 +72,7 @@ final class AppViewController: UIViewController
         }
         
         self.contentViewControllerShadowView = UIView()
-        self.contentViewControllerShadowView.backgroundColor = .white
+        self.contentViewControllerShadowView.backgroundColor = .altBackground
         self.contentViewControllerShadowView.layer.cornerRadius = 38
         self.contentViewControllerShadowView.layer.shadowColor = UIColor.black.cgColor
         self.contentViewControllerShadowView.layer.shadowOffset = CGSize(width: 0, height: -1)

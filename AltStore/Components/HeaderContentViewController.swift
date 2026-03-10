@@ -106,7 +106,7 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
     {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .altBackground
         self.view.clipsToBounds = true
         
         self.navigationItem.largeTitleDisplayMode = .never
@@ -166,7 +166,7 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.contentViewController.didMove(toParent: self)
         
         self.contentViewControllerShadowView = UIView()
-        self.contentViewControllerShadowView.backgroundColor = .white
+        self.contentViewControllerShadowView.backgroundColor = .altBackground
         self.contentViewControllerShadowView.layer.cornerRadius = 38
         self.contentViewControllerShadowView.layer.shadowColor = UIColor.black.cgColor
         self.contentViewControllerShadowView.layer.shadowOffset = CGSize(width: 0, height: -1)

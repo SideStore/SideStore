@@ -5,6 +5,11 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release version to build (e.g. 0.6.2). Must match MARKETING_VERSION or will be forced.'
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -36,18 +41,23 @@ jobs:
 
       - name: Setup Env
         run: |
-          MARKETING_VERSION=$(python3 scripts/ci/workflow.py get-marketing-version)
           SHORT_COMMIT=$(python3 scripts/ci/workflow.py commit-id)
 
-          if [ "${{ github.event_name }}" = "push" ]; then
-            if [ "$MARKETING_VERSION" != "${{ github.ref_name }}" ]; then
-              echo "Version mismatch"
-              echo "Build.xcconfig: $MARKETING_VERSION"
-              echo "Tag: ${{ github.ref_name }}"
-              exit 1
-            fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RELEASE_TAG="${{ inputs.release_tag }}"
+          else
+            RELEASE_TAG="${{ github.ref_name }}"
           fi
 
+          MARKETING_VERSION=$(python3 scripts/ci/workflow.py get-marketing-version)
+
+          if [ "$MARKETING_VERSION" != "$RELEASE_TAG" ]; then
+            echo "Overriding MARKETING_VERSION: $MARKETING_VERSION -> $RELEASE_TAG"
+            python3 scripts/ci/workflow.py set-marketing-version "$RELEASE_TAG"
+            MARKETING_VERSION="$RELEASE_TAG"
+          fi
+
+          echo "RELEASE_TAG=$RELEASE_TAG" | tee -a $GITHUB_ENV
           echo "MARKETING_VERSION=$MARKETING_VERSION" | tee -a $GITHUB_ENV
           echo "SHORT_COMMIT=$SHORT_COMMIT" | tee -a $GITHUB_ENV
 
@@ -116,7 +126,7 @@ jobs:
           IPA_NAME="$PRODUCT_NAME.ipa"
 
           python3 scripts/ci/workflow.py generate-metadata \
-            "${{ github.ref_name }}" \
+            "${{ env.RELEASE_TAG }}" \
             "$SHORT_COMMIT" \
             "$MARKETING_VERSION" \
             "$CHANNEL" \
@@ -129,8 +139,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/ci/workflow.py upload-release \
-            "${{ github.ref_name }}" \
-            "${{ github.ref_name }}" \
+            "${{ env.RELEASE_TAG }}" \
+            "${{ env.RELEASE_TAG }}" \
             "$GITHUB_SHA" \
             "$GITHUB_REPOSITORY" \
             "$UPSTREAM_CHANNEL" \
