@@ -368,10 +368,14 @@ final class TunnelManager: ObservableObject {
 
     func handleVPNStatusChange(notification: Notification) {
         guard let connection = notification.object as? NEVPNConnection else { return }
-        if let manager = vpnManager, connection == manager.connection {
-            updateTunnelStatus(from: connection.status)
-        }
+        // Note: updateTunnelStatus for our own manager is already called by the observer
+        // in setupStatusObserver before this method is invoked. No need to duplicate it here.
+        //
+        // Only auto-restart LocalDevVPN when the *other* VPN we stopped finishes disconnecting.
+        // If our own manager disconnected, we do NOT want to auto-restart.
+        let isOurManager = (vpnManager != nil && connection === vpnManager?.connection)
         if connection.status == .disconnected &&
+            !isOurManager &&
             UserDefaults.standard.bool(forKey: "ShouldStartLocalDevVPNAfterDisconnect")
         {
             UserDefaults.standard.removeObject(forKey: "ShouldStartLocalDevVPNAfterDisconnect")
@@ -808,9 +812,9 @@ struct VPNSettingsView: View {
                     }
                 }
                 Section(header: Text("network_configuration")) {
-                    vpnConfigRow(label: "tunnel_ip",   text: $deviceIP)
-                    vpnConfigRow(label: "device_ip",   text: $fakeIP)
-                    vpnConfigRow(label: "subnet_mask", text: $subnetMask)
+                    vpnConfigRow(label: "local_device_ip", text: $deviceIP)
+                    vpnConfigRow(label: "tunnel_ip",       text: $fakeIP)
+                    vpnConfigRow(label: "subnet_mask",     text: $subnetMask)
                 }
                 Section(header: Text("app_information")) {
                     SwiftUI.Button {
@@ -858,7 +862,11 @@ struct VPNSettingsView: View {
                 .keyboardType(.numbersAndPunctuation)
                 .onChange(of: text.wrappedValue) { _ in
                     if !shownTunnelAlert { showNetworkWarning = true }
-                    tunnelManager.vpnManager?.saveToPreferences { _ in }
+                    tunnelManager.vpnManager?.saveToPreferences { error in
+                        if let error {
+                            VPNLogger.shared.log("Error saving VPN config after settings change: \(error.localizedDescription)")
+                        }
+                    }
                 }
         }
     }
