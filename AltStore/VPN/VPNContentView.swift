@@ -460,7 +460,7 @@ struct VPNRootView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button { activeSheet = .settings } label: {
+                SwiftUI.Button { activeSheet = .settings } label: {
                     Image(systemName: "gear").foregroundColor(.primary)
                 }
             }
@@ -581,7 +581,7 @@ struct VPNConnectionButton: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        Button(action: action) {
+        SwiftUI.Button(action: action) {
             HStack {
                 Text(buttonText).font(.headline).fontWeight(.semibold)
                 if tunnelManager.tunnelStatus == .connecting ||
@@ -771,7 +771,7 @@ struct VPNSettingsView: View {
                     vpnConfigRow(label: "subnet_mask", text: $subnetMask)
                 }
                 Section(header: Text("app_information")) {
-                    Button {
+                    SwiftUI.Button {
                         if let url = URL(string: "https://jkcoxson.com/cdn/LocalDevVPN/LocalDevVPNPrivacyPolicy.md") {
                             UIApplication.shared.open(url)
                         }
@@ -800,7 +800,7 @@ struct VPNSettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("done") { dismiss() }
+                    SwiftUI.Button("done") { dismiss() }
                 }
             }
         }
@@ -882,7 +882,7 @@ struct VPNSetupView: View {
                     }
                     .padding(.horizontal)
 
-                    Button {
+                    SwiftUI.Button {
                         hasNotCompletedSetup = false
                         onComplete()
                         dismiss()
