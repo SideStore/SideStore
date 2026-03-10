@@ -91,12 +91,15 @@ class AppCardCollectionViewCell: UICollectionViewCell
         self.topAreaPanGestureRecognizer.delaysTouchesEnded = false
         
         super.init(frame: frame)
-        
+
+        self.contentView.backgroundColor = .altBackground
         self.contentView.clipsToBounds = true
         self.contentView.layer.cornerCurve = .continuous
-        
+
         self.contentView.addSubview(self.bannerView.backgroundEffectView, pinningEdgesWith: .zero)
         self.contentView.addSubview(self.stackView, pinningEdgesWith: .zero)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(updateOLEDAppearance), name: .oledBackgroundSettingChanged, object: nil)
         
         self.screenshotsCollectionView.collectionViewLayout = self.makeLayout()
         self.screenshotsCollectionView.dataSource = self.dataSource
@@ -134,8 +137,24 @@ class AppCardCollectionViewCell: UICollectionViewCell
     override func layoutSubviews()
     {
         super.layoutSubviews()
-        
+
         self.contentView.layer.cornerRadius = self.bannerView.layer.cornerRadius
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?)
+    {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle
+        {
+            updateOLEDAppearance()
+        }
+    }
+
+    @objc private func updateOLEDAppearance()
+    {
+        let isOLEDDark = traitCollection.userInterfaceStyle == .dark && UserDefaults.standard.isOLEDModeEnabled
+        self.bannerView.backgroundEffectView.isHidden = isOLEDDark
     }
 }
 
