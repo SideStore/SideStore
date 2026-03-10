@@ -39,11 +39,13 @@ jobs:
           MARKETING_VERSION=$(python3 scripts/ci/workflow.py get-marketing-version)
           SHORT_COMMIT=$(python3 scripts/ci/workflow.py commit-id)
 
-          if [ "$MARKETING_VERSION" != "${{ github.ref_name }}" ]; then
-            echo "Version mismatch"
-            echo "Build.xcconfig: $MARKETING_VERSION"
-            echo "Tag: ${{ github.ref_name }}"
-            exit 1
+          if [ "${{ github.event_name }}" = "push" ]; then
+            if [ "$MARKETING_VERSION" != "${{ github.ref_name }}" ]; then
+              echo "Version mismatch"
+              echo "Build.xcconfig: $MARKETING_VERSION"
+              echo "Tag: ${{ github.ref_name }}"
+              exit 1
+            fi
           fi
 
           echo "MARKETING_VERSION=$MARKETING_VERSION" | tee -a $GITHUB_ENV
@@ -52,7 +54,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "26.0"
+          xcode-version: "26.2"
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
