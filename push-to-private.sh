@@ -35,6 +35,18 @@ else
   git remote add "$PRIVATE_REMOTE_NAME" "$REMOTE_URL"
 fi
 
+# Verify the remote is reachable before pushing
+echo "Checking access to https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME} ..."
+if ! git ls-remote "$PRIVATE_REMOTE_NAME" HEAD &>/dev/null; then
+  echo ""
+  echo "Error: Cannot reach https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}"
+  echo "Check that:"
+  echo "  1. The repo exists at https://github.com/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}"
+  echo "  2. Your PAT has 'repo' scope (classic) or write access to that repo (fine-grained)"
+  exit 1
+fi
+echo "Remote accessible."
+
 # Fetch latest from origin so all remote-tracking refs are up to date
 echo "Fetching latest from origin..."
 git fetch --all --prune
