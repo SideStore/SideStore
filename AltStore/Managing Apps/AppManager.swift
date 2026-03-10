@@ -660,6 +660,9 @@ extension AppManager
     @discardableResult
     func install<T: AppProtocol>(_ app: T, presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
     {
+        if UserDefaults.standard.bool(forKey: "autoEnableVPNOnRefreshOrInstall") {
+            TunnelManager.shared.startVPN()
+        }
         let group = RefreshGroup(context: context)
         group.completionHandler = { (results) in
             do
@@ -1035,11 +1038,14 @@ extension AppManager
     @discardableResult
     func backgroundRefresh(_ installedApps: [InstalledApp], presentsNotifications: Bool = false, completionHandler: @escaping (Result<[String: Result<InstalledApp, Error>], Error>) -> Void) -> BackgroundRefreshAppsOperation
     {
+        if UserDefaults.standard.bool(forKey: "autoEnableVPNOnRefreshOrInstall") {
+            TunnelManager.shared.startVPN()
+        }
         let backgroundRefreshAppsOperation = BackgroundRefreshAppsOperation(installedApps: installedApps)
         backgroundRefreshAppsOperation.resultHandler = completionHandler
         backgroundRefreshAppsOperation.presentsFinishedNotification = presentsNotifications
         self.run([backgroundRefreshAppsOperation], context: nil)
-        
+
         return backgroundRefreshAppsOperation
     }
 }
