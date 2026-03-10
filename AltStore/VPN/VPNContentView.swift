@@ -459,7 +459,7 @@ struct VPNRootView: View {
         .navigationTitle("LocalDevVPN")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button { activeSheet = .settings } label: {
                     Image(systemName: "gear").foregroundColor(.primary)
                 }
@@ -757,7 +757,7 @@ struct VPNSettingsView: View {
     @State private var showNetworkWarning = false
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 Section(header: Text("connection_settings")) {
                     Toggle("auto_connect_on_launch", isOn: $autoConnect)
@@ -799,7 +799,7 @@ struct VPNSettingsView: View {
             .navigationTitle(Text("settings"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button("done") { dismiss() }
                 }
             }
@@ -845,7 +845,7 @@ struct VPNSetupView: View {
     let onComplete: () -> Void
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 28) {
                     Image(systemName: "checkmark.shield.fill")
