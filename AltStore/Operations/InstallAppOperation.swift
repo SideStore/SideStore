@@ -11,8 +11,6 @@ import AltStoreCore
 import AltSign
 import Roxas
 
-let shortcutURLonDelay = URL(string: "shortcuts://run-shortcut?name=TurnOnDataDelay")!
-
 @objc(InstallAppOperation)
 final class InstallAppOperation: ResultOperation<InstalledApp>
 {
@@ -213,10 +211,6 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                             let alert = UIAlertController(title: "Finish Refresh", message: "Please reopen SideStore after the process is finished.To finish refreshing, SideStore must be moved to the background. To do this, you can either go to the Home Screen manually or by hitting Continue. Please reopen SideStore after doing this.", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default, handler: { _ in
                                 print("Going home")
-                                // Cell Shortcut
-                                UIApplication.shared.open(shortcutURLonDelay, options: [:]) { _ in
-                                    print("Cell OFF Shortcut finished execution.")}
-                                    
                                 UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                             }))
 
@@ -233,8 +227,6 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                             }
                         }
                     }
-                    // Cell Shortcut
-                    UIApplication.shared.open(shortcutURLonDelay, options: [:]) { _ in print("Cell OFF Shortcut finished execution.")}
                     UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                 }
             }
