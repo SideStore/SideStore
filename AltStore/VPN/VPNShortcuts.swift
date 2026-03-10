@@ -3,7 +3,10 @@
 //  SideStore
 //
 //  Ported from LocalDevVPN by se2crid.
-//  App Intents for controlling LocalDevVPN from Shortcuts.
+//  App Intents for controlling LocalDevVPN from the Shortcuts app.
+//
+//  NOTE: All AppShortcut phrases MUST include \(.applicationName) — this is an
+//  Apple requirement; without it the shortcut won't be registered with Siri.
 //
 
 import Foundation
@@ -15,7 +18,7 @@ import AppIntents
 @available(iOS 16.0, *)
 struct StartLocalDevVPNIntent: AppIntent {
     static var title: LocalizedStringResource = "Start LocalDevVPN"
-    static var description = IntentDescription("Connects LocalDevVPN without launching the app.")
+    static var description = IntentDescription("Connects the local dev tunnel without opening the app.")
     static var openAppWhenRun = false
 
     @MainActor
@@ -28,7 +31,7 @@ struct StartLocalDevVPNIntent: AppIntent {
 @available(iOS 16.0, *)
 struct StopLocalDevVPNIntent: AppIntent {
     static var title: LocalizedStringResource = "Stop LocalDevVPN"
-    static var description = IntentDescription("Disconnects LocalDevVPN without launching the app.")
+    static var description = IntentDescription("Disconnects the local dev tunnel without opening the app.")
     static var openAppWhenRun = false
 
     @MainActor
@@ -44,9 +47,9 @@ struct LocalDevVPNActions: AppShortcutsProvider {
         AppShortcut(
             intent: StartLocalDevVPNIntent(),
             phrases: [
-                "Start LocalDevVPN",
-                "Connect LocalDevVPN",
-                "Enable LocalDevVPN"
+                "Start \(.applicationName)",
+                "Connect \(.applicationName)",
+                "Enable \(.applicationName) tunnel",
             ],
             shortTitle: "Start LocalDevVPN",
             systemImageName: "checkmark.shield.fill"
@@ -54,9 +57,9 @@ struct LocalDevVPNActions: AppShortcutsProvider {
         AppShortcut(
             intent: StopLocalDevVPNIntent(),
             phrases: [
-                "Stop LocalDevVPN",
-                "Disconnect LocalDevVPN",
-                "Disable LocalDevVPN"
+                "Stop \(.applicationName)",
+                "Disconnect \(.applicationName)",
+                "Disable \(.applicationName) tunnel",
             ],
             shortTitle: "Stop LocalDevVPN",
             systemImageName: "xmark.shield.fill"
