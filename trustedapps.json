@@ -78,7 +78,7 @@
     },
     {
       "identifier": "com.deliacheminot.mona",
-      "sourceURL": "https://github.com/delia-cheminot/mona-hrt/blob/main/ios_source.json"
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ],
   "sources": [
@@ -155,7 +155,7 @@
     },
     {
       "identifier": "com.deliacheminot.mona",
-      "sourceURL": "https://github.com/delia-cheminot/mona-hrt/blob/main/ios_source.json"
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ]
 }
