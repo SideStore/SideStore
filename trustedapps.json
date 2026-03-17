@@ -75,6 +75,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://github.com/delia-cheminot/mona-hrt/blob/main/ios_source.json"
     }
   ],
   "sources": [
@@ -148,6 +152,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://github.com/delia-cheminot/mona-hrt/blob/main/ios_source.json"
     }
   ]
 }
