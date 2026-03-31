@@ -225,7 +225,9 @@ struct OperationError: ALTLocalizedError {
         case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice. Please make sure you have paired your iDevice by running 'SideJITServer -y', or try refreshing SideJITServer from Settings.", comment: "")
         case .wrongSideJITIP: return NSLocalizedString("Incorrect SideJITServer IP. Please make sure that you are on the same Wi-Fi as SideJITServer", comment: "")
         case .refreshsidejit: return NSLocalizedString("Unable to find app; Please try refreshing SideJITServer from Settings.", comment: "")
-        case .anisetteV1Error: return NSLocalizedString("An error occurred while getting anisette data from a V1 server: %@. Try using another anisette server.", comment: "")
+        case .anisetteV1Error:
+            let message = self._failureReason ?? NSLocalizedString("Unknown error", comment: "")
+            return String(format: NSLocalizedString("An error occurred while getting anisette data from a V1 server: %@. Try using another anisette server.", comment: ""), message)        
         case .provisioningError: return NSLocalizedString("An error occurred while provisioning: %@ %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
         case .anisetteV3Error: return NSLocalizedString("An error occurred while getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
         case .cacheClearError: return NSLocalizedString("An error occurred while clearing the cache: %@", comment: "")
