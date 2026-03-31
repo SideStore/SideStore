@@ -29,5 +29,6 @@ final class NewsCollectionViewCell: UICollectionViewCell
         
         self.imageView.layer.cornerRadius = 30
         self.imageView.clipsToBounds = true
+        self.imageView.contentMode = .scaleAspectFit
     }
 }
