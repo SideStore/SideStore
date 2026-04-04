@@ -36,42 +36,6 @@ struct AppDetailWidget: Widget
     }
 }
 
-// Extracted so @Environment(\.widgetRenderingMode) is scoped behind @available(iOS 16, *).
-@available(iOS 16, *)
-private struct AppIconWidgetView: View
-{
-    let icon: UIImage
-    let darkIcon: UIImage?
-    let imageHeight: CGFloat
-    
-    @Environment(\.widgetRenderingMode)
-    private var widgetRenderingMode
-    
-    @Environment(\.colorScheme)
-    private var colorScheme
-    
-    var body: some View {
-        // Use the dark mode icon variant when available and in dark mode.
-        let resolvedIcon = (colorScheme == .dark ? darkIcon : nil) ?? icon
-        let base = Image(uiImage: resolvedIcon.withRenderingMode(.alwaysOriginal)).resizable()
-        Group {
-            if widgetRenderingMode == .accented && colorScheme == .light {
-                // In light tinted/clear mode, images become white rectangles.
-                // luminanceToAlpha() maps brightness to opacity so the system
-                // accent colour shows through correctly.
-                // In dark mode we skip this — the system renders the dark
-                // tinted/clear version correctly with .alwaysOriginal alone.
-                base.luminanceToAlpha()
-            } else {
-                base
-            }
-        }
-        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-        .frame(height: imageHeight)
-        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-    }
-}
-
 private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
@@ -84,18 +48,24 @@ private struct AppDetailWidgetView: View
             if let app = self.entry.apps.first
             {
                 let daysRemaining = app.expirationDate.numberOfCalendarDays(since: self.entry.date)
+                let icon = (colorScheme == .dark ? app.darkIcon : nil) ?? app.icon ?? UIImage(named: "SideStore")!
                     
                 GeometryReader { (geometry) in
                     Group {
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
-                                // UIImage() is zero-size and invisible in all modes — use the
-                                // SideStore placeholder instead when no icon is available.
-                                let icon = app.icon ?? UIImage(named: "SideStore")!
                                 
-                                if #available(iOS 16, *) {
-                                    AppIconWidgetView(icon: icon, darkIcon: app.darkIcon, imageHeight: imageHeight)
+                                // .alwaysOriginal must be applied AFTER any resizing — resizing via
+                                // UIGraphicsContext strips the flag. widgetAccentedRenderingMode(.fullColor)
+                                // (iOS 18+) keeps the icon full-colour in tinted/clear accented mode.
+                                if #available(iOS 18, *) {
+                                    Image(uiImage: icon.withRenderingMode(.alwaysOriginal))
+                                        .resizable()
+                                        .widgetAccentedRenderingMode(.fullColor)
+                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+                                        .frame(height: imageHeight)
+                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
                                 } else {
                                     Image(uiImage: icon.withRenderingMode(.alwaysOriginal))
                                         .resizable()
@@ -171,6 +141,16 @@ private struct AppDetailWidgetView: View
                             .fontWeight(.semibold)
                             .foregroundColor(Color.white.opacity(0.4))
                     }
+                    else
+                    {
+                        // Show a placeholder icon so the widget gallery preview isn't blank.
+                        Image(uiImage: UIImage(named: "SideStore")!.withRenderingMode(.alwaysOriginal))
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 60)
+                            .cornerRadius(12)
+                            .opacity(0.5)
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -190,16 +170,15 @@ private extension AppDetailWidgetView
 {
     func backgroundView(icon: UIImage? = nil, darkIcon: UIImage? = nil, tintColor: UIColor? = nil, colorScheme: ColorScheme = .light) -> some View
     {
-        // Use the dark mode icon variant for the background blur when available and in dark mode.
+        // Use dark variant for the background blur when in dark mode.
         let icon = (colorScheme == .dark ? darkIcon : nil) ?? icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
         
         let imageHeight = 60 as CGFloat
         let saturation = 1.8
         let blurRadius = 5 as CGFloat
-        // Reduce tint opacity in dark mode so the background doesn't overpower the content,
-        // matching the article's guidance to adjust containerBackground for dark mode.
-        let tintOpacity = colorScheme == .dark ? 0.3 : 0.45
+        // Reduce tint opacity in dark mode per the article's guidance.
+        let tintOpacity: Double = colorScheme == .dark ? 0.3 : 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
         // so we scale the image to 97% so as to reduce its actual size but not too much
