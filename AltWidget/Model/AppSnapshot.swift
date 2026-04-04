@@ -35,13 +35,7 @@ extension AppSnapshot
         self.tintColor = installedApp.storeApp?.tintColor
         
         let application = ALTApplication(fileURL: installedApp.fileURL)
-        // Force .alwaysOriginal so iOS 26 clear/tinted widget rendering modes
-        // (liquid glass) do not monochromize the app icon image.
-        if let resized = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180)) {
-            self.icon = resized.withRenderingMode(.alwaysOriginal)
-        } else {
-            self.icon = nil
-        }
+        self.icon = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180))
     }
 }
 
