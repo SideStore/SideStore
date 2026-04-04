@@ -35,9 +35,9 @@ extension AppSnapshot
         self.tintColor = installedApp.storeApp?.tintColor
         
         let application = ALTApplication(fileURL: installedApp.fileURL)
-        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new UIImage via
-        // UIGraphicsContext which strips any prior renderingMode flag.
         if let resized = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180)) {
+            // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a new
+            // UIImage via UIGraphicsContext which strips any prior renderingMode flag.
             self.icon = resized.withRenderingMode(.alwaysOriginal)
         } else {
             self.icon = nil
