@@ -52,11 +52,22 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
-                                    .resizable()
-                                    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                    .frame(height: imageHeight)
-                                    .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                Group {
+                                    if #available(iOS 18, *) {
+                                        // In iOS 16+ tinted/clear widget modes, WidgetKit desaturates images
+                                        // by default. .widgetAccentedRenderingMode(.fullColor) opts out so
+                                        // the app icon always renders in full color.
+                                        Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
+                                            .resizable()
+                                            .widgetAccentedRenderingMode(.fullColor)
+                                    } else {
+                                        Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
+                                            .resizable()
+                                    }
+                                }
+                                .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+                                .frame(height: imageHeight)
+                                .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -166,16 +177,21 @@ private extension AppDetailWidgetView
             // Blurred Image
             GeometryReader { geometry in
                 ZStack {
-                    Image(uiImage: resizedIcon)
-                        .resizable()
-                        // Prevents any inherited .foregroundStyle from tinting this image white
-                        // in iOS 26 clear/tinted widget rendering modes.
-                        .foregroundStyle(.primary)
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: imageHeight, height: imageHeight, alignment: .center)
-                        .saturation(saturation)
-                        .blur(radius: blurRadius, opaque: true)
-                        .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
+                    Group {
+                        if #available(iOS 18, *) {
+                            Image(uiImage: resizedIcon)
+                                .resizable()
+                                .widgetAccentedRenderingMode(.fullColor)
+                        } else {
+                            Image(uiImage: resizedIcon)
+                                .resizable()
+                        }
+                    }
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: imageHeight, height: imageHeight, alignment: .center)
+                    .saturation(saturation)
+                    .blur(radius: blurRadius, opaque: true)
+                    .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
                         // .onAppear {
                         //     print("Geometry size: \(geometry.size)")
                         //     print("Image height: \(imageHeight), Geometry width: \(geometry.size.width)")

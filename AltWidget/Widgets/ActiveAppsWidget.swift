@@ -128,14 +128,21 @@ private struct ActiveAppsWidgetView: View
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            Image(uiImage: resizedIcon)
-                                .resizable()
-                                // .foregroundStyle(.white) is inherited from the parent Group and causes
-                                // iOS 26 clear/tinted widget modes to render this image as a white template.
-                                // Resetting to .primary here breaks that inheritance and keeps the icon full-color.
-                                .foregroundStyle(.primary)
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
+                            Group {
+                                if #available(iOS 18, *) {
+                                    // In iOS 16+ tinted/clear widget modes, WidgetKit desaturates images
+                                    // by default. .widgetAccentedRenderingMode(.fullColor) opts out of
+                                    // that so the app icon always renders in full color.
+                                    Image(uiImage: resizedIcon)
+                                        .resizable()
+                                        .widgetAccentedRenderingMode(.fullColor)
+                                } else {
+                                    Image(uiImage: resizedIcon)
+                                        .resizable()
+                                }
+                            }
+                            .aspectRatio(contentMode: .fit)
+                            .cornerRadius(cornerRadius)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {
