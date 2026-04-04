@@ -36,8 +36,7 @@ extension AppSnapshot
         
         let application = ALTApplication(fileURL: installedApp.fileURL)
         // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new UIImage via
-        // UIGraphicsContext which strips any prior renderingMode. Without this, iOS 26
-        // tinted/clear widgets treat the icon as a template and render it white.
+        // UIGraphicsContext which strips any prior renderingMode flag.
         if let resized = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180)) {
             self.icon = resized.withRenderingMode(.alwaysOriginal)
         } else {
