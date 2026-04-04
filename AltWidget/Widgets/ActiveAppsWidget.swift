@@ -115,6 +115,8 @@ private struct ActiveAppsWidgetView: View
                     ForEach(Array(entry.apps.enumerated()), id: \.offset) { index, app in
                     
                         let icon: UIImage = app.icon ?? UIImage(named: "SideStore")!
+                        // Use the dark mode icon variant when available and in dark mode.
+                        let resolvedIcon: UIImage = (colorScheme == .dark ? app.darkIcon : nil) ?? icon
                         
                         // 1024x1024 images are not supported by previews but supported by device
                         // so we scale the image to 97% so as to reduce its actual size but not too much
@@ -122,13 +124,13 @@ private struct ActiveAppsWidgetView: View
                         let scalingFactor = 0.97
                         
                         let resizedSize = CGSize(
-                            width:  icon.size.width * scalingFactor,
-                            height: icon.size.height * scalingFactor
+                            width:  resolvedIcon.size.width * scalingFactor,
+                            height: resolvedIcon.size.height * scalingFactor
                         )
                         
                         // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a
                         // new UIImage via UIGraphicsContext which strips any prior renderingMode flag.
-                        let resizedIcon = icon.resizing(to: resizedSize)!
+                        let resizedIcon = resolvedIcon.resizing(to: resizedSize)!
                             .withRenderingMode(.alwaysOriginal)
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
