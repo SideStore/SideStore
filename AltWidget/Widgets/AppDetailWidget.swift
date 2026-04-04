@@ -40,6 +40,9 @@ private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
     
+    @Environment(\.widgetRenderingMode)
+    private var widgetRenderingMode
+    
     var body: some View {
         Group {
             if let app = self.entry.apps.first
@@ -52,14 +55,24 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                // Force .alwaysOriginal so iOS 26 clear/tinted widget rendering modes
-                                // do not monochromize the app icon image.
-                                let rawIcon = app.icon ?? UIImage()
-                                Image(uiImage: rawIcon.withRenderingMode(.alwaysOriginal))
+                                // In iOS 26 clear/tinted (vibrant/accented) modes the widget background
+                                // becomes glass-colored, so add a subtle rounded rect behind the icon
+                                // to maintain contrast and visibility.
+                                Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
+                                    .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the icon
                                     .resizable()
                                     .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
                                     .frame(height: imageHeight)
                                     .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                    .background(
+                                        Group {
+                                            if widgetRenderingMode != .fullColor {
+                                                RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous)
+                                                    .fill(Color.white.opacity(0.15))
+                                                    .padding(-4)
+                                            }
+                                        }
+                                    )
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -164,13 +177,13 @@ private extension AppDetailWidgetView
         )
             
         let resizedIcon = icon.resizing(to: resizedSize)!
-            .withRenderingMode(.alwaysOriginal)
         
         return ZStack(alignment: .topTrailing) {
             // Blurred Image
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
+                        .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the background icon
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageHeight, height: imageHeight, alignment: .center)

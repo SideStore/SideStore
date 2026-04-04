@@ -123,15 +123,13 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
-                        // Force .alwaysOriginal so iOS 26 clear/tinted widget rendering modes
-                        // do not monochromize the app icon image.
                         let resizedIcon = icon.resizing(to: resizedSize)!
-                            .withRenderingMode(.alwaysOriginal)
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
                             Image(uiImage: resizedIcon)
+                                .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the icon
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(cornerRadius)
