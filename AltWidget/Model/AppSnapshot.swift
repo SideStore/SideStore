@@ -20,7 +20,6 @@ struct AppSnapshot
     
     var tintColor: UIColor?
     var icon: UIImage?
-    var darkIcon: UIImage? // Dark mode icon variant loaded from CFBundleIcons~dark
 }
 
 extension AppSnapshot
@@ -36,42 +35,7 @@ extension AppSnapshot
         self.tintColor = installedApp.storeApp?.tintColor
         
         let application = ALTApplication(fileURL: installedApp.fileURL)
-        // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a new
-        // UIImage via UIGraphicsContext which strips any prior renderingMode flag.
-        if let resized = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180)) {
-            self.icon = resized.withRenderingMode(.alwaysOriginal)
-        } else {
-            self.icon = nil
-        }
-        
-        // Load dark mode icon declared under CFBundleIcons~dark in the app's Info.plist.
-        self.darkIcon = AppSnapshot.loadVariantIcon(from: installedApp.fileURL, key: "CFBundleIcons~dark")
-    }
-    
-    /// Reads an icon PNG from the app bundle using the given CFBundleIcons variant key.
-    /// iOS 18 apps can declare dark icons under `CFBundleIcons~dark` in Info.plist.
-    private static func loadVariantIcon(from appBundleURL: URL, key: String) -> UIImage?
-    {
-        let infoPlistURL = appBundleURL.appendingPathComponent("Info.plist")
-        guard
-            let plist = NSDictionary(contentsOf: infoPlistURL),
-            let variantIcons = plist[key] as? [String: Any],
-            let primaryIcon = variantIcons["CFBundlePrimaryIcon"] as? [String: Any],
-            let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
-            let baseName = iconFiles.last // last entry is typically the largest size
-        else { return nil }
-        
-        // Try @3x, @2x, then the bare name.
-        for suffix in ["@3x", "@2x", ""] {
-            let url = appBundleURL.appendingPathComponent("\(baseName)\(suffix).png")
-            if let data = try? Data(contentsOf: url),
-               let image = UIImage(data: data),
-               let resized = image.resizing(toFill: CGSize(width: 180, height: 180))
-            {
-                return resized.withRenderingMode(.alwaysOriginal)
-            }
-        }
-        return nil
+        self.icon = application?.icon?.resizing(toFill: CGSize(width: 180, height: 180))
     }
 }
 

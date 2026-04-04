@@ -74,9 +74,6 @@ private struct ActiveAppsWidgetView: View
     
     @Environment(\.colorScheme)
     private var colorScheme
-    
-    @Environment(\.widgetRenderingMode)
-    private var widgetRenderingMode
         
     var body: some View {
         Group {
@@ -115,8 +112,6 @@ private struct ActiveAppsWidgetView: View
                     ForEach(Array(entry.apps.enumerated()), id: \.offset) { index, app in
                     
                         let icon: UIImage = app.icon ?? UIImage(named: "SideStore")!
-                        // Use dark variant when available and in dark mode.
-                        let resolvedIcon = (colorScheme == .dark ? app.darkIcon : nil) ?? icon
                         
                         // 1024x1024 images are not supported by previews but supported by device
                         // so we scale the image to 97% so as to reduce its actual size but not too much
@@ -124,34 +119,19 @@ private struct ActiveAppsWidgetView: View
                         let scalingFactor = 0.97
                         
                         let resizedSize = CGSize(
-                            width:  resolvedIcon.size.width * scalingFactor,
-                            height: resolvedIcon.size.height * scalingFactor
+                            width:  icon.size.width * scalingFactor,
+                            height: icon.size.height * scalingFactor
                         )
                         
-                        // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a
-                        // new UIImage via UIGraphicsContext which strips any prior renderingMode flag.
-                        let resizedIcon = resolvedIcon.resizing(to: resizedSize)!
-                            .withRenderingMode(.alwaysOriginal)
+                        let resizedIcon = icon.resizing(to: resizedSize)!
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            // In accented (tinted/clear) mode use .widgetAccentedRenderingMode(.fullColor)
-                            // so the image keeps its original colours instead of becoming a white rectangle.
-                            // This API requires iOS 18 — tinted/clear widgets also require iOS 18, so the
-                            // #available guard is the right tool here rather than a fallback branch.
-                            if #available(iOS 18, *) {
-                                Image(uiImage: resizedIcon)
-                                    .resizable()
-                                    .widgetAccentedRenderingMode(.fullColor)
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(cornerRadius)
-                            } else {
-                                Image(uiImage: resizedIcon)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(cornerRadius)
-                            }
+                            Image(uiImage: resizedIcon)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(cornerRadius)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {

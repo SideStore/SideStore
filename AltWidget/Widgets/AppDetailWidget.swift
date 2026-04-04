@@ -40,15 +40,11 @@ private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
     
-    @Environment(\.colorScheme)
-    private var colorScheme
-    
     var body: some View {
         Group {
             if let app = self.entry.apps.first
             {
                 let daysRemaining = app.expirationDate.numberOfCalendarDays(since: self.entry.date)
-                let icon = (colorScheme == .dark ? app.darkIcon : nil) ?? app.icon ?? UIImage(named: "SideStore")!
                     
                 GeometryReader { (geometry) in
                     Group {
@@ -56,23 +52,11 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                // .alwaysOriginal must be applied AFTER any resizing — resizing via
-                                // UIGraphicsContext strips the flag. widgetAccentedRenderingMode(.fullColor)
-                                // (iOS 18+) keeps the icon full-colour in tinted/clear accented mode.
-                                if #available(iOS 18, *) {
-                                    Image(uiImage: icon.withRenderingMode(.alwaysOriginal))
-                                        .resizable()
-                                        .widgetAccentedRenderingMode(.fullColor)
-                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                        .frame(height: imageHeight)
-                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-                                } else {
-                                    Image(uiImage: icon.withRenderingMode(.alwaysOriginal))
-                                        .resizable()
-                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                        .frame(height: imageHeight)
-                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-                                }
+                                Image(uiImage: app.icon ?? UIImage())
+                                    .resizable()
+                                    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+                                    .frame(height: imageHeight)
+                                    .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -141,16 +125,6 @@ private struct AppDetailWidgetView: View
                             .fontWeight(.semibold)
                             .foregroundColor(Color.white.opacity(0.4))
                     }
-                    else
-                    {
-                        // Show a placeholder icon so the widget gallery preview isn't blank.
-                        Image(uiImage: UIImage(named: "SideStore")!.withRenderingMode(.alwaysOriginal))
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 60)
-                            .cornerRadius(12)
-                            .opacity(0.5)
-                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -158,9 +132,7 @@ private struct AppDetailWidgetView: View
         .widgetBackground(
             backgroundView(
                 icon: entry.apps.first?.icon,
-                darkIcon: entry.apps.first?.darkIcon,
-                tintColor: entry.apps.first?.tintColor,
-                colorScheme: colorScheme
+                tintColor: entry.apps.first?.tintColor
             )
         )
     }
@@ -168,17 +140,15 @@ private struct AppDetailWidgetView: View
 
 private extension AppDetailWidgetView
 {
-    func backgroundView(icon: UIImage? = nil, darkIcon: UIImage? = nil, tintColor: UIColor? = nil, colorScheme: ColorScheme = .light) -> some View
+    func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
     {
-        // Use dark variant for the background blur when in dark mode.
-        let icon = (colorScheme == .dark ? darkIcon : nil) ?? icon ?? UIImage(named: "SideStore")!
+        let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
         
         let imageHeight = 60 as CGFloat
         let saturation = 1.8
         let blurRadius = 5 as CGFloat
-        // Reduce tint opacity in dark mode per the article's guidance.
-        let tintOpacity: Double = colorScheme == .dark ? 0.3 : 0.45
+        let tintOpacity = 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
         // so we scale the image to 97% so as to reduce its actual size but not too much
@@ -190,10 +160,7 @@ private extension AppDetailWidgetView
             height: icon.size.height * scalingFactor
         )
             
-        // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a new UIImage
-        // via UIGraphicsContext which strips any prior renderingMode flag.
         let resizedIcon = icon.resizing(to: resizedSize)!
-            .withRenderingMode(.alwaysOriginal)
         
         return ZStack(alignment: .topTrailing) {
             // Blurred Image
