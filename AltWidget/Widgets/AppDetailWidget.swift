@@ -40,6 +40,12 @@ private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
     
+    @Environment(\.widgetRenderingMode)
+    private var renderingMode
+
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     var body: some View {
         Group {
             if let app = self.entry.apps.first
@@ -57,6 +63,9 @@ private struct AppDetailWidgetView: View
                                     .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
                                     .frame(height: imageHeight)
                                     .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                    // Preserve the original app icon colours in tinted (accented)
+                                    // mode on iOS 18+. Without this the system renders the icon white.
+                                    .widgetAccentedRenderingMode(.fullColor)
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -132,7 +141,9 @@ private struct AppDetailWidgetView: View
         .widgetBackground(
             backgroundView(
                 icon: entry.apps.first?.icon,
-                tintColor: entry.apps.first?.tintColor
+                tintColor: entry.apps.first?.tintColor,
+                renderingMode: renderingMode,
+                colorScheme: colorScheme
             )
         )
     }
@@ -140,7 +151,7 @@ private struct AppDetailWidgetView: View
 
 private extension AppDetailWidgetView
 {
-    func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
+    func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil, renderingMode: WidgetRenderingMode = .fullColor, colorScheme: ColorScheme = .light) -> some View
     {
         let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
@@ -148,7 +159,8 @@ private extension AppDetailWidgetView
         let imageHeight = 60 as CGFloat
         let saturation = 1.8
         let blurRadius = 5 as CGFloat
-        let tintOpacity = 0.45
+        // Increase tint opacity in dark mode for contrast; reduce in light mode.
+        let tintOpacity = colorScheme == .dark ? 0.60 : 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
         // so we scale the image to 97% so as to reduce its actual size but not too much
@@ -162,23 +174,29 @@ private extension AppDetailWidgetView
             
         let resizedIcon = icon.resizing(to: resizedSize)!
         
-        return ZStack(alignment: .topTrailing) {
-            // Blurred Image
+        // In tinted (accented) mode the system overlays its own accent colour;
+        // return a simple neutral background so it reads clearly.
+        if renderingMode == .accented {
+            return AnyView(Color.gray.opacity(0.3))
+        }
+        
+        return AnyView(ZStack(alignment: .topTrailing) {
+            // Blurred Image background — desaturated further in dark mode so the
+            // blurred icon doesn't overpower the foreground content.
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageHeight, height: imageHeight, alignment: .center)
-                        .saturation(saturation)
+                        .saturation(colorScheme == .dark ? saturation * 0.6 : saturation)
                         .blur(radius: blurRadius, opaque: true)
                         .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
-                        // .onAppear {
-                        //     print("Geometry size: \(geometry.size)")
-                        //     print("Image height: \(imageHeight), Geometry width: \(geometry.size.width)")
-                        //     print("Icon size: \(icon.size)")
-                        // }
-                        
+                    
+                    // In dark mode, overlay a dark scrim so text stays legible.
+                    if colorScheme == .dark {
+                        Color.black.opacity(0.35)
+                    }
                     
                     Color(tintColor)
                         .opacity(tintOpacity)
@@ -189,7 +207,7 @@ private extension AppDetailWidgetView
                 .resizable()
                 .frame(width: 26, height: 26)
                 .padding()
-        }
+        })
     }
 }
 

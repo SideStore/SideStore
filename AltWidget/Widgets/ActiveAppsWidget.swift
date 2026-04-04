@@ -74,6 +74,9 @@ private struct ActiveAppsWidgetView: View
     
     @Environment(\.colorScheme)
     private var colorScheme
+
+    @Environment(\.widgetRenderingMode)
+    private var renderingMode
         
     var body: some View {
         Group {
@@ -88,13 +91,21 @@ private struct ActiveAppsWidgetView: View
         }
         .foregroundStyle(.white)
         .containerBackground(for: .widget) {
-            if colorScheme == .dark
-            {
-                LinearGradient(colors: [.altGradientDark, .altGradientExtraDark], startPoint: .top, endPoint: .bottom)
-            }
-            else
-            {
-                LinearGradient(colors: [.altGradientLight, .altGradientDark], startPoint: .top, endPoint: .bottom)
+            switch renderingMode {
+            case .accented:
+                // In tinted mode, use a solid neutral background so the
+                // system accent colour reads clearly over it.
+                Color.gray.opacity(0.3)
+            default:
+                // fullColor – light vs dark gradient
+                if colorScheme == .dark
+                {
+                    LinearGradient(colors: [.altGradientDark, .altGradientExtraDark], startPoint: .top, endPoint: .bottom)
+                }
+                else
+                {
+                    LinearGradient(colors: [.altGradientLight, .altGradientDark], startPoint: .top, endPoint: .bottom)
+                }
             }
         }
     }
@@ -132,6 +143,10 @@ private struct ActiveAppsWidgetView: View
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(cornerRadius)
+                                // Preserve the original app icon colours in tinted (accented)
+                                // mode on iOS 18+. Without this the system desaturates the
+                                // image and renders it white, which is the iOS 26 bug.
+                                .widgetAccentedRenderingMode(.fullColor)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {
