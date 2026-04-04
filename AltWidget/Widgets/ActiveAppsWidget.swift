@@ -140,13 +140,14 @@ private struct ActiveAppsWidgetView: View
 
                         HStack(spacing: 10) {
                             Image(uiImage: resizedIcon)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
                                 // Preserve the original app icon colours in tinted (accented)
                                 // mode on iOS 18+. Without this the system desaturates the
                                 // image and renders it white, which is the iOS 26 bug.
+                                // Must be applied directly on Image before any View-returning modifiers.
                                 .widgetAccentedFullColor()
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(cornerRadius)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {

@@ -100,13 +100,14 @@ private struct AppDetailWidgetView: View
                                 let imageHeight = geometry.size.height * 0.4
                                 
                                 Image(uiImage: app.icon ?? UIImage())
+                                    // Preserve the original app icon colours in tinted (accented)
+                                    // mode on iOS 18+. Without this the system renders the icon white.
+                                    // Must be applied directly on Image before any View-returning modifiers.
+                                    .widgetAccentedFullColor()
                                     .resizable()
                                     .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
                                     .frame(height: imageHeight)
                                     .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-                                    // Preserve the original app icon colours in tinted (accented)
-                                    // mode on iOS 18+. Without this the system renders the icon white.
-                                    .widgetAccentedFullColor()
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
