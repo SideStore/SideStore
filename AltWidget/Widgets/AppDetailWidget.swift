@@ -36,7 +36,7 @@ struct AppDetailWidget: Widget
     }
 }
 
-// Extracted to scope @Environment(\.widgetRenderingMode) behind @available(iOS 16, *).
+// Extracted so @Environment(\.widgetRenderingMode) is scoped behind @available(iOS 16, *).
 @available(iOS 16, *)
 private struct AppIconWidgetView: View
 {
@@ -50,17 +50,15 @@ private struct AppIconWidgetView: View
     private var colorScheme
     
     var body: some View {
-        // Apply .alwaysOriginal AFTER any resizing — resizing via UIGraphicsContext strips the flag.
         let base = Image(uiImage: icon.withRenderingMode(.alwaysOriginal)).resizable()
         Group {
-            if widgetRenderingMode == .accented {
-                // luminanceToAlpha() maps brightness to opacity for the system accent color.
-                // In dark mode, colorInvert() first so dark icon backgrounds don't become transparent.
-                if colorScheme == .dark {
-                    base.colorInvert().luminanceToAlpha()
-                } else {
-                    base.luminanceToAlpha()
-                }
+            if widgetRenderingMode == .accented && colorScheme == .light {
+                // In light tinted/clear mode, images become white rectangles.
+                // luminanceToAlpha() maps brightness to opacity so the system
+                // accent colour shows through correctly.
+                // In dark mode we skip this — the system renders the dark
+                // tinted/clear version correctly with .alwaysOriginal alone.
+                base.luminanceToAlpha()
             } else {
                 base
             }
@@ -86,6 +84,8 @@ private struct AppDetailWidgetView: View
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
+                                // UIImage() is zero-size and invisible in all modes — use the
+                                // SideStore placeholder instead when no icon is available.
                                 let icon = app.icon ?? UIImage(named: "SideStore")!
                                 
                                 if #available(iOS 16, *) {
@@ -200,8 +200,8 @@ private extension AppDetailWidgetView
             height: icon.size.height * scalingFactor
         )
             
-        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new UIImage via
-        // UIGraphicsContext which strips any prior renderingMode flag.
+        // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a new UIImage
+        // via UIGraphicsContext which strips any prior renderingMode flag.
         let resizedIcon = icon.resizing(to: resizedSize)!
             .withRenderingMode(.alwaysOriginal)
         

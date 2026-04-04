@@ -126,8 +126,8 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
-                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
-                        // UIImage via UIGraphicsContext which strips any prior renderingMode flag.
+                        // .alwaysOriginal must be applied AFTER resizing() — resizing() creates a
+                        // new UIImage via UIGraphicsContext which strips any prior renderingMode flag.
                         let resizedIcon = icon.resizing(to: resizedSize)!
                             .withRenderingMode(.alwaysOriginal)
                         let cornerRadius = rowHeight / 5.0
@@ -136,17 +136,13 @@ private struct ActiveAppsWidgetView: View
                         HStack(spacing: 10) {
                             let iconImage = Image(uiImage: resizedIcon).resizable()
                             Group {
-                                if widgetRenderingMode == .accented {
-                                    // luminanceToAlpha() maps pixel brightness to opacity so the
-                                    // system accent color shows through correctly.
-                                    // In dark mode, icons have dark backgrounds which would become
-                                    // transparent — colorInvert() first fixes that so dark icons
-                                    // render correctly in dark mode tinted/clear widgets.
-                                    if colorScheme == .dark {
-                                        iconImage.colorInvert().luminanceToAlpha()
-                                    } else {
-                                        iconImage.luminanceToAlpha()
-                                    }
+                                if widgetRenderingMode == .accented && colorScheme == .light {
+                                    // In light tinted/clear mode, images become white rectangles.
+                                    // luminanceToAlpha() maps brightness to opacity so the system
+                                    // accent colour shows through correctly.
+                                    // In dark mode we skip this — the system renders the dark
+                                    // tinted/clear version correctly with .alwaysOriginal alone.
+                                    iconImage.luminanceToAlpha()
                                 } else {
                                     iconImage
                                 }
