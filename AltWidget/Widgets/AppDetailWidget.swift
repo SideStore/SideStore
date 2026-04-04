@@ -52,7 +52,10 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                Image(uiImage: app.icon ?? UIImage())
+                                // Force .alwaysOriginal so iOS 26 clear/tinted widget rendering modes
+                                // do not monochromize the app icon image.
+                                let rawIcon = app.icon ?? UIImage()
+                                Image(uiImage: rawIcon.withRenderingMode(.alwaysOriginal))
                                     .resizable()
                                     .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
                                     .frame(height: imageHeight)
@@ -161,6 +164,7 @@ private extension AppDetailWidgetView
         )
             
         let resizedIcon = icon.resizing(to: resizedSize)!
+            .withRenderingMode(.alwaysOriginal)
         
         return ZStack(alignment: .topTrailing) {
             // Blurred Image
