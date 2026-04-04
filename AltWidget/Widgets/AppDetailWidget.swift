@@ -36,17 +36,58 @@ struct AppDetailWidget: Widget
     }
 }
 
+// ViewModifier that reads widgetRenderingMode (iOS 16+) and injects
+// an `isAccented` Bool into the environment so pre-iOS-16 code stays clean.
+@available(iOS 16, *)
+private struct RenderingModeModifier: ViewModifier
+{
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.isAccentedWidget, renderingMode == .accented)
+    }
+}
+
+// Custom environment key so we can pass the accented flag down without
+// requiring iOS 16 at every call site.
+private struct IsAccentedWidgetKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+private extension EnvironmentValues {
+    var isAccentedWidget: Bool {
+        get { self[IsAccentedWidgetKey.self] }
+        set { self[IsAccentedWidgetKey.self] = newValue }
+    }
+}
+
+
 private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
-    
-    @Environment(\.widgetRenderingMode)
-    private var renderingMode
 
     @Environment(\.colorScheme)
     private var colorScheme
 
+    // Populated by RenderingModeModifier on iOS 16+; false on older OS.
+    @Environment(\.isAccentedWidget)
+    private var isAccented
+
     var body: some View {
+        // Attach the iOS-16 rendering-mode reader only when available.
+        if #available(iOS 16, *)
+        {
+            innerBody.modifier(RenderingModeModifier())
+        }
+        else
+        {
+            innerBody
+        }
+    }
+
+    @ViewBuilder
+    private var innerBody: some View {
         Group {
             if let app = self.entry.apps.first
             {
@@ -65,7 +106,7 @@ private struct AppDetailWidgetView: View
                                     .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
                                     // Preserve the original app icon colours in tinted (accented)
                                     // mode on iOS 18+. Without this the system renders the icon white.
-                                    .widgetAccentedRenderingMode(.fullColor)
+                                    .widgetAccentedFullColor()
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -142,7 +183,7 @@ private struct AppDetailWidgetView: View
             backgroundView(
                 icon: entry.apps.first?.icon,
                 tintColor: entry.apps.first?.tintColor,
-                renderingMode: renderingMode,
+                isAccented: isAccented,
                 colorScheme: colorScheme
             )
         )
@@ -151,7 +192,7 @@ private struct AppDetailWidgetView: View
 
 private extension AppDetailWidgetView
 {
-    func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil, renderingMode: WidgetRenderingMode = .fullColor, colorScheme: ColorScheme = .light) -> some View
+    func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil, isAccented: Bool = false, colorScheme: ColorScheme = .light) -> some View
     {
         let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
@@ -176,7 +217,7 @@ private extension AppDetailWidgetView
         
         // In tinted (accented) mode the system overlays its own accent colour;
         // return a simple neutral background so it reads clearly.
-        if renderingMode == .accented {
+        if isAccented {
             return AnyView(Color.gray.opacity(0.3))
         }
         

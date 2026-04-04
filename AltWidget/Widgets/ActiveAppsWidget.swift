@@ -146,7 +146,7 @@ private struct ActiveAppsWidgetView: View
                                 // Preserve the original app icon colours in tinted (accented)
                                 // mode on iOS 18+. Without this the system desaturates the
                                 // image and renders it white, which is the iOS 26 bug.
-                                .widgetAccentedRenderingMode(.fullColor)
+                                .widgetAccentedFullColor()
                             
                             
                             VStack(alignment: .leading, spacing: 1) {
