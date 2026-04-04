@@ -80,23 +80,4 @@ extension View
 
 }
 
-// Added for iOS 18+ tinted widget icon fix.
-// `widgetAccentedRenderingMode` is an Image-only modifier that returns Image,
-// so this must extend Image and return Image to keep the modifier chain intact
-// (e.g. so .resizable() can still follow it).
-extension Image {
-    /// Applies `.widgetAccentedRenderingMode(.fullColor)` on iOS 18+ so app icons
-    /// retain their original colours in tinted (accented) widget mode instead of
-    /// being rendered as white silhouettes. No-op on older OS versions.
-    func widgetAccentedFullColor() -> Image
-    {
-        if #available(iOSApplicationExtension 18, *)
-        {
-            return self.widgetAccentedRenderingMode(.fullColor)
-        }
-        else
-        {
-            return self
-        }
-    }
-}
+
