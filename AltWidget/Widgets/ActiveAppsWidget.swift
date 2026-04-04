@@ -129,7 +129,10 @@ private struct ActiveAppsWidgetView: View
 
                         HStack(spacing: 10) {
                             Image(uiImage: resizedIcon)
-                                .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the icon
+                                // .foregroundStyle(.white) is inherited from the parent Group and causes
+                                // iOS 26 clear/tinted widget modes to render this image as a white template.
+                                // Resetting to .primary here breaks that inheritance and keeps the icon full-color.
+                                .foregroundStyle(.primary)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(cornerRadius)

@@ -36,39 +36,6 @@ struct AppDetailWidget: Widget
     }
 }
 
-// Extracted so we can gate @Environment(\.widgetRenderingMode) behind @available(iOS 16, *)
-// without having to mark the entire parent view as iOS 16+.
-@available(iOS 16, *)
-private struct AppIconView: View
-{
-    let icon: UIImage?
-    let imageHeight: CGFloat
-    
-    @Environment(\.widgetRenderingMode)
-    private var widgetRenderingMode
-    
-    var body: some View {
-        Image(uiImage: icon ?? UIImage(named: "SideStore")!)
-            .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the icon
-            .resizable()
-            .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-            .frame(height: imageHeight)
-            .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-            .background(
-                Group {
-                    // In iOS 26 clear/tinted (vibrant/accented) modes the widget background
-                    // becomes glass-colored, so add a subtle rounded rect behind the icon
-                    // to maintain contrast and visibility.
-                    if widgetRenderingMode != .fullColor {
-                        RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous)
-                            .fill(Color.white.opacity(0.15))
-                            .padding(-4)
-                    }
-                }
-            )
-    }
-}
-
 private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
@@ -85,16 +52,11 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                if #available(iOS 16, *) {
-                                    AppIconView(icon: app.icon, imageHeight: imageHeight)
-                                } else {
-                                    Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
-                                        .renderingMode(.original)
-                                        .resizable()
-                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                        .frame(height: imageHeight)
-                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-                                }
+                                Image(uiImage: app.icon ?? UIImage(named: "SideStore")!)
+                                    .resizable()
+                                    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+                                    .frame(height: imageHeight)
+                                    .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -205,7 +167,9 @@ private extension AppDetailWidgetView
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
-                        .renderingMode(.original) // Prevents iOS 26 clear/tinted widget modes from monochromizing the background icon
+                        // Prevents any inherited .foregroundStyle from tinting this image white
+                        // in iOS 26 clear/tinted widget rendering modes.
+                        .foregroundStyle(.primary)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageHeight, height: imageHeight, alignment: .center)
