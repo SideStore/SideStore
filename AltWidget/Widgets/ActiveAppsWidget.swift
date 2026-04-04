@@ -91,21 +91,20 @@ private struct ActiveAppsWidgetView: View
         }
         .foregroundStyle(.white)
         .containerBackground(for: .widget) {
-            switch renderingMode {
-            case .accented:
-                // In tinted mode, use a solid neutral background so the
-                // system accent colour reads clearly over it.
-                Color.gray.opacity(0.3)
-            default:
-                // fullColor – light vs dark gradient
-                if colorScheme == .dark
-                {
-                    LinearGradient(colors: [.altGradientDark, .altGradientExtraDark], startPoint: .top, endPoint: .bottom)
-                }
-                else
-                {
-                    LinearGradient(colors: [.altGradientLight, .altGradientDark], startPoint: .top, endPoint: .bottom)
-                }
+            // In accented (tinted) mode the system applies the user's chosen
+            // tint colour over the widget. Use a plain dark background so the
+            // tint reads correctly — a coloured gradient would fight it.
+            if renderingMode == .accented
+            {
+                Color.black
+            }
+            else if colorScheme == .dark
+            {
+                LinearGradient(colors: [.altGradientDark, .altGradientExtraDark], startPoint: .top, endPoint: .bottom)
+            }
+            else
+            {
+                LinearGradient(colors: [.altGradientLight, .altGradientDark], startPoint: .top, endPoint: .bottom)
             }
         }
     }
@@ -138,61 +137,68 @@ private struct ActiveAppsWidgetView: View
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
-                            let iconImage: AnyView = {
-                                let base = Image(uiImage: resizedIcon).resizable()
-                                if #available(iOSApplicationExtension 18, *) {
-                                    // Preserve full colour in tinted (accented) mode on iOS 18+.
-                                    // Without this the system renders the icon white.
-                                    return AnyView(base.widgetAccentedRenderingMode(.fullColor)
-                                        .aspectRatio(contentMode: .fit)
-                                        .cornerRadius(cornerRadius))
-                                } else {
-                                    return AnyView(base
-                                        .aspectRatio(contentMode: .fit)
-                                        .cornerRadius(cornerRadius))
-                                }
-                            }()
-
-                            HStack(spacing: 10) {
-                                iconImage
-                            
-                            
-                                VStack(alignment: .leading, spacing: 1) {
-                                    Text(app.name)
-                                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                    
-                                    let text = if entry.date > app.expirationDate
-                                    {
-                                        Text("Expired")
-                                    }
-                                    else
-                                    {
-                                        Text("Expires in \(daysRemaining) ") + (daysRemaining == 1 ? Text("day") : Text("days"))
-                                    }
-                                    
-                                    text
-                                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                Countdown(startDate: app.refreshedDate,
-                                          endDate: app.expirationDate,
-                                          currentDate: entry.date,
-                                          strokeWidth: 3.0) // Slightly thinner circle stroke width
-                                .background {
-                                    Color.black.opacity(0.1)
-                                        .mask(Capsule())
-                                        .padding(.all, -5)
-                                }
-                                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                .activatesRefreshAllAppsIntent()
-                                // this modifier invalidates the view (disables user interaction and shows a blinking effect)
-                                .invalidatableContent()
-
+                        HStack(spacing: 10) {
+                            // widgetAccentedRenderingMode must be the first modifier on Image,
+                            // before any View-returning modifier breaks the Image chain.
+                            // .accentedDesaturated: maps luminance→alpha then tints with the
+                            //   user's chosen accent colour (correct tinted-mode behaviour).
+                            // .fullColor: shows the original icon colours (light/dark mode).
+                            if #available(iOSApplicationExtension 18, *)
+                            {
+                                Image(uiImage: resizedIcon)
+                                    .widgetAccentedRenderingMode(renderingMode == .accented ? .accentedDesaturated : .fullColor)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(cornerRadius)
                             }
-                            .frame(height: rowHeight)
+                            else
+                            {
+                                Image(uiImage: resizedIcon)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(cornerRadius)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(app.name)
+                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                
+                                let text = if entry.date > app.expirationDate
+                                {
+                                    Text("Expired")
+                                }
+                                else
+                                {
+                                    Text("Expires in \(daysRemaining) ") + (daysRemaining == 1 ? Text("day") : Text("days"))
+                                }
+                                
+                                text
+                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.secondary)
+                            }
+                            // .widgetAccentable() lets the system tint this text in accented mode
+                            .widgetAccentable()
+                            
+                            Spacer()
+                            
+                            Countdown(startDate: app.refreshedDate,
+                                      endDate: app.expirationDate,
+                                      currentDate: entry.date,
+                                      strokeWidth: 3.0) // Slightly thinner circle stroke width
+                            .background {
+                                Color.black.opacity(0.1)
+                                    .mask(Capsule())
+                                    .padding(.all, -5)
+                            }
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .activatesRefreshAllAppsIntent()
+                            // this modifier invalidates the view (disables user interaction and shows a blinking effect)
+                            .invalidatableContent()
+                            // Tint the countdown in accented mode too
+                            .widgetAccentable()
+
+                        }
+                        .frame(height: rowHeight)
                     
                     }
                 }
