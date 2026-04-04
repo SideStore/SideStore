@@ -91,11 +91,10 @@ private struct ActiveAppsWidgetView: View
         }
         .foregroundStyle(.white)
         .containerBackground(for: .widget) {
-            // In accented (tinted) mode the system applies the user's chosen
-            // tint colour over the widget. Use a plain dark background so the
-            // tint reads correctly — a coloured gradient would fight it.
             if renderingMode == .accented
             {
+                // Plain dark background in tinted mode so the system's
+                // accent colour composites cleanly over it.
                 Color.black
             }
             else if colorScheme == .dark
@@ -138,26 +137,16 @@ private struct ActiveAppsWidgetView: View
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            // widgetAccentedRenderingMode must be the first modifier on Image,
-                            // before any View-returning modifier breaks the Image chain.
-                            // .accentedDesaturated: maps luminance→alpha then tints with the
-                            //   user's chosen accent colour (correct tinted-mode behaviour).
-                            // .fullColor: shows the original icon colours (light/dark mode).
-                            if #available(iOSApplicationExtension 18, *)
-                            {
-                                Image(uiImage: resizedIcon)
-                                    .widgetAccentedRenderingMode(renderingMode == .accented ? .accentedDesaturated : .fullColor)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(cornerRadius)
-                            }
-                            else
-                            {
-                                Image(uiImage: resizedIcon)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(cornerRadius)
-                            }
+                            // In tinted (accented) mode, luminanceToAlpha() converts the icon's
+                            // brightness into opacity so the system can tint it with the user's
+                            // chosen accent colour. widgetAccentable() opts the view into that
+                            // accent group. In fullColor mode both are no-ops (via the helpers).
+                            Image(uiImage: resizedIcon)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(cornerRadius)
+                                .luminanceToAlphaInAccentedMode()
+                                .widgetAccentableIfAvailable()
                             
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(app.name)
@@ -176,8 +165,7 @@ private struct ActiveAppsWidgetView: View
                                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                                     .foregroundStyle(.secondary)
                             }
-                            // .widgetAccentable() lets the system tint this text in accented mode
-                            .widgetAccentable()
+                            .widgetAccentableIfAvailable()
                             
                             Spacer()
                             
@@ -194,8 +182,7 @@ private struct ActiveAppsWidgetView: View
                             .activatesRefreshAllAppsIntent()
                             // this modifier invalidates the view (disables user interaction and shows a blinking effect)
                             .invalidatableContent()
-                            // Tint the countdown in accented mode too
-                            .widgetAccentable()
+                            .widgetAccentableIfAvailable()
 
                         }
                         .frame(height: rowHeight)

@@ -55,27 +55,7 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
 
-                                // widgetAccentedRenderingMode is iOS 18+ and must be the
-                                // first modifier on Image (before any View-returning modifiers).
-                                // .accentedDesaturated maps the icon's luminance to alpha and
-                                // tints it with the user's chosen accent colour in tinted mode.
-                                // .fullColor preserves the original icon in light/dark mode.
-                                if #available(iOSApplicationExtension 18, *)
-                                {
-                                    AppIconView(
-                                        icon: app.icon,
-                                        imageHeight: imageHeight,
-                                        isAccented: true // always pass true; mode switches internally
-                                    )
-                                }
-                                else
-                                {
-                                    Image(uiImage: app.icon ?? UIImage())
-                                        .resizable()
-                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                        .frame(height: imageHeight)
-                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-                                }
+                                AppIconView(icon: app.icon, imageHeight: imageHeight)
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -84,8 +64,7 @@ private struct AppDetailWidgetView: View
                                     .minimumScaleFactor(0.5)
                             }
                             .fixedSize(horizontal: false, vertical: true)
-                            // Tint text in accented (tinted) mode
-                            .widgetAccentable()
+                            .widgetAccentableIfAvailable()
                             
                             Spacer(minLength: 0)
                             
@@ -129,8 +108,7 @@ private struct AppDetailWidgetView: View
                             }
                             .fixedSize(horizontal: false, vertical: true)
                             .activatesRefreshAllAppsIntent()
-                            // Tint the expiry text and countdown in accented mode
-                            .widgetAccentable()
+                            .widgetAccentableIfAvailable()
                         }
                         .padding()
                     }
@@ -161,25 +139,27 @@ private struct AppDetailWidgetView: View
     }
 }
 
-// Separate sub-view so we can gate the entire thing on iOS 18 without
-// repeating the modifier chain. Only instantiated on iOS 18+.
-@available(iOSApplicationExtension 18, *)
+// Sub-view for the app icon so the luminanceToAlpha + widgetAccentable
+// tinted-mode logic is self-contained and doesn't pollute the parent view.
+// All modifiers here work on `some View` — no Image-chain restrictions.
 private struct AppIconView: View
 {
     let icon: UIImage?
     let imageHeight: CGFloat
-    let isAccented: Bool // unused here; rendering mode env drives the switch
-
-    @Environment(\.widgetRenderingMode) private var renderingMode
 
     var body: some View {
         Image(uiImage: icon ?? UIImage())
-            // Must be first modifier on Image — before any View-returning modifier.
-            .widgetAccentedRenderingMode(renderingMode == .accented ? .accentedDesaturated : .fullColor)
             .resizable()
             .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
             .frame(height: imageHeight)
             .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+            // In tinted (accented) mode the system needs luminance→alpha conversion
+            // so it can tint the icon with the user's chosen accent colour.
+            // Without this the icon appears as a white rectangle.
+            // luminanceToAlpha() + widgetAccentable() is the correct pattern per
+            // https://www.createwithswift.com/adapting-widgets-for-tint-mode-and-dark-mode-in-swiftui/
+            .luminanceToAlphaInAccentedMode()
+            .widgetAccentableIfAvailable()
     }
 }
 
@@ -193,7 +173,6 @@ private extension AppDetailWidgetView
         let imageHeight = 60 as CGFloat
         let saturation = 1.8
         let blurRadius = 5 as CGFloat
-        // Increase tint opacity in dark mode for contrast; reduce in light mode.
         let tintOpacity = colorScheme == .dark ? 0.60 : 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
@@ -209,8 +188,6 @@ private extension AppDetailWidgetView
         let resizedIcon = icon.resizing(to: resizedSize)!
         
         return ZStack(alignment: .topTrailing) {
-            // Blurred icon background — desaturated further in dark mode so it
-            // doesn't overpower the foreground content.
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
@@ -221,7 +198,6 @@ private extension AppDetailWidgetView
                         .blur(radius: blurRadius, opaque: true)
                         .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
                     
-                    // In dark mode, overlay a dark scrim so text stays legible.
                     if colorScheme == .dark {
                         Color.black.opacity(0.35)
                     }
