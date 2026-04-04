@@ -46,16 +46,21 @@ private struct AppIconWidgetView: View
     @Environment(\.widgetRenderingMode)
     private var widgetRenderingMode
     
+    @Environment(\.colorScheme)
+    private var colorScheme
+    
     var body: some View {
-        // Apply .alwaysOriginal AFTER any resizing — resizing via UIGraphicsContext
-        // strips the renderingMode flag. We do it here rather than at snapshot time
-        // so the original UIImage stored in AppSnapshot is not mutated.
+        // Apply .alwaysOriginal AFTER any resizing — resizing via UIGraphicsContext strips the flag.
         let base = Image(uiImage: icon.withRenderingMode(.alwaysOriginal)).resizable()
         Group {
-            // In accented (tinted/clear) widget rendering mode, images render as white
-            // rectangles unless luminanceToAlpha() converts their color to opacity.
             if widgetRenderingMode == .accented {
-                base.luminanceToAlpha()
+                // luminanceToAlpha() maps brightness to opacity for the system accent color.
+                // In dark mode, colorInvert() first so dark icon backgrounds don't become transparent.
+                if colorScheme == .dark {
+                    base.colorInvert().luminanceToAlpha()
+                } else {
+                    base.luminanceToAlpha()
+                }
             } else {
                 base
             }

@@ -126,7 +126,7 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
-                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a brand new
+                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
                         // UIImage via UIGraphicsContext which strips any prior renderingMode flag.
                         let resizedIcon = icon.resizing(to: resizedSize)!
                             .withRenderingMode(.alwaysOriginal)
@@ -134,13 +134,19 @@ private struct ActiveAppsWidgetView: View
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            // In accented (tinted/clear) widget rendering mode, images render as
-                            // white rectangles unless we convert their luminance to alpha first.
-                            let iconImage = Image(uiImage: resizedIcon)
-                                .resizable()
+                            let iconImage = Image(uiImage: resizedIcon).resizable()
                             Group {
                                 if widgetRenderingMode == .accented {
-                                    iconImage.luminanceToAlpha()
+                                    // luminanceToAlpha() maps pixel brightness to opacity so the
+                                    // system accent color shows through correctly.
+                                    // In dark mode, icons have dark backgrounds which would become
+                                    // transparent — colorInvert() first fixes that so dark icons
+                                    // render correctly in dark mode tinted/clear widgets.
+                                    if colorScheme == .dark {
+                                        iconImage.colorInvert().luminanceToAlpha()
+                                    } else {
+                                        iconImage.luminanceToAlpha()
+                                    }
                                 } else {
                                     iconImage
                                 }
