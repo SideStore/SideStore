@@ -74,6 +74,9 @@ private struct ActiveAppsWidgetView: View
     
     @Environment(\.colorScheme)
     private var colorScheme
+    
+    @Environment(\.widgetRenderingMode)
+    private var widgetRenderingMode
         
     var body: some View {
         Group {
@@ -123,21 +126,27 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
-                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
-                        // UIImage via UIGraphicsContext which strips any prior renderingMode.
-                        // Without this, iOS 26 tinted/clear widgets treat the icon as a template
-                        // and render it white.
+                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a brand new
+                        // UIImage via UIGraphicsContext which strips any prior renderingMode flag.
                         let resizedIcon = icon.resizing(to: resizedSize)!
                             .withRenderingMode(.alwaysOriginal)
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            Image(uiImage: resizedIcon)
+                            // In accented (tinted/clear) widget rendering mode, images render as
+                            // white rectangles unless we convert their luminance to alpha first.
+                            let iconImage = Image(uiImage: resizedIcon)
                                 .resizable()
-                                .widgetAccentedRenderingMode(.fullColor)
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
+                            Group {
+                                if widgetRenderingMode == .accented {
+                                    iconImage.luminanceToAlpha()
+                                } else {
+                                    iconImage
+                                }
+                            }
+                            .aspectRatio(contentMode: .fit)
+                            .cornerRadius(cornerRadius)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {

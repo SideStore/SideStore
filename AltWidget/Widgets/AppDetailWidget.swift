@@ -36,6 +36,36 @@ struct AppDetailWidget: Widget
     }
 }
 
+// Extracted to scope @Environment(\.widgetRenderingMode) behind @available(iOS 16, *).
+@available(iOS 16, *)
+private struct AppIconWidgetView: View
+{
+    let icon: UIImage
+    let imageHeight: CGFloat
+    
+    @Environment(\.widgetRenderingMode)
+    private var widgetRenderingMode
+    
+    var body: some View {
+        // Apply .alwaysOriginal AFTER any resizing — resizing via UIGraphicsContext
+        // strips the renderingMode flag. We do it here rather than at snapshot time
+        // so the original UIImage stored in AppSnapshot is not mutated.
+        let base = Image(uiImage: icon.withRenderingMode(.alwaysOriginal)).resizable()
+        Group {
+            // In accented (tinted/clear) widget rendering mode, images render as white
+            // rectangles unless luminanceToAlpha() converts their color to opacity.
+            if widgetRenderingMode == .accented {
+                base.luminanceToAlpha()
+            } else {
+                base
+            }
+        }
+        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+        .frame(height: imageHeight)
+        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+    }
+}
+
 private struct AppDetailWidgetView: View
 {
     var entry: AppsEntry<Intent>
@@ -51,17 +81,17 @@ private struct AppDetailWidgetView: View
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
+                                let icon = app.icon ?? UIImage(named: "SideStore")!
                                 
-                                // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
-                                // UIImage via UIGraphicsContext which strips any prior renderingMode.
-                                // Without this, iOS 26 tinted/clear widgets treat the icon as a template.
-                                let rawIcon = app.icon ?? UIImage(named: "SideStore")!
-                                Image(uiImage: rawIcon.withRenderingMode(.alwaysOriginal))
-                                    .resizable()
-                                    .widgetAccentedRenderingMode(.fullColor)
-                                    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                    .frame(height: imageHeight)
-                                    .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                if #available(iOS 16, *) {
+                                    AppIconWidgetView(icon: icon, imageHeight: imageHeight)
+                                } else {
+                                    Image(uiImage: icon.withRenderingMode(.alwaysOriginal))
+                                        .resizable()
+                                        .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+                                        .frame(height: imageHeight)
+                                        .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                }
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -165,9 +195,8 @@ private extension AppDetailWidgetView
             height: icon.size.height * scalingFactor
         )
             
-        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
-        // UIImage via UIGraphicsContext which strips any prior renderingMode.
-        // Without this, iOS 26 tinted/clear widgets treat the icon as a template.
+        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new UIImage via
+        // UIGraphicsContext which strips any prior renderingMode flag.
         let resizedIcon = icon.resizing(to: resizedSize)!
             .withRenderingMode(.alwaysOriginal)
         
@@ -177,7 +206,6 @@ private extension AppDetailWidgetView
                 ZStack {
                     Image(uiImage: resizedIcon)
                         .resizable()
-                        .widgetAccentedRenderingMode(.fullColor)
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageHeight, height: imageHeight, alignment: .center)
                         .saturation(saturation)
