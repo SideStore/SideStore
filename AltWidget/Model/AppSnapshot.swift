@@ -20,6 +20,7 @@ struct AppSnapshot
     
     var tintColor: UIColor?
     var icon: UIImage?
+    var darkIcon: UIImage?  // Dark mode icon variant, if the app bundle provides one
 }
 
 extension AppSnapshot
@@ -42,6 +43,38 @@ extension AppSnapshot
         } else {
             self.icon = nil
         }
+        
+        // Load the dark mode icon variant from the app bundle if available.
+        // iOS 18 apps declare dark icons under CFBundleIcons~dark in Info.plist.
+        self.darkIcon = AppSnapshot.loadDarkIcon(from: installedApp.fileURL)
+    }
+    
+    // Reads the dark icon PNG from the sideloaded app bundle.
+    // The bundle's Info.plist declares it under:
+    //   CFBundleIcons~dark > CFBundlePrimaryIcon > CFBundleIconFiles
+    private static func loadDarkIcon(from appBundleURL: URL) -> UIImage?
+    {
+        let infoPlistURL = appBundleURL.appendingPathComponent("Info.plist")
+        guard let plist = NSDictionary(contentsOf: infoPlistURL),
+              let darkIcons = plist["CFBundleIcons~dark"] as? [String: Any],
+              let primaryIcon = darkIcons["CFBundlePrimaryIcon"] as? [String: Any],
+              let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+              let iconBaseName = iconFiles.last  // last entry is typically the largest
+        else { return nil }
+        
+        // Try @3x then @2x then bare filename
+        let candidates = ["\(iconBaseName)@3x", "\(iconBaseName)@2x", iconBaseName]
+        for candidate in candidates
+        {
+            let iconURL = appBundleURL.appendingPathComponent("\(candidate).png")
+            if let data = try? Data(contentsOf: iconURL),
+               let image = UIImage(data: data)
+            {
+                return image.resizing(toFill: CGSize(width: 180, height: 180))?
+                    .withRenderingMode(.alwaysOriginal)
+            }
+        }
+        return nil
     }
 }
 
