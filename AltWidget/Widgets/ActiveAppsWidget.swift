@@ -138,54 +138,61 @@ private struct ActiveAppsWidgetView: View
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
-                        HStack(spacing: 10) {
-                            Image(uiImage: resizedIcon)
-                                // Preserve the original app icon colours in tinted (accented)
-                                // mode on iOS 18+. Without this the system desaturates the
-                                // image and renders it white, which is the iOS 26 bug.
-                                // Must be applied directly on Image before any View-returning modifiers.
-                                .widgetAccentedFullColor()
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
-                            
-                            
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text(app.name)
-                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                
-                                let text = if entry.date > app.expirationDate
-                                {
-                                    Text("Expired")
+                            let iconImage: AnyView = {
+                                let base = Image(uiImage: resizedIcon).resizable()
+                                if #available(iOSApplicationExtension 18, *) {
+                                    // Preserve full colour in tinted (accented) mode on iOS 18+.
+                                    // Without this the system renders the icon white.
+                                    return AnyView(base.widgetAccentedRenderingMode(.fullColor)
+                                        .aspectRatio(contentMode: .fit)
+                                        .cornerRadius(cornerRadius))
+                                } else {
+                                    return AnyView(base
+                                        .aspectRatio(contentMode: .fit)
+                                        .cornerRadius(cornerRadius))
                                 }
-                                else
-                                {
-                                    Text("Expires in \(daysRemaining) ") + (daysRemaining == 1 ? Text("day") : Text("days"))
-                                }
-                                
-                                text
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            Countdown(startDate: app.refreshedDate,
-                                      endDate: app.expirationDate,
-                                      currentDate: entry.date,
-                                      strokeWidth: 3.0) // Slightly thinner circle stroke width
-                            .background {
-                                Color.black.opacity(0.1)
-                                    .mask(Capsule())
-                                    .padding(.all, -5)
-                            }
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
-                            .activatesRefreshAllAppsIntent()
-                            // this modifier invalidates the view (disables user interaction and shows a blinking effect)
-                            .invalidatableContent()
+                            }()
 
-                        }
-                        .frame(height: rowHeight)
+                            HStack(spacing: 10) {
+                                iconImage
+                            
+                            
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(app.name)
+                                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                    
+                                    let text = if entry.date > app.expirationDate
+                                    {
+                                        Text("Expired")
+                                    }
+                                    else
+                                    {
+                                        Text("Expires in \(daysRemaining) ") + (daysRemaining == 1 ? Text("day") : Text("days"))
+                                    }
+                                    
+                                    text
+                                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Countdown(startDate: app.refreshedDate,
+                                          endDate: app.expirationDate,
+                                          currentDate: entry.date,
+                                          strokeWidth: 3.0) // Slightly thinner circle stroke width
+                                .background {
+                                    Color.black.opacity(0.1)
+                                        .mask(Capsule())
+                                        .padding(.all, -5)
+                                }
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .activatesRefreshAllAppsIntent()
+                                // this modifier invalidates the view (disables user interaction and shows a blinking effect)
+                                .invalidatableContent()
+
+                            }
+                            .frame(height: rowHeight)
                     
                     }
                 }
