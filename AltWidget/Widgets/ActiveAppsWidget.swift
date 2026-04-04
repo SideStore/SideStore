@@ -123,26 +123,21 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
+                        // Apply .alwaysOriginal AFTER resizing() — resizing() creates a new
+                        // UIImage via UIGraphicsContext which strips any prior renderingMode.
+                        // Without this, iOS 26 tinted/clear widgets treat the icon as a template
+                        // and render it white.
                         let resizedIcon = icon.resizing(to: resizedSize)!
+                            .withRenderingMode(.alwaysOriginal)
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
-                            Group {
-                                if #available(iOS 18, *) {
-                                    // In iOS 16+ tinted/clear widget modes, WidgetKit desaturates images
-                                    // by default. .widgetAccentedRenderingMode(.fullColor) opts out of
-                                    // that so the app icon always renders in full color.
-                                    Image(uiImage: resizedIcon)
-                                        .resizable()
-                                        .widgetAccentedRenderingMode(.fullColor)
-                                } else {
-                                    Image(uiImage: resizedIcon)
-                                        .resizable()
-                                }
-                            }
-                            .aspectRatio(contentMode: .fit)
-                            .cornerRadius(cornerRadius)
+                            Image(uiImage: resizedIcon)
+                                .resizable()
+                                .widgetAccentedRenderingMode(.fullColor)
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(cornerRadius)
                             
                             
                             VStack(alignment: .leading, spacing: 1) {
