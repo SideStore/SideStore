@@ -79,3 +79,22 @@ extension View
     }
 
 }
+
+// Added for iOS 18+ tinted widget icon fix.
+extension View {
+    /// Applies `.widgetAccentedRenderingMode(.fullColor)` on iOS 18+ so app icons
+    /// retain their original colours in tinted (accented) widget mode instead of
+    /// being rendered as white silhouettes. No-op on older OS versions.
+    @ViewBuilder
+    func widgetAccentedFullColor() -> some View
+    {
+        if #available(iOSApplicationExtension 18, *)
+        {
+            self.widgetAccentedRenderingMode(.fullColor)
+        }
+        else
+        {
+            self
+        }
+    }
+}
