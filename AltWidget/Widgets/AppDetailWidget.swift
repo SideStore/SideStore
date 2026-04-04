@@ -167,10 +167,10 @@ private extension AppDetailWidgetView
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
+                        .resizable()
                         // Prevents any inherited .foregroundStyle from tinting this image white
                         // in iOS 26 clear/tinted widget rendering modes.
                         .foregroundStyle(.primary)
-                        .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageHeight, height: imageHeight, alignment: .center)
                         .saturation(saturation)
