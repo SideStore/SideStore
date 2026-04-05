@@ -130,7 +130,7 @@ private struct AppDetailWidgetView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .widgetBackground(
+        .background(
             backgroundView(
                 icon: entry.apps.first?.icon,
                 tintColor: entry.apps.first?.tintColor
@@ -152,13 +152,8 @@ private struct AppIconView: View
             .resizable()
             .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
             .frame(height: imageHeight)
-            .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-            // In tinted (accented) mode the system needs luminance→alpha conversion
-            // so it can tint the icon with the user's chosen accent colour.
-            // Without this the icon appears as a white rectangle.
-            // luminanceToAlpha() + widgetAccentable() is the correct pattern per
-            // https://www.createwithswift.com/adapting-widgets-for-tint-mode-and-dark-mode-in-swiftui/
             .luminanceToAlphaInAccentedMode()
+            .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
             .widgetAccentableIfAvailable()
     }
 }
