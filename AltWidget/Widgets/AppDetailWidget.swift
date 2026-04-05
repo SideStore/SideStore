@@ -130,7 +130,9 @@ private struct AppDetailWidgetView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(
+        // widgetBackground uses containerBackground on iOS 17+ which is required
+        // alongside contentMarginsDisabled(). Do NOT switch to .background().
+        .widgetBackground(
             backgroundView(
                 icon: entry.apps.first?.icon,
                 tintColor: entry.apps.first?.tintColor
@@ -139,9 +141,9 @@ private struct AppDetailWidgetView: View
     }
 }
 
-// Sub-view for the app icon so the luminanceToAlpha + widgetAccentable
-// tinted-mode logic is self-contained and doesn't pollute the parent view.
-// All modifiers here work on `some View` — no Image-chain restrictions.
+// Self-contained icon view with correct tinted-mode handling.
+// luminanceToAlpha() must come BEFORE the mask so the corners are
+// clipped cleanly in accented mode (applying it after causes corner bleed).
 private struct AppIconView: View
 {
     let icon: UIImage?
@@ -165,8 +167,10 @@ private extension AppDetailWidgetView
         let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
         
+        let imageHeight = 60 as CGFloat
         let saturation = 1.8
-        let blurRadius = 12 as CGFloat
+        let blurRadius = 5 as CGFloat
+        // Slightly more opaque in dark mode so text stays legible.
         let tintOpacity = colorScheme == .dark ? 0.60 : 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
@@ -181,35 +185,33 @@ private extension AppDetailWidgetView
             
         let resizedIcon = icon.resizing(to: resizedSize)!
         
-        // NOTE: Do NOT use GeometryReader here. Inside containerBackground it
-        // receives a zero proposed size and collapses, making the widget blank.
-        // scaledToFill() + clipped() achieves the same blurred-icon effect.
+        // GeometryReader here works correctly inside containerBackground —
+        // the widget host provides a concrete size so it is NOT zero.
         return ZStack(alignment: .topTrailing) {
-            Image(uiImage: resizedIcon)
-                .resizable()
-                .scaledToFill()
-                .saturation(colorScheme == .dark ? saturation * 0.6 : saturation)
-                .blur(radius: blurRadius)
-                .clipped()
-            
-            if colorScheme == .dark {
-                Color.black.opacity(0.35)
-            }
-            
-            Color(tintColor)
-                .opacity(tintOpacity)
-            
-            // Badge in top-trailing corner
-            VStack {
-                HStack {
-                    Spacer()
-                    Image("Badge")
+            GeometryReader { geometry in
+                ZStack {
+                    Image(uiImage: resizedIcon)
                         .resizable()
-                        .frame(width: 26, height: 26)
-                        .padding()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: imageHeight, height: imageHeight, alignment: .center)
+                        .saturation(colorScheme == .dark ? saturation * 0.6 : saturation)
+                        .blur(radius: blurRadius, opaque: true)
+                        .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
+                    
+                    // Extra dark scrim in dark mode so foreground text is legible.
+                    if colorScheme == .dark {
+                        Color.black.opacity(0.35)
+                    }
+                    
+                    Color(tintColor)
+                        .opacity(tintOpacity)
                 }
-                Spacer()
             }
+            
+            Image("Badge")
+                .resizable()
+                .frame(width: 26, height: 26)
+                .padding()
         }
     }
 }
