@@ -19,7 +19,7 @@ struct AppDetailWidget: Widget
         // containerBackground and contentMarginsDisabled(), unlike the legacy
         // IntentConfiguration which breaks on iOS 17+ with the
         // "Please adopt containerBackground" error.
-        if #available(iOSApplicationExtension 16, *)
+        if #available(iOSApplicationExtension 17, *)
         {
             return AppIntentConfiguration(
                 kind: kind,
