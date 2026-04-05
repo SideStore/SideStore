@@ -126,9 +126,9 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
         {
             firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to creating 10 App IDs per week.", comment: "")
         }
-        
-        let message = firstSentence + " " + NSLocalizedString("Remove this app's extensions so they don't count toward your limit?", comment: "") + " " + String(format: NSLocalizedString("Number of Extensions: %d.", comment: ""), extensions.count)
-        
+
+        let message = firstSentence + " " + NSLocalizedString("Remove this app's extensions so they don't count toward your limit?", comment: "") + " " + "\(NSLocalizedString("Number of Extensions:", comment: "")) \(extensions.count)."
+
         let alertController = UIAlertController(title: NSLocalizedString("App Contains Extensions", comment: ""), message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { (action) in
             self.finish(.failure(OperationError.cancelled))
