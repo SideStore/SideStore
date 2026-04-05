@@ -198,7 +198,10 @@ private struct AppDetailWidgetView: View
     }
 }
 
-// Tinted-mode icon: widgetAccentable lets the system tint correctly.
+// In tinted/clear mode: luminanceToAlpha converts pixel brightness → opacity so
+// the system can overlay the accent colour. Must come BEFORE the mask so the
+// squircle corners are clipped after conversion (reverse order = corner bleed).
+// widgetAccentable() opts the result into the accent group.
 private struct AppIconView: View
 {
     let icon: UIImage?
@@ -209,6 +212,7 @@ private struct AppIconView: View
             .resizable()
             .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
             .frame(height: imageHeight)
+            .luminanceToAlphaInAccentedMode()
             .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
             .widgetAccentableIfAvailable()
     }
