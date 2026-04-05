@@ -2,40 +2,35 @@
 //  ViewAppIntent.swift
 //  AltWidgetExtension
 //
-//  Replaces the legacy SiriKit-based ViewAppIntent (from ViewApp.intentdefinition)
-//  with a modern AppIntents-based intent, required for iOS 17+ widget compatibility.
-//  IntentConfiguration (old API) does not support containerBackground on iOS 17+,
-//  causing the "Please adopt containerBackground" error.
+//  Replaces the legacy SiriKit ViewAppIntent (ViewApp.intentdefinition) with a
+//  modern AppIntents-based intent. Required because IntentConfiguration does not
+//  support containerBackground on iOS 17+, causing the blank-widget bug.
 //
 
 import AppIntents
 import WidgetKit
 import AltStoreCore
 
-// Mirrors the App type from the old intentdefinition — just the bundle identifier.
-@available(iOS 16, *)
-struct AppEntity: AppEntity
+// Represents one installed app in the picker list.
+@available(iOSApplicationExtension 16, *)
+struct InstalledAppEntity: AppEntity
 {
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "App"
-    static var defaultQuery = AppEntityQuery()
+    // Disambiguates from the AppEntity name used in AppIntents framework.
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Installed App"
+    static var defaultQuery = InstalledAppQuery()
 
     var id: String // bundle identifier
-    var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(displayName)")
-    }
-    var displayName: String
+    var name: String
 
-    init(id: String, displayName: String)
-    {
-        self.id = id
-        self.displayName = displayName
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(name)")
     }
 }
 
-@available(iOS 16, *)
-struct AppEntityQuery: EntityQuery
+@available(iOSApplicationExtension 16, *)
+struct InstalledAppQuery: EntityQuery
 {
-    func entities(for identifiers: [String]) async throws -> [AppEntity]
+    func entities(for identifiers: [String]) async throws -> [InstalledAppEntity]
     {
         try await DatabaseManager.shared.start()
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
@@ -48,28 +43,31 @@ struct AppEntityQuery: EntityQuery
             )
             fetchRequest.returnsObjectsAsFaults = false
             let apps = try context.fetch(fetchRequest)
-            return apps.map { AppEntity(id: $0.bundleIdentifier, displayName: $0.name) }
+            return apps.map { InstalledAppEntity(id: $0.bundleIdentifier, name: $0.name) }
         }
     }
 
-    func suggestedEntities() async throws -> [AppEntity]
+    func suggestedEntities() async throws -> [InstalledAppEntity]
     {
         try await DatabaseManager.shared.start()
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         return try await context.performAsync {
-            let apps = InstalledApp.all(in: context)
-            return apps.map { AppEntity(id: $0.bundleIdentifier, displayName: $0.name) }
-                .sorted { $0.displayName < $1.displayName }
+            InstalledApp.all(in: context)
+                .map { InstalledAppEntity(id: $0.bundleIdentifier, name: $0.name) }
+                .sorted { $0.name < $1.name }
         }
     }
 }
 
-@available(iOS 16, *)
+@available(iOSApplicationExtension 16, *)
 struct SelectAppIntent: WidgetConfigurationIntent
 {
     static var title: LocalizedStringResource = "Select App"
     static var description = IntentDescription("Choose which app to display.")
 
     @Parameter(title: "App")
-    var app: AppEntity?
+    var app: InstalledAppEntity?
+
+    // WidgetConfigurationIntent requires perform() — no-op for configuration intents.
+    func perform() async throws -> some IntentResult { .result() }
 }
