@@ -12,7 +12,7 @@ import WidgetKit
 import AltStoreCore
 
 // Represents one installed app in the picker list.
-@available(iOSApplicationExtension 16, *)
+@available(iOSApplicationExtension 17, *)
 struct InstalledAppEntity: AppEntity
 {
     // Disambiguates from the AppEntity name used in AppIntents framework.
@@ -27,7 +27,7 @@ struct InstalledAppEntity: AppEntity
     }
 }
 
-@available(iOSApplicationExtension 16, *)
+@available(iOSApplicationExtension 17, *)
 struct InstalledAppQuery: EntityQuery
 {
     func entities(for identifiers: [String]) async throws -> [InstalledAppEntity]
@@ -59,7 +59,7 @@ struct InstalledAppQuery: EntityQuery
     }
 }
 
-@available(iOSApplicationExtension 16, *)
+@available(iOSApplicationExtension 17, *)
 struct SelectAppIntent: WidgetConfigurationIntent
 {
     static var title: LocalizedStringResource = "Select App"
