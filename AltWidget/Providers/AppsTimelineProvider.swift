@@ -225,7 +225,7 @@ class AppsTimelineProvider: AppsTimelineProviderBase<Intent>, IntentTimelineProv
 // Modern AppIntents-based provider for AppDetailWidget on iOS 16+.
 // Replaces AppsTimelineProvider (IntentTimelineProvider) which uses the legacy
 // SiriKit Intents framework that breaks containerBackground on iOS 17+.
-@available(iOSApplicationExtension 16, *)
+@available(iOSApplicationExtension 17, *)
 class SelectAppTimelineProvider: AppsTimelineProviderBase<SelectAppIntent>, AppIntentTimelineProvider
 {
     typealias Intent = SelectAppIntent
