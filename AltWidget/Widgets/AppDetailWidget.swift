@@ -61,7 +61,6 @@ private struct AppDetailWidgetView: View
                                     .minimumScaleFactor(0.5)
                             }
                             .fixedSize(horizontal: false, vertical: true)
-                            .widgetAccentableIfAvailable()
                             
                             Spacer(minLength: 0)
                             
@@ -105,7 +104,6 @@ private struct AppDetailWidgetView: View
                             }
                             .fixedSize(horizontal: false, vertical: true)
                             .activatesRefreshAllAppsIntent()
-                            .widgetAccentableIfAvailable()
                         }
                         .padding()
                     }
@@ -114,8 +112,6 @@ private struct AppDetailWidgetView: View
             else
             {
                 VStack {
-                    // Put conditional inside VStack, or else an empty view will be returned
-                    // if isPlaceholder == false, which messes up layout.
                     if !entry.isPlaceholder
                     {
                         Text("App Not Found")
@@ -127,6 +123,10 @@ private struct AppDetailWidgetView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        // On iOS 17+ with contentMarginsDisabled(), containerBackground is still
+        // required — it must be applied as a modifier on the foreground content,
+        // with the background view passed as the closure body.
+        // The widgetBackground helper does exactly this correctly.
         .widgetBackground(
             backgroundView(
                 icon: entry.apps.first?.icon,
@@ -136,9 +136,7 @@ private struct AppDetailWidgetView: View
     }
 }
 
-// Tinted-mode icon: widgetAccentable lets the system tint the icon correctly.
-// luminanceToAlpha is NOT used — for app icons widgetAccentable alone is correct;
-// luminanceToAlpha would turn the bright icon white in tinted/clear mode.
+// Tinted-mode icon: widgetAccentable lets the system tint correctly.
 private struct AppIconView: View
 {
     let icon: UIImage?
@@ -150,7 +148,6 @@ private struct AppIconView: View
             .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
             .frame(height: imageHeight)
             .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
-            .widgetAccentableIfAvailable()
     }
 }
 
@@ -166,9 +163,6 @@ private extension AppDetailWidgetView
         let blurRadius = 5 as CGFloat
         let tintOpacity = 0.45
         
-        // 1024x1024 images are not supported by previews but supported by device
-        // so we scale the image to 97% so as to reduce its actual size but not too much
-        // to somewhere below value, acceptable by previews ie < 1042x948
         let scalingFactor = 0.97
         
         let resizedSize = CGSize(
@@ -179,7 +173,6 @@ private extension AppDetailWidgetView
         let resizedIcon = icon.resizing(to: resizedSize)!
         
         return ZStack(alignment: .topTrailing) {
-            // Blurred Image
             GeometryReader { geometry in
                 ZStack {
                     Image(uiImage: resizedIcon)
