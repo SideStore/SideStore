@@ -170,9 +170,8 @@ private extension AppDetailWidgetView
         let icon = icon ?? UIImage(named: "SideStore")!
         let tintColor = tintColor ?? .gray
         
-        let imageHeight = 60 as CGFloat
         let saturation = 1.8
-        let blurRadius = 5 as CGFloat
+        let blurRadius = 12 as CGFloat
         let tintOpacity = colorScheme == .dark ? 0.60 : 0.45
         
         // 1024x1024 images are not supported by previews but supported by device
@@ -187,30 +186,35 @@ private extension AppDetailWidgetView
             
         let resizedIcon = icon.resizing(to: resizedSize)!
         
+        // NOTE: Do NOT use GeometryReader here. Inside containerBackground it
+        // receives a zero proposed size and collapses, making the widget blank.
+        // scaledToFill() + clipped() achieves the same blurred-icon effect.
         return ZStack(alignment: .topTrailing) {
-            GeometryReader { geometry in
-                ZStack {
-                    Image(uiImage: resizedIcon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: imageHeight, height: imageHeight, alignment: .center)
-                        .saturation(colorScheme == .dark ? saturation * 0.6 : saturation)
-                        .blur(radius: blurRadius, opaque: true)
-                        .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
-                    
-                    if colorScheme == .dark {
-                        Color.black.opacity(0.35)
-                    }
-                    
-                    Color(tintColor)
-                        .opacity(tintOpacity)
-                }
+            Image(uiImage: resizedIcon)
+                .resizable()
+                .scaledToFill()
+                .saturation(colorScheme == .dark ? saturation * 0.6 : saturation)
+                .blur(radius: blurRadius)
+                .clipped()
+            
+            if colorScheme == .dark {
+                Color.black.opacity(0.35)
             }
             
-            Image("Badge")
-                .resizable()
-                .frame(width: 26, height: 26)
-                .padding()
+            Color(tintColor)
+                .opacity(tintOpacity)
+            
+            // Badge in top-trailing corner
+            VStack {
+                HStack {
+                    Spacer()
+                    Image("Badge")
+                        .resizable()
+                        .frame(width: 26, height: 26)
+                        .padding()
+                }
+                Spacer()
+            }
         }
     }
 }

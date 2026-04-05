@@ -144,7 +144,7 @@ private struct ActiveAppsWidgetView: View
                             Image(uiImage: resizedIcon)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
+                                .mask(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                                 .luminanceToAlphaInAccentedMode()
                                 .widgetAccentableIfAvailable()
                             
