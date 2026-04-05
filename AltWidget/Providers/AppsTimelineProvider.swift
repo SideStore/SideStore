@@ -221,3 +221,24 @@ class AppsTimelineProvider: AppsTimelineProviderBase<Intent>, IntentTimelineProv
         }
     }
 }
+
+// Modern AppIntents-based provider for AppDetailWidget on iOS 16+.
+// Replaces AppsTimelineProvider (IntentTimelineProvider) which uses the legacy
+// SiriKit Intents framework that breaks containerBackground on iOS 17+.
+@available(iOS 16, *)
+class SelectAppTimelineProvider: AppsTimelineProviderBase<SelectAppIntent>, AppIntentTimelineProvider
+{
+    typealias Intent = SelectAppIntent
+
+    func snapshot(for intent: SelectAppIntent, in context: Context) async -> AppsEntry<SelectAppIntent>
+    {
+        let bundleID = intent.app?.id ?? StoreApp.altstoreAppID
+        return await self.snapshot(for: [bundleID], in: intent)
+    }
+
+    func timeline(for intent: SelectAppIntent, in context: Context) async -> Timeline<AppsEntry<SelectAppIntent>>
+    {
+        let bundleID = intent.app?.id ?? StoreApp.altstoreAppID
+        return await self.timeline(for: [bundleID], in: intent)
+    }
+}
