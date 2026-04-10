@@ -85,12 +85,12 @@ extension ProcessInfo {
     }
     
     public var sparseRestorePatched: Bool {
-        if operatingSystemVersion < OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 0) { false }
-        else if operatingSystemVersion > OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 1) { true }
-        else if operatingSystemVersion >= OperatingSystemVersion(majorVersion: 18, minorVersion: 1, patchVersion: 0),
-                let currentBuild = BuildVersion(operatingSystemBuild),
-                let targetBuild  = BuildVersion("22B5054e") {
-            currentBuild >= targetBuild
-        } else { false }
+        // only true if we are 18.7.2<=26 || >=26.0.2
+        if (OperatingSystemVersion(majorVersion: 18, minorVersion: 7, patchVersion: 2) <= operatingSystemVersion && operatingSystemVersion.majorVersion == 18) || operatingSystemVersion >= OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 2) { true }
+        // we are 26.0<26.0.2
+        else if operatingSystemVersion < OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 2) { false }
+        // we are <18.7.2
+        else if operatingSystemVersion < OperatingSystemVersion(majorVersion: 18, minorVersion: 7, patchVersion: 2) { false }
+        else { true }
     }
 }
