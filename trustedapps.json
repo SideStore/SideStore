@@ -14,7 +14,7 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
     },
     {
       "identifier": "com.aoshuang.manicemu",
@@ -95,7 +95,7 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
     },
     {
       "identifier": "com.aoshuang.manicemu",
