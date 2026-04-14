@@ -68,14 +68,7 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                if #available(iOSApplicationExtension 16, *)
-                                {
-                                    AppIconView(app: app, imageHeight: imageHeight)
-                                }
-                                else
-                                {
-                                    AppIconViewLegacy(app: app, imageHeight: imageHeight)
-                                }
+                                AppIconView(icon: app.icon, imageHeight: imageHeight)
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -209,27 +202,12 @@ private struct AppDetailWidgetView: View
 // the system can overlay the accent colour. Must come BEFORE the mask so the
 // squircle corners are clipped after conversion (reverse order = corner bleed).
 // widgetAccentable() opts the result into the accent group.
-// Dark/tinted/clear: uses the app's dark icon variant when available (iOS 18+).
-
-// iOS 16+ version — reads widgetRenderingMode to detect accented mode.
-// Uses explicit ~dark/~tinted icon variants when the app ships them.
-// Falls back to the standard icon otherwise — the widget background already
-// handles the dark appearance; we don't manipulate icon colours ourselves.
-@available(iOSApplicationExtension 16, *)
 private struct AppIconView: View
 {
-    let app: AppSnapshot
+    let icon: UIImage?
     let imageHeight: CGFloat
 
-    @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.widgetRenderingMode) private var renderingMode
-
     var body: some View {
-        let isAccented = renderingMode == .accented
-        let icon = app.resolvedIcon(
-            colorScheme: colorScheme == .dark ? .dark : .light,
-            isAccented: isAccented
-        )
         Image(uiImage: icon ?? UIImage())
             .resizable()
             .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
@@ -237,27 +215,6 @@ private struct AppIconView: View
             .luminanceToAlphaInAccentedMode()
             .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
             .widgetAccentableIfAvailable()
-    }
-}
-
-// Pre-iOS 16 fallback — no rendering mode, uses colorScheme only.
-private struct AppIconViewLegacy: View
-{
-    let app: AppSnapshot
-    let imageHeight: CGFloat
-
-    @Environment(\.colorScheme) private var colorScheme
-
-    var body: some View {
-        let icon = app.resolvedIcon(
-            colorScheme: colorScheme == .dark ? .dark : .light,
-            isAccented: false
-        )
-        Image(uiImage: icon ?? UIImage())
-            .resizable()
-            .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-            .frame(height: imageHeight)
-            .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
     }
 }
 

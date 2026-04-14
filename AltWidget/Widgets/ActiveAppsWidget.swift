@@ -122,32 +122,25 @@ private struct ActiveAppsWidgetView: View
                     
                         let icon: UIImage = app.icon ?? UIImage(named: "SideStore")!
                         
-                        // Pick the correct icon variant:
-                        // - accented (tinted/clear): dark variant if available (iOS 26 uses
-                        //   the dark icon as the base for tinting)
-                        // - dark mode: dark variant if available
-                        // - light mode: standard icon
-                        let isAccented = renderingMode == .accented
-                        let resolvedIcon: UIImage = app.resolvedIcon(
-                            colorScheme: colorScheme == .dark ? .dark : .light,
-                            isAccented: isAccented
-                        ) ?? icon
-                        
                         // 1024x1024 images are not supported by previews but supported by device
                         // so we scale the image to 97% so as to reduce its actual size but not too much
                         // to somewhere below value, acceptable by previews ie < 1042x948
                         let scalingFactor = 0.97
                         
                         let resizedSize = CGSize(
-                            width:  resolvedIcon.size.width * scalingFactor,
-                            height: resolvedIcon.size.height * scalingFactor
+                            width:  icon.size.width * scalingFactor,
+                            height: icon.size.height * scalingFactor
                         )
                         
-                        let resizedIcon = resolvedIcon.resizing(to: resizedSize)!
+                        let resizedIcon = icon.resizing(to: resizedSize)!
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
+                            // In tinted (accented) mode, luminanceToAlpha() converts the icon's
+                            // brightness into opacity so the system can tint it with the user's
+                            // chosen accent colour. widgetAccentable() opts the view into that
+                            // accent group. In fullColor mode both are no-ops (via the helpers).
                             Image(uiImage: resizedIcon)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
