@@ -79,9 +79,8 @@ extension View
         }
     }
 
-    /// Opts this view into the widget accent group on iOS 16+, which lets the
-    /// system tint it with the user's chosen colour in tinted (accented) mode.
-    /// No-op on older OS versions where the API does not exist.
+    /// Opts this view into the widget accent group on iOS 16+, which lets the system tint it with the user's chosen colour in tinted (accented) mode.
+    /// Doesn't apply on older OS versions where the API does not exist.
     @ViewBuilder
     func widgetAccentableIfAvailable() -> some View
     {
@@ -95,11 +94,8 @@ extension View
         }
     }
 
-    /// Applies `luminanceToAlpha()` only when the widget is rendering in
-    /// accented (tinted) mode on iOS 16+. This converts the view's pixel
-    /// brightness into opacity so the system can overlay the user's chosen
-    /// tint colour correctly — without it, images appear as white rectangles
-    /// in tinted mode. No-op in fullColor/dark/light mode and on older OS.
+    /// Applies `luminanceToAlpha()` only when the widget is rendering in accented (tinted) mode on iOS 16+. This converts the view's pixel brightness into opacity so the system can overlay the user's chosen tint colour correctly — without it, images appear as white rectangles in tinted mode.
+    /// Doesn't apply in fullColor/dark/light mode and on older OS.
     @ViewBuilder
     func luminanceToAlphaInAccentedMode() -> some View
     {
@@ -115,9 +111,7 @@ extension View
 
 }
 
-/// Helper view that reads widgetRenderingMode (iOS 16+) and conditionally
-/// applies luminanceToAlpha(). Kept separate so the environment read is
-/// cleanly scoped behind the @available gate.
+/// Helper view that reads widgetRenderingMode (iOS 16+) and conditionally applies luminanceToAlpha(). Kept separate so the environment read is cleanly scoped behind the @available gate.
 @available(iOSApplicationExtension 16, *)
 private struct LuminanceToAlphaWrapper<Content: View>: View
 {
