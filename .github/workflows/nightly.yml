@@ -97,7 +97,7 @@ jobs:
           steps.build_gate.outputs.should_skip != 'true' &&
           steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
