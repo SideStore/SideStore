@@ -33,13 +33,13 @@ jobs:
           echo "MARKETING_VERSION=$NORMALIZED_VERSION" | tee -a $GITHUB_ENV
 
       - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1.6.0
+        uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: "26.2"
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -49,7 +49,7 @@ jobs:
       - name: Restore Cache (last)
         if: steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -74,17 +74,17 @@ jobs:
             ~/Library/Caches/org.swift.swiftpm
           key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-logs-${{ env.MARKETING_VERSION }}.zip
           path: build-logs.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}.ipa
           path: SideStore-${{ env.MARKETING_VERSION }}.ipa
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}-dSYMs.zip
           path: SideStore.dSYMs.zip
