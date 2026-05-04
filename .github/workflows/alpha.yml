@@ -60,7 +60,7 @@ jobs:
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -70,7 +70,7 @@ jobs:
       - name: Restore Cache (last)
         if: steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
