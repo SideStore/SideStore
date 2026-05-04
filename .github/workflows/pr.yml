@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 1    # shallow clone just for PR
@@ -67,7 +67,7 @@ jobs:
 
       - name: Save Cache
         if: ${{ steps.xcode-cache-fallback.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
