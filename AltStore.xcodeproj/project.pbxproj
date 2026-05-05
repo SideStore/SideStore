@@ -2535,10 +2535,12 @@
 		};
 		A8C6D50B2D1EE87600DF01F1 /* AltSign-Static */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = A803924C2F552FDA00097AF1 /* XCRemoteSwiftPackageReference "AltSign" */;
 			productName = "AltSign-Static";
 		};
 		A8EB89CB2F5451AF0094BC01 /* Minimuxer */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = A80392492F552F4C00097AF1 /* XCRemoteSwiftPackageReference "minimuxer" */;
 			productName = Minimuxer;
 		};
 		A8EB89CD2F5451B50094BC01 /* SemanticVersion */ = {
