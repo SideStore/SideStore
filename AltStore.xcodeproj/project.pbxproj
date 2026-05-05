@@ -2427,8 +2427,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SideStore/AltSign";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 		A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */ = {
