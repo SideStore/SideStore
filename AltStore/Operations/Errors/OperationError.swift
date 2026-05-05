@@ -9,7 +9,6 @@
 import Foundation
 import AltSign
 import AltStoreCore
-import minimuxer
 
 extension OperationError
 {
@@ -201,7 +200,7 @@ struct OperationError: ALTLocalizedError {
         case .unknownResult: return NSLocalizedString("The operation returned an unknown result.", comment: "")
         case .timedOut: return NSLocalizedString("The operation timed out.", comment: "")
         case .notAuthenticated: return NSLocalizedString("You are not signed in.", comment: "")
-        case .unknownUDID: return NSLocalizedString("SideStore could not determine this device's UDID.", comment: "")
+        case .unknownUDID: return NSLocalizedString("SideStore could not determine this device's UDID. Please replace your pairing using iloader.", comment: "")
         case .invalidApp: return NSLocalizedString("The app is in an invalid format.", comment: "")
         case .maximumAppIDLimitReached: return NSLocalizedString("Cannot register more than 10 App IDs within a 7 day period.", comment: "")
         case .noSources: return NSLocalizedString("There are no SideStore sources.", comment: "")
@@ -220,16 +219,16 @@ struct OperationError: ALTLocalizedError {
         case .openAppFailed:
             let appName = self.appName ?? NSLocalizedString("The app", comment: "")
             return String(format: NSLocalizedString("SideStore was denied permission to launch %@.", comment: ""), appName)
-        case .noWiFi: return NSLocalizedString("You do not appear to be connected to WiFi and/or the WireGuard VPN!\nSideStore will never be able to install or refresh applications without WiFi and the WireGuard VPN.", comment: "")
-        case .tooNewError: return NSLocalizedString("iOS 17 has changed how JIT is enabled therefore SideStore cannot enable it without SideJITServer at this time, sorry for any inconvenience.\nWe will let everyone know once we have a solution!", comment: "")
-        case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer Please check that you are on the Same Wi-Fi and your Firewall has been set correctly", comment: "")
-        case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice Please make sure you have paired your Device by doing 'SideJITServer -y' or try Refreshing SideJITServer from Settings", comment: "")
-        case .wrongSideJITIP: return NSLocalizedString("Incorrect SideJITServer IP Please make sure that you are on the Samw Wifi as SideJITServer", comment: "")
-        case .refreshsidejit: return NSLocalizedString("Unable to find App Please try Refreshing SideJITServer from Settings", comment: "")
-        case .anisetteV1Error: return NSLocalizedString("An error occurred when getting anisette data from a V1 server: %@. Try using another anisette server.", comment: "")
-        case .provisioningError: return NSLocalizedString("An error occurred when provisioning: %@ %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
-        case .anisetteV3Error: return NSLocalizedString("An error occurred when getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
-        case .cacheClearError: return NSLocalizedString("An error occurred while clearing cache: %@", comment: "")
+        case .noWiFi: return NSLocalizedString("You do not appear to be connected to Wi-Fi and/or LocalDevVPN!\nSideStore cannot install or refresh applications without Wi-Fi and LocalDevVPN. If both are connected, replace your pairing with iloader.", comment: "")
+        case .tooNewError: return NSLocalizedString("iOS 17.0-17.3.1 changed how JIT is enabled so SideStore cannot enable JIT without SideJITServer on these versions, sorry for any inconvenience.", comment: "")
+        case .unableToConnectSideJIT: return NSLocalizedString("Unable to connect to SideJITServer. Please check that you are on the same Wi-Fi of and your Firewall has been set correctly on your server.", comment: "")
+        case .unableToRespondSideJITDevice: return NSLocalizedString("SideJITServer is unable to connect to your iDevice. Please make sure you have paired your iDevice by running 'SideJITServer -y', or try refreshing SideJITServer from Settings.", comment: "")
+        case .wrongSideJITIP: return NSLocalizedString("Incorrect SideJITServer IP. Please make sure that you are on the same Wi-Fi as SideJITServer", comment: "")
+        case .refreshsidejit: return NSLocalizedString("Unable to find app; Please try refreshing SideJITServer from Settings.", comment: "")
+        case .anisetteV1Error: return NSLocalizedString("An error occurred while getting anisette data from a V1 server: %@. Try using another anisette server.", comment: "")
+        case .provisioningError: return NSLocalizedString("An error occurred while provisioning: %@ %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
+        case .anisetteV3Error: return NSLocalizedString("An error occurred while getting anisette data from a V3 server: %@. Please try again. If the issue persists, report it on GitHub Issues!", comment: "")
+        case .cacheClearError: return NSLocalizedString("An error occurred while clearing the cache: %@", comment: "")
         case .SideJITIssue: return NSLocalizedString("An error occurred while using SideJIT: %@", comment: "")
             
         case .refreshAppFailed:
@@ -260,7 +259,7 @@ struct OperationError: ALTLocalizedError {
     var recoverySuggestion: String? {
         switch self.code
         {
-        case .noWiFi: return NSLocalizedString("Make sure the VPN is toggled on and you are connected to any WiFi network!", comment: "")
+        case .noWiFi: return NSLocalizedString("Make sure LocalDevVPN is connected and that you are connected to any Wi-Fi network!", comment: "")
         case .serverNotFound: return NSLocalizedString("Make sure you're on the same Wi-Fi network as a computer running AltServer, or try connecting this device to your computer via USB.", comment: "")
         case .maximumAppIDLimitReached:
             let baseMessage = NSLocalizedString("Delete sideloaded apps to free up App ID slots.", comment: "")
@@ -299,69 +298,5 @@ struct OperationError: ALTLocalizedError {
             
         default: return nil
         }
-    }
-}
-
-extension MinimuxerError: LocalizedError {
-    public var failureReason: String? {
-        switch self {
-        case .NoDevice:
-            return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
-        case .NoConnection:
-            return NSLocalizedString("Unable to connect to the device, make sure Wireguard is enabled and you're connected to WiFi. This could mean an invalid pairing.", comment: "")
-        case .PairingFile:
-            return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use jitterbugpair to generate it", comment: "")
-            
-        case .CreateDebug:
-            return self.createService(name: "debug")
-        case .LookupApps:
-            return self.getFromDevice(name: "installed apps")
-        case .FindApp:
-            return self.getFromDevice(name: "path to the app")
-        case .BundlePath:
-            return self.getFromDevice(name: "bundle path")
-        case .MaxPacket:
-            return self.setArgument(name: "max packet")
-        case .WorkingDirectory:
-            return self.setArgument(name: "working directory")
-        case .Argv:
-            return self.setArgument(name: "argv")
-        case .LaunchSuccess:
-            return self.getFromDevice(name: "launch success")
-        case .Detach:
-            return NSLocalizedString("Unable to detach from the app's process", comment: "")
-        case .Attach:
-            return NSLocalizedString("Unable to attach to the app's process", comment: "")
-            
-        case .CreateInstproxy:
-            return self.createService(name: "instproxy")
-        case .CreateAfc:
-            return self.createService(name: "AFC")
-        case .RwAfc:
-            return NSLocalizedString("AFC was unable to manage files on the device. This usually means an invalid pairing.", comment: "")
-        case .InstallApp(let message):
-            return NSLocalizedString("Unable to install the app: \(message.toString())", comment: "")
-        case .UninstallApp:
-            return NSLocalizedString("Unable to uninstall the app", comment: "")
-
-        case .CreateMisagent:
-            return self.createService(name: "misagent")
-        case .ProfileInstall:
-            return NSLocalizedString("Unable to manage profiles on the device", comment: "")
-        case .ProfileRemove:
-            return NSLocalizedString("Unable to manage profiles on the device", comment: "")
-        }
-    }
-    
-    fileprivate func createService(name: String) -> String {
-        return String(format: NSLocalizedString("Cannot start a %@ server on the device.", comment: ""), name)
-    }
-    
-    fileprivate func getFromDevice(name: String) -> String {
-        return String(format: NSLocalizedString("Cannot fetch %@ from the device.", comment: ""), name)
-    }
-    
-    fileprivate func setArgument(name: String) -> String {
-        return String(format: NSLocalizedString("Cannot set %@ on the device.", comment: ""), name)
     }
 }

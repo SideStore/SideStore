@@ -30,12 +30,16 @@ public extension UserDefaults
     @NSManaged var preferredServerID: String?
     
     @NSManaged var isBackgroundRefreshEnabled: Bool
+    @NSManaged var enableEMPforWireguard: Bool
     @NSManaged var isIdleTimeoutDisableEnabled: Bool
     @NSManaged var isAppLimitDisabled: Bool
     @NSManaged var isBetaUpdatesEnabled: Bool
+    @NSManaged var customizeAppId: Bool
     @NSManaged var isExportResignedAppEnabled: Bool
     @NSManaged var isVerboseOperationsLoggingEnabled: Bool
     @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
+    @NSManaged var isMinimuxerStatusCheckEnabled: Bool
+
     @NSManaged var recreateDatabaseOnNextStart: Bool
     @NSManaged var isPairingReset: Bool
     @NSManaged var isDebugModeEnabled: Bool
@@ -50,11 +54,8 @@ public extension UserDefaults
     
     @NSManaged var patchedApps: [String]?
     
-    @NSManaged var patronsRefreshID: String?
-    
     @NSManaged var trustedSourceIDs: [String]?
     @NSManaged var trustedServerURL: String?
-    @NSManaged var skipPatreonDownloads: Bool
     
     @NSManaged var betaUdpatesTrack: String?
 
@@ -128,12 +129,15 @@ public extension UserDefaults
         let defaults = [
             #keyPath(UserDefaults.isAppLimitDisabled): false,
             #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
+            #keyPath(UserDefaults.customizeAppId): false,
             #keyPath(UserDefaults.isExportResignedAppEnabled): false,
             #keyPath(UserDefaults.isDebugModeEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): false, // minimuxer logging is disabled by default for console loggin
+            #keyPath(UserDefaults.isMinimuxerStatusCheckEnabled): false, // minimuxer status check is disabled by default to support LocalDevVPN based cellular refresh
             #keyPath(UserDefaults.recreateDatabaseOnNextStart): false, 
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
+            #keyPath(UserDefaults.enableEMPforWireguard): false,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,
             #keyPath(UserDefaults.isPairingReset): true,
             #keyPath(UserDefaults.isLegacyDeactivationSupported): isLegacyDeactivationSupported,

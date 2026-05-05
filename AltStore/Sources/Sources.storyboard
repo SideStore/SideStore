@@ -20,6 +20,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="xWh-1U-u0q" customClass="NavigationBar" customModule="SideStore" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="59" width="393" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <edgeInsets key="layoutMargins" top="8" left="20" bottom="8" right="8"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -248,6 +249,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="HLe-3g-P8I" customClass="NavigationBar" customModule="SideStore" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="108"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <edgeInsets key="layoutMargins" top="8" left="20" bottom="8" right="8"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

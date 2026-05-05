@@ -8,12 +8,11 @@
 
 import UIKit
 import Combine
-
-import minimuxer
 import AltStoreCore
 import Roxas
 
 import Nuke
+import Minimuxer
 
 class BrowseViewController: UICollectionViewController, PeekPopPreviewing
 {
@@ -557,7 +556,7 @@ private extension BrowseViewController
             return
         }
 
-        if !minimuxer.ready() {
+        if !isMinimuxerReady {
             let toastView = ToastView(error: MinimuxerError.NoConnection)
             toastView.show(in: self)
             return

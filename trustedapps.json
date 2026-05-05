@@ -9,6 +9,34 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
+      "identifier": "com.stik.stikdebug",
+      "sourceURL": "https://stikdebug.xyz/index.json"
+    },
+    {
+      "identifier": "com.livecontainer.source",
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
+    },
+    {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
+    },
+    {
+      "identifier": "com.stossy11.MeloNX",
+      "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
+    },
+    {
+      "identifier": "com.chachirie.source",
+      "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
+    },
+    {
+      "identifier": "org.geode-sdk.altsource",
+      "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
+    },
+    {
+      "identifier": "com.sbuga.retrosekai",
+      "sourceURL": "https://repo.untitledcharts.com"
+    },
+    {
       "identifier": "org.provenance-emu.provenance",
       "sourceURL": "https://provenance-emu.com/apps.json"
     },
@@ -25,11 +53,7 @@
       "sourceURL": "https://alt.getutm.app"
     },
     {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
-    },
-    {
-      "identifier": "dev.crystall1ne.repos.PojavLauncher",
+      "identifier": "dev.crystall1ne.alt",
       "sourceURL": "https://alt.crystall1ne.dev"
     },
     {
@@ -51,6 +75,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ],
   "sources": [
@@ -62,6 +90,30 @@
       "sourceURL": "https://community-apps.sidestore.io/sidecommunity.json"
     },
     {
+      "identifier": "com.stik.stikdebug",
+      "sourceURL": "https://stikdebug.xyz/index.json"
+    },
+    {
+      "identifier": "com.livecontainer.source",
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
+    },
+    {
+      "identifier": "com.aoshuang.manicemu",
+      "sourceURL": "https://apps.manicemu.site/altstore"
+    },
+    {
+      "identifier": "com.stossy11.MeloNX",
+      "sourceURL": "https://git.ryujinx.app/melonx/emu/-/raw/XC-ios-ht/source.json"
+    },
+    {
+      "identifier": "com.chachirie.source",
+      "sourceURL": "https://github.com/chachillie/Flycast-iOS/raw/refs/heads/main/flycast-ios.json"
+    },
+    {
+      "identifier": "org.geode-sdk.altsource",
+      "sourceURL": "https://ios-repo.geode-sdk.org/altsource/main.json"
+    },
+    {
       "identifier": "org.provenance-emu.provenance",
       "sourceURL": "https://provenance-emu.com/apps.json"
     },
@@ -78,11 +130,7 @@
       "sourceURL": "https://alt.getutm.app"
     },
     {
-      "identifier": "com.flyinghead.source",
-      "sourceURL": "https://flyinghead.github.io/flycast-builds/altstore.json"
-    },
-    {
-      "identifier": "dev.crystall1ne.repos.PojavLauncher",
+      "identifier": "dev.crystall1ne.alt",
       "sourceURL": "https://alt.crystall1ne.dev"
     },
     {
@@ -104,6 +152,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ]
 }

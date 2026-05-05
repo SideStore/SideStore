@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-
 import AltStoreCore
 
 @available(iOS 16, *)

@@ -11,11 +11,9 @@ import MobileCoreServices
 import Intents
 import Combine
 import UniformTypeIdentifiers
-
 import AltStoreCore
 import AltSign
 import Roxas
-import minimuxer
 import SemanticVersion
 
 import Nuke
@@ -120,7 +118,6 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     {
         super.viewIsAppearing(animated)
         
-        // Ensure the button for each app reflects correct Patreon status.
         self.collectionView.reloadData()
         
         self.update()
@@ -166,9 +163,11 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     @IBAction func unwindToMyAppsViewController(_ segue: UIStoryboardSegue)
     {
     }
+
     var minimuxerStatus: Bool {
-        guard minimuxer.ready() else {
-            ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No WiFi or VPN!")).show(in: self)
+        // added isMinimuxerStatusCheckEnabled to forcefully ignore minimuxer status if status check is disabled in settings
+        guard !UserDefaults.standard.isMinimuxerStatusCheckEnabled || isMinimuxerReady else {
+            ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No Wi-Fi or VPN!")).show(in: self)
             return false
         }
         return true
@@ -541,11 +540,6 @@ private extension MyAppsViewController
         catch
         {
             print("[ALTLog] Failed to fetch updates:", error)
-        }
-        
-        if let patreonAccount = DatabaseManager.shared.patreonAccount(), patreonAccount.isAltStorePatron, PatreonAPI.shared.isAuthenticated
-        {
-            self.dataSource.predicate = nil
         }
     }
 }
@@ -1485,15 +1479,6 @@ private extension MyAppsViewController
             guard minimuxerStatus else { return }
         }
         
-        if #available(iOS 17, *), !sidejitenabled {
-            let error = OperationError.tooNewError as NSError
-            let localizedError = error.withLocalizedTitle("No iOS 17 On Device JIT!")
-            
-            ToastView(error: localizedError, opensLog: true).show(in: self)
-            AppManager.shared.log(error, operation: .enableJIT, app: installedApp)
-            return
-        }
-        
         AppManager.shared.enableJIT(for: installedApp) { result in
             DispatchQueue.main.async {
                 switch result {
@@ -2002,8 +1987,6 @@ extension MyAppsViewController
             
             for action in actions where !allowedActions.contains(action)
             {
-                // Disable options for Patreon apps that we are no longer pledged to.
-                
                 if let action = action as? UIAction
                 {
                     action.attributes = .disabled

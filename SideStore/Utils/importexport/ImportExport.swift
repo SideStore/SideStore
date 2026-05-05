@@ -12,7 +12,7 @@ import AltStoreCore
 
 class ImportExport {
     
-    private static var documentPickerHandler: DocumentPickerHandler?
+    public static var documentPickerHandler: DocumentPickerHandler?
     
     public static func getPreviousBackupURL(_ backupURL: URL) -> URL {
         let backupParentDirectory = backupURL.deletingLastPathComponent()

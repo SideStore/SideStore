@@ -8,7 +8,6 @@
 
 import Foundation
 import CryptoKit
-
 import AltStoreCore
 import AltSign
 import Roxas
@@ -38,11 +37,13 @@ final class VerifyAppOperation: ResultOperation<Void>
 {
     let permissionsMode: PermissionReviewMode
     let context: InstallAppOperationContext
+    var customBundleId: String?
     
-    init(permissionsMode: PermissionReviewMode, context: InstallAppOperationContext)
+    init(permissionsMode: PermissionReviewMode, context: InstallAppOperationContext, customBundleId: String? = nil)
     {
         self.permissionsMode = permissionsMode
         self.context = context
+        self.customBundleId = customBundleId
         
         super.init()
     }
@@ -65,7 +66,8 @@ final class VerifyAppOperation: ResultOperation<Void>
             }
             
             if !["ny.litritt.ignited", "com.litritt.ignited"].contains(where: { $0 == app.bundleIdentifier }) {
-                guard app.bundleIdentifier == self.context.bundleIdentifier else {
+                let bundleId = customBundleId ?? app.bundleIdentifier
+                guard bundleId == self.context.bundleIdentifier else {
                     throw VerificationError.mismatchedBundleIdentifiers(sourceBundleID: self.context.bundleIdentifier, app: app)
                 }
             }

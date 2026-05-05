@@ -30,7 +30,7 @@
     url = https://github.com/rileytestut/Roxas.git
 [submodule "Dependencies/libimobiledevice"]
     path = Dependencies/libimobiledevice
-    url = https://github.com/libimobiledevice/libimobiledevice
+    url = https://github.com/SideStore/libimobiledevice
 [submodule "Dependencies/libusbmuxd"]
     path = Dependencies/libusbmuxd
     url = https://github.com/libimobiledevice/libusbmuxd.git
@@ -46,23 +46,19 @@
 
 
 #sidestore dependencies
-[submodule "SideStore/minimuxer"]
-    path = SideStore/minimuxer
+[submodule "Dependencies/minimuxer"]
+    path = Dependencies/minimuxer
     url = https://github.com/SideStore/minimuxer
     branch = master
-[submodule "SideStore/em_proxy"]
-    path = SideStore/em_proxy
-    url = https://github.com/SideStore/em_proxy
+[submodule "Dependencies/em_proxy"]
+	path = Dependencies/em_proxy
+	url = https://github.com/SideStore/em_proxy
     branch = master
-[submodule "SideStore/libfragmentzip"]
-    path = SideStore/libfragmentzip
-    url = https://github.com/SideStore/libfragmentzip
-    branch = master
-[submodule "SideStore/apps-v2.json"]
-    path = SideStore/apps-v2.json
+[submodule "Dependencies/apps-v2.json"]
+    path = Dependencies/apps-v2.json
     url = https://github.com/SideStore/apps-v2.json
     branch = main
-[submodule "SideStore/AltSign"]
-    path = SideStore/AltSign
+[submodule "Dependencies/AltSign"]
+    path = Dependencies/AltSign
     url = https://github.com/SideStore/AltSign
     branch = master

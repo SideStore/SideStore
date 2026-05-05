@@ -32,6 +32,13 @@ public struct AnyApp: AppProtocol
         self.url = url
         self.storeApp = storeApp
     }
+    
+    public init(from app: AppProtocol, name: String? = nil, bundleId: String? = nil, url: URL? = nil, storeApp: StoreApp? = nil) {
+        self.name = name ?? app.name
+        self.bundleIdentifier = bundleId ?? app.bundleIdentifier
+        self.url = url ?? app.url
+        self.storeApp = storeApp ?? app.storeApp
+    }
 }
 
 extension ALTApplication: AppProtocol

@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 import System
-
 import AltStoreCore
 
 class CoreDataHelper{

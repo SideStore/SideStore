@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 import Roxas
 
@@ -167,29 +166,7 @@ extension AppBannerView
             self.subtitleLabel.text = NSLocalizedString("Sideloaded", comment: "")
             self.accessibilityLabel = values.name
         }
-        
-        if let storeApp = app.storeApp, storeApp.isPledgeRequired
-        {
-            // Always show button label for Patreon apps.
-            self.buttonLabel.isHidden = false
-            
-            if storeApp.isPledged
-            {
-                self.buttonLabel.text = NSLocalizedString("Pledged", comment: "")
-            }
-            else if storeApp.installedApp != nil
-            {
-                self.buttonLabel.text = NSLocalizedString("Pledge Expired", comment: "")
-            }
-            else
-            {
-                self.buttonLabel.text = NSLocalizedString("Join Patreon", comment: "")
-            }
-        }
-        else
-        {
-            self.buttonLabel.isHidden = true
-        }
+        self.buttonLabel.isHidden = true
         
         if let source = app.storeApp?.source, showSourceIcon
         {
@@ -293,15 +270,6 @@ extension AppBannerView
                         self.button.setTitle(buttonTitle.uppercased(), for: .normal)
                         self.button.accessibilityLabel = String(format: NSLocalizedString("Install %@", comment: ""), app.name)
                         self.button.accessibilityValue = buttonTitle
-                    }
-                    else if let amount = storeApp.pledgeAmount, let currencyCode = storeApp.pledgeCurrency, !storeApp.prefersCustomPledge, #available(iOS 15, *)
-                    {
-                        let price = amount.formatted(.currency(code: currencyCode).presentation(.narrow).precision(.fractionLength(0...2)))
-                        
-                        let buttonTitle = String(format: NSLocalizedString("%@/mo", comment: ""), price)
-                        self.button.setTitle(buttonTitle, for: .normal)
-                        self.button.accessibilityLabel = String(format: NSLocalizedString("Pledge %@ a month", comment: ""), price)
-                        self.button.accessibilityValue = String(format: NSLocalizedString("%@ a month", comment: ""), price)
                     }
                     else
                     {

@@ -8,7 +8,6 @@
 
 import SwiftUI
 import WidgetKit
-
 import AltStoreCore
 
 import GameplayKit

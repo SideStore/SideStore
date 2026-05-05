@@ -14,12 +14,13 @@ import Intents
 import IntentsUI
 
 import SemanticVersion
-
 import AltStoreCore
+import CAltSign
+import UniformTypeIdentifiers
 
 extension SettingsViewController
 {
-    fileprivate enum Section: Int, CaseIterable
+    private enum Section: Int, CaseIterable
     {
         case signIn
         case account
@@ -29,13 +30,14 @@ extension SettingsViewController
         case instructions
         case techyThings
         case credits
+        case betaTesting
         case advancedSettings
-        // diagnostics section, will be enabled on release builds only on swipe down with 3 fingers 3 times
-        case diagnostics
+        case signing
+        case diagnostics    // diagnostics section, will be enabled on release builds only on swipe down with 3 fingers 3 times
         // case macDirtyCow
     }
     
-    fileprivate enum AppRefreshRow: Int, CaseIterable
+    private enum AppRefreshRow: Int, CaseIterable
     {
         case backgroundRefresh
         case noIdleTimeout        
@@ -54,7 +56,7 @@ extension SettingsViewController
         }
     }
     
-    fileprivate enum CreditsRow: Int, CaseIterable
+    private enum CreditsRow: Int, CaseIterable
     {
         case developer
         case operations
@@ -62,25 +64,37 @@ extension SettingsViewController
         case softwareLicenses
     }
     
-    fileprivate enum TechyThingsRow: Int, CaseIterable
+    private enum TechyThingsRow: Int, CaseIterable
     {
         case errorLog
         case clearCache
     }
     
-    fileprivate enum AdvancedSettingsRow: Int, CaseIterable
+    private enum AdvancedSettingsRow: Int, CaseIterable
     {
         case sendFeedback
         case refreshAttempts
         case refreshSideJITServer
         case resetPairingFile
         case anisetteServers
-        case betaUpdates
-        case betaTrack
-//        case hiddenSettings
+        case vpnConfiguration
+        case enableEMPForWiregaurd
+        case customizeAppId
+    }
+    
+    private enum SigningSettingsRow: Int, CaseIterable {
+        case importAccount
+        case exportAccount
+        case importCert
+        case exportCert
     }
 
-    fileprivate enum DiagnosticsRow: Int, CaseIterable
+    private enum BetaTestingRow: Int, CaseIterable {
+        case betaUpdates
+        case betaTrack
+    }
+
+    private enum DiagnosticsRow: Int, CaseIterable
     {
         case responseCaching
         case exportResignedApp
@@ -111,9 +125,11 @@ final class SettingsViewController: UITableViewController
     @IBOutlet private var accountTypeLabel: UILabel!
     
     @IBOutlet private var backgroundRefreshSwitch: UISwitch!
+    @IBOutlet private var enableEMPforWireguard: UISwitch!
     @IBOutlet private var noIdleTimeoutSwitch: UISwitch!
     @IBOutlet private var disableAppLimitSwitch: UISwitch!
     @IBOutlet private var betaUpdatesSwitch: UISwitch!
+    @IBOutlet private var customizeAppIdSwitch: UISwitch!
     @IBOutlet private var exportResignedAppsSwitch: UISwitch!
     @IBOutlet private var verboseOperationsLoggingSwitch: UISwitch!
     @IBOutlet private var minimuxerConsoleLoggingSwitch: UISwitch!
@@ -143,6 +159,7 @@ final class SettingsViewController: UITableViewController
         
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openPatreonSettings(_:)), name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openErrorLog(_:)), name: ToastView.openErrorLogNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SettingsViewController.openExportCertificateConfirm(_:)), name: AppDelegate.exportCertificateNotification, object: nil)
     }
     
     
@@ -191,6 +208,16 @@ final class SettingsViewController: UITableViewController
     {
         super.viewDidLoad()
         
+        // --- iOS 26 fix ---
+        if #available(iOS 26.0, *) {
+            let appearance = UINavigationBarAppearance()
+//            appearance.configureWithOpaqueBackground()  // or .defaultBackground if you want blur
+//            appearance.backgroundColor = UIColor(named: "SettingsBackground")
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance       // required for iOS 26, maybe enforce it in storyboard?
+        } 
         let nib = UINib(nibName: "SettingsHeaderFooterView", bundle: nil)
         self.prototypeHeaderFooterView = nib.instantiate(withOwner: nil, options: nil)[0] as? SettingsHeaderFooterView
         
@@ -236,6 +263,118 @@ final class SettingsViewController: UITableViewController
         }
         
         configureReleaseChannelButton()
+        #if !targetEnvironment(simulator)
+        detectAndImportAccountFile()
+        #endif
+    }
+    
+    func importAccountAtFile(_ file: URL, remove: Bool = false) {
+        _ = file.startAccessingSecurityScopedResource()
+        defer { file.stopAccessingSecurityScopedResource() }
+        guard let accountD = try? Data(contentsOf: file) else {
+            return Logger.main.notice("Could not parse data from file \(file)")
+        }
+        guard let account = try? Foundation.JSONDecoder().decode(ImportedAccount.self, from: accountD) else {
+            return Logger.main.notice("Could not parse data from file \(file)")
+        }
+        print("We want to import this account probably: \(account)")
+        if remove {
+            try? FileManager.default.removeItem(at: file)
+        }
+        Keychain.shared.appleIDEmailAddress = account.email
+        Keychain.shared.appleIDPassword = account.password
+        Keychain.shared.adiPb = account.adiPB
+        Keychain.shared.identifier = account.local_user
+        signIn()
+        update()
+        if let altCert = ALTCertificate(p12Data: account.cert, password: account.certpass) {
+            Keychain.shared.signingCertificate = altCert.encryptedP12Data(withPassword: "")!
+            Keychain.shared.signingCertificatePassword = account.certpass
+            let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(account.email)'!", comment: ""), detailText: "SideStore should be fully operational!")
+            return toastView.show(in: self)
+        } else {
+            let toastView = ToastView(text: NSLocalizedString("Failed to import account certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct. Still imported account/adi.pb details!")
+            return toastView.show(in: self)
+        }
+    }
+    
+    func detectAndImportAccountFile() {
+        let accountFileURL = FileManager.default.documentsDirectory.appendingPathComponent("Account.sideconf")
+        #if !DEBUG
+        importAccountAtFile(accountFileURL, remove: true)
+        #else
+        importAccountAtFile(accountFileURL)
+        #endif
+    }
+    
+    func exportAccount(_ certpass: String) -> ImportedAccount? {
+        guard let email = Keychain.shared.appleIDEmailAddress,
+              let password = Keychain.shared.appleIDPassword,
+              let cert = Keychain.shared.signingCertificate,
+              let identifier = Keychain.shared.identifier,
+              let adiPB = Keychain.shared.adiPb else {
+            #if DEBUG
+            print(Keychain.shared.appleIDEmailAddress ?? "Empty email")
+            print(Keychain.shared.appleIDPassword ?? "Empty password")
+            print(Keychain.shared.signingCertificate ?? "Empty cert")
+            print(Keychain.shared.identifier ?? "Empty identifier")
+            print(Keychain.shared.adiPb ?? "Empty adiPb")
+            #endif
+            return nil
+        }
+        return ImportedAccount(email: email, password: password, cert: cert, certpass: certpass, local_user: identifier, adiPB: adiPB)
+    }
+    
+    func showExportAccount() {
+        
+        Task {
+            guard let password = await withUnsafeContinuation({ (c: UnsafeContinuation<String?,Never>) in
+                let alertController = UIAlertController(title: NSLocalizedString("Please enter the password for the certificate.", comment: ""), message: nil, preferredStyle: .alert)
+                
+                alertController.addTextField { (textField) in
+                    textField.autocorrectionType = .no
+                    textField.autocapitalizationType = .none
+                }
+                
+                let submitAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { (action) in
+                    let textField = alertController.textFields?.first
+                    
+                    let code = textField?.text ?? ""
+                    c.resume(returning: code)
+                }
+                alertController.addAction(submitAction)
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                    c.resume(returning: nil)
+                })
+                
+                self.present(alertController, animated: true)
+            }) else {
+                return
+            }
+            
+            guard let account = exportAccount(password) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: "Account not found.")
+                return toastView.show(in: self)
+            }
+            
+            guard let accountData = try? Foundation.JSONEncoder().encode(account) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to export account data!", comment: ""), detailText: "Account malformed.")
+                toastView.show(in: self)
+                return
+
+            }
+            
+            let accountTmpPath = FileManager.default.temporaryDirectory.appendingPathComponent("\(account.email).sideconf")
+            do {
+                try accountData.write(to: accountTmpPath)
+            } catch {
+                let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: error.localizedDescription)
+                toastView.show(in: self)
+                return
+            }
+            let exportVC = UIDocumentPickerViewController(forExporting: [accountTmpPath], asCopy: false)
+            self.present(exportVC, animated: true)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -335,12 +474,15 @@ private extension SettingsViewController
         
         // AppRefreshRow
         self.backgroundRefreshSwitch.isOn = UserDefaults.standard.isBackgroundRefreshEnabled
+        self.enableEMPforWireguard.isOn = UserDefaults.standard.enableEMPforWireguard
         self.noIdleTimeoutSwitch.isOn = UserDefaults.standard.isIdleTimeoutDisableEnabled
         self.disableAppLimitSwitch.isOn = UserDefaults.standard.isAppLimitDisabled
 
         // AdvancedSettingsRow
+        self.customizeAppIdSwitch.isOn = UserDefaults.standard.customizeAppId
+        
+        // BetaTestingRow
         self.betaUpdatesSwitch.isOn = UserDefaults.standard.isBetaUpdatesEnabled
-        self.betaTrackLabel.isEnabled = UserDefaults.standard.isBetaUpdatesEnabled
         self.betaTrackPopupButton.isEnabled = UserDefaults.standard.isBetaUpdatesEnabled
 
         // DiagnosticsRow
@@ -357,7 +499,7 @@ private extension SettingsViewController
         }
     }
     
-    func prepare(_ settingsHeaderFooterView: SettingsHeaderFooterView, for section: Section, isHeader: Bool)
+    private func prepare(_ settingsHeaderFooterView: SettingsHeaderFooterView, for section: Section, isHeader: Bool)
     {
         settingsHeaderFooterView.primaryLabel.isHidden = !isHeader
         settingsHeaderFooterView.secondaryLabel.isHidden = isHeader
@@ -433,7 +575,35 @@ private extension SettingsViewController
             
         case .advancedSettings:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("ADVANCED SETTINGS", comment: "")
+            
+        case .signing:
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("SIGNING", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString("", comment: "")
+            }
+        
+        case .betaTesting:
+            if isHeader
+            {
+                settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("BETA TESTING", comment: "")
+            }
+            else
+            {
+                settingsHeaderFooterView.secondaryLabel.text = NSLocalizedString(
+                    """
+                    Opt in for beta testing to receive regular updates and early previews of upcoming releases.\n
+                    Please note that these builds are experimental and may be unstable or break unexpectedly.
+                    """,
+                    comment: ""
+                )
+            }
+            
 
+            
         case .diagnostics:
             settingsHeaderFooterView.primaryLabel.text = NSLocalizedString("DIAGNOSTICS", comment: "")
             
@@ -450,7 +620,7 @@ private extension SettingsViewController
         }
     }
     
-    func preferredHeight(for settingsHeaderFooterView: SettingsHeaderFooterView, in section: Section, isHeader: Bool) -> CGFloat
+    private func preferredHeight(for settingsHeaderFooterView: SettingsHeaderFooterView, in section: Section, isHeader: Bool) -> CGFloat
     {
         let widthConstraint = settingsHeaderFooterView.contentView.widthAnchor.constraint(equalToConstant: tableView.bounds.width)
         NSLayoutConstraint.activate([widthConstraint])
@@ -462,7 +632,7 @@ private extension SettingsViewController
         return size.height
     }
     
-    func isSectionHidden(_ section: Section) -> Bool
+    private func isSectionHidden(_ section: Section) -> Bool
     {
         switch section
         {
@@ -553,6 +723,11 @@ private extension SettingsViewController
         UserDefaults.standard.isMinimuxerConsoleLoggingEnabled = sender.isOn
     }
 
+    @IBAction func toggleMinimuxerStatusCheck(_ sender: UISwitch) {
+        // update it in database
+        UserDefaults.standard.isMinimuxerStatusCheckEnabled = sender.isOn
+    }
+
     @IBAction func toggleRecreateDatabaseSwitch(_ sender: UISwitch) {
         // Update the setting in UserDefaults
         UserDefaults.standard.recreateDatabaseOnNextStart = sender.isOn
@@ -590,9 +765,19 @@ private extension SettingsViewController
         UserDefaults.standard.isBetaUpdatesEnabled = sender.isOn
     }
     
+    @IBAction func toggleEnableAppIdCustomization(_ sender: UISwitch) {
+        // update it in database
+        UserDefaults.standard.customizeAppId = sender.isOn
+    }
+    
     @IBAction func toggleIsBackgroundRefreshEnabled(_ sender: UISwitch)
     {
         UserDefaults.standard.isBackgroundRefreshEnabled = sender.isOn
+    }
+    
+    @IBAction func toggleEnableEMPforWireguard(_ sender: UISwitch)
+    {
+        UserDefaults.standard.enableEMPforWireguard = sender.isOn
     }
     
     @IBAction func toggleNoIdleTimeoutEnabled(_ sender: UISwitch)
@@ -756,6 +941,48 @@ private extension SettingsViewController
             self.performSegue(withIdentifier: "showErrorLog", sender: nil)
         }
     }
+    
+    @objc func openExportCertificateConfirm(_ notification: Notification)
+    {
+        func export()
+        {
+            guard let template = notification.userInfo?[AppDelegate.exportCertificateCallbackTemplateKey] as? String,
+                  template.contains("$(BASE64_CERT)") else {
+                let toastView = ToastView(text: NSLocalizedString("No $(BASE64_CERT) placeholder found", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            guard let data = Keychain.shared.signingCertificate,
+            let password = Keychain.shared.signingCertificatePassword else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to find certificate or password", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            let base64encodedCert = data.base64EncodedString()
+            var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
+            allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")
+            guard let encodedCert = base64encodedCert.addingPercentEncoding(withAllowedCharacters: allowedQueryParamAndKey) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to encode certificate!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            var urlStr = template.replacingOccurrences(of: "$(BASE64_CERT)", with: encodedCert, options: .literal, range: nil)
+            urlStr = urlStr.replacingOccurrences(of: "$(PASSWORD)", with: password, options: .literal, range: nil)
+            
+            print(urlStr)
+            guard let callbackUrl = URL(string: urlStr) else {
+                let toastView = ToastView(text: NSLocalizedString("Failed to initialize callback URL!", comment: ""), detailText: nil)
+                toastView.show(in: self)
+                return
+            }
+            UIApplication.shared.open(callbackUrl)
+        }
+        
+        let alertController = UIAlertController(title: NSLocalizedString("Export Certificate", comment: ""), message: NSLocalizedString("Do you want to export your certificate to an external app? That app will be able to sign apps using your certificate.", comment: ""), preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Export", comment: ""), style: .default) { _ in export() })
+        alertController.addAction(.cancel)
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension SettingsViewController
@@ -827,7 +1054,7 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         case .account where self.activeTeam == nil: return nil
-        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .diagnostics /* ,.macDirtyCow */:
+        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .signing, .betaTesting, .diagnostics /* ,.macDirtyCow */:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(headerView, for: section, isHeader: true)
             return headerView
@@ -844,7 +1071,7 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return nil
         case .signIn where self.activeTeam != nil: return nil
         // case .signIn, .patreon, .display, .appRefresh, .techyThings, .macDirtyCow:
-        case .signIn, .patreon, .display, .appRefresh, .techyThings:
+        case .signIn, .patreon, .display, .appRefresh, .techyThings, .signing, .betaTesting:
             let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderFooterView") as! SettingsHeaderFooterView
             self.prepare(footerView, for: section, isHeader: false)
             return footerView
@@ -861,8 +1088,7 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return 1.0
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0
-        // case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .macDirtyCow, .advanced:
-        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .diagnostics:
+        case .signIn, .account, .patreon, .display, .appRefresh, .techyThings, .credits, .advancedSettings, .signing, .betaTesting, .diagnostics:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: true)
             return height
             
@@ -879,7 +1105,7 @@ extension SettingsViewController
         case .signIn where self.activeTeam != nil: return 1.0
         case .account where self.activeTeam == nil: return 1.0            
         // case .signIn, .patreon, .display, .appRefresh, .techyThings, .macDirtyCow:
-        case .signIn, .patreon, .display, .appRefresh, .techyThings, .diagnostics:
+        case .signIn, .patreon, .display, .appRefresh, .techyThings, .signing, .diagnostics, .betaTesting:
             let height = self.preferredHeight(for: self.prototypeHeaderFooterView, in: section, isHeader: false)
             return height
             
@@ -1139,20 +1365,175 @@ extension SettingsViewController
                     handleRefreshResult(result)
                 })
                 
-                let anisetteServersController = UIHostingController(rootView: anisetteServersView)
+                let vc = UIHostingController(rootView: anisetteServersView)
+                self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: vc), sender: nil)
 
-                self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: anisetteServersController), sender: nil)
-                
-//            case .hiddenSettings:
-//                // Create the URL that deep links to your app's custom settings.
-//                if let url = URL(string: UIApplication.openSettingsURLString) {
-//                    // Ask the system to open that URL.
-//                    UIApplication.shared.open(url)
-//                } else {
-//                    ELOG("UIApplication.openSettingsURLString invalid")
-//                }
-            case .refreshAttempts, .betaUpdates, .betaTrack: break
+            case .vpnConfiguration:
+                let vpnConfigurationView = VPNConfigurationView()
+                let vc = UIHostingController(rootView: vpnConfigurationView)
 
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithDefaultBackground()   // gives solid background
+                vc.navigationItem.scrollEdgeAppearance = appearance
+                vc.navigationItem.standardAppearance = appearance
+
+                navigationController?.pushViewController(vc, animated: true)
+            case .refreshAttempts, .enableEMPForWiregaurd, .customizeAppId: break
+            }
+        case .signing:
+            let row = SigningSettingsRow.allCases[indexPath.row]
+            switch row {
+            case .exportAccount: showExportAccount()
+            case .importAccount:
+                Task {
+                    let confUrl = await withUnsafeContinuation { c in
+                        let importVc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType(filenameExtension: "sideconf")!], asCopy: false)
+                        ImportExport.documentPickerHandler = DocumentPickerHandler { url in
+                            c.resume(returning: url)
+                        }
+                        importVc.delegate = ImportExport.documentPickerHandler
+                        
+                        self.present(importVc, animated: true)
+                        
+                    }
+                    guard let confUrl else {
+                        return
+                    }
+                    importAccountAtFile(confUrl)
+                }
+            case .importCert:
+                let importVc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType(filenameExtension: "p12")!], asCopy: false)
+                ImportExport.documentPickerHandler = DocumentPickerHandler { url in
+                    guard let url else {
+                        return
+                    }
+                    importVc.delegate = ImportExport.documentPickerHandler
+                    self.present(importVc, animated: true)
+                    _ = url.startAccessingSecurityScopedResource()
+                    defer { url.stopAccessingSecurityScopedResource() }
+                }
+                Task {
+                    let certUrl = await withUnsafeContinuation { c in
+                        let importVc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType(filenameExtension: "p12")!], asCopy: false)
+                        ImportExport.documentPickerHandler = DocumentPickerHandler { url in
+                            _ = url?.startAccessingSecurityScopedResource()
+                            defer { url?.stopAccessingSecurityScopedResource() }
+                            c.resume(returning: url)
+                        }
+                        importVc.delegate = ImportExport.documentPickerHandler
+
+                        self.present(importVc, animated: true)
+                        
+                    }
+                    guard let certUrl else {
+                        return
+                    }
+                    
+                    let password = await withUnsafeContinuation { (c: UnsafeContinuation<String?,Never>) in
+                        let alertController = UIAlertController(title: NSLocalizedString("Please enter the password for the certificate.", comment: ""), message: nil, preferredStyle: .alert)
+                        
+                        alertController.addTextField { (textField) in
+                            textField.autocorrectionType = .no
+                            textField.autocapitalizationType = .none
+                        }
+                        
+                        let submitAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { (action) in
+                            let textField = alertController.textFields?.first
+                            
+                            let code = textField?.text ?? ""
+                            c.resume(returning: code)
+                        }
+                        alertController.addAction(submitAction)
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                            c.resume(returning: nil)
+                        })
+                        
+                        self.present(alertController, animated: true)
+                    }
+                    
+                    guard let password else {
+                        return
+                    }
+                    _ = certUrl.startAccessingSecurityScopedResource()
+                    defer {
+                        certUrl.stopAccessingSecurityScopedResource()
+                    }
+                    let certData : Data
+                    do {
+                        certData = try Data(contentsOf: certUrl)
+                    } catch {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: error.localizedDescription)
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    guard let altCert = ALTCertificate(p12Data: certData, password: password) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    Keychain.shared.signingCertificate = altCert.encryptedP12Data(withPassword: "")!
+                    let toastView = ToastView(text: NSLocalizedString("Certificate imported successfully!", comment: ""), detailText: nil)
+                    toastView.show(in: self)
+                }
+            case .exportCert:
+                Task {
+                    guard let certData = Keychain.shared.signingCertificate else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Certificate not found.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    let password = await withUnsafeContinuation { (c: UnsafeContinuation<String?,Never>) in
+                        let alertController = UIAlertController(title: NSLocalizedString("Please enter the password for the certificate.", comment: ""), message: nil, preferredStyle: .alert)
+                        
+                        alertController.addTextField { (textField) in
+                            textField.autocorrectionType = .no
+                            textField.autocapitalizationType = .none
+                        }
+                        
+                        let submitAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { (action) in
+                            let textField = alertController.textFields?.first
+                            
+                            let code = textField?.text ?? ""
+                            c.resume(returning: code)
+                        }
+                        alertController.addAction(submitAction)
+                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                            c.resume(returning: nil)
+                        })
+                        
+                        self.present(alertController, animated: true)
+                    }
+                    
+                    guard let password else {
+                        return
+                    }
+                    
+                    guard let altCert = ALTCertificate(p12Data: certData, password: nil) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    guard let newCertData = altCert.encryptedP12Data(withPassword: password) else {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Failed to encrypt  ALTCertificate.")
+                        toastView.show(in: self)
+                        return
+                    }
+                    
+                    let newCertTmpPath = FileManager.default.temporaryDirectory.appendingPathComponent("SideStoreSigningCertificate.p12")
+                    do {
+                        try newCertData.write(to: newCertTmpPath)
+                    } catch {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: error.localizedDescription)
+                        toastView.show(in: self)
+                        return
+                    }
+                    let exportVC = UIDocumentPickerViewController(forExporting: [newCertTmpPath], asCopy: false)
+                    self.present(exportVC, animated: true)
+                }
             }
         
         case .diagnostics:
@@ -1206,7 +1587,7 @@ extension SettingsViewController
             
             
         // case .account, .patreon, .display, .instructions, .macDirtyCow: break
-        case .account, .patreon, .display, .instructions: break
+        case .account, .patreon, .display, .instructions, .betaTesting: break
         }
         
         

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 import AltStoreCore
 import AltSign
 import Roxas
@@ -54,7 +53,8 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
         Logger.sideload.notice("Fetching provisioning profiles for app \(self.context.bundleIdentifier, privacy: .public)...")
         
         self.progress.totalUnitCount = Int64(1 + app.appExtensions.count)
-        
+        let effectiveBundleId = self.context.bundleIdentifier
+
         self.prepareProvisioningProfile(for: app, parentApp: nil, team: team, session: session) { (result) in
             do
             {
@@ -62,25 +62,27 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
                 
                 let profile = try result.get()
                 
-                var profiles = [app.bundleIdentifier: profile]
+                var profiles = [effectiveBundleId: profile]
                 var error: Error?
                 
                 let dispatchGroup = DispatchGroup()
                 
-                for appExtension in app.appExtensions
-                {
-                    dispatchGroup.enter()
-                    
-                    self.prepareProvisioningProfile(for: appExtension, parentApp: app, team: team, session: session) { (result) in
-                        switch result
-                        {
-                        case .failure(let e): error = e
-                        case .success(let profile): profiles[appExtension.bundleIdentifier] = profile
+                if !self.context.useMainProfile {
+                    for appExtension in app.appExtensions
+                    {
+                        dispatchGroup.enter()
+                        
+                        self.prepareProvisioningProfile(for: appExtension, parentApp: app, team: team, session: session) { (result) in
+                            switch result
+                            {
+                            case .failure(let e): error = e
+                            case .success(let profile): profiles[appExtension.bundleIdentifier] = profile
+                            }
+                            
+                            dispatchGroup.leave()
+                            
+                            self.progress.completedUnitCount += 1
                         }
-                        
-                        dispatchGroup.leave()
-                        
-                        self.progress.completedUnitCount += 1
                     }
                 }
                 
@@ -218,19 +220,30 @@ extension FetchProvisioningProfilesOperation
                 // Or, if the app _is_ installed but with a different team, we need to create a new
                 // bundle identifier anyway to prevent collisions with the previous team.
                 let parentBundleID = parentApp?.bundleIdentifier ?? app.bundleIdentifier
+                let effectiveParentBundleID = self.context.bundleIdentifier
+
                 let updatedParentBundleID: String
-                
+
                 if app.isAltStoreApp
                 {
                     // Use legacy bundle ID format for AltStore (and its extensions).
-                    updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
+                    updatedParentBundleID = effectiveParentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
                 }
                 else
                 {
-                    updatedParentBundleID = parentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
+                    updatedParentBundleID = effectiveParentBundleID + "." + team.identifier // Append just team identifier to make it harder to track.
                 }
-                
-                bundleID = app.bundleIdentifier.replacingOccurrences(of: parentBundleID, with: updatedParentBundleID)
+
+                if let parentApp = parentApp,
+                   app.bundleIdentifier.hasPrefix(parentBundleID + ".")
+                {
+                    let suffix = String(app.bundleIdentifier.dropFirst(parentBundleID.count))
+                    bundleID = updatedParentBundleID + suffix
+                }
+                else
+                {
+                    bundleID = updatedParentBundleID
+                }
             }
             
             let preferredName: String

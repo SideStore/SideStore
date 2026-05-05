@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 import Roxas
 
@@ -363,13 +362,13 @@ private extension FeaturedViewController
         let sourceHasRemainingAppsPredicate = NSPredicate(format:
             """
             SUBQUERY(%K, $app,
-                ($app.%K != %@) AND ($app.%K == nil) AND (($app.%K == NO) OR ($app.%K == NO) OR ($app.%K == YES))
+                ($app.%K != %@) AND ($app.%K == nil)
             ).@count > 0
             """,
-                                                          #keyPath(StoreApp._source._apps),
-                                                          #keyPath(StoreApp.bundleIdentifier), StoreApp.altstoreAppID,
-                                                          #keyPath(StoreApp.installedApp),
-                                                          #keyPath(StoreApp.isPledgeRequired), #keyPath(StoreApp.isHiddenWithoutPledge), #keyPath(StoreApp.isPledged)
+            #keyPath(StoreApp._source._apps),
+            #keyPath(StoreApp.bundleIdentifier),
+            StoreApp.altstoreAppID,
+            #keyPath(StoreApp.installedApp)
         )
         
         let primaryFetchRequest = fetchRequest.copy() as! NSFetchRequest<StoreApp>

@@ -8,7 +8,6 @@
 
 import WidgetKit
 import CoreData
-
 import AltStoreCore
 
 struct AppsEntry<T>: TimelineEntry

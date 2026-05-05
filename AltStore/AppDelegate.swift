@@ -10,11 +10,10 @@ import UIKit
 import UserNotifications
 import AVFoundation
 import Intents
-
 import AltStoreCore
 import AltSign
 import Roxas
-import EmotionalDamage
+
 
 import Nuke
 
@@ -27,10 +26,12 @@ extension AppDelegate
     static let addSourceDeepLinkNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".AddSourceDeepLinkNotification")
     
     static let appBackupDidFinish = Notification.Name(Bundle.Info.appbundleIdentifier + ".AppBackupDidFinish")
+    static let exportCertificateNotification = Notification.Name(Bundle.Info.appbundleIdentifier + ".ExportCertificateNotification")
     
     static let importAppDeepLinkURLKey = "fileURL"
     static let appBackupResultKey = "result"
     static let addSourceDeepLinkURLKey = "sourceURL"
+    static let exportCertificateCallbackTemplateKey = "callback"
 }
 
 @UIApplicationMain
@@ -91,13 +92,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        AnalyticsManager.shared.start()
-        
         self.setTintColor()
         self.prepareImageCache()
 
         // TODO: @mahee96: find if we need to start em_proxy as in altstore?
-        // start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+        if UserDefaults.standard.enableEMPforWireguard {
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
+        }
 
         SecureValueTransformer.register()        
         
@@ -122,7 +123,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         // Make sure to update SceneDelegate.sceneDidEnterBackground() as well.
         // TODO: @mahee96: find if we need to stop em_proxy as in altstore?
-        // stop_em_proxy()
+        if UserDefaults.standard.enableEMPforWireguard {
+            stopEMProxy()
+        }
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
         let midnightOneMonthAgo = Calendar.current.startOfDay(for: oneMonthAgo)
@@ -139,9 +142,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication)
     {
         AppManager.shared.update()
-        start_em_proxy(bind_addr: Consts.Proxy.serverURL)
-
-        PatreonAPI.shared.refreshPatreonAccount()
+        if UserDefaults.standard.enableEMPforWireguard {
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
+        }
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
@@ -241,13 +244,6 @@ private extension AppDelegate
             
             switch host
             {
-            case "patreon":
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
-                }
-                
-                return true
-                
             case "appbackupresponse":
                 let result: Result<Void, Error>
                 
@@ -288,6 +284,26 @@ private extension AppDelegate
                 
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: AppDelegate.addSourceDeepLinkNotification, object: nil, userInfo: [AppDelegate.addSourceDeepLinkURLKey: sourceURL])
+                }
+                
+                return true
+                
+            case "pairing":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let callbackTemplate = queryItems["urlName"]?.removingPercentEncoding else { return false }
+                
+                DispatchQueue.main.async {
+                    exportPairingFile(callbackTemplate)
+                }
+                
+                return true
+            
+            case "certificate":
+                let queryItems = components.queryItems?.reduce(into: [String: String]()) { $0[$1.name.lowercased()] = $1.value } ?? [:]
+                guard let callbackTemplate = queryItems["callback_template"]?.removingPercentEncoding else { return false }
+                
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: AppDelegate.exportCertificateNotification, object: nil, userInfo: [AppDelegate.exportCertificateCallbackTemplateKey: callbackTemplate])
                 }
                 
                 return true

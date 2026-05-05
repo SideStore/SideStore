@@ -8,10 +8,8 @@
 
 import Foundation
 import Roxas
-
 import AltStoreCore
 import AltSign
-import minimuxer
 
 @objc(ResignAppOperation)
 final class ResignAppOperation: ResultOperation<ALTApplication>
@@ -55,7 +53,8 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
         let prepareAppProgress = Progress.discreteProgress(totalUnitCount: 2)
         self.progress.addChild(prepareAppProgress, withPendingUnitCount: 3)
         
-        let prepareAppBundleProgress = self.prepareAppBundle(for: app, profiles: profiles) { (result) in
+        let effectiveBundleId = self.context.bundleIdentifier
+        let prepareAppBundleProgress = self.prepareAppBundle(for: app, profiles: profiles, appexBundleIds: context.appexBundleIds ?? [:]) { (result) in
             guard let appBundleURL = self.process(result) else { return }
             
             // Resign app bundle
@@ -65,7 +64,13 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
                 // Finish
                 do
                 {
-                    let destinationURL = InstalledApp.refreshedIPAURL(for: app)
+                    let updatedApp = AnyApp(
+                        name: app.name,
+                        bundleIdentifier: effectiveBundleId,
+                        url: app.fileURL,
+                        storeApp: app.storeApp
+                    )
+                    let destinationURL = InstalledApp.refreshedIPAURL(for: updatedApp)
                     try FileManager.default.copyItem(at: resignedURL, to: destinationURL, shouldReplace: true)
                     print("Successfully resigned app to \(destinationURL.absoluteString)")
                     
@@ -107,22 +112,26 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
 
 private extension ResignAppOperation
 {
-    func prepareAppBundle(for app: ALTApplication, profiles: [String: ALTProvisioningProfile], completionHandler: @escaping (Result<URL, Error>) -> Void) -> Progress
+    func prepareAppBundle(for app: ALTApplication, profiles: [String: ALTProvisioningProfile], appexBundleIds: [String: String], completionHandler: @escaping (Result<URL, Error>) -> Void) -> Progress
     {
         let progress = Progress.discreteProgress(totalUnitCount: 1)
-        
-        let bundleIdentifier = app.bundleIdentifier
+
+        let bundleIdentifier = context.bundleIdentifier
         let openURL = InstalledApp.openAppURL(for: app)
-        
         let fileURL = app.fileURL
-        
-        func prepare(_ bundle: Bundle, additionalInfoDictionaryValues: [String: Any] = [:]) throws
+
+        func prepare(_ bundle: Bundle, bundleID identifier: String?, additionalInfoDictionaryValues: [String: Any] = [:]) throws
         {
-            guard let identifier = bundle.bundleIdentifier else { throw ALTError(.missingAppBundle) }
-            guard let profile = profiles[identifier] else { throw ALTError(.missingProvisioningProfile) }
+            guard let identifier else { throw ALTError(.missingAppBundle) }
+            guard let profile = context.useMainProfile ? profiles.values.first : profiles[identifier] else { throw ALTError(.missingProvisioningProfile) }
             guard var infoDictionary = bundle.completeInfoDictionary else { throw ALTError(.missingInfoPlist) }
             
-            infoDictionary[kCFBundleIdentifierKey as String] = profile.bundleIdentifier
+            if let forcedBundleIdentifier = appexBundleIds[identifier] {
+                infoDictionary[kCFBundleIdentifierKey as String] = forcedBundleIdentifier
+            } else {
+                infoDictionary[kCFBundleIdentifierKey as String] = profile.bundleIdentifier
+            }
+
             infoDictionary[Bundle.Info.altBundleID] = identifier
             infoDictionary[Bundle.Info.devicePairingString] = "<insert pairing file here>"
             infoDictionary.removeValue(forKey: "DTXcode")
@@ -192,8 +201,8 @@ private extension ResignAppOperation
 
                 if app.isAltStoreApp
                 {
-                    guard let udid = fetch_udid()?.toString() as? String else { throw OperationError.unknownUDID }
-                    guard let pairingFileString = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) as? String else { throw OperationError.unknownUDID }                    
+                    guard let udid = fetchUDID() else { throw OperationError.unknownUDID }
+                    guard Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) is String else { throw OperationError.unknownUDID }
                     additionalValues[Bundle.Info.devicePairingString] = "<insert pairing file here>"
                     additionalValues[Bundle.Info.deviceID] = udid
                     additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
@@ -213,7 +222,7 @@ private extension ResignAppOperation
                         // The embedded certificate + certificate identifier are already in app bundle, no need to update them.
                     }
                 }
-                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetch_udid()?.toString() as? String
+                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetchUDID()
                 {
                     // There is an ALTDeviceID entry, so assume the app is using AltKit and replace it with the device's UDID.
                     additionalValues[Bundle.Info.deviceID] = udid
@@ -237,7 +246,7 @@ private extension ResignAppOperation
                 }
                 
                 // Prepare app
-                try prepare(appBundle, additionalInfoDictionaryValues: additionalValues)
+                try prepare(appBundle, bundleID: bundleIdentifier, additionalInfoDictionaryValues: additionalValues)
                 try self.removeMissingAppExtensionReferences(from: appBundle)
                 
                 if let directory = appBundle.builtInPlugInsURL, let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants])
@@ -254,7 +263,8 @@ private extension ResignAppOperation
                         #endif
                         
                         guard let appExtension = Bundle(url: fileURL) else { throw ALTError(.missingAppBundle) }
-                        try prepare(appExtension)
+                        let updatedAppExBundleId = appExtension.bundleIdentifier?.replacingOccurrences(of: app.bundleIdentifier, with: bundleIdentifier)
+                        try prepare(appExtension, bundleID: updatedAppExBundleId)
                     }
                 }
                 

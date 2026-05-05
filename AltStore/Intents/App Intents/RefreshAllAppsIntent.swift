@@ -8,7 +8,6 @@
 
 import AppIntents
 import WidgetKit
-
 import AltStoreCore
 
 // Shouldn't conform types we don't own to protocols we don't own, so make custom

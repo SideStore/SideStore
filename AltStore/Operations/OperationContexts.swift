@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 import Network
-
 import AltStoreCore
 import AltSign
 
@@ -66,6 +65,8 @@ class AppOperationContext
     
     var app: ALTApplication?
     var provisioningProfiles: [String: ALTProvisioningProfile]?
+    var appexBundleIds: [String: String]?
+    var useMainProfile = false
     
     var isFinished = false
     
@@ -121,6 +122,8 @@ class InstallAppOperationContext: AppOperationContext
     var beginInstallationHandler: ((InstalledApp) -> Void)?
     
     var alternateIconURL: URL?
+    
+    var shouldTurnOffData: Bool = false
     
     // Non-nil when installing from a source.
     @AsyncManaged

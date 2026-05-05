@@ -3,6 +3,11 @@
 // https://developer.apple.com/account/#/membership
 DEVELOPMENT_TEAM = XYZ0123456
 
+// If you have a free account use this following line
+// CODE_SIGN_ENTITLEMENTS = ./AltStore/AltStoreFree.entitlements
+// Paid accounts can use this following line
+CODE_SIGN_ENTITLEMENTS = ./AltStore/AltStore.entitlements
+
 // Set this for dev-local xcode builds
 //MARKETING_VERSION_SUFFIX = -local
 

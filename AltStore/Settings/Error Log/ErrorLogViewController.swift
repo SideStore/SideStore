@@ -9,7 +9,6 @@
 import UIKit
 import SafariServices
 import QuickLook
-
 import AltStoreCore
 import Roxas
 
@@ -380,13 +379,8 @@ private extension ErrorLogViewController
     
     func searchFAQ(for loggedError: LoggedError)
     {
-        let baseURL = URL(string: "https://faq.altstore.io/getting-started/error-codes")!
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-        
-        let query = [loggedError.domain, "\(loggedError.error.displayCode)"].joined(separator: "+")
-        components.queryItems = [URLQueryItem(name: "q", value: query)]
-        
-        let safariViewController = SFSafariViewController(url: components.url ?? baseURL)
+        let staticURL = URL(string: "https://docs.sidestore.io/docs/troubleshooting/error-codes")!
+        let safariViewController = SFSafariViewController(url: staticURL)
         safariViewController.preferredControlTintColor = .altPrimary
         self.present(safariViewController, animated: true)
     }

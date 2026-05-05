@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 
 class ErrorDetailsViewController: UIViewController

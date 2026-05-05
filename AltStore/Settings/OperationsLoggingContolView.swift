@@ -42,63 +42,56 @@ struct OperationsLoggingControlView: View {
                                 }
                             ))
                             
-                            CustomToggle("2. VerifyAppPledge", isOn: Binding(
-                                get: { self.viewModel.getFromDatabase(for: VerifyAppPledgeOperation.self) },
-                                set: { value in
-                                    self.viewModel.updateDatabase(for: VerifyAppPledgeOperation.self, value: value)
-                                }
-                            ))
-                            
-                            CustomToggle("3. DownloadApp", isOn: Binding(
+                            CustomToggle("2. DownloadApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: DownloadAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: DownloadAppOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("4. VerifyApp", isOn: Binding(
+                            CustomToggle("3. VerifyApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: VerifyAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: VerifyAppOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("5. RemoveAppExtensions", isOn: Binding(
+                            CustomToggle("4. RemoveAppExtensions", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: RemoveAppExtensionsOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: RemoveAppExtensionsOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("6. FetchAnisetteData", isOn: Binding(
+                            CustomToggle("5. FetchAnisetteData", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: FetchAnisetteDataOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: FetchAnisetteDataOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("7. FetchProvisioningProfiles(I)", isOn: Binding(
+                            CustomToggle("6. FetchProvisioningProfiles(I)", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: FetchProvisioningProfilesInstallOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: FetchProvisioningProfilesInstallOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("8. ResignApp", isOn: Binding(
+                            CustomToggle("7. ResignApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: ResignAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: ResignAppOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("9. SendApp", isOn: Binding(
+                            CustomToggle("8. SendApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: SendAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: SendAppOperation.self, value: value)
                                 }
                             ))
                             
-                            CustomToggle("10. InstallApp", isOn: Binding(
+                            CustomToggle("9. InstallApp", isOn: Binding(
                                 get: { self.viewModel.getFromDatabase(for: InstallAppOperation.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: InstallAppOperation.self, value: value)
@@ -199,16 +192,6 @@ struct OperationsLoggingControlView: View {
                                 get: { self.viewModel.getFromDatabase(for: EnableJITOperation<DummyConformance>.self) },
                                 set: { value in
                                     self.viewModel.updateDatabase(for: EnableJITOperation<DummyConformance>.self, value: value)
-                                }
-                            ))
-                        }
-                        
-                        CustomSection(header: Text("Patrons Operations"))
-                        {
-                            CustomToggle("1. UpdatePatrons", isOn: Binding(
-                                get: { self.viewModel.getFromDatabase(for: UpdatePatronsOperation.self) },
-                                set: { value in
-                                    self.viewModel.updateDatabase(for: UpdatePatronsOperation.self, value: value)
                                 }
                             ))
                         }

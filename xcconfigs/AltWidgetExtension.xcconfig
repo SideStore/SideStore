@@ -1,3 +1,4 @@
 #include "../Build.xcconfig"
 
-PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_BUNDLE_IDENTIFIER).AltWidget
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM).AltWidget
+PRODUCT_BUNDLE_IDENTIFIER[config=Release] = $(ORG_IDENTIFIER).SideStore.AltWidget

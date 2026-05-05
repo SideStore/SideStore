@@ -1,12 +1,15 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MARKETING_VERSION = 0.6.1
-CURRENT_PROJECT_VERSION = 0601
+MARKETING_VERSION = 0.6.4
+CURRENT_PROJECT_VERSION = 0604
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ
 ORG_IDENTIFIER = com.SideStore
+
+// Default is free for CI builds, override it using CodeSigning.xcconfig if required
+CODE_SIGN_ENTITLEMENTS = ./AltStore/AltStoreFree.entitlements
 
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
@@ -20,8 +23,10 @@ PRODUCT_NAME = SideStore
 //PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   =  $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
 //PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).SideStore
 // preserve unmodified bundle ID (without any extra suffixes)
-GROUP_ID = $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
-PRODUCT_BUNDLE_IDENTIFIER = $(GROUP_ID)
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM)
+PRODUCT_BUNDLE_IDENTIFIER[config=Release] = $(ORG_IDENTIFIER).SideStore
+GROUP_ID = $(ORG_IDENTIFIER).SideStore
+GROUP_ID[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM)
 
 EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
 APP_GROUP_IDENTIFIER        = $(GROUP_ID)

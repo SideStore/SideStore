@@ -1,82 +1,260 @@
 name: Nightly SideStore Build
+
 on:
   push:
-    branches:
-      - develop
+    branches: [develop]
   schedule:
-    - cron: '0 0 * * *' # Runs every night at midnight UTC
-  workflow_dispatch: # Allows manual trigger
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
-# cancel duplicate run if from same branch
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check-changes:
-    if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check.outputs.has_changes }}
+  build:
+    runs-on: macos-26
+    env:
+      DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASE_NAME: Nightly
+      CHANNEL: nightly
+      UPSTREAM_CHANNEL: ""
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ensure full history
+          submodules: recursive
+          fetch-depth: 0
 
-      - name: Get last successful workflow run
-        id: get_last_success
+      - name: Find Last Successful commit
         run: |
-          LAST_SUCCESS=$(gh run list --workflow "Nightly SideStore Build" --json createdAt,conclusion \
-            --jq '[.[] | select(.conclusion=="success")][0].createdAt' || echo "")
-          echo "Last successful run: $LAST_SUCCESS"
-          echo "last_success=$LAST_SUCCESS" >> $GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LAST_SUCCESSFUL_COMMIT=$(python3 scripts/ci/workflow.py last-successful-commit \
+            "false" "${{ env.CHANNEL }}" || echo "")
+          echo "LAST_SUCCESSFUL_COMMIT=$LAST_SUCCESSFUL_COMMIT" | tee -a $GITHUB_ENV
 
-      - name: Check for new commits since last successful build
-        id: check
+      - name: Check for new changes (on schedule)
+        id: check_changes
+        if: github.event_name == 'schedule'
         run: |
-          if [ -n "$LAST_SUCCESS" ]; then
-            NEW_COMMITS=$(git rev-list --count --since="$LAST_SUCCESS" origin/develop)
-            COMMIT_LOG=$(git log --since="$LAST_SUCCESS" --pretty=format:"%h %s" origin/develop)
-          else
-            NEW_COMMITS=1
-            COMMIT_LOG=$(git log -n 10 --pretty=format:"%h %s" origin/develop) # Show last 10 commits if no history
-          fi
-          
-          echo "Has changes: $NEW_COMMITS"
-          echo "New commits since last successful build:"
-          echo "$COMMIT_LOG"
-          
-          if [ "$NEW_COMMITS" -gt 0 ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
+          NEW_COMMITS=$(python3 scripts/ci/workflow.py count-new-commits "$LAST_SUCCESSFUL_COMMIT")
+          SHOULD_BUILD=$([ "${NEW_COMMITS:-0}" -ge 1 ] && echo true || echo false)
+          echo "should_build=$SHOULD_BUILD" >> $GITHUB_OUTPUT
+          echo "NEW_COMMITS=$NEW_COMMITS" | tee -a $GITHUB_ENV
+
+      - name: Should Skip Building (on schedule)
+        id: build_gate
+        run: |
+          SHOULD_SKIP=$(
+            { [ "${{ github.event_name }}" = "schedule" ] && \
+              [ "${{ steps.check_changes.outputs.should_build }}" != "true" ]; \
+            } && echo true || echo false
+          )
+          echo "should_skip=$SHOULD_SKIP" >> $GITHUB_OUTPUT
+
+      - run: brew install ldid xcbeautify
+        if: steps.build_gate.outputs.should_skip != 'true'
+
+      # --------------------------------------------------
+      # runtime env setup
+      # --------------------------------------------------
+      - name: Setup Env
+        if: steps.build_gate.outputs.should_skip != 'true'
+        run: |
+          BUILD_NUM="${{ github.run_number }}"
+          MARKETING_VERSION=$(python3 scripts/ci/workflow.py get-marketing-version)
+          SHORT_COMMIT=$(python3 scripts/ci/workflow.py commit-id)
+
+          NORMALIZED_VERSION=$(python3 scripts/ci/workflow.py compute-normalized \
+              "$MARKETING_VERSION" \
+              "$BUILD_NUM" \
+              "$SHORT_COMMIT")
+
+          python3 scripts/ci/workflow.py set-marketing-version "$NORMALIZED_VERSION"
+
+          echo "BUILD_NUM=$BUILD_NUM" | tee -a $GITHUB_ENV
+          echo "SHORT_COMMIT=$SHORT_COMMIT" | tee -a $GITHUB_ENV
+          echo "MARKETING_VERSION=$NORMALIZED_VERSION" | tee -a $GITHUB_ENV
+
+      - name: Setup Xcode
+        if: steps.build_gate.outputs.should_skip != 'true'
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: "26.4"
+
+      - name: Restore Cache (exact)
+        if: steps.build_gate.outputs.should_skip != 'true'
+        id: xcode-cache-exact
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: Restore Cache (last)
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          steps.xcode-cache-exact.outputs.cache-hit != 'true'
+        id: xcode-cache-fallback
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-build-cache-${{ github.ref_name }}-
+
+      # --------------------------------------------------
+      # build and test
+      # --------------------------------------------------
+      - name: Clean
+        if: steps.build_gate.outputs.should_skip != 'true' && contains(github.event.head_commit.message, '[--clean-build]')
+        run: |
+          python3 scripts/ci/workflow.py clean
+          python3 scripts/ci/workflow.py clean-derived-data
+          python3 scripts/ci/workflow.py clean-spm-cache
+
+      - name: Boot simulator (async)
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          vars.ENABLE_TESTS == '1' &&
+          vars.ENABLE_TESTS_RUN == '1'
+        run: |
+          mkdir -p build/logs
+          python3 scripts/ci/workflow.py boot-sim-async "iPhone 17 Pro"
+
+      - name: Build
+        if: steps.build_gate.outputs.should_skip != 'true'
+        id: build
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LAST_SUCCESS: ${{ env.last_success }}
+          BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+        run: |
+          python3 scripts/ci/workflow.py build; STATUS=$?
+          python3 scripts/ci/workflow.py encrypt-build
+          echo "encrypted=true" >> $GITHUB_OUTPUT
+          exit $STATUS
 
-  Reusable-build:
-    if: |
-      always() &&
-      (github.event_name == 'push' || 
-      (github.event_name == 'schedule' && needs.check-changes.result == 'success' && needs.check-changes.outputs.has_changes == 'true'))
-    needs: check-changes
-    uses: ./.github/workflows/reusable-sidestore-build.yml
-    with:
-      # bundle_id: "com.SideStore.SideStore.Nightly"
-      bundle_id: "com.SideStore.SideStore"
-      # bundle_id_suffix: ".Nightly"
-      is_beta: true
-      publish: ${{ vars.PUBLISH_NIGHTLY_UPDATES == 'true' }} 
-      is_shared_build_num: false
-      release_tag: "nightly"
-      release_name: "Nightly"
-      upstream_tag: "0.5.10"
-      upstream_name: "Stable"
-    secrets:
-      CROSS_REPO_PUSH_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
-      BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+      - name: Tests Build
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          vars.ENABLE_TESTS == '1' &&
+          vars.ENABLE_TESTS_BUILD == '1'
+        id: test-build
+        env:
+          BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+        run: |
+          python3 scripts/ci/workflow.py tests-build; STATUS=$?
+          python3 scripts/ci/workflow.py encrypt-tests-build
+          exit $STATUS
 
+      - name: Save Cache
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          steps.xcode-cache-fallback.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+
+      - name: Tests Run
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          vars.ENABLE_TESTS == '1' &&
+          vars.ENABLE_TESTS_RUN == '1'
+        id: test-run
+        env:
+          BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
+        run: |
+          python3 scripts/ci/workflow.py tests-run "iPhone 17 Pro"; STATUS=$?
+          python3 scripts/ci/workflow.py encrypt-tests-run
+          exit $STATUS
+
+      # --------------------------------------------------
+      # artifacts
+      # --------------------------------------------------
+      - uses: actions/upload-artifact@v4
+        if: steps.build_gate.outputs.should_skip != 'true'
+        with:
+          name: build-logs-${{ env.MARKETING_VERSION }}.zip
+          path: build-logs.zip
+
+      - uses: actions/upload-artifact@v4
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          vars.ENABLE_TESTS == '1' &&
+          vars.ENABLE_TESTS_BUILD == '1'
+        with:
+          name: tests-build-logs-${{ env.SHORT_COMMIT }}.zip
+          path: tests-build-logs.zip
+
+      - uses: actions/upload-artifact@v4
+        if: >
+          steps.build_gate.outputs.should_skip != 'true' &&
+          vars.ENABLE_TESTS == '1' &&
+          vars.ENABLE_TESTS_RUN == '1'
+        with:
+          name: tests-run-logs-${{ env.SHORT_COMMIT }}.zip
+          path: tests-run-logs.zip
+
+      - uses: actions/upload-artifact@v4
+        if: steps.build_gate.outputs.should_skip != 'true'
+        with:
+          name: SideStore-${{ env.MARKETING_VERSION }}.ipa
+          path: SideStore.ipa
+      - uses: actions/upload-artifact@v4
+        if: steps.build_gate.outputs.should_skip != 'true'
+        with:
+          name: SideStore-${{ env.MARKETING_VERSION }}-dSYMs.zip
+          path: SideStore.dSYMs.zip
+
+      - uses: actions/checkout@v4
+        if: steps.build_gate.outputs.should_skip != 'true' && env.DEPLOY_KEY != ''
+        with:
+          repository: "SideStore/apps-v2.json"
+          ref: "main"
+          token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+          path: "SideStore/apps-v2.json"
+
+      - name: Generate Metadata
+        if: steps.build_gate.outputs.should_skip != 'true'
+        run: |
+          python3 scripts/ci/workflow.py dump-project-settings
+          PRODUCT_NAME=$(python3 scripts/ci/workflow.py read-product-name)
+          BUNDLE_ID=$(python3 scripts/ci/workflow.py read-bundle-id)
+          IPA_NAME="$PRODUCT_NAME.ipa"
+
+          python3 scripts/ci/workflow.py generate-metadata \
+            "$CHANNEL" \
+            "$SHORT_COMMIT" \
+            "$MARKETING_VERSION" \
+            "$CHANNEL" \
+            "$BUNDLE_ID" \
+            "$IPA_NAME" \
+            "$LAST_SUCCESSFUL_COMMIT"
+
+      - name: Deploy
+        if: steps.build_gate.outputs.should_skip != 'true' && env.DEPLOY_KEY != ''
+        run: |
+          SOURCE_JSON="_includes/source.json"
+
+          python3 scripts/ci/workflow.py deploy \
+            SideStore/apps-v2.json \
+            "$SOURCE_JSON" \
+            "$CHANNEL" \
+            "$MARKETING_VERSION"
+      
+
+      # --------------------------------------------------
+      # upload release to GH
+      # --------------------------------------------------
+      - name: Upload Release
+        if: steps.build_gate.outputs.should_skip != 'true'
+        run: |
+          python3 scripts/ci/workflow.py upload-release \
+            "$RELEASE_NAME" \
+            "$CHANNEL" \
+            "$GITHUB_SHA" \
+            "$GITHUB_REPOSITORY" \
+            "$UPSTREAM_CHANNEL"

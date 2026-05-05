@@ -53,6 +53,12 @@ public class Keychain
     @KeychainItem(key: "appleIDPassword")
     public var appleIDPassword: String?
     
+    @KeychainItem(key: "appleIDAdsid")
+    public var appleIDAdsid: String?
+    
+    @KeychainItem(key: "appleIDXcodeToken")
+    public var appleIDXcodeToken: String?
+    
     @KeychainItem(key: "signingCertificatePrivateKey")
     public var signingCertificatePrivateKey: Data?
     
@@ -65,23 +71,17 @@ public class Keychain
     @KeychainItem(key: "signingCertificatePassword")
     public var signingCertificatePassword: String?
     
-    @KeychainItem(key: "patreonAccessToken")
-    public var patreonAccessToken: String?
-    
-    @KeychainItem(key: "patreonRefreshToken")
-    public var patreonRefreshToken: String?
-    
-    @KeychainItem(key: "patreonCreatorAccessToken")
-    public var patreonCreatorAccessToken: String?
-    
-    @KeychainItem(key: "patreonAccountID")
-    public var patreonAccountID: String?
-    
     @KeychainItem(key: "identifier")
     public var identifier: String?
     
     @KeychainItem(key: "adiPb")
     public var adiPb: String?
+    
+    // for some reason authenticated cert/session/team is completely not cached, which result in logging in for every request
+    // we save it here so when user logs out we can clear cached account/session/team
+    public var certificate: ALTCertificate? = nil
+    public var session: ALTAppleAPISession? = nil
+    public var team: ALTTeam? = nil
     
     private init()
     {
@@ -91,7 +91,13 @@ public class Keychain
     {
         self.appleIDEmailAddress = nil
         self.appleIDPassword = nil
+        self.appleIDAdsid = nil
+        self.appleIDXcodeToken = nil
         self.signingCertificatePrivateKey = nil
         self.signingCertificateSerialNumber = nil
+        
+        self.certificate = nil
+        self.session = nil
+        self.team = nil
     }
 }

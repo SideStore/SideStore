@@ -59,6 +59,8 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
     @NSManaged public var needsResign: Bool
     @NSManaged public var hasAlternateIcon: Bool
     
+    @NSManaged public var useMainProfile: Bool
+    
     @NSManaged public var certificateSerialNumber: String?
     @NSManaged public var storeBuildVersion: String?
     
