@@ -98,7 +98,7 @@ final class TunnelConfig: ObservableObject {
     static let shared = TunnelConfig()
 
     private static let defaultOverrideIP: String = {
-        if #available(iOS 26.4, *) { return "192.168.1.50" }
+//        if #available(iOS 26.4, *) { return "192.168.1.50" }
         return "10.7.0.1"
     }()
 
