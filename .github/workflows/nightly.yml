@@ -22,7 +22,7 @@ jobs:
       UPSTREAM_CHANNEL: ""
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0
@@ -78,14 +78,14 @@ jobs:
 
       - name: Setup Xcode
         if: steps.build_gate.outputs.should_skip != 'true'
-        uses: maxim-lobanov/setup-xcode@v1.6.0
+        uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: "26.4"
 
       - name: Restore Cache (exact)
         if: steps.build_gate.outputs.should_skip != 'true'
         id: xcode-cache-exact
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -97,7 +97,7 @@ jobs:
           steps.build_gate.outputs.should_skip != 'true' &&
           steps.xcode-cache-exact.outputs.cache-hit != 'true'
         id: xcode-cache-fallback
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -151,7 +151,7 @@ jobs:
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
           steps.xcode-cache-fallback.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v5
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
@@ -174,13 +174,13 @@ jobs:
       # --------------------------------------------------
       # artifacts
       # --------------------------------------------------
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: steps.build_gate.outputs.should_skip != 'true'
         with:
           name: build-logs-${{ env.MARKETING_VERSION }}.zip
           path: build-logs.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
           vars.ENABLE_TESTS == '1' &&
@@ -189,7 +189,7 @@ jobs:
           name: tests-build-logs-${{ env.SHORT_COMMIT }}.zip
           path: tests-build-logs.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
           vars.ENABLE_TESTS == '1' &&
@@ -198,18 +198,18 @@ jobs:
           name: tests-run-logs-${{ env.SHORT_COMMIT }}.zip
           path: tests-run-logs.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: steps.build_gate.outputs.should_skip != 'true'
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}.ipa
           path: SideStore.ipa
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: steps.build_gate.outputs.should_skip != 'true'
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}-dSYMs.zip
           path: SideStore.dSYMs.zip
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: steps.build_gate.outputs.should_skip != 'true' && env.DEPLOY_KEY != ''
         with:
           repository: "SideStore/apps-v2.json"
