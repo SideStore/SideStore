@@ -15,36 +15,52 @@ struct AppDetailWidget: Widget
     private let kind: String = "AppDetail"
     
     public var body: some WidgetConfiguration {
-        let configuration = IntentConfiguration(kind: kind,
-                                   intent: ViewAppIntent.self,
-                                   provider: AppsTimelineProvider()) { (entry) in
-            AppDetailWidgetView(entry: entry)
-        }
-        .supportedFamilies([.systemSmall])
-        .configurationDisplayName("App Status")
-        .description("View remaining days until your sideloaded apps expire. Tap the countdown timer to refresh them in the background.")
-        
-        if #available(iOS 17, *)
+        // On iOS 16+ use AppIntentConfiguration — it correctly supports
+        // containerBackground and contentMarginsDisabled(), unlike the legacy
+        // IntentConfiguration which breaks on iOS 17+ with the
+        // "Please adopt containerBackground" error.
+        if #available(iOSApplicationExtension 17, *)
         {
-            return configuration
-                .contentMarginsDisabled()
+            return AppIntentConfiguration(
+                kind: kind,
+                intent: SelectAppIntent.self,
+                provider: SelectAppTimelineProvider()
+            ) { entry in
+                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder)
+            }
+            .supportedFamilies([.systemSmall])
+            .configurationDisplayName("App Status")
+            .description("View remaining days until your sideloaded apps expire. Tap the countdown timer to refresh them in the background.")
+            .contentMarginsDisabled()
         }
         else
         {
-            return configuration
+            // Legacy path for iOS 15.
+            return IntentConfiguration(
+                kind: kind,
+                intent: ViewAppIntent.self,
+                provider: AppsTimelineProvider()
+            ) { entry in
+                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder)
+            }
+            .supportedFamilies([.systemSmall])
+            .configurationDisplayName("App Status")
+            .description("View remaining days until your sideloaded apps expire. Tap the countdown timer to refresh them in the background.")
         }
     }
 }
 
 private struct AppDetailWidgetView: View
 {
-    var entry: AppsEntry<Intent>
+    let apps: [AppSnapshot]
+    let date: Date
+    let isPlaceholder: Bool
     
     var body: some View {
         Group {
-            if let app = self.entry.apps.first
+            if let app = apps.first
             {
-                let daysRemaining = app.expirationDate.numberOfCalendarDays(since: self.entry.date)
+                let daysRemaining = app.expirationDate.numberOfCalendarDays(since: date)
                     
                 GeometryReader { (geometry) in
                     Group {
@@ -52,11 +68,7 @@ private struct AppDetailWidgetView: View
                             VStack(alignment: .leading, spacing: 5) {
                                 let imageHeight = geometry.size.height * 0.4
                                 
-                                Image(uiImage: app.icon ?? UIImage())
-                                    .resizable()
-                                    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-                                    .frame(height: imageHeight)
-                                    .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+                                AppIconView(icon: app.icon, imageHeight: imageHeight)
                                 
                                 Text(app.name.uppercased())
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -65,6 +77,7 @@ private struct AppDetailWidgetView: View
                                     .minimumScaleFactor(0.5)
                             }
                             .fixedSize(horizontal: false, vertical: true)
+                            .widgetAccentableIfAvailable()
                             
                             Spacer(minLength: 0)
                             
@@ -97,7 +110,7 @@ private struct AppDetailWidgetView: View
                                 {
                                     Countdown(startDate: app.refreshedDate,
                                               endDate: app.expirationDate,
-                                              currentDate: self.entry.date)
+                                              currentDate: date)
                                         .font(.system(size: 20, weight: .semibold, design: .rounded))
                                         .foregroundColor(Color.white)
                                         .opacity(0.8)
@@ -108,6 +121,7 @@ private struct AppDetailWidgetView: View
                             }
                             .fixedSize(horizontal: false, vertical: true)
                             .activatesRefreshAllAppsIntent()
+                            .widgetAccentableIfAvailable()
                         }
                         .padding()
                     }
@@ -118,7 +132,7 @@ private struct AppDetailWidgetView: View
                 VStack {
                     // Put conditional inside VStack, or else an empty view will be returned
                     // if isPlaceholder == false, which messes up layout.
-                    if !entry.isPlaceholder
+                    if !isPlaceholder
                     {
                         Text("App Not Found")
                             .font(.system(.body, design: .rounded))
@@ -131,15 +145,12 @@ private struct AppDetailWidgetView: View
         }
         .widgetBackground(
             backgroundView(
-                icon: entry.apps.first?.icon,
-                tintColor: entry.apps.first?.tintColor
+                icon: apps.first?.icon,
+                tintColor: apps.first?.tintColor
             )
         )
     }
-}
 
-private extension AppDetailWidgetView
-{
     func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
     {
         let icon = icon ?? UIImage(named: "SideStore")!
@@ -173,12 +184,6 @@ private extension AppDetailWidgetView
                         .saturation(saturation)
                         .blur(radius: blurRadius, opaque: true)
                         .scaleEffect(geometry.size.width / imageHeight, anchor: .center)
-                        // .onAppear {
-                        //     print("Geometry size: \(geometry.size)")
-                        //     print("Image height: \(imageHeight), Geometry width: \(geometry.size.width)")
-                        //     print("Icon size: \(icon.size)")
-                        // }
-                        
                     
                     Color(tintColor)
                         .opacity(tintOpacity)
@@ -190,6 +195,26 @@ private extension AppDetailWidgetView
                 .frame(width: 26, height: 26)
                 .padding()
         }
+    }
+}
+
+// In tinted/clear mode: luminanceToAlpha converts pixel brightness → opacity so
+// the system can overlay the accent colour. Must come BEFORE the mask so the
+// squircle corners are clipped after conversion (reverse order = corner bleed).
+// widgetAccentable() opts the result into the accent group.
+private struct AppIconView: View
+{
+    let icon: UIImage?
+    let imageHeight: CGFloat
+
+    var body: some View {
+        Image(uiImage: icon ?? UIImage())
+            .resizable()
+            .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+            .frame(height: imageHeight)
+            .luminanceToAlphaInAccentedMode()
+            .mask(RoundedRectangle(cornerRadius: imageHeight / 5.0, style: .continuous))
+            .widgetAccentableIfAvailable()
     }
 }
 
