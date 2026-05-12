@@ -87,9 +87,22 @@ private extension SceneDelegate
         if context.url.isFileURL
         {
             guard context.url.pathExtension.lowercased() == "ipa" else { return }
+            if !context.url.startAccessingSecurityScopedResource() { return }
+            defer { context.url.stopAccessingSecurityScopedResource() }
+
+            let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+            do {
+                try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil) }
+            catch { return }
+
+            let ipa = temporaryDirectory.appendingPathComponent(context.url.lastPathComponent)
+            
+            do {
+                try FileManager.default.copyItem(at: context.url, to: ipa)
+            } catch { return }
             
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: context.url])
+                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: ipa])
             }
         }
         else
