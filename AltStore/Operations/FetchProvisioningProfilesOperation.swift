@@ -113,6 +113,7 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
             return nil
             
         case .success(let value):
+            self.saveProvisioningProfileToDisk(value, bundleIdentifier: appID.bundleIdentifier)
             guard !self.isCancelled else {
                 self.finish(.failure(OperationError.cancelled))
                 return nil
@@ -150,6 +151,24 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
                 }
             }
         }
+    }
+}
+
+internal func saveProvisioningProfileToDisk(_ profile: ALTProvisioningProfile, bundleIdentifier: String) {
+    guard let data = profile.mobileprovisionData else {
+        Logger.sideload.error("No mobileprovision data found for \(bundleIdentifier, privacy: .public)")
+        return
+    }
+
+    let fileName = "\(bundleIdentifier)_profile.mobileprovision"
+    let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    let fileURL = documentsURL.appendingPathComponent(fileName)
+
+    do {
+        try data.write(to: fileURL, options: .atomic)
+        Logger.sideload.notice("Saved provisioning profile to \(fileURL.path, privacy: .public)")
+    } catch {
+        Logger.sideload.error("Failed to save provisioning profile for \(bundleIdentifier, privacy: .public): \(error.localizedDescription, privacy: .public)")
     }
 }
 
