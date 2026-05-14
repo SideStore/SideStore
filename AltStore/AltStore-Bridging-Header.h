@@ -3,6 +3,3 @@
 //
 
 #import "NSAttributedString+Markdown.h"
-#import "ALTAppPatcher.h"
-
-#include "fragmentzip.h"

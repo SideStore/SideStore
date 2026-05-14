@@ -7,7 +7,6 @@
 //
 
 import Intents
-import AltStoreCore
 
 public class ViewAppIntentHandler: NSObject, ViewAppIntentHandling
 {

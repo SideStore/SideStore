@@ -8,10 +8,8 @@
 
 import Foundation
 import Roxas
-
 import AltStoreCore
 import AltSign
-import minimuxer
 
 @objc(ResignAppOperation)
 final class ResignAppOperation: ResultOperation<ALTApplication>
@@ -118,12 +116,13 @@ private extension ResignAppOperation
     {
         let progress = Progress.discreteProgress(totalUnitCount: 1)
 
+        let bundleIdentifier = context.bundleIdentifier
         let openURL = InstalledApp.openAppURL(for: app)
         let fileURL = app.fileURL
-        let identifier = context.bundleIdentifier
 
-        func prepare(_ bundle: Bundle, additionalInfoDictionaryValues: [String: Any] = [:]) throws
+        func prepare(_ bundle: Bundle, bundleID identifier: String?, additionalInfoDictionaryValues: [String: Any] = [:]) throws
         {
+            guard let identifier else { throw ALTError(.missingAppBundle) }
             guard let profile = context.useMainProfile ? profiles.values.first : profiles[identifier] else { throw ALTError(.missingProvisioningProfile) }
             guard var infoDictionary = bundle.completeInfoDictionary else { throw ALTError(.missingInfoPlist) }
             
@@ -194,7 +193,7 @@ private extension ResignAppOperation
                 var allURLSchemes = infoDictionary[Bundle.Info.urlTypes] as? [[String: Any]] ?? []
                 
                 let altstoreURLScheme = ["CFBundleTypeRole": "Editor",
-                                         "CFBundleURLName": identifier,
+                                         "CFBundleURLName": bundleIdentifier,
                                          "CFBundleURLSchemes": [openURL.scheme!]] as [String : Any]
                 allURLSchemes.append(altstoreURLScheme)
                 
@@ -202,7 +201,7 @@ private extension ResignAppOperation
 
                 if app.isAltStoreApp
                 {
-                    guard let udid = fetch_udid()?.toString() as? String else { throw OperationError.unknownUDID }
+                    guard let udid = fetchUDID() else { throw OperationError.unknownUDID }
                     guard Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) is String else { throw OperationError.unknownUDID }
                     additionalValues[Bundle.Info.devicePairingString] = "<insert pairing file here>"
                     additionalValues[Bundle.Info.deviceID] = udid
@@ -223,7 +222,7 @@ private extension ResignAppOperation
                         // The embedded certificate + certificate identifier are already in app bundle, no need to update them.
                     }
                 }
-                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetch_udid()?.toString() as? String
+                else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetchUDID()
                 {
                     // There is an ALTDeviceID entry, so assume the app is using AltKit and replace it with the device's UDID.
                     additionalValues[Bundle.Info.deviceID] = udid
@@ -247,7 +246,7 @@ private extension ResignAppOperation
                 }
                 
                 // Prepare app
-                try prepare(appBundle, additionalInfoDictionaryValues: additionalValues)
+                try prepare(appBundle, bundleID: bundleIdentifier, additionalInfoDictionaryValues: additionalValues)
                 try self.removeMissingAppExtensionReferences(from: appBundle)
                 
                 if let directory = appBundle.builtInPlugInsURL, let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants])
@@ -264,7 +263,8 @@ private extension ResignAppOperation
                         #endif
                         
                         guard let appExtension = Bundle(url: fileURL) else { throw ALTError(.missingAppBundle) }
-                        try prepare(appExtension)
+                        let updatedAppExBundleId = appExtension.bundleIdentifier?.replacingOccurrences(of: app.bundleIdentifier, with: bundleIdentifier)
+                        try prepare(appExtension, bundleID: updatedAppExBundleId)
                     }
                 }
                 

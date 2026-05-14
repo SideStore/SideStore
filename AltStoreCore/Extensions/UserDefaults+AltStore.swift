@@ -54,11 +54,8 @@ public extension UserDefaults
     
     @NSManaged var patchedApps: [String]?
     
-    @NSManaged var patronsRefreshID: String?
-    
     @NSManaged var trustedSourceIDs: [String]?
     @NSManaged var trustedServerURL: String?
-    @NSManaged var skipPatreonDownloads: Bool
     
     @NSManaged var betaUdpatesTrack: String?
 

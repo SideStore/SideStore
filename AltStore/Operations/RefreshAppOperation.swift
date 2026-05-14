@@ -7,11 +7,11 @@
 //
 
 import Foundation
-
 import AltStoreCore
 import AltSign
 import Roxas
-import minimuxer
+
+import Minimuxer
 
 @objc(RefreshAppOperation)
 final class RefreshAppOperation: ResultOperation<InstalledApp>
@@ -48,8 +48,7 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
 
             for p in profiles {
                 do {
-                    let bytes = p.value.data.toRustByteSlice()
-                    try install_provisioning_profile(bytes.forRust())
+                    try installProvisioningProfiles(p.value.data)
                 } catch {
                     self.finish(.failure(MinimuxerError.ProfileInstall))
                 }

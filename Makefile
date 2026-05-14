@@ -169,7 +169,7 @@ MARKETING_VERSION ?=
 BUNDLE_ID_SUFFIX ?= 
 # Common build settings for xcodebuild
 COMMON_BUILD_SETTINGS = \
-	-workspace AltStore.xcworkspace \
+	-project AltStore.xcodeproj \
 	-scheme SideStore \
 	-sdk iphoneos \
 	-configuration $(BUILD_CONFIG) \
@@ -247,7 +247,7 @@ sim-boot-check:
 
 clean-build:
 	@echo "Cleaning build artifacts..."
-	@xcodebuild clean -workspace AltStore.xcworkspace -scheme SideStore
+	@xcodebuild clean -project AltStore.xcodeproj -scheme SideStore
 
 fakesign-apps:
 	rm -rf SideStore.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
@@ -374,8 +374,7 @@ ipa-altbackup: checkPaths copy-altbackup
 	@echo " Copying from $(ALT_APP_SRC) into $(ALT_APP_PAYLOAD_DST)"
 	@cp -R -f	"$(ALT_APP_SRC)/." "$(ALT_APP_PAYLOAD_DST)/$(TARGET_NAME)"
 	@pushd 		"$(ALT_APP_DST_ARCHIVE)" && zip -r "../../$(ALT_APP_IPA_DST)" Payload || popd
-	@cp	   -f	"$(ALT_APP_IPA_DST)" AltStore/Resources
-	@echo "  IPA created: AltStore/Resources/AltBackup.ipa"
+	@echo "  IPA created: build/AltBackup.ipa"
 
 clean-altbackup:
 	@echo ""

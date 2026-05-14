@@ -10,11 +10,10 @@ import UIKit
 import UserNotifications
 import AVFoundation
 import Intents
-
 import AltStoreCore
 import AltSign
 import Roxas
-import EmotionalDamage
+
 
 import Nuke
 
@@ -93,14 +92,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        AnalyticsManager.shared.start()
-        
         self.setTintColor()
         self.prepareImageCache()
 
         // TODO: @mahee96: find if we need to start em_proxy as in altstore?
         if UserDefaults.standard.enableEMPforWireguard {
-            start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
         }
 
         SecureValueTransformer.register()        
@@ -127,7 +124,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Make sure to update SceneDelegate.sceneDidEnterBackground() as well.
         // TODO: @mahee96: find if we need to stop em_proxy as in altstore?
         if UserDefaults.standard.enableEMPforWireguard {
-            stop_em_proxy()
+            stopEMProxy()
         }
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
@@ -146,10 +143,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         AppManager.shared.update()
         if UserDefaults.standard.enableEMPforWireguard {
-            start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
         }
-
-        PatreonAPI.shared.refreshPatreonAccount()
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
@@ -249,13 +244,6 @@ private extension AppDelegate
             
             switch host
             {
-            case "patreon":
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
-                }
-                
-                return true
-                
             case "appbackupresponse":
                 let result: Result<Void, Error>
                 

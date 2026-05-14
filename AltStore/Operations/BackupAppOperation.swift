@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 import AltStoreCore
 import AltSign
 

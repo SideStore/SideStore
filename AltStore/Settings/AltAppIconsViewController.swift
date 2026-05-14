@@ -20,15 +20,17 @@ extension UIApplication
 
 private final class AltIcon: Decodable
 {
-    static let defaultIconName: String = "AppIcon"
+    static let defaultName: String = "Original"
     
     var name: String
     var imageName: String
+    var iconName: String
     
     private enum CodingKeys: String, CodingKey
     {
         case name
         case imageName
+        case iconName
     }
     
     required init(from decoder: Decoder) throws
@@ -36,6 +38,7 @@ private final class AltIcon: Decodable
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try container.decode(String.self, forKey: .name)
         self.imageName = try container.decode(String.self, forKey: .imageName)
+        self.iconName = try container.decode(String.self, forKey: .iconName)
     }
 }
 
@@ -146,20 +149,14 @@ private extension AltAppIconsViewController
             config.textProperties.font = font
             config.textProperties.color = .label
 
-            // we have to do this hardcodded name hack for .appiconset
-            // else one can supply the artifacts via .imageset
-            let image: UIImage? =
-                UIImage(named: "\(icon.imageName)76x76@2x~ipad") ??
-                UIImage(named: "\(icon.imageName)60x60@2x") ??
-                UIImage(named: icon.imageName)
-
+            let image = UIImage(named: icon.imageName)
             config.image = image
             config.imageProperties.maximumSize = CGSize(width: imageWidth, height: imageWidth)
             config.imageProperties.cornerRadius = imageWidth / 5.0 // Copied from AppIconImageView
             
             cell.contentConfiguration = config
 
-            if UIApplication.shared.alternateIconName == icon.imageName || (UIApplication.shared.alternateIconName == nil && icon.imageName == AltIcon.defaultIconName)
+            if UIApplication.shared.alternateIconName == icon.iconName || (UIApplication.shared.alternateIconName == nil && icon.name == AltIcon.defaultName)
             {
                 cell.accessories = [.checkmark(options: .init(tintColor: .white))]
             }
@@ -167,7 +164,7 @@ private extension AltAppIconsViewController
             {
                 cell.accessories = []
             }
-                      
+            
             var backgroundConfiguration = UIBackgroundConfiguration.listPlainCell()
             backgroundConfiguration.backgroundColorTransformer = UIConfigurationColorTransformer { [weak cell] c in
                 if let state = cell?.configurationState, state.isHighlighted 
@@ -199,14 +196,14 @@ extension AltAppIconsViewController
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
         let icon = self.dataSource.item(at: indexPath)
-        guard UIApplication.shared.alternateIconName != icon.imageName else { return }
+        guard UIApplication.shared.alternateIconName != icon.iconName else { return }
         
         // Deselect previous icon + select new icon
         collectionView.reloadData()
         
         // If assigning primary icon, pass "nil" as alternate icon name.
-        let imageName = (icon.imageName == "AppIcon") ? nil : icon.imageName
-        UIApplication.shared.setAlternateIconName(imageName) { error in
+        let iconName = (icon.name == AltIcon.defaultName) ? nil : icon.iconName
+        UIApplication.shared.setAlternateIconName(iconName) { error in
             if let error
             {
                 let alertController = UIAlertController(title: NSLocalizedString("Unable to Change App Icon", comment: ""),

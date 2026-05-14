@@ -117,39 +117,6 @@ extension PlatformURL: Comparable {
 
 public typealias PlatformURLs = [PlatformURL]
 
-private struct PatreonParameters: Decodable
-{
-    struct Pledge: Decodable
-    {
-        var amount: Decimal
-        var isCustom: Bool
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.singleValueContainer()
-            
-            if let stringValue = try? container.decode(String.self), stringValue == "custom"
-            {
-                self.amount = 0 // Use 0 as amount internally to simplify logic.
-                self.isCustom = true
-            }
-            else
-            {
-                // Unless the value is "custom", throw error if value is not Decimal.
-                self.amount = try container.decode(Decimal.self)
-                self.isCustom = false
-            }
-        }
-    }
-    
-    var pledge: Pledge?
-    var currency: String?
-    var tiers: Set<String>?
-    var benefit: String?
-    var hidden: Bool?
-}
-
-
 extension StoreApp {
     
     //MARK: - relationships
@@ -226,13 +193,12 @@ public class StoreApp: BaseEntity, Decodable
     // Required for Marketplace apps.
     @NSManaged public private(set) var marketplaceID: String?
 
+    // TODO retire these pledge related fields later coz sidestore doesn't require in-app pledging for patreon content
     @NSManaged public var isPledged: Bool
     @NSManaged public private(set) var isPledgeRequired: Bool
     @NSManaged public private(set) var isHiddenWithoutPledge: Bool
     @NSManaged public private(set) var pledgeCurrency: String?
     @NSManaged public private(set) var prefersCustomPledge: Bool
-    
-    @nonobjc public var pledgeAmount: Decimal? { _pledgeAmount as? Decimal }
     @NSManaged @objc(pledgeAmount) private var _pledgeAmount: NSDecimalNumber?
     
     @NSManaged public var sortIndex: Int32
@@ -287,11 +253,6 @@ public class StoreApp: BaseEntity, Decodable
     @NSManaged public private(set) var loggedErrors: NSSet /* Set<LoggedError> */ // Use NSSet to avoid eagerly fetching values.
     
     /* Non-Core Data Properties */
-    
-    // Used to set isPledged after fetching source.
-    public var _tierIDs: Set<String>?
-    public var _rewardID: String?
-
     @nonobjc public var source: Source? {
         set {
             self._source = newValue
@@ -337,7 +298,6 @@ public class StoreApp: BaseEntity, Decodable
         case size
         case isBeta = "beta"    // backward compatibility for altstore source format
         case versions
-        case patreon
         case category
         
         // Legacy
@@ -464,37 +424,10 @@ public class StoreApp: BaseEntity, Decodable
             // Must _explicitly_ set to false to ensure it updates cached database value.
             self.isPledged = false
             self.prefersCustomPledge = false
-            
-            if let patreon = try container.decodeIfPresent(PatreonParameters.self, forKey: .patreon)
-            {
-                self.isPledgeRequired = true
-                self.isHiddenWithoutPledge = patreon.hidden ?? false // Default to showing Patreon apps
-                                
-                if let pledge = patreon.pledge
-                {
-                    self._pledgeAmount = pledge.amount as NSDecimalNumber
-                    self.pledgeCurrency = patreon.currency ?? "USD" // Only set pledge currency if explicitly given pledge.
-                    self.prefersCustomPledge = pledge.isCustom
-                }
-                else if patreon.pledge == nil && patreon.tiers == nil && patreon.benefit == nil
-                {
-                    // No conditions, so default to pledgeAmount of 0 to simplify logic.
-                    self._pledgeAmount = 0 as NSDecimalNumber
-                }
-                
-                self._tierIDs = patreon.tiers
-                self._rewardID = patreon.benefit
-            }
-            else
-            {
-                self.isPledgeRequired = false
-                self.isHiddenWithoutPledge = false
-                self._pledgeAmount = nil
-                self.pledgeCurrency = nil
-                
-                self._tierIDs = nil
-                self._rewardID = nil
-            }
+            self.isPledgeRequired = false
+            self.isHiddenWithoutPledge = false
+            self._pledgeAmount = nil
+            self.pledgeCurrency = nil
         }
         catch
         {
@@ -774,10 +707,7 @@ public extension StoreApp
         let placeholderSourceID = Source.altStoreIdentifier
         let placeholderVersion = "0.0.0"
         let placeholderDate = Date.distantPast
-        // let placeholderDate = Date(timeIntervalSinceReferenceDate: 0)
-        // let placeholderDate = Date(timeIntervalSince1970: 0)
         var placeholderChannel = ReleaseTracks.stable.stringValue      // placeholder is always assumed to be from stable channel
-        let placeholderSize: Int32 = 0
         
         #if BETA
         placeholderChannel = ReleaseTracks.nightly.stringValue

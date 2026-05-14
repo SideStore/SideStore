@@ -8,7 +8,7 @@
 
 import UIKit
 import AltStoreCore
-import EmotionalDamage
+
 
 @available(iOS 13, *)
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate
@@ -41,10 +41,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
         
         AppManager.shared.update()
         if UserDefaults.standard.enableEMPforWireguard {
-            start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
         }
-
-        PatreonAPI.shared.refreshPatreonAccount()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene)
@@ -59,7 +57,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
 
         // TODO: @mahee96: find if we need to stop em_proxy as in altstore?
         if UserDefaults.standard.enableEMPforWireguard {
-            stop_em_proxy()
+            stopEMProxy()
         }
 
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
@@ -89,9 +87,22 @@ private extension SceneDelegate
         if context.url.isFileURL
         {
             guard context.url.pathExtension.lowercased() == "ipa" else { return }
+            if !context.url.startAccessingSecurityScopedResource() { return }
+            defer { context.url.stopAccessingSecurityScopedResource() }
+
+            let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+            do {
+                try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil) }
+            catch { return }
+
+            let ipa = temporaryDirectory.appendingPathComponent(context.url.lastPathComponent)
+            
+            do {
+                try FileManager.default.copyItem(at: context.url, to: ipa)
+            } catch { return }
             
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: context.url])
+                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: ipa])
             }
         }
         else
@@ -101,11 +112,6 @@ private extension SceneDelegate
             
             switch host
             {
-            case "patreon":
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
-                }
-                
             case "appbackupresponse":
                 let result: Result<Void, Error>
                 

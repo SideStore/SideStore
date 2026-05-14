@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 import Roxas
 

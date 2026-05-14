@@ -10,6 +10,7 @@ import Foundation
 import OSLog
 import Combine
 
+#if os(macOS)
 @available(macOS 12, *)
 extension Process
 {
@@ -149,3 +150,5 @@ extension Process
         }
     }
 }
+#endif
+

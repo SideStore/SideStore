@@ -9,7 +9,6 @@
 import UIKit
 import SafariServices
 import QuickLook
-
 import AltStoreCore
 import Roxas
 

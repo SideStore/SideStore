@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 
 extension AppScreenshotCollectionViewCell

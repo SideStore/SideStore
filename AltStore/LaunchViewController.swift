@@ -8,8 +8,7 @@
 
 import UIKit
 import Roxas
-import EmotionalDamage
-import minimuxer
+
 import WidgetKit
 
 import AltSign
@@ -77,7 +76,7 @@ final class LaunchViewController: UIViewController, UIDocumentPickerDelegate {
         detectAndImportAccountFile()
         
         if UserDefaults.standard.enableEMPforWireguard {
-            start_em_proxy(bind_addr: Consts.Proxy.serverURL)
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
         }
         guard let pf = fetchPairingFile() else {
             displayError("Device pairing file not found.")
@@ -88,16 +87,16 @@ final class LaunchViewController: UIViewController, UIDocumentPickerDelegate {
     }
 
     func start_minimuxer_threads(_ pairing_file: String) {
-        target_minimuxer_address()
+        retargetUsbmuxdAddr()
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
             let loggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
-            try minimuxer.startWithLogger(pairing_file, documentsDirectory, loggingEnabled)
+            try minimuxerStartWithLogger(pairing_file, documentsDirectory, loggingEnabled)
         } catch {
             try! FileManager.default.removeItem(at: FileManager.default.documentsDirectory.appendingPathComponent(pairingFileName))
             displayError("minimuxer failed to start, please restart SideStore. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR")")
         }
-        start_auto_mounter(documentsDirectory)
+        startAutoMounter(documentsDirectory)
     }
 
     func fetchPairingFile() -> String? { PairingFileManager.shared.fetchPairingFile(presentingVC: self) }
@@ -199,8 +198,6 @@ extension LaunchViewController {
         didFinishLaunching = true
         
         AppManager.shared.update()
-        AppManager.shared.updatePatronsIfNeeded()
-        PatreonAPI.shared.refreshPatreonAccount()
         AppManager.shared.updateAllSources { result in
             guard case .failure(let error) = result else { return }
             Logger.main.error("Failed to update sources on launch. \(error.localizedDescription, privacy: .public)")

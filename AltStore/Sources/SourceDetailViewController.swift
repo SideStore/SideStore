@@ -9,7 +9,6 @@
 import UIKit
 import SafariServices
 import Combine
-
 import AltStoreCore
 import Roxas
 

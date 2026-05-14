@@ -11,11 +11,9 @@ import MobileCoreServices
 import Intents
 import Combine
 import UniformTypeIdentifiers
-
 import AltStoreCore
 import AltSign
 import Roxas
-import minimuxer
 import SemanticVersion
 
 import Nuke
@@ -120,7 +118,6 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     {
         super.viewIsAppearing(animated)
         
-        // Ensure the button for each app reflects correct Patreon status.
         self.collectionView.reloadData()
         
         self.update()
@@ -169,7 +166,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
 
     var minimuxerStatus: Bool {
         // added isMinimuxerStatusCheckEnabled to forcefully ignore minimuxer status if status check is disabled in settings
-        guard !UserDefaults.standard.isMinimuxerStatusCheckEnabled || minimuxer.ready() else {
+        guard !UserDefaults.standard.isMinimuxerStatusCheckEnabled || isMinimuxerReady else {
             ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No Wi-Fi or VPN!")).show(in: self)
             return false
         }
@@ -543,11 +540,6 @@ private extension MyAppsViewController
         catch
         {
             print("[ALTLog] Failed to fetch updates:", error)
-        }
-        
-        if let patreonAccount = DatabaseManager.shared.patreonAccount(), patreonAccount.isAltStorePatron, PatreonAPI.shared.isAuthenticated
-        {
-            self.dataSource.predicate = nil
         }
     }
 }
@@ -1995,8 +1987,6 @@ extension MyAppsViewController
             
             for action in actions where !allowedActions.contains(action)
             {
-                // Disable options for Patreon apps that we are no longer pledged to.
-                
                 if let action = action as? UIAction
                 {
                     action.attributes = .disabled

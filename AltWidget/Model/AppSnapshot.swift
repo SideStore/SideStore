@@ -8,7 +8,6 @@
 
 import UIKit
 import WidgetKit
-
 import AltStoreCore
 import AltSign
 

@@ -8,7 +8,6 @@
 
 import SwiftUI
 import WidgetKit
-
 import AltStoreCore
 
 import GameplayKit
@@ -75,6 +74,9 @@ private struct ActiveAppsWidgetView: View
     
     @Environment(\.colorScheme)
     private var colorScheme
+
+    @Environment(\.widgetRenderingMode)
+    private var renderingMode
         
     var body: some View {
         Group {
@@ -92,6 +94,12 @@ private struct ActiveAppsWidgetView: View
             if colorScheme == .dark
             {
                 LinearGradient(colors: [.altGradientDark, .altGradientExtraDark], startPoint: .top, endPoint: .bottom)
+            }
+            else if renderingMode == .accented
+            {
+                // Plain dark background in tinted mode so the system's
+                // accent colour composites cleanly over it.
+                Color.black
             }
             else
             {
@@ -129,11 +137,16 @@ private struct ActiveAppsWidgetView: View
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
                         HStack(spacing: 10) {
+                            // In tinted (accented) mode, luminanceToAlpha() converts the icon's
+                            // brightness into opacity so the system can tint it with the user's
+                            // chosen accent colour. widgetAccentable() opts the view into that
+                            // accent group. In fullColor mode both are no-ops (via the helpers).
                             Image(uiImage: resizedIcon)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .cornerRadius(cornerRadius)
-                            
+                                .luminanceToAlphaInAccentedMode()
+                                .mask(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+                                .widgetAccentableIfAvailable()
                             
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(app.name)
@@ -152,6 +165,7 @@ private struct ActiveAppsWidgetView: View
                                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                                     .foregroundStyle(.secondary)
                             }
+                            .widgetAccentableIfAvailable()
                             
                             Spacer()
                             
@@ -168,6 +182,7 @@ private struct ActiveAppsWidgetView: View
                             .activatesRefreshAllAppsIntent()
                             // this modifier invalidates the view (disables user interaction and shows a blinking effect)
                             .invalidatableContent()
+                            .widgetAccentableIfAvailable()
 
                         }
                         .frame(height: rowHeight)

@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 import Network
-
 import AltStoreCore
 import AltSign
 
@@ -123,6 +122,8 @@ class InstallAppOperationContext: AppOperationContext
     var beginInstallationHandler: ((InstalledApp) -> Void)?
     
     var alternateIconURL: URL?
+    
+    var shouldTurnOffData: Bool = false
     
     // Non-nil when installing from a source.
     @AsyncManaged

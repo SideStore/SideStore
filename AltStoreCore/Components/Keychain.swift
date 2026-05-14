@@ -71,18 +71,6 @@ public class Keychain
     @KeychainItem(key: "signingCertificatePassword")
     public var signingCertificatePassword: String?
     
-    @KeychainItem(key: "patreonAccessToken")
-    public var patreonAccessToken: String?
-    
-    @KeychainItem(key: "patreonRefreshToken")
-    public var patreonRefreshToken: String?
-    
-    @KeychainItem(key: "patreonCreatorAccessToken")
-    public var patreonCreatorAccessToken: String?
-    
-    @KeychainItem(key: "patreonAccountID")
-    public var patreonAccountID: String?
-    
     @KeychainItem(key: "identifier")
     public var identifier: String?
     

@@ -14,7 +14,7 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
     },
     {
       "identifier": "com.aoshuang.manicemu",
@@ -75,6 +75,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ],
   "sources": [
@@ -91,7 +95,7 @@
     },
     {
       "identifier": "com.livecontainer.source",
-      "sourceURL": "https://raw.githubusercontent.com/LiveContainer/LiveContainer/refs/heads/main/apps.json"
+      "sourceURL": "https://github.com/LiveContainer/LiveContainer/releases/download/1.0/apps.json"
     },
     {
       "identifier": "com.aoshuang.manicemu",
@@ -148,6 +152,10 @@
     {
       "identifier": "thatstel.la.altsource",
       "sourceURL": "https://alt.thatstel.la/"
+    },
+    {
+      "identifier": "com.deliacheminot.mona",
+      "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
     }
   ]
 }

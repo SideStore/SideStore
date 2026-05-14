@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreData
-
 import AltStoreCore
 import AltSign
 

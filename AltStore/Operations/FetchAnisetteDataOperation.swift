@@ -9,7 +9,6 @@
 import Foundation
 import CommonCrypto
 import Starscream
-
 import AltStoreCore
 import AltSign
 import Roxas

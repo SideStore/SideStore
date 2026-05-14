@@ -33,7 +33,6 @@ final class TabBarController: UITabBarController
     {
         super.init(coder: aDecoder)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.openPatreonSettings(_:)), name: AppDelegate.openPatreonSettingsDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.importApp(_:)), name: AppDelegate.importAppDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.presentSources(_:)), name: AppDelegate.addSourceDeepLinkNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(TabBarController.exportFiles(_:)), name: AppDelegate.exportCertificateNotification, object: nil)
@@ -61,35 +60,6 @@ final class TabBarController: UITabBarController
         {
             self.initialSegue = nil
             self.performSegue(withIdentifier: identifier, sender: sender)
-        }
-        else if let patchedApps = UserDefaults.standard.patchedApps, !patchedApps.isEmpty
-        {
-            // Check if we need to finish installing untethered jailbreak.
-            let activeApps = InstalledApp.fetchActiveApps(in: DatabaseManager.shared.viewContext)
-            guard let patchedApp = activeApps.first(where: { patchedApps.contains($0.bundleIdentifier) }) else { return }
-            
-            self.performSegue(withIdentifier: "finishJailbreak", sender: patchedApp)
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        guard let identifier = segue.identifier else { return }
-        
-        switch identifier
-        {
-        case "finishJailbreak":
-            guard let installedApp = sender as? InstalledApp else { return }
-            
-            let navigationController = segue.destination as! UINavigationController
-            
-            let patchViewController = navigationController.viewControllers.first as! PatchViewController
-            patchViewController.installedApp = installedApp
-            patchViewController.completionHandler = { [weak self] _ in
-                self?.dismiss(animated: true, completion: nil)
-            }
-            
-        default: break
         }
     }
     
@@ -128,11 +98,6 @@ extension TabBarController
 
 private extension TabBarController
 {
-    @objc func openPatreonSettings(_ notification: Notification)
-    {
-        self.selectedIndex = Tab.settings.rawValue
-    }
-    
     @objc func importApp(_ notification: Notification)
     {
         self.selectedIndex = Tab.myApps.rawValue

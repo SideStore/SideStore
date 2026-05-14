@@ -70,3 +70,6 @@ test-recording.mp4
 test-recording.log
 altstore-sources.md
 local-build.sh
+
+source-metadata.json
+release-notes.md

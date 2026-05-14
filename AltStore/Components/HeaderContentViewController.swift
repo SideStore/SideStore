@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import AltStoreCore
 import Roxas
 
@@ -204,10 +203,14 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.navigationBarButton = PillButton(type: .system)
         self.navigationBarButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 9000), for: .horizontal) // Prioritize over title length.
         
-        // Embed navigationBarButton in container view with Auto Layout to ensure it can automatically update its size.
-        let buttonContainerView = UIView()
-        buttonContainerView.addSubview(self.navigationBarButton, pinningEdgesWith: .zero)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: buttonContainerView)
+        if #available(iOS 26.0, *) {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarButton)
+        } else {
+            // Embed navigationBarButton in container view with Auto Layout to ensure it can automatically update its size.
+            let buttonContainerView = UIView()
+            buttonContainerView.addSubview(self.navigationBarButton, pinningEdgesWith: .zero)
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: buttonContainerView)
+        }
         
         NSLayoutConstraint.activate([
             self.navigationBarIconView.widthAnchor.constraint(equalToConstant: 35),
