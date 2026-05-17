@@ -108,8 +108,8 @@ extension AppsTimelineProviderBase
             
             var installedApps = try context.fetch(fetchRequest)
             
-            // If no apps matched the bundle ID filter (can happen on iOS 17/26
-            // when isActive is stale and the resolved bundle ID doesn't exist),
+            // If no apps matched the bundle ID filter (can happen when 
+            // isActive is stale and the resolved bundle ID doesn't exist),
             // fall back to all installed apps so the widget is never empty.
             if installedApps.isEmpty
             {
@@ -198,7 +198,7 @@ extension AppsTimelineProviderBase
                 
                 if !activeIDs.isEmpty { return activeIDs }
                 
-                // isActive may be false for all apps on iOS 17/26 due to widget
+                // isActive may be false for all apps due to widget
                 // process timing — fall back to ALL installed apps.
                 // Use hardcoded entity name to avoid entity() returning nil before
                 // the model is fully loaded.
