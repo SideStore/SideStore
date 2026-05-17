@@ -191,7 +191,7 @@ extension AppsTimelineProviderBase
                 // Fall back to ALL installed apps so the widget never shows empty.
                 if !activeIDs.isEmpty { return activeIDs }
                 
-                let allFetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<NSDictionary>
+                let allFetchRequest = NSFetchRequest<NSDictionary>(entityName: InstalledApp.entity().name ?? "InstalledApp")
                 allFetchRequest.resultType = .dictionaryResultType
                 allFetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
                 
