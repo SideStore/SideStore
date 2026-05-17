@@ -106,7 +106,17 @@ extension AppsTimelineProviderBase
             fetchRequest.predicate = NSPredicate(format: "%K IN %@", #keyPath(InstalledApp.bundleIdentifier), bundleIDs)
             fetchRequest.returnsObjectsAsFaults = false
             
-            let installedApps = try context.fetch(fetchRequest)
+            var installedApps = try context.fetch(fetchRequest)
+            
+            // If no apps matched the bundle ID filter (can happen on iOS 17/26
+            // when isActive is stale and the resolved bundle ID doesn't exist),
+            // fall back to all installed apps so the widget is never empty.
+            if installedApps.isEmpty
+            {
+                let allRequest = InstalledApp.fetchRequest()
+                allRequest.returnsObjectsAsFaults = false
+                installedApps = try context.fetch(allRequest)
+            }
             
             let apps = installedApps.map { AppSnapshot(installedApp: $0) }
             
@@ -186,12 +196,13 @@ extension AppsTimelineProviderBase
                 let activeIDs = try context.fetch(activeFetchRequest)
                     .compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
                 
-                // On iOS 17, isActive may be false for all apps even when apps are
-                // installed (a known iOS 17 AppIntentTimelineProvider timing issue).
-                // Fall back to ALL installed apps so the widget never shows empty.
                 if !activeIDs.isEmpty { return activeIDs }
                 
-                let allFetchRequest = NSFetchRequest<NSDictionary>(entityName: InstalledApp.entity().name ?? "InstalledApp")
+                // isActive may be false for all apps on iOS 17/26 due to widget
+                // process timing — fall back to ALL installed apps.
+                // Use hardcoded entity name to avoid entity() returning nil before
+                // the model is fully loaded.
+                let allFetchRequest = NSFetchRequest<NSDictionary>(entityName: "InstalledApp")
                 allFetchRequest.resultType = .dictionaryResultType
                 allFetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
                 
@@ -206,7 +217,6 @@ extension AppsTimelineProviderBase
         catch
         {
             print("Failed to fetch active bundle IDs, falling back to AltStore bundle ID.", error)
-            
             return [StoreApp.altstoreAppID]
         }
     }
