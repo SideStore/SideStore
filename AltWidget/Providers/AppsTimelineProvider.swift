@@ -178,12 +178,27 @@ extension AppsTimelineProviderBase
             
             let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
             let bundleIDs = try await context.performAsync {
-                let fetchRequest = InstalledApp.activeAppsFetchRequest() as! NSFetchRequest<NSDictionary>
-                fetchRequest.resultType = .dictionaryResultType
-                fetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
+                // First try active apps (isActive == YES)
+                let activeFetchRequest = InstalledApp.activeAppsFetchRequest() as! NSFetchRequest<NSDictionary>
+                activeFetchRequest.resultType = .dictionaryResultType
+                activeFetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
                 
-                let bundleIDs = try context.fetch(fetchRequest).compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
-                return bundleIDs
+                let activeIDs = try context.fetch(activeFetchRequest)
+                    .compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
+                
+                // On iOS 17, isActive may be false for all apps even when apps are
+                // installed (a known iOS 17 AppIntentTimelineProvider timing issue).
+                // Fall back to ALL installed apps so the widget never shows empty.
+                if !activeIDs.isEmpty { return activeIDs }
+                
+                let allFetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<NSDictionary>
+                allFetchRequest.resultType = .dictionaryResultType
+                allFetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
+                
+                let allIDs = try context.fetch(allFetchRequest)
+                    .compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
+                
+                return allIDs
             }
             
             return bundleIDs
