@@ -79,6 +79,10 @@
     {
       "identifier": "com.deliacheminot.mona",
       "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
+    },
+    {
+      "identifier": "moe.ampersand.app.source",
+      "sourceURL": "https://github.com/NyaomiDEV/Ampersand/releases/latest/download/altstore.json"
     }
   ],
   "sources": [
@@ -156,6 +160,10 @@
     {
       "identifier": "com.deliacheminot.mona",
       "sourceURL": "https://raw.githubusercontent.com/delia-cheminot/mona-hrt/refs/heads/main/ios_source.json"
+    },
+    {
+      "identifier": "moe.ampersand.app.source",
+      "sourceURL": "https://github.com/NyaomiDEV/Ampersand/releases/latest/download/altstore.json"
     }
   ]
 }
