@@ -9,7 +9,7 @@ struct ExpirationTimeRemainingIntent: AppIntent
     static var description = IntentDescription("Returns the number of seconds until the \(applicationName) app's signing certificate expires. Returns 0 if the app has already expired.")
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Get seconds until \(applicationName) expires")
+        Summary("Get seconds until app expires")
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<Double>
