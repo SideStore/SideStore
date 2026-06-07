@@ -4,11 +4,12 @@ import AltStoreCore
 @available(iOS 17.0, *)
 struct ExpirationTimeRemainingIntent: AppIntent
 {
-    static var title: LocalizedStringResource = "Get Time Until Expiration"
-    static var description = IntentDescription("Returns the number of seconds until the SideStore app's signing certificate expires. Returns 0 if the app has already expired.")
+    static let applicationName = Bundle.Info.appbundleIdentifier.components(separatedBy: ".").last ?? "SideStore"
+    static var title: LocalizedStringResource = "Get Time Until \(applicationName) Expiration"
+    static var description = IntentDescription("Returns the number of seconds until the \(applicationName) app's signing certificate expires. Returns 0 if the app has already expired.")
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Get seconds until \(.applicationName) expires")
+        Summary("Get seconds until \(applicationName) expires")
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<Double>
@@ -54,7 +55,7 @@ private extension ExpirationTimeRemainingIntent
 
         guard let expirationDate else { throw OperationError.appNotFound(name: nil) }
 
-        let secondsRemaining = max(0, expirationDate.timeIntervalSinceNow) // test
+        let secondsRemaining = max(0, expirationDate.timeIntervalSinceNow)
         return secondsRemaining
     }
 }
