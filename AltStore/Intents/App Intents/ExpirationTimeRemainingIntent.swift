@@ -54,7 +54,7 @@ private extension ExpirationTimeRemainingIntent
 
         guard let expirationDate else { throw OperationError.appNotFound(name: nil) }
 
-        let secondsRemaining = max(0, expirationDate.timeIntervalSinceNow)
+        let secondsRemaining = max(0, expirationDate.timeIntervalSinceNow) // test
         return secondsRemaining
     }
 }
