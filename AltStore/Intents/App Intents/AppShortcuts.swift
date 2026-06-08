@@ -29,7 +29,7 @@ public struct ShortcutsProvider: AppShortcutsProvider
                         "When does \(.applicationName) expire",
                         "\(.applicationName) expiration",
                     ],
-                    shortTitle: "Time Until \(.applicationName) Expiration",
+                    shortTitle: "Time Until Expiration",
                     systemImageName: "clock.badge.exclamationmark")
     }
     
