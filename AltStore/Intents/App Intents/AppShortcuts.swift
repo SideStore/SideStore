@@ -21,6 +21,16 @@ public struct ShortcutsProvider: AppShortcutsProvider
                     ],
                     shortTitle: "Refresh All Apps",
                     systemImageName: "arrow.triangle.2.circlepath")
+
+        AppShortcut(intent: ExpirationTimeRemainingIntent(),
+                    phrases: [
+                        "How long until \(.applicationName) expires",
+                        "Time until \(.applicationName) expires",
+                        "When does \(.applicationName) expire",
+                        "\(.applicationName) expiration",
+                    ],
+                    shortTitle: "Time Until Expiration",
+                    systemImageName: "clock.badge.exclamationmark")
     }
     
     public static var shortcutTileColor: ShortcutTileColor {
