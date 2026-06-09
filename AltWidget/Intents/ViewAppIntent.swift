@@ -56,17 +56,13 @@ struct InstalledAppQuery: EntityQuery
             // provider's fetchActiveAppBundleIDs() logic. On iOS 27 the widget
             // extension process may see isActive == NO for all apps due to timing,
             // so fall back to every installed app rather than returning an empty list.
-            let activeFetch = InstalledApp.activeAppsFetchRequest() as NSFetchRequest<InstalledApp>
-            activeFetch.returnsObjectsAsFaults = false
-            let active = (try? context.fetch(activeFetch)) ?? []
+            let active = InstalledApp.all(satisfying: NSPredicate(format: "%K == YES", #keyPath(InstalledApp.isActive)), in: context)
 
             let apps: [InstalledApp]
             if !active.isEmpty {
                 apps = active
             } else {
-                let allFetch = InstalledApp.fetchRequest()
-                allFetch.returnsObjectsAsFaults = false
-                apps = (try? context.fetch(allFetch)) ?? []
+                apps = InstalledApp.all(in: context)
             }
 
             return apps
