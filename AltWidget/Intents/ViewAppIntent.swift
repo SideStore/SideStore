@@ -52,7 +52,24 @@ struct InstalledAppQuery: EntityQuery
         try await DatabaseManager.shared.start()
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         return try await context.performAsync {
-            InstalledApp.all(in: context)
+            // First try active apps only (isActive == YES), mirroring the widget
+            // provider's fetchActiveAppBundleIDs() logic. On iOS 27 the widget
+            // extension process may see isActive == NO for all apps due to timing,
+            // so fall back to every installed app rather than returning an empty list.
+            let activeFetch = InstalledApp.activeAppsFetchRequest() as NSFetchRequest<InstalledApp>
+            activeFetch.returnsObjectsAsFaults = false
+            let active = (try? context.fetch(activeFetch)) ?? []
+
+            let apps: [InstalledApp]
+            if !active.isEmpty {
+                apps = active
+            } else {
+                let allFetch = InstalledApp.fetchRequest()
+                allFetch.returnsObjectsAsFaults = false
+                apps = (try? context.fetch(allFetch)) ?? []
+            }
+
+            return apps
                 .map { InstalledAppEntity(id: $0.bundleIdentifier, name: $0.name) }
                 .sorted { $0.name < $1.name }
         }
