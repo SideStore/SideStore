@@ -7,8 +7,8 @@
 //
 
 import UIKit
+import CoreData
 import AltStoreCore
-import Roxas
 
 @objc(RefreshAttemptTableViewCell)
 private final class RefreshAttemptTableViewCell: UITableViewCell
@@ -34,6 +34,7 @@ final class RefreshAttemptsViewController: UITableViewController
         super.viewDidLoad()
         
         self.tableView.dataSource = self.dataSource
+        self.dataSource.contentView = self.tableView
     }
 }
 

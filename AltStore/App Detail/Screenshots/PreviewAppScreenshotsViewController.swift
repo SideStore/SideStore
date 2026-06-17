@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -55,6 +54,7 @@ class PreviewAppScreenshotsViewController: UICollectionViewController
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         let doneButton = UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in
             self?.dismissPreview()

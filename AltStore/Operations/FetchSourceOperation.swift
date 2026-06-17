@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 import AltStoreCore
-import Roxas
 import SemanticVersion
 
 @objc(FetchSourceOperation)
@@ -94,7 +93,7 @@ final class FetchSourceOperation: ResultOperation<Source>
 
         let dataTask = self.session.dataTask(with: request) { (data, response, error) in
             
-            let childContext = DatabaseManager.shared.persistentContainer.newBackgroundContext(withParent: self.managedObjectContext)
+            let childContext = DatabaseManager.shared.persistentContainer.newBackgroundContext(parent: self.managedObjectContext)
             childContext.mergePolicy = NSOverwriteMergePolicy
             childContext.perform {
                 do

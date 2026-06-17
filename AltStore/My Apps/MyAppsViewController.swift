@@ -10,10 +10,10 @@ import UIKit
 import MobileCoreServices
 import Intents
 import Combine
+import CoreData
 import UniformTypeIdentifiers
 import AltStoreCore
 import AltSign
-import Roxas
 import SemanticVersion
 
 import Nuke
@@ -80,11 +80,12 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         self.collectionView.dragDelegate = self
         self.collectionView.dropDelegate = self
         self.collectionView.dragInteractionEnabled = true
                 
-        self.prototypeUpdateCell = UpdateCollectionViewCell.instantiate(with: UpdateCollectionViewCell.nib!)
+        self.prototypeUpdateCell = UpdateCollectionViewCell.instantiate(with: UpdateCollectionViewCell.nib)
         self.prototypeUpdateCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
         self.collectionView.register(UpdateCollectionViewCell.nib, forCellWithReuseIdentifier: "UpdateCell")
@@ -189,7 +190,7 @@ private extension MyAppsViewController
         dynamicDataSource.numberOfSectionsHandler = { 1 }
         dynamicDataSource.numberOfItemsHandler = { _ in self.updatesDataSource.itemCount == 0 ? 1 : 0 }
         dynamicDataSource.cellIdentifierHandler = { _ in "NoUpdatesCell" }
-        dynamicDataSource.cellConfigurationHandler = { (cell, _, indexPath) in
+        dynamicDataSource.dynamicCellConfigurationHandler = { (cell, indexPath) in
             let cell = cell as! NoUpdatesCollectionViewCell
             cell.layoutMargins.left = self.view.layoutMargins.left
             cell.layoutMargins.right = self.view.layoutMargins.right
@@ -2371,7 +2372,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: UInt(sectionIndex), for: type)
+                dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)

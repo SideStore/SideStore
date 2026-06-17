@@ -7,8 +7,8 @@
 //
 
 import UIKit
+import CoreData
 import AltStoreCore
-import Roxas
 
 final class AppIDsViewController: UICollectionViewController
 {
@@ -28,6 +28,7 @@ final class AppIDsViewController: UICollectionViewController
         super.viewDidLoad()
         
         self.collectionView.dataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         self.activityIndicatorBarButtonItem.isIndicatingActivity = true
         

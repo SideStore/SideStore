@@ -9,7 +9,6 @@
 import UIKit
 import AltStoreCore
 import AltSign
-import Roxas
 
 final class RefreshAltStoreViewController: UIViewController
 {

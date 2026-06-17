@@ -8,8 +8,8 @@
 
 import UIKit
 import Combine
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 import Minimuxer
@@ -94,6 +94,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         let collectionViewLayout = self.collectionViewLayout as! UICollectionViewFlowLayout
         collectionViewLayout.minimumLineSpacing = 30

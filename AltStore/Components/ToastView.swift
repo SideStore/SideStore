@@ -6,7 +6,6 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-import Roxas
 import AltStoreCore
 
 extension TimeInterval

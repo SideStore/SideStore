@@ -17,47 +17,146 @@ public extension UserDefaults
         return sharedUserDefaults
     }()
     
-    @NSManaged var firstLaunch: Date?
-    @NSManaged var requiresAppGroupMigration: Bool
-    @NSManaged var textServer: Bool
-    @NSManaged var sidejitenable: Bool
-    @NSManaged var textInputSideJITServerurl: String?
-    @NSManaged var textInputAnisetteURL: String?
-    @NSManaged var customAnisetteURL: String?
-    @NSManaged var menuAnisetteURL: String
-    @NSManaged var menuAnisetteList: String
-    @NSManaged var menuAnisetteServersList: [String]
-    @NSManaged var preferredServerID: String?
+    var firstLaunch: Date? {
+        get { self.object(forKey: "firstLaunch") as? Date }
+        set { self.set(newValue, forKey: "firstLaunch") }
+    }
+    var requiresAppGroupMigration: Bool {
+        get { self.bool(forKey: "requiresAppGroupMigration") }
+        set { self.set(newValue, forKey: "requiresAppGroupMigration") }
+    }
+    var textServer: Bool {
+        get { self.bool(forKey: "textServer") }
+        set { self.set(newValue, forKey: "textServer") }
+    }
+    var sidejitenable: Bool {
+        get { self.bool(forKey: "sidejitenable") }
+        set { self.set(newValue, forKey: "sidejitenable") }
+    }
+    var textInputSideJITServerurl: String? {
+        get { self.string(forKey: "textInputSideJITServerurl") }
+        set { self.set(newValue, forKey: "textInputSideJITServerurl") }
+    }
+    var textInputAnisetteURL: String? {
+        get { self.string(forKey: "textInputAnisetteURL") }
+        set { self.set(newValue, forKey: "textInputAnisetteURL") }
+    }
+    var customAnisetteURL: String? {
+        get { self.string(forKey: "customAnisetteURL") }
+        set { self.set(newValue, forKey: "customAnisetteURL") }
+    }
+    var menuAnisetteURL: String {
+        get { self.string(forKey: "menuAnisetteURL") ?? "" }
+        set { self.set(newValue, forKey: "menuAnisetteURL") }
+    }
+    var menuAnisetteList: String {
+        get { self.string(forKey: "menuAnisetteList") ?? "" }
+        set { self.set(newValue, forKey: "menuAnisetteList") }
+    }
+    var menuAnisetteServersList: [String] {
+        get { self.stringArray(forKey: "menuAnisetteServersList") ?? [] }
+        set { self.set(newValue, forKey: "menuAnisetteServersList") }
+    }
+    var preferredServerID: String? {
+        get { self.string(forKey: "preferredServerID") }
+        set { self.set(newValue, forKey: "preferredServerID") }
+    }
     
-    @NSManaged var isBackgroundRefreshEnabled: Bool
-    @NSManaged var enableEMPforWireguard: Bool
-    @NSManaged var isIdleTimeoutDisableEnabled: Bool
-    @NSManaged var isAppLimitDisabled: Bool
-    @NSManaged var isBetaUpdatesEnabled: Bool
-    @NSManaged var customizeAppId: Bool
-    @NSManaged var isExportResignedAppEnabled: Bool
-    @NSManaged var isVerboseOperationsLoggingEnabled: Bool
-    @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
-    @NSManaged var isMinimuxerStatusCheckEnabled: Bool
+    var isBackgroundRefreshEnabled: Bool {
+        get { self.bool(forKey: "isBackgroundRefreshEnabled") }
+        set { self.set(newValue, forKey: "isBackgroundRefreshEnabled") }
+    }
+    var enableEMPforWireguard: Bool {
+        get { self.bool(forKey: "enableEMPforWireguard") }
+        set { self.set(newValue, forKey: "enableEMPforWireguard") }
+    }
+    var isIdleTimeoutDisableEnabled: Bool {
+        get { self.bool(forKey: "isIdleTimeoutDisableEnabled") }
+        set { self.set(newValue, forKey: "isIdleTimeoutDisableEnabled") }
+    }
+    var isAppLimitDisabled: Bool {
+        get { self.bool(forKey: "isAppLimitDisabled") }
+        set { self.set(newValue, forKey: "isAppLimitDisabled") }
+    }
+    var isBetaUpdatesEnabled: Bool {
+        get { self.bool(forKey: "isBetaUpdatesEnabled") }
+        set { self.set(newValue, forKey: "isBetaUpdatesEnabled") }
+    }
+    var customizeAppId: Bool {
+        get { self.bool(forKey: "customizeAppId") }
+        set { self.set(newValue, forKey: "customizeAppId") }
+    }
+    var isExportResignedAppEnabled: Bool {
+        get { self.bool(forKey: "isExportResignedAppEnabled") }
+        set { self.set(newValue, forKey: "isExportResignedAppEnabled") }
+    }
+    var isVerboseOperationsLoggingEnabled: Bool {
+        get { self.bool(forKey: "isVerboseOperationsLoggingEnabled") }
+        set { self.set(newValue, forKey: "isVerboseOperationsLoggingEnabled") }
+    }
+    var isMinimuxerConsoleLoggingEnabled: Bool {
+        get { self.bool(forKey: "isMinimuxerConsoleLoggingEnabled") }
+        set { self.set(newValue, forKey: "isMinimuxerConsoleLoggingEnabled") }
+    }
+    var isMinimuxerStatusCheckEnabled: Bool {
+        get { self.bool(forKey: "isMinimuxerStatusCheckEnabled") }
+        set { self.set(newValue, forKey: "isMinimuxerStatusCheckEnabled") }
+    }
 
-    @NSManaged var recreateDatabaseOnNextStart: Bool
-    @NSManaged var isPairingReset: Bool
-    @NSManaged var isDebugModeEnabled: Bool
-    @NSManaged var presentedLaunchReminderNotification: Bool
+    var recreateDatabaseOnNextStart: Bool {
+        get { self.bool(forKey: "recreateDatabaseOnNextStart") }
+        set { self.set(newValue, forKey: "recreateDatabaseOnNextStart") }
+    }
+    var isPairingReset: Bool {
+        get { self.bool(forKey: "isPairingReset") }
+        set { self.set(newValue, forKey: "isPairingReset") }
+    }
+    var isDebugModeEnabled: Bool {
+        get { self.bool(forKey: "isDebugModeEnabled") }
+        set { self.set(newValue, forKey: "isDebugModeEnabled") }
+    }
+    var presentedLaunchReminderNotification: Bool {
+        get { self.bool(forKey: "presentedLaunchReminderNotification") }
+        set { self.set(newValue, forKey: "presentedLaunchReminderNotification") }
+    }
     
-    @NSManaged var legacySideloadedApps: [String]?
+    var legacySideloadedApps: [String]? {
+        get { self.stringArray(forKey: "legacySideloadedApps") }
+        set { self.set(newValue, forKey: "legacySideloadedApps") }
+    }
     
-    @NSManaged var isLegacyDeactivationSupported: Bool
-    @NSManaged var activeAppLimitIncludesExtensions: Bool
+    var isLegacyDeactivationSupported: Bool {
+        get { self.bool(forKey: "isLegacyDeactivationSupported") }
+        set { self.set(newValue, forKey: "isLegacyDeactivationSupported") }
+    }
+    var activeAppLimitIncludesExtensions: Bool {
+        get { self.bool(forKey: "activeAppLimitIncludesExtensions") }
+        set { self.set(newValue, forKey: "activeAppLimitIncludesExtensions") }
+    }
     
-    @NSManaged var localServerSupportsRefreshing: Bool
+    var localServerSupportsRefreshing: Bool {
+        get { self.bool(forKey: "localServerSupportsRefreshing") }
+        set { self.set(newValue, forKey: "localServerSupportsRefreshing") }
+    }
     
-    @NSManaged var patchedApps: [String]?
+    var patchedApps: [String]? {
+        get { self.stringArray(forKey: "patchedApps") }
+        set { self.set(newValue, forKey: "patchedApps") }
+    }
     
-    @NSManaged var trustedSourceIDs: [String]?
-    @NSManaged var trustedServerURL: String?
+    var trustedSourceIDs: [String]? {
+        get { self.stringArray(forKey: "trustedSourceIDs") }
+        set { self.set(newValue, forKey: "trustedSourceIDs") }
+    }
+    var trustedServerURL: String? {
+        get { self.string(forKey: "trustedServerURL") }
+        set { self.set(newValue, forKey: "trustedServerURL") }
+    }
     
-    @NSManaged var betaUdpatesTrack: String?
+    var betaUdpatesTrack: String? {
+        get { self.string(forKey: "betaUdpatesTrack") }
+        set { self.set(newValue, forKey: "betaUdpatesTrack") }
+    }
 
     @nonobjc var preferredAppSorting: AppSorting {
         get {
@@ -68,7 +167,11 @@ public extension UserDefaults
             _preferredAppSorting = newValue.rawValue
         }
     }
-    @NSManaged @objc(preferredAppSorting) private var _preferredAppSorting: String?
+    
+    private var _preferredAppSorting: String? {
+        get { self.string(forKey: "preferredAppSorting") }
+        set { self.set(newValue, forKey: "preferredAppSorting") }
+    }
     
     @nonobjc
     var activeAppsLimit: Int? {
@@ -86,13 +189,26 @@ public extension UserDefaults
             }
         }
     }
-    @NSManaged @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber?
+    
+    private var _activeAppsLimit: NSNumber? {
+        get { self.object(forKey: "activeAppsLimit") as? NSNumber }
+        set { self.set(newValue, forKey: "activeAppsLimit") }
+    }
     
     // Including "MacDirtyCow" in name triggers false positives with malware detectors 🤷‍♂️
-    @NSManaged var isCowExploitSupported: Bool
+    var isCowExploitSupported: Bool {
+        get { self.bool(forKey: "isCowExploitSupported") }
+        set { self.set(newValue, forKey: "isCowExploitSupported") }
+    }
     
-    @NSManaged var permissionCheckingDisabled: Bool
-    @NSManaged var responseCachingDisabled: Bool
+    var permissionCheckingDisabled: Bool {
+        get { self.bool(forKey: "permissionCheckingDisabled") }
+        set { self.set(newValue, forKey: "permissionCheckingDisabled") }
+    }
+    var responseCachingDisabled: Bool {
+        get { self.bool(forKey: "responseCachingDisabled") }
+        set { self.set(newValue, forKey: "responseCachingDisabled") }
+    }
     
     // Default track for beta updates when beta-updates are enabled
     static let defaultBetaUpdatesTrack: String = ReleaseTracks.nightly.rawValue
@@ -127,29 +243,29 @@ public extension UserDefaults
         let preferredAppSorting: AppSorting = if #available(iOS 15, *) { .default } else { .name }
         
         let defaults = [
-            #keyPath(UserDefaults.isAppLimitDisabled): false,
-            #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
-            #keyPath(UserDefaults.customizeAppId): false,
-            #keyPath(UserDefaults.isExportResignedAppEnabled): false,
-            #keyPath(UserDefaults.isDebugModeEnabled): false,
-            #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
-            #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): false, // minimuxer logging is disabled by default for console loggin
-            #keyPath(UserDefaults.isMinimuxerStatusCheckEnabled): false, // minimuxer status check is disabled by default to support LocalDevVPN based cellular refresh
-            #keyPath(UserDefaults.recreateDatabaseOnNextStart): false, 
-            #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
-            #keyPath(UserDefaults.enableEMPforWireguard): false,
-            #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,
-            #keyPath(UserDefaults.isPairingReset): true,
-            #keyPath(UserDefaults.isLegacyDeactivationSupported): isLegacyDeactivationSupported,
-            #keyPath(UserDefaults.activeAppLimitIncludesExtensions): activeAppLimitIncludesExtensions,
-            #keyPath(UserDefaults.localServerSupportsRefreshing): localServerSupportsRefreshing,
-            #keyPath(UserDefaults.requiresAppGroupMigration): true,
-            #keyPath(UserDefaults.menuAnisetteList): "https://servers.sidestore.io/servers.json",
-            #keyPath(UserDefaults.menuAnisetteURL): "https://ani.sidestore.io",
-            #keyPath(UserDefaults.isCowExploitSupported): isMacDirtyCowSupported,
-            #keyPath(UserDefaults.permissionCheckingDisabled): permissionCheckingDisabled,
-            #keyPath(UserDefaults._preferredAppSorting): preferredAppSorting.rawValue,
-            #keyPath(UserDefaults.betaUdpatesTrack): defaultBetaUpdatesTrack,
+            "isAppLimitDisabled": false,
+            "isBetaUpdatesEnabled": false,
+            "customizeAppId": false,
+            "isExportResignedAppEnabled": false,
+            "isDebugModeEnabled": false,
+            "isVerboseOperationsLoggingEnabled": false,
+            "isMinimuxerConsoleLoggingEnabled": false, // minimuxer logging is disabled by default for console loggin
+            "isMinimuxerStatusCheckEnabled": false, // minimuxer status check is disabled by default to support LocalDevVPN based cellular refresh
+            "recreateDatabaseOnNextStart": false, 
+            "isBackgroundRefreshEnabled": true,
+            "enableEMPforWireguard": false,
+            "isIdleTimeoutDisableEnabled": true,
+            "isPairingReset": true,
+            "isLegacyDeactivationSupported": isLegacyDeactivationSupported,
+            "activeAppLimitIncludesExtensions": activeAppLimitIncludesExtensions,
+            "localServerSupportsRefreshing": localServerSupportsRefreshing,
+            "requiresAppGroupMigration": true,
+            "menuAnisetteList": "https://servers.sidestore.io/servers.json",
+            "menuAnisetteURL": "https://ani.sidestore.io",
+            "isCowExploitSupported": isMacDirtyCowSupported,
+            "permissionCheckingDisabled": permissionCheckingDisabled,
+            "preferredAppSorting": preferredAppSorting.rawValue,
+            "betaUdpatesTrack": defaultBetaUpdatesTrack,
         ] as [String: Any]
         
         UserDefaults.standard.register(defaults: defaults)

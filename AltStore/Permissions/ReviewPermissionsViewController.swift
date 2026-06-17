@@ -11,7 +11,6 @@ import SwiftUI
 
 import AltSign
 import AltStoreCore
-import Roxas
 
 @available(iOS 15, *)
 extension ReviewPermissionsViewController
@@ -211,7 +210,7 @@ extension ReviewPermissionsViewController
         let approveDataSource = RSTDynamicCollectionViewDataSource<NSString>()
         approveDataSource.numberOfSectionsHandler = { 1 }
         approveDataSource.numberOfItemsHandler = { _ in 1 }
-        approveDataSource.cellConfigurationHandler = { cell, _, indexPath in
+        approveDataSource.dynamicCellConfigurationHandler = { cell, indexPath in
             let cell = cell as! UICollectionViewListCell
             
             var config = cell.defaultContentConfiguration()
@@ -241,9 +240,9 @@ extension ReviewPermissionsViewController
             cell.backgroundConfiguration = backgroundConfig
         }
         
-        let dataSource = RSTCompositeCollectionViewDataSource(dataSources: [self.knownPermissionsDataSource,
-                                                                            self.unknownPermissionsDataSource,
-                                                                            approveDataSource])
+        let dataSource = RSTCompositeCollectionViewDataSource<NSString>(dataSources: [self.knownPermissionsDataSource,
+                                                                                       self.unknownPermissionsDataSource,
+                                                                                       approveDataSource])
         return dataSource
     }
     

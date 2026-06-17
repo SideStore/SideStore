@@ -9,7 +9,6 @@
 import UIKit
 import CoreData
 import AltStoreCore
-import Roxas
 import Nuke
 
 @objc(SourcesFooterView)
@@ -62,6 +61,7 @@ final class SourcesViewController: UICollectionViewController
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         self.collectionView.allowsSelectionDuringEditing = false
         
         let backgroundView = UIView(frame: .zero)
@@ -507,7 +507,7 @@ extension SourcesViewController: NSFetchedResultsControllerDelegate
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) 
     {
-        self.dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: UInt(sectionIndex), for: type)
+        self.dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
     }
 }
 

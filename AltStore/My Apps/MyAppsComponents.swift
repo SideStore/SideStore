@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Roxas
 
 final class InstalledAppCollectionViewCell: UICollectionViewCell
 {

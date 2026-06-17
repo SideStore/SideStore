@@ -12,7 +12,7 @@ import AVFoundation
 import Intents
 import AltStoreCore
 import AltSign
-import Roxas
+import CoreData
 
 
 import Nuke

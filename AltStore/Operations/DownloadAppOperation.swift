@@ -11,7 +11,6 @@ import WebKit
 import UniformTypeIdentifiers
 import AltStoreCore
 import AltSign
-import Roxas
 
 @objc(DownloadAppOperation)
 final class DownloadAppOperation: ResultOperation<ALTApplication>

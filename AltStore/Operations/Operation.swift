@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Roxas
+import AltStoreCore
 
 class ResultOperation<ResultType>: Operation
 {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 import UIKit
 import UserNotifications
 import MobileCoreServices
@@ -15,7 +16,6 @@ import Combine
 import WidgetKit
 import AltStoreCore
 import AltSign
-import Roxas
 import Minimuxer
 import UniformTypeIdentifiers
 
@@ -2328,4 +2328,3 @@ private extension AppManager {
         }
     }
 }
-

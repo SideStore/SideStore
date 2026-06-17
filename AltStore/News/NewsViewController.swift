@@ -9,8 +9,8 @@
 import UIKit
 import SafariServices
 import Combine
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -83,7 +83,7 @@ class NewsViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.backgroundColor = .altBackground
         
-        self.prototypeCell = NewsCollectionViewCell.instantiate(with: NewsCollectionViewCell.nib!)
+        self.prototypeCell = NewsCollectionViewCell.instantiate(with: NewsCollectionViewCell.nib)
         self.prototypeCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
         // Need to add dummy constraint + layout subviews before we can remove Interface Builder's width constraint.
@@ -98,6 +98,7 @@ class NewsViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         self.collectionView.register(NewsCollectionViewCell.nib, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
         self.collectionView.register(AppBannerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "AppBanner")
@@ -458,6 +459,10 @@ extension NewsViewController: UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize
     {
+        guard self.dataSource.contentView(collectionView, numberOfItemsInSection: section) > 0 else {
+            return .zero
+        }
+        
         let item = self.dataSource.item(at: IndexPath(row: 0, section: section))
         
         if item.storeApp != nil

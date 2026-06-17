@@ -11,7 +11,6 @@ import SwiftUI
 
 import AltSign
 import AltStoreCore
-import Roxas
 
 extension UIApplication
 {
@@ -97,6 +96,7 @@ class AltAppIconsViewController: UICollectionViewController
         
         self.dataSource.proxy = self
         self.collectionView.dataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         self.collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
         self.collectionView.register(UICollectionViewListCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UICollectionView.elementKindSectionHeader)
@@ -133,11 +133,11 @@ private extension AltAppIconsViewController
     func makeDataSource() -> RSTCompositeCollectionViewDataSource<AltIcon>
     {
         let dataSources = Section.allCases.compactMap { self.iconsBySection[$0] }.filter { !$0.isEmpty }.map { icons in
-            let dataSource = RSTArrayCollectionViewDataSource(items: icons)
+            let dataSource = RSTArrayCollectionViewDataSource<AltIcon>(items: icons)
             return dataSource
         }
         
-        let dataSource = RSTCompositeCollectionViewDataSource(dataSources: dataSources)
+        let dataSource = RSTCompositeCollectionViewDataSource<AltIcon>(dataSources: dataSources)
         dataSource.cellConfigurationHandler = { cell, icon, indexPath in
             let cell = cell as! UICollectionViewListCell
             

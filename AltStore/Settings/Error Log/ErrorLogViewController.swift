@@ -9,8 +9,8 @@
 import UIKit
 import SafariServices
 import QuickLook
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -50,6 +50,7 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
         super.viewDidLoad()
         
         self.tableView.dataSource = self.dataSource
+        self.dataSource.contentView = self.tableView
         self.tableView.prefetchDataSource = self.dataSource
         
         self.exportLogButton.activityIndicatorView.color = .white

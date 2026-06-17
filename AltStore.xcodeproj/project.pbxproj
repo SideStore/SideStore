@@ -90,7 +90,6 @@
 		A8635D0B2F4CF1A100E66784 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */; };
 		A8635D0C2F4CF1A100E66784 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A867C0AA2F5534EB006426FE /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A8C6D50B2D1EE87600DF01F1 /* AltSign-Static */; };
-		A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8945AA52D059B6100D86CBE /* Roxas.framework */; };
 		A8B646012D70C23E00125819 /* MarkdownKit in Frameworks */ = {isa = PBXBuildFile; productRef = A8B646002D70C23E00125819 /* MarkdownKit */; };
 		A8C2260E2EC9039A00047C0D /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = A8C2260D2EC9039A00047C0D /* Nuke */; };
 		A8EB89C22F5448B20094BC01 /* em_proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD2F652F543FD40045335F /* em_proxy.swift */; };
@@ -157,8 +156,6 @@
 		A8EB963C2F54561E0094BC01 /* lockdown.h in Headers */ = {isa = PBXBuildFile; fileRef = A8BD30A92F5440300045335F /* lockdown.h */; };
 		A8EB96512F54565B0094BC01 /* libusbmuxd.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BD324C2F5440300045335F /* libusbmuxd.c */; };
 		A8EB96562F5457010094BC01 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */; };
-		BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD247862284BB3B00981D42 /* Roxas.framework */; };
-		BF1614F2250822F100767AEA /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BFD247862284BB3B00981D42 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF580497246A3D19008AE704 /* UIKit.framework */; };
 		BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; };
 		BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -201,27 +198,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = BF45872A2298D31600BD7491;
 			remoteInfo = libimobiledevice;
-		};
-		A8EB8CB22F5453CD0094BC01 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8BD32D02F5440300045335F /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BFADAFF819AE7BB70050CF31;
-			remoteInfo = Roxas;
-		};
-		A8EB8CB42F5453CD0094BC01 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8BD32D02F5440300045335F /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BF8624801BB742E700C12EEE;
-			remoteInfo = RoxasTV;
-		};
-		A8EB8CB62F5453CD0094BC01 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8BD32D02F5440300045335F /* Roxas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BFADB00319AE7BB80050CF31;
-			remoteInfo = RoxasTests;
 		};
 		A8EB8CBB2F5453CD0094BC01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -283,7 +259,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A8635D072F4CF16D00E66784 /* OpenSSL.xcframework in Embed Frameworks */,
-				BF1614F2250822F100767AEA /* Roxas.framework in Embed Frameworks */,
 				BF66EE862501AE50007EE018 /* AltStoreCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -330,7 +305,6 @@
 		A84596F32F7DC4C90000B8CD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A84596F42F7DC4C90000B8CD /* trustedapps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = trustedapps.json; sourceTree = "<group>"; };
 		A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = Dependencies/AltSign/Dependencies/OpenSSL.xcframework; sourceTree = "<group>"; };
-		A8945AA52D059B6100D86CBE /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BD20292F543FD40045335F /* client_privatekey */ = {isa = PBXFileReference; lastKnownFileType = text; path = client_privatekey; sourceTree = "<group>"; };
 		A8BD202A2F543FD40045335F /* client_publickey */ = {isa = PBXFileReference; lastKnownFileType = text; path = client_publickey; sourceTree = "<group>"; };
 		A8BD202B2F543FD40045335F /* emp.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = emp.conf; sourceTree = "<group>"; };
@@ -520,7 +494,6 @@
 		A8BD32512F5440300045335F /* iproxy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = iproxy.c; sourceTree = "<group>"; };
 		A8BD325D2F5440300045335F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A8BD325F2F5440300045335F /* minimuxer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = minimuxer; sourceTree = "<group>"; };
-		A8BD32D02F5440300045335F /* Roxas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Roxas.xcodeproj; sourceTree = "<group>"; };
 		A8BD32FA2F54444D0045335F /* AltSign */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AltSign; sourceTree = "<group>"; };
 		B3C39606284F4C8400DA9E2F /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		B3C39607284F4C8400DA9E2F /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
@@ -530,7 +503,6 @@
 		BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltStoreCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AltWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD2476A2284B9A500981D42 /* SideStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SideStore.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BFD247862284BB3B00981D42 /* Roxas.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -700,7 +672,6 @@
 			files = (
 				A867C0AA2F5534EB006426FE /* AltSign-Static in Frameworks */,
 				A8635D082F4CF17A00E66784 /* OpenSSL.xcframework in Frameworks */,
-				A8945AA62D059B6100D86CBE /* Roxas.framework in Frameworks */,
 				A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */,
 				A83FE3772EC905E3005ACE9A /* KeychainAccess in Frameworks */,
 				A803924E2F552FDA00097AF1 /* AltSign-Static in Frameworks */,
@@ -728,7 +699,6 @@
 				A8EB89D02F5451C20094BC01 /* KeychainAccess in Frameworks */,
 				A8C2260E2EC9039A00047C0D /* Nuke in Frameworks */,
 				A83FE3672EC90482005ACE9A /* Starscream in Frameworks */,
-				BF1614F1250822F100767AEA /* Roxas.framework in Frameworks */,
 				A8EB89CE2F5451B50094BC01 /* SemanticVersion in Frameworks */,
 				BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */,
 				A803924B2F552F4C00097AF1 /* Minimuxer in Frameworks */,
@@ -801,7 +771,6 @@
 				A8036E802F54606400097AF1 /* libimobiledevice-glue */,
 				A8BD323D2F5440300045335F /* libplist */,
 				A8BD2FAA2F54401E0045335F /* MarkdownAttributedString */,
-				A8BD32D12F5440300045335F /* Roxas */,
 				A8BD2F6C2F543FD40045335F /* em_proxy */,
 			);
 			path = Dependencies;
@@ -1150,24 +1119,6 @@
 			path = libusbmuxd;
 			sourceTree = "<group>";
 		};
-		A8BD32D12F5440300045335F /* Roxas */ = {
-			isa = PBXGroup;
-			children = (
-				A8BD32D02F5440300045335F /* Roxas.xcodeproj */,
-			);
-			path = Roxas;
-			sourceTree = "<group>";
-		};
-		A8EB8CAD2F5453CD0094BC01 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A8EB8CB32F5453CD0094BC01 /* Roxas.framework */,
-				A8EB8CB52F5453CD0094BC01 /* Roxas.framework */,
-				A8EB8CB72F5453CD0094BC01 /* RoxasTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		A8EB8CB82F5453CD0094BC01 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1217,8 +1168,6 @@
 			children = (
 				A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */,
 				BF580497246A3D19008AE704 /* UIKit.framework */,
-				BFD247862284BB3B00981D42 /* Roxas.framework */,
-				A8945AA52D059B6100D86CBE /* Roxas.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1493,10 +1442,6 @@
 					ProductGroup = A8EB8CB82F5453CD0094BC01 /* Products */;
 					ProjectRef = A8BD2FBD2F5440300045335F /* em_proxy.xcodeproj */;
 				},
-				{
-					ProductGroup = A8EB8CAD2F5453CD0094BC01 /* Products */;
-					ProjectRef = A8BD32D02F5440300045335F /* Roxas.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1511,27 +1456,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A8EB8CB32F5453CD0094BC01 /* Roxas.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Roxas.framework;
-			remoteRef = A8EB8CB22F5453CD0094BC01 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A8EB8CB52F5453CD0094BC01 /* Roxas.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Roxas.framework;
-			remoteRef = A8EB8CB42F5453CD0094BC01 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A8EB8CB72F5453CD0094BC01 /* RoxasTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RoxasTests.xctest;
-			remoteRef = A8EB8CB62F5453CD0094BC01 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		A8EB8CBC2F5453CD0094BC01 /* libem_proxy_static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

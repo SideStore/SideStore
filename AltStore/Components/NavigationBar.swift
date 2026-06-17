@@ -8,7 +8,6 @@
 
 import UIKit
 
-import Roxas
 
 class NavigationBarAppearance: UINavigationBarAppearance
 {

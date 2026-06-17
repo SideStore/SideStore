@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import CoreData
 import Combine
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -95,6 +95,7 @@ class AddSourceViewController: UICollectionViewController
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         self.startPipeline()
     }
@@ -203,7 +204,7 @@ private extension AddSourceViewController
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.numberOfItemsHandler = { _ in 1 }
         dataSource.cellIdentifierHandler = { _ in ReuseID.textFieldCell.rawValue }
-        dataSource.cellConfigurationHandler = { [weak self] cell, source, indexPath in
+        dataSource.dynamicCellConfigurationHandler = { [weak self] cell, indexPath in
             guard let self else { return }
             
             let cell = cell as! AddSourceTextFieldCell
@@ -564,11 +565,7 @@ private extension AddSourceViewController
         
         self.sourcePreviewDataSource.setItems(sources, with: changes)
         
-        if sources.isEmpty {
-            self.collectionView.reloadSections([Section.preview.rawValue])
-        } else {
-            self.collectionView.collectionViewLayout.invalidateLayout()
-        }
+        self.collectionView.collectionViewLayout.invalidateLayout()
     }
 }
 

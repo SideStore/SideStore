@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import CoreData
 import SafariServices
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -71,6 +71,7 @@ class SourceDetailContentViewController: UICollectionViewController
         self.dataSource.proxy = self
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         let context = self.source.managedObjectContext ?? DatabaseManager.shared.viewContext
         NotificationCenter.default.addObserver(self, selector: #selector(SourceDetailContentViewController.didChangeApps), name: NSManagedObjectContext.didChangeObjectsNotification, object: context)
@@ -165,10 +166,7 @@ private extension SourceDetailContentViewController
     
     func makeDataSource() -> RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
     {
-        let newsDataSource = self.newsDataSource as! RSTFetchedResultsCollectionViewDataSource<NSManagedObject>
-        let appsDataSource = self.appsDataSource as! RSTArrayCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
-        
-        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [newsDataSource, appsDataSource, self.aboutDataSource])
+        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [self.newsDataSource, self.appsDataSource, self.aboutDataSource])
         return dataSource
     }
     
@@ -271,7 +269,7 @@ private extension SourceDetailContentViewController
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.numberOfItemsHandler = { [source] _ in source.localizedDescription == nil ? 0 : 1 }
         dataSource.cellIdentifierHandler = { _ in "AboutCell" }
-        dataSource.cellConfigurationHandler = { [source] (cell, _, indexPath) in
+        dataSource.dynamicCellConfigurationHandler = { [source] (cell, indexPath) in
             let cell = cell as! TextViewCollectionViewCell
             cell.contentView.layoutMargins = .zero // Fixes incorrect margins if not initially on screen.
             cell.textView.text = source.localizedDescription
