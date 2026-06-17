@@ -68,7 +68,7 @@
     url = https://github.com/SideStore/AltSign
     branch = master
 
-[submodule "Dependencies/Roxas"]
-    path = Dependencies/Roxas
-    url = https://github.com/SideStore/Roxas.git
-    branch = master
+# [submodule "Dependencies/Roxas"]
+#     path = Dependencies/Roxas
+#     url = https://github.com/SideStore/Roxas.git
+#     branch = master
