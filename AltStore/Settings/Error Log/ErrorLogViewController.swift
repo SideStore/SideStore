@@ -258,7 +258,7 @@ private extension ErrorLogViewController
     
     enum LogView: String {
         case consoleLog = "console-log"
-        case minimuxerLog = "minimuxer-log"
+        // case minimuxerLog = "minimuxer-log"
 
         // This class will manage the QLPreviewController and the timer.
         private class LogViewManager {
@@ -310,8 +310,8 @@ private extension ErrorLogViewController
                 case .consoleLog:
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
                     return appDelegate.consoleLog.logFileURL
-                case .minimuxerLog:
-                    return FileManager.default.documentsDirectory.appendingPathComponent("minimuxer.log")
+                // case .minimuxerLog:
+                //     return FileManager.default.documentsDirectory.appendingPathComponent("minimuxer.log")
             }
         }
     }
@@ -390,13 +390,13 @@ private extension ErrorLogViewController
         self.performSegue(withIdentifier: "showErrorDetails", sender: loggedError)
     }
     
-    @IBAction func showMinimuxerLogs(_ sender: UIBarButtonItem)
-    {
-        // Show minimuxer.log
-        let previewController = LogView.minimuxerLog.getViewController(self)
-        let navigationController = UINavigationController(rootViewController: previewController)
-        present(navigationController, animated: true, completion: nil)
-    }
+    // @IBAction func showMinimuxerLogs(_ sender: UIBarButtonItem)
+    // {
+    //     // Show minimuxer.log
+    //     let previewController = LogView.minimuxerLog.getViewController(self)
+    //     let navigationController = UINavigationController(rootViewController: previewController)
+    //     present(navigationController, animated: true, completion: nil)
+    // }
     
 //    @available(iOS 15, *)
 //    @IBAction func exportDetailedLog(_ sender: UIBarButtonItem)

@@ -1935,12 +1935,12 @@ Settings by i cons from the Noun Project</string>
                                     <action selector="clearLoggedErrors:" destination="g8a-Rf-zWa" id="faq-89-H5j"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="minimuxer" id="BNj-HE-KHr" userLabel="Minimuxer Log Button">
+                            <!-- <barButtonItem title="minimuxer" id="BNj-HE-KHr" userLabel="Minimuxer Log Button">
                                 <imageReference key="image" image="ladybug" catalog="system" symbolScale="large"/>
                                 <connections>
                                     <action selector="showMinimuxerLogs:" destination="g8a-Rf-zWa" id="Kbw-Q5-9WO"/>
                                 </connections>
-                            </barButtonItem>
+                            </barButtonItem> -->
                             <barButtonItem title="console" id="1cD-4y-vTJ" userLabel="Console Log Button">
                                 <imageReference key="image" image="terminal" catalog="system" symbolScale="large"/>
                                 <connections>
