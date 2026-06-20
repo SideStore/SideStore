@@ -497,12 +497,16 @@ extension ErrorLogViewController
                     context.delete(loggedError)
                     
                     try context.save()
-                    completion(true)
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
                 }
                 catch
                 {
                     print("[ALTLog] Failed to delete LoggedError \(loggedError.objectID):", error)
-                    completion(false)
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
                 }
             }
         }
