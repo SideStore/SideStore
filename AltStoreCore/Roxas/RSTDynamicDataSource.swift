@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+
 open class RSTDynamicDataSource<ContentType, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: RSTCellContentDataSource<ContentType, CellType, ViewType, DataSourceType> {
     open var numberOfSectionsHandler: (() -> Int) = { 0 }
     open var numberOfItemsHandler: ((Int) -> Int) = { _ in 0 }
@@ -27,6 +28,7 @@ open class RSTDynamicDataSource<ContentType, CellType: UIView & RSTCellContentCe
 
 open class RSTDynamicCollectionViewDataSource<ContentType>: RSTDynamicDataSource<ContentType, UICollectionViewCell, UICollectionView, UICollectionViewDataSource> {}
 open class RSTDynamicTableViewDataSource<ContentType>: RSTDynamicDataSource<ContentType, UITableViewCell, UITableView, UITableViewDataSource> {}
+
 open class RSTDynamicCollectionViewPrefetchingDataSource<ContentType, PrefetchContentType>: RSTDynamicCollectionViewDataSource<ContentType>, RSTCellContentPrefetchingDataSource, UICollectionViewDataSourcePrefetching {
     public var prefetchItemCache = NSCache<AnyObject, AnyObject>()
     public var prefetchHandler: ((ContentType, IndexPath, @escaping (PrefetchContentType?, Error?) -> Void) -> Operation?)?
@@ -38,11 +40,13 @@ open class RSTDynamicCollectionViewPrefetchingDataSource<ContentType, PrefetchCo
     public override func configureCell(_ cell: UICollectionViewCell, at indexPath: IndexPath) {
         super.configureCell(cell, at: indexPath)
         
+        guard let prefetchHandler = self.prefetchHandler else { return }
+        
         // Cancel existing operation for this index path if any
         prefetchOperations[indexPath]?.cancel()
         
         let item = self.item(at: indexPath)
-        if let operation = prefetchHandler?(item, indexPath, { [weak self, weak cell] (content, error) in
+        if let operation = prefetchHandler(item, indexPath, { [weak self, weak cell] (content, error) in
             guard let self, let cell else { return }
             DispatchQueue.main.async {
                 self.prefetchCompletionHandler?(cell, content, indexPath, error)
@@ -54,14 +58,16 @@ open class RSTDynamicCollectionViewPrefetchingDataSource<ContentType, PrefetchCo
     }
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let prefetchHandler = self.prefetchHandler else { return }
         for indexPath in indexPaths {
             let item = self.item(at: indexPath)
-            if let operation = prefetchHandler?(item, indexPath, { _, _ in }) {
+            if let operation = prefetchHandler(item, indexPath, { _, _ in }) {
                 prefetchOperations[indexPath] = operation
                 prefetchOperationQueue.addOperation(operation)
             }
         }
     }
+    
     public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
             prefetchOperations[indexPath]?.cancel()
@@ -69,6 +75,7 @@ open class RSTDynamicCollectionViewPrefetchingDataSource<ContentType, PrefetchCo
         }
     }
 }
+
 open class RSTDynamicTableViewPrefetchingDataSource<ContentType, PrefetchContentType>: RSTDynamicTableViewDataSource<ContentType>, RSTCellContentPrefetchingDataSource, UITableViewDataSourcePrefetching {
     public var prefetchItemCache = NSCache<AnyObject, AnyObject>()
     public var prefetchHandler: ((ContentType, IndexPath, @escaping (PrefetchContentType?, Error?) -> Void) -> Operation?)?
@@ -80,11 +87,13 @@ open class RSTDynamicTableViewPrefetchingDataSource<ContentType, PrefetchContent
     public override func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
         super.configureCell(cell, at: indexPath)
         
+        guard let prefetchHandler = self.prefetchHandler else { return }
+        
         // Cancel existing operation for this index path if any
         prefetchOperations[indexPath]?.cancel()
         
         let item = self.item(at: indexPath)
-        if let operation = prefetchHandler?(item, indexPath, { [weak self, weak cell] (content, error) in
+        if let operation = prefetchHandler(item, indexPath, { [weak self, weak cell] (content, error) in
             guard let self, let cell else { return }
             DispatchQueue.main.async {
                 self.prefetchCompletionHandler?(cell, content, indexPath, error)
@@ -96,14 +105,16 @@ open class RSTDynamicTableViewPrefetchingDataSource<ContentType, PrefetchContent
     }
 
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        guard let prefetchHandler = self.prefetchHandler else { return }
         for indexPath in indexPaths {
             let item = self.item(at: indexPath)
-            if let operation = prefetchHandler?(item, indexPath, { _, _ in }) {
+            if let operation = prefetchHandler(item, indexPath, { _, _ in }) {
                 prefetchOperations[indexPath] = operation
                 prefetchOperationQueue.addOperation(operation)
             }
         }
     }
+    
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
             prefetchOperations[indexPath]?.cancel()

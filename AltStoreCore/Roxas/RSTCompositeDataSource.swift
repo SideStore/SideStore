@@ -8,12 +8,13 @@
 
 import UIKit
 import CoreData
-private protocol RSTAnyCompositeDataSource: AnyObject {
+
+protocol RSTAnyCompositeDataSource: AnyObject {
     func compositeCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     func compositeTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
 }
 
-open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: RSTCellContentDataSource<ContentType, CellType, ViewType, DataSourceType> {
+open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: RSTCellContentDataSource<ContentType, CellType, ViewType, DataSourceType>, RSTCellContentIndexPathTranslating {
     open var dataSources: [AnyObject]
     open var shouldFlattenSections = false {
         didSet { (contentView as? UICollectionView)?.reloadData(); (contentView as? UITableView)?.reloadData() }
@@ -48,11 +49,11 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         }
     }
 
-    private func sectionCount(for dataSource: RSTAnyCellContentDataSource) -> Int {
+    private func childSectionCount(for dataSource: RSTAnyCellContentDataSource) -> Int {
         dataSource.anyNumberOfSections()
     }
 
-    private func itemCount(for dataSource: RSTAnyCellContentDataSource) -> Int {
+    private func childItemCount(for dataSource: RSTAnyCellContentDataSource) -> Int {
         let sectionCount = dataSource.anyNumberOfSections()
         guard sectionCount > 0 else { return dataSource.anyItemCount }
         return (0..<sectionCount).reduce(0) { total, section in
@@ -78,7 +79,7 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         if shouldFlattenSections {
             var itemOffset = 0
             for dataSource in typedDataSources {
-                let count = itemCount(for: dataSource)
+                let count = childItemCount(for: dataSource)
                 if indexPath.item < itemOffset + count {
                     let localItem = indexPath.item - itemOffset
                     return (dataSource, localIndexPath(forFlattenedItem: localItem, in: dataSource))
@@ -88,7 +89,7 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         } else {
             var sectionOffset = 0
             for dataSource in typedDataSources {
-                let count = sectionCount(for: dataSource)
+                let count = childSectionCount(for: dataSource)
                 if indexPath.section < sectionOffset + count {
                     return (dataSource, IndexPath(item: indexPath.item, section: indexPath.section - sectionOffset))
                 }
@@ -101,7 +102,7 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
 
     private func refreshItemCount() {
         itemCount = typedDataSources.reduce(0) { total, dataSource in
-            total + itemCount(for: dataSource)
+            total + childItemCount(for: dataSource)
         }
     }
 
@@ -135,58 +136,7 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         return resolved.dataSource.anyItem(at: resolved.indexPath) as! ContentType
     }
 
-    public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        contentView = collectionView as? ViewType
-        guard let resolved = resolve(indexPath) else {
-            return UICollectionViewCell()
-        }
 
-        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
-        resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
-        return cell
-    }
-
-    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        contentView = tableView as? ViewType
-        guard let resolved = resolve(indexPath) else {
-            return UITableViewCell()
-        }
-
-        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-        resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
-        return cell
-    }
-}
-
-extension RSTCompositeDataSource: RSTAnyCompositeDataSource {
-    fileprivate func compositeCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        contentView = collectionView as? ViewType
-        guard let resolved = resolve(indexPath) else {
-            return UICollectionViewCell()
-        }
-
-        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
-        resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
-        return cell
-    }
-
-    fileprivate func compositeTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        contentView = tableView as? ViewType
-        guard let resolved = resolve(indexPath) else {
-            return UITableViewCell()
-        }
-
-        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-        resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
-        return cell
-    }
-}
-
-extension RSTCompositeDataSource: RSTCellContentIndexPathTranslating {
     public func dataSource(_ dataSource: AnyObject, globalIndexPathForLocalIndexPath localIndexPath: IndexPath) -> IndexPath? {
         guard let anyDataSource = dataSource as? RSTAnyCellContentDataSource else { return nil }
         
@@ -198,13 +148,13 @@ extension RSTCompositeDataSource: RSTCellContentIndexPathTranslating {
         if shouldFlattenSections {
             var itemOffset = 0
             for i in 0..<dataSourceIndex {
-                itemOffset += itemCount(for: typedDataSources[i])
+                itemOffset += childItemCount(for: typedDataSources[i])
             }
             globalIndexPath = IndexPath(item: localIndexPath.item + itemOffset, section: 0)
         } else {
             var sectionOffset = 0
             for i in 0..<dataSourceIndex {
-                sectionOffset += sectionCount(for: typedDataSources[i])
+                sectionOffset += childSectionCount(for: typedDataSources[i])
             }
             globalIndexPath = IndexPath(item: localIndexPath.item, section: localIndexPath.section + sectionOffset)
         }
@@ -216,6 +166,37 @@ extension RSTCompositeDataSource: RSTCellContentIndexPathTranslating {
         return globalIndexPath
     }
 }
+
+extension RSTCompositeDataSource: RSTAnyCompositeDataSource {
+    func compositeCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        contentView = collectionView as? ViewType
+        guard let resolved = resolve(indexPath) else {
+            return UICollectionViewCell()
+        }
+
+        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
+        if let typedCell = cell as? CellType {
+            configureCell(typedCell, at: indexPath)
+        }
+        return cell
+    }
+
+    func compositeTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        contentView = tableView as? ViewType
+        guard let resolved = resolve(indexPath) else {
+            return UITableViewCell()
+        }
+
+        let identifier = resolved.dataSource.anyCellIdentifier(at: resolved.indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+        if let typedCell = cell as? CellType {
+            configureCell(typedCell, at: indexPath)
+        }
+        return cell
+    }
+}
+
 open class RSTCompositeCollectionViewDataSource<ContentType>: RSTCompositeDataSource<ContentType, UICollectionViewCell, UICollectionView, UICollectionViewDataSource> {}
 open class RSTCompositeTableViewDataSource<ContentType>: RSTCompositeDataSource<ContentType, UITableViewCell, UITableView, UITableViewDataSource> {}
 open class RSTCompositeCollectionViewPrefetchingDataSource<ContentType, PrefetchContentType>: RSTCompositeCollectionViewDataSource<ContentType>, RSTCellContentPrefetchingDataSource, UICollectionViewDataSourcePrefetching {

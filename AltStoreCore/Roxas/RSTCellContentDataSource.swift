@@ -8,12 +8,15 @@
 
 import UIKit
 import CoreData
+
+public let RSTCellContentGenericCellIdentifier = "Cell"
+
 @objc(RSTCellContentIndexPathTranslating)
 public protocol RSTCellContentIndexPathTranslating: AnyObject {
     @objc func dataSource(_ dataSource: AnyObject, globalIndexPathForLocalIndexPath localIndexPath: IndexPath) -> IndexPath?
 }
 
-private protocol RSTAnyCellContentDataSource: AnyObject {
+protocol RSTAnyCellContentDataSource: AnyObject {
     var anyItemCount: Int { get }
     func setAnyContentView(_ contentView: UIScrollView?)
     func anyNumberOfSections() -> Int
@@ -215,36 +218,36 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
 }
 
 extension RSTCellContentDataSource: RSTAnyCellContentDataSource {
-    fileprivate var anyItemCount: Int { itemCount }
+    var anyItemCount: Int { itemCount }
 
-    fileprivate func setAnyContentView(_ contentView: UIScrollView?) {
+    func setAnyContentView(_ contentView: UIScrollView?) {
         self.contentView = contentView as? ViewType
     }
 
-    fileprivate func anyNumberOfSections() -> Int {
+    func anyNumberOfSections() -> Int {
         guard let contentView else { return 0 }
         return numberOfSections(in: contentView)
     }
 
-    fileprivate func anyNumberOfItems(in section: Int) -> Int {
+    func anyNumberOfItems(in section: Int) -> Int {
         guard let contentView else { return 0 }
         return self.contentView(contentView, numberOfItemsInSection: section)
     }
 
-    fileprivate func anyItem(at indexPath: IndexPath) -> Any {
+    func anyItem(at indexPath: IndexPath) -> Any {
         item(at: indexPath)
     }
 
-    fileprivate func anyCellIdentifier(at indexPath: IndexPath) -> String {
+    func anyCellIdentifier(at indexPath: IndexPath) -> String {
         cellIdentifierHandler(indexPath)
     }
 
-    fileprivate func configureAnyCell(_ cell: UIView, at indexPath: IndexPath) {
+    func configureAnyCell(_ cell: UIView, at indexPath: IndexPath) {
         guard let cell = cell as? CellType else { return }
         configureCell(cell, at: indexPath)
     }
 
-    fileprivate var anyIndexPathTranslator: RSTCellContentIndexPathTranslating? {
+    var anyIndexPathTranslator: RSTCellContentIndexPathTranslating? {
         get { self.indexPathTranslator }
         set { self.indexPathTranslator = newValue }
     }

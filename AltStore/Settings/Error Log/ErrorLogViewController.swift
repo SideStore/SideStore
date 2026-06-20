@@ -36,7 +36,7 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
         return dateFormatter
     }()
     
-    @IBOutlet private var exportLogButton: UIBarButtonItem!
+    @IBOutlet private var exportLogButton: UIBarButtonItem?
     @IBOutlet private var clearLogButton: UIBarButtonItem!
     
     private var _exportedLogURL: URL?
@@ -53,7 +53,7 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
         self.dataSource.contentView = self.tableView
         self.tableView.prefetchDataSource = self.dataSource
         
-        self.exportLogButton.activityIndicatorView.color = .white
+        self.exportLogButton?.activityIndicatorView.color = .white
         
         if #unavailable(iOS 15)
         {

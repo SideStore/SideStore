@@ -7,6 +7,15 @@
 //
 
 import UIKit
+
 extension UICollectionViewCell: RSTCellContentCell {}
 
+public extension UICollectionViewCell {
+    class var nib: UINib {
+        UINib(nibName: String(describing: self), bundle: nil)
+    }
 
+    class func instantiate(with nib: UINib) -> Self {
+        nib.instantiate(withOwner: nil, options: nil).compactMap { $0 as? Self }.first ?? Self(frame: .zero)
+    }
+}
