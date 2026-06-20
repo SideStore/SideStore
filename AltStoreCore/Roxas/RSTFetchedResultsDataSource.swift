@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 internal final class RSTProxyPredicate: NSCompoundPredicate {
-    init(predicate: NSPredicate?, externalPredicate: NSPredicate?) {
+    convenience init(predicate: NSPredicate?, externalPredicate: NSPredicate?) {
         var subpredicates = [NSPredicate]()
         if let externalPredicate = externalPredicate {
             subpredicates.append(externalPredicate)
@@ -17,7 +17,11 @@ internal final class RSTProxyPredicate: NSCompoundPredicate {
         if let predicate = predicate {
             subpredicates.append(predicate)
         }
-        super.init(type: .and, subpredicates: subpredicates)
+        self.init(type: .and, subpredicates: subpredicates)
+    }
+    
+    override init(type: NSCompoundPredicate.LogicalType, subpredicates: [NSPredicate]) {
+        super.init(type: type, subpredicates: subpredicates)
     }
     
     required init?(coder: NSCoder) {
