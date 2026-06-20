@@ -9,11 +9,15 @@
 import UIKit
 import CoreData
 open class RSTArrayDataSource<ContentType, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: RSTCellContentDataSource<ContentType, CellType, ViewType, DataSourceType> {
+    private var isApplyingBatchChanges = false
+
     open var items: [ContentType] = [] {
         didSet {
             itemCount = items.count
-            (contentView as? UICollectionView)?.reloadData()
-            (contentView as? UITableView)?.reloadData()
+            if !isApplyingBatchChanges {
+                (contentView as? UICollectionView)?.reloadData()
+                (contentView as? UITableView)?.reloadData()
+            }
         }
     }
     public init(items: [ContentType]) {
@@ -22,10 +26,23 @@ open class RSTArrayDataSource<ContentType, CellType: UIView & RSTCellContentCell
         self.itemCount = items.count
     }
     public func setItems(_ items: [ContentType], with changes: [RSTCellContentChange]? = nil) {
+        self.isApplyingBatchChanges = true
         self.items = items
         self.itemCount = items.count
-        (contentView as? UICollectionView)?.reloadData()
-        (contentView as? UITableView)?.reloadData()
+        self.isApplyingBatchChanges = false
+        
+        if let changes = changes {
+            if !changes.isEmpty, let contentView = self.contentView {
+                (contentView as? RSTCellContentTransactionUpdateable)?.beginUpdates()
+                for change in changes {
+                    self.addChange(change)
+                }
+                (contentView as? RSTCellContentTransactionUpdateable)?.endUpdates()
+            }
+        } else {
+            (contentView as? UICollectionView)?.reloadData()
+            (contentView as? UITableView)?.reloadData()
+        }
     }
     public override func item(at indexPath: IndexPath) -> ContentType { items[indexPath.item] }
     public override func numberOfSections(in contentView: ViewType) -> Int { 1 }

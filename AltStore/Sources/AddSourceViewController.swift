@@ -60,6 +60,7 @@ extension AddSourceViewController
 class AddSourceViewController: UICollectionViewController 
 {
     private var stagedForAdd: LinkedHashMap<Source, Bool> = LinkedHashMap()
+    private var hasPressedReturn = false
     
     private lazy var dataSource = self.makeDataSource()
     private lazy var addSourceDataSource = self.makeAddSourceDataSource()
@@ -342,6 +343,7 @@ private extension AddSourceViewController
         Publishers.CombineLatest(sourceURLsPublisher, showPreviewStatusPublisher.prepend(false))
             .receive(on: RunLoop.main)
             .map { $0.0 }
+            .removeDuplicates()
             .flatMap { [weak self] (sourceURLs: [URL]) -> AnyPublisher<[SourcePreviewResult?], Never> in
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 
@@ -380,6 +382,8 @@ private extension AddSourceViewController
                                  self.viewModel.$isShowingPreviewStatus.removeDuplicates())
         .sink { [weak self] _ in
             guard let self else { return }
+            
+            guard self.viewModel.isShowingPreviewStatus else { return }
             
             // @Published fires _before_ property is updated, so wait until next run loop.
             DispatchQueue.main.async {
@@ -565,7 +569,9 @@ private extension AddSourceViewController
         
         self.sourcePreviewDataSource.setItems(sources, with: changes)
         
-        self.collectionView.collectionViewLayout.invalidateLayout()
+        if currentItemCount > 0 || newItemCount > 0 {
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }
     }
 }
 
@@ -644,6 +650,13 @@ private extension AddSourceViewController
     
     func configure(_ footerView: PlaceholderCollectionReusableView, with sourcePreviewResults: [SourcePreviewResult?])
     {
+        guard self.viewModel.isShowingPreviewStatus else {
+            footerView.placeholderView.textLabel.text = nil
+            footerView.placeholderView.textLabel.isHidden = true
+            footerView.placeholderView.activityIndicatorView.stopAnimating()
+            return
+        }
+        
         footerView.placeholderView.stackView.isLayoutMarginsRelativeArrangement = false
         
         footerView.placeholderView.textLabel.textColor = .secondaryLabel
@@ -929,19 +942,24 @@ extension AddSourceViewController: UITextFieldDelegate
 {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool 
     {
+        self.hasPressedReturn = false
         self.viewModel.isShowingPreviewStatus = false
         return true
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
+        self.hasPressedReturn = true
         textField.resignFirstResponder()
         return false
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) 
     {
-        self.viewModel.isShowingPreviewStatus = true
+        if self.hasPressedReturn
+        {
+            self.viewModel.isShowingPreviewStatus = true
+        }
     }
 }
 
