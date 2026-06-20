@@ -14,6 +14,7 @@ public let RSTCellContentGenericCellIdentifier = "Cell"
 @objc(RSTCellContentIndexPathTranslating)
 public protocol RSTCellContentIndexPathTranslating: AnyObject {
     @objc func dataSource(_ dataSource: AnyObject, globalIndexPathForLocalIndexPath localIndexPath: IndexPath) -> IndexPath?
+    @objc func dataSource(_ dataSource: AnyObject, localIndexPathForGlobalIndexPath globalIndexPath: IndexPath) -> IndexPath?
 }
 
 protocol RSTAnyCellContentDataSource: AnyObject {
@@ -25,6 +26,7 @@ protocol RSTAnyCellContentDataSource: AnyObject {
     func anyCellIdentifier(at indexPath: IndexPath) -> String
     func configureAnyCell(_ cell: UIView, at indexPath: IndexPath)
     var anyIndexPathTranslator: RSTCellContentIndexPathTranslating? { get set }
+    var anyIsDynamic: Bool { get }
 }
 
 open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: NSObject, UITableViewDataSource, UICollectionViewDataSource {
@@ -34,6 +36,22 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
     open var cellConfigurationHandler: ((CellType, ContentType, IndexPath) -> Void) = { _, _, _ in }
     open var predicate: NSPredicate?
     open weak var indexPathTranslator: RSTCellContentIndexPathTranslating?
+    open var isDynamic: Bool { false }
+    
+    public func localIndexPath(for globalIndexPath: IndexPath) -> IndexPath? {
+        if let translator = indexPathTranslator {
+            return translator.dataSource(self, localIndexPathForGlobalIndexPath: globalIndexPath)
+        }
+        return globalIndexPath
+    }
+
+    public func globalIndexPath(for localIndexPath: IndexPath) -> IndexPath? {
+        if let translator = indexPathTranslator {
+            return translator.dataSource(self, globalIndexPathForLocalIndexPath: localIndexPath)
+        }
+        return localIndexPath
+    }
+
         open var placeholderView: UIView? {
         didSet {
             placeholderView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -87,7 +105,7 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
         }
     }
     open var rowAnimation: UITableView.RowAnimation = .automatic
-    public var itemCount: Int = 0
+    open var itemCount: Int = 0
 
     public lazy var searchController: RSTSearchController = {
         let controller = RSTSearchController(searchResultsController: nil)
@@ -251,4 +269,6 @@ extension RSTCellContentDataSource: RSTAnyCellContentDataSource {
         get { self.indexPathTranslator }
         set { self.indexPathTranslator = newValue }
     }
+
+    var anyIsDynamic: Bool { isDynamic }
 }

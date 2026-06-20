@@ -73,7 +73,7 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         return IndexPath(item: max(remainingItem, 0), section: 0)
     }
 
-    private func resolve(_ indexPath: IndexPath) -> (dataSource: RSTAnyCellContentDataSource, indexPath: IndexPath)? {
+    func resolve(_ indexPath: IndexPath) -> (dataSource: RSTAnyCellContentDataSource, indexPath: IndexPath)? {
         prepareChildren(for: contentView)
 
         if shouldFlattenSections {
@@ -136,6 +136,28 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         return resolved.dataSource.anyItem(at: resolved.indexPath) as! ContentType
     }
 
+    private var isDefaultCellConfigurationHandler = true
+    open override var cellConfigurationHandler: ((CellType, ContentType, IndexPath) -> Void) {
+        get { super.cellConfigurationHandler }
+        set {
+            isDefaultCellConfigurationHandler = false
+            super.cellConfigurationHandler = newValue
+        }
+    }
+
+    open override func configureCell(_ cell: CellType, at indexPath: IndexPath) {
+        guard let resolved = resolve(indexPath) else { return }
+        
+        if resolved.dataSource.anyIsDynamic {
+            resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
+        } else {
+            if isDefaultCellConfigurationHandler {
+                resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
+            } else {
+                cellConfigurationHandler(cell, item(at: indexPath), indexPath)
+            }
+        }
+    }
 
     public func dataSource(_ dataSource: AnyObject, globalIndexPathForLocalIndexPath localIndexPath: IndexPath) -> IndexPath? {
         guard let anyDataSource = dataSource as? RSTAnyCellContentDataSource else { return nil }
@@ -164,6 +186,11 @@ open class RSTCompositeDataSource<ContentType, CellType: UIView & RSTCellContent
         }
         
         return globalIndexPath
+    }
+
+    public func dataSource(_ dataSource: AnyObject, localIndexPathForGlobalIndexPath globalIndexPath: IndexPath) -> IndexPath? {
+        guard let resolved = resolve(globalIndexPath), resolved.dataSource === dataSource else { return nil }
+        return resolved.indexPath
     }
 }
 
@@ -210,14 +237,39 @@ open class RSTCompositeCollectionViewPrefetchingDataSource<ContentType, Prefetch
     public override func configureCell(_ cell: UICollectionViewCell, at indexPath: IndexPath) {
         super.configureCell(cell, at: indexPath)
         
-        // Cancel existing operation for this index path if any
+        if prefetchHandler == nil {
+            if let resolved = resolve(indexPath),
+               let _ = resolved.dataSource as? any RSTCellContentPrefetchingDataSource {
+                resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
+            }
+            return
+        }
+        
         prefetchOperations[indexPath]?.cancel()
         
         let item = self.item(at: indexPath)
+        if let cached = prefetchItemCache.object(forKey: item as AnyObject) as? PrefetchContentType {
+            self.prefetchCompletionHandler?(cell, cached, indexPath, nil)
+            return
+        }
+        
         if let operation = prefetchHandler?(item, indexPath, { [weak self, weak cell] (content, error) in
             guard let self, let cell else { return }
+            if let content {
+                self.prefetchItemCache.setObject(content as AnyObject, forKey: item as AnyObject)
+            }
             DispatchQueue.main.async {
-                self.prefetchCompletionHandler?(cell, content, indexPath, error)
+                if let collectionView = self.contentView as? UICollectionView,
+                   let cellIndexPath = collectionView.indexPath(for: cell) {
+                    if self.isValidIndexPath(cellIndexPath) {
+                        let currentItem = self.item(at: cellIndexPath)
+                        if (currentItem as AnyObject) === (item as AnyObject) || cellIndexPath == indexPath {
+                            self.prefetchCompletionHandler?(cell, content, cellIndexPath, error)
+                        }
+                    }
+                } else {
+                    self.prefetchCompletionHandler?(cell, content, indexPath, error)
+                }
             }
         }) {
             prefetchOperations[indexPath] = operation
@@ -227,8 +279,25 @@ open class RSTCompositeCollectionViewPrefetchingDataSource<ContentType, Prefetch
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
+            guard isValidIndexPath(indexPath) else { continue }
+            if prefetchHandler == nil {
+                if let resolved = resolve(indexPath),
+                   let childPrefetching = resolved.dataSource as? any UICollectionViewDataSourcePrefetching {
+                    childPrefetching.collectionView(collectionView, prefetchItemsAt: [resolved.indexPath])
+                }
+                continue
+            }
+            
             let item = self.item(at: indexPath)
-            if let operation = prefetchHandler?(item, indexPath, { _, _ in }) {
+            if prefetchItemCache.object(forKey: item as AnyObject) != nil {
+                continue
+            }
+            if let operation = prefetchHandler?(item, indexPath, { [weak self] (content, error) in
+                guard let self else { return }
+                if let content {
+                    self.prefetchItemCache.setObject(content as AnyObject, forKey: item as AnyObject)
+                }
+            }) {
                 prefetchOperations[indexPath] = operation
                 prefetchOperationQueue.addOperation(operation)
             }
@@ -236,6 +305,13 @@ open class RSTCompositeCollectionViewPrefetchingDataSource<ContentType, Prefetch
     }
     public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
+            if prefetchHandler == nil {
+                if let resolved = resolve(indexPath),
+                   let childPrefetching = resolved.dataSource as? any UICollectionViewDataSourcePrefetching {
+                    childPrefetching.collectionView?(collectionView, cancelPrefetchingForItemsAt: [resolved.indexPath])
+                }
+                continue
+            }
             prefetchOperations[indexPath]?.cancel()
             prefetchOperations.removeValue(forKey: indexPath)
         }
@@ -252,14 +328,39 @@ open class RSTCompositeTableViewPrefetchingDataSource<ContentType, PrefetchConte
     public override func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
         super.configureCell(cell, at: indexPath)
         
-        // Cancel existing operation for this index path if any
+        if prefetchHandler == nil {
+            if let resolved = resolve(indexPath),
+               let _ = resolved.dataSource as? any RSTCellContentPrefetchingDataSource {
+                resolved.dataSource.configureAnyCell(cell, at: resolved.indexPath)
+            }
+            return
+        }
+        
         prefetchOperations[indexPath]?.cancel()
         
         let item = self.item(at: indexPath)
+        if let cached = prefetchItemCache.object(forKey: item as AnyObject) as? PrefetchContentType {
+            self.prefetchCompletionHandler?(cell, cached, indexPath, nil)
+            return
+        }
+        
         if let operation = prefetchHandler?(item, indexPath, { [weak self, weak cell] (content, error) in
             guard let self, let cell else { return }
+            if let content {
+                self.prefetchItemCache.setObject(content as AnyObject, forKey: item as AnyObject)
+            }
             DispatchQueue.main.async {
-                self.prefetchCompletionHandler?(cell, content, indexPath, error)
+                if let tableView = self.contentView as? UITableView,
+                   let cellIndexPath = tableView.indexPath(for: cell) {
+                    if self.isValidIndexPath(cellIndexPath) {
+                        let currentItem = self.item(at: cellIndexPath)
+                        if (currentItem as AnyObject) === (item as AnyObject) || cellIndexPath == indexPath {
+                            self.prefetchCompletionHandler?(cell, content, cellIndexPath, error)
+                        }
+                    }
+                } else {
+                    self.prefetchCompletionHandler?(cell, content, indexPath, error)
+                }
             }
         }) {
             prefetchOperations[indexPath] = operation
@@ -269,8 +370,25 @@ open class RSTCompositeTableViewPrefetchingDataSource<ContentType, PrefetchConte
 
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
+            guard isValidIndexPath(indexPath) else { continue }
+            if prefetchHandler == nil {
+                if let resolved = resolve(indexPath),
+                   let childPrefetching = resolved.dataSource as? any UITableViewDataSourcePrefetching {
+                    childPrefetching.tableView(tableView, prefetchRowsAt: [resolved.indexPath])
+                }
+                continue
+            }
+            
             let item = self.item(at: indexPath)
-            if let operation = prefetchHandler?(item, indexPath, { _, _ in }) {
+            if prefetchItemCache.object(forKey: item as AnyObject) != nil {
+                continue
+            }
+            if let operation = prefetchHandler?(item, indexPath, { [weak self] (content, error) in
+                guard let self else { return }
+                if let content {
+                    self.prefetchItemCache.setObject(content as AnyObject, forKey: item as AnyObject)
+                }
+            }) {
                 prefetchOperations[indexPath] = operation
                 prefetchOperationQueue.addOperation(operation)
             }
@@ -278,8 +396,16 @@ open class RSTCompositeTableViewPrefetchingDataSource<ContentType, PrefetchConte
     }
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
+            if prefetchHandler == nil {
+                if let resolved = resolve(indexPath),
+                   let childPrefetching = resolved.dataSource as? any UITableViewDataSourcePrefetching {
+                    childPrefetching.tableView?(tableView, cancelPrefetchingForRowsAt: [resolved.indexPath])
+                }
+                continue
+            }
             prefetchOperations[indexPath]?.cancel()
             prefetchOperations.removeValue(forKey: indexPath)
         }
     }
 }
+

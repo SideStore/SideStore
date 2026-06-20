@@ -146,29 +146,7 @@ extension UICollectionView: RSTCellContentUpdateableView, RSTCellContentTransact
 
 public extension UICollectionView {
     func add(_ change: RSTCellContentChange) {
-        performBatchUpdates {
-            switch change.type {
-            case .insert:
-                if let destinationIndexPath = change.destinationIndexPath {
-                    insertItems(at: [destinationIndexPath])
-                } else if change.sectionIndex != RSTUnknownSectionIndex {
-                    insertSections(IndexSet(integer: change.sectionIndex))
-                }
-            case .delete:
-                if let currentIndexPath = change.currentIndexPath {
-                    deleteItems(at: [currentIndexPath])
-                } else if change.sectionIndex != RSTUnknownSectionIndex {
-                    deleteSections(IndexSet(integer: change.sectionIndex))
-                }
-            case .move:
-                if let currentIndexPath = change.currentIndexPath, let destinationIndexPath = change.destinationIndexPath {
-                    moveItem(at: currentIndexPath, to: destinationIndexPath)
-                }
-            case .update:
-                if let currentIndexPath = change.currentIndexPath {
-                    reloadItems(at: [currentIndexPath])
-                }
-            }
-        }
+        self.addChange(change)
     }
 }
+
