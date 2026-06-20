@@ -60,7 +60,20 @@ public extension Bundle
     static var baseAltStoreAppGroupID = "group." + Bundle.Info.appbundleIdentifier
 
     var appGroups: [String] {
-        return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []
+        if let groups = self.infoDictionary?[Bundle.Info.appGroups] as? [String], !groups.isEmpty {
+            return groups
+        }
+        
+        // On iOS 27, self.infoDictionary can come back empty/stale in the widget
+        // extension process (observed as a timing issue during widget rendering).
+        // Fall back to reading Info.plist directly off disk, which still returns
+        // the correct per-build (Debug team-suffixed or Release) app group value
+        // rather than guessing at a hardcoded literal.
+        if let groups = self.completeInfoDictionary?[Bundle.Info.appGroups] as? [String] {
+            return groups
+        }
+        
+        return []
     }
     
     var altstoreAppGroup: String? {        
