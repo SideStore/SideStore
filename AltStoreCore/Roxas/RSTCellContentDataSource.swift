@@ -237,6 +237,39 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
         }
         return cell
     }
+
+    private func isDataSourceSelector(_ aSelector: Selector!) -> Bool {
+        for protocolName in ["UITableViewDataSource", "UICollectionViewDataSource", "UITableViewDataSourcePrefetching", "UICollectionViewDataSourcePrefetching"] {
+            if let proto = objc_getProtocol(protocolName) {
+                var desc = protocol_getMethodDescription(proto, aSelector, false, true)
+                if desc.name != nil {
+                    return true
+                }
+                desc = protocol_getMethodDescription(proto, aSelector, true, true)
+                if desc.name != nil {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    open override func responds(to aSelector: Selector!) -> Bool {
+        if super.responds(to: aSelector) {
+            return true
+        }
+        if let proxy = self.proxy, isDataSourceSelector(aSelector) {
+            return proxy.responds(to: aSelector)
+        }
+        return false
+    }
+    
+    open override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        if let proxy = self.proxy, isDataSourceSelector(aSelector) {
+            return proxy
+        }
+        return super.forwardingTarget(for: aSelector)
+    }
 }
 
 extension RSTCellContentDataSource: RSTAnyCellContentDataSource {
