@@ -43,7 +43,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private let viewAppIntentHandler = ViewAppIntentHandler()
     
     public let consoleLog = ConsoleLog()
-    
+
+    // Holds an imported .ipa URL when the app isn't active yet (cold launch),
+    // so the import notification can be posted once the app becomes active.
+    private var pendingImportIPAURL: URL?
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         // navigation bar buttons spacing is too much (so hack it to use minimal spacing)
@@ -146,7 +150,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
         }
     }
-    
+
+    func applicationDidBecomeActive(_ application: UIApplication)
+    {
+        // Flush any .ipa import that arrived before the app was active (cold launch).
+        guard let url = self.pendingImportIPAURL else { return }
+        self.pendingImportIPAURL = nil
+        NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: url])
+    }
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
     {
         return self.open(url)
@@ -230,11 +242,38 @@ private extension AppDelegate
         if url.isFileURL
         {
             guard url.pathExtension.lowercased() == "ipa" else { return false }
-            
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: url])
+
+            // Copy the shared .ipa out of its security-scoped location into a
+            // temporary directory we own, so it stays readable while signing.
+            let didStartAccessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if didStartAccessing { url.stopAccessingSecurityScopedResource() }
             }
-            
+
+            let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+            do {
+                try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("[ALTLog] Failed to create temp directory for imported IPA: \(error)")
+                return false
+            }
+
+            let ipaURL = temporaryDirectory.appendingPathComponent(url.lastPathComponent)
+
+            do {
+                try FileManager.default.copyItem(at: url, to: ipaURL)
+            } catch {
+                print("[ALTLog] Failed to copy imported IPA: \(error)")
+                return false
+            }
+
+            if UIApplication.shared.applicationState == .active {
+                NotificationCenter.default.post(name: AppDelegate.importAppDeepLinkNotification, object: nil, userInfo: [AppDelegate.importAppDeepLinkURLKey: ipaURL])
+            } else {
+                // Defer until the app is active (cold launch) — see applicationDidBecomeActive.
+                self.pendingImportIPAURL = ipaURL
+            }
+
             return true
         }
         else
