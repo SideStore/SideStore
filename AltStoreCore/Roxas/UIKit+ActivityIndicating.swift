@@ -57,10 +57,15 @@ internal final class ActivityIndicatingHelper: NSObject, RSTActivityIndicating {
                 activityIndicatorView.stopAnimating()
             }
             
+            var didChange = false
             queue.sync {
-                guard _isIndicatingActivity != newValue else { return }
-                _isIndicatingActivity = newValue
+                if _isIndicatingActivity != newValue {
+                    _isIndicatingActivity = newValue
+                    didChange = true
+                }
             }
+            
+            guard didChange else { return }
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }

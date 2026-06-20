@@ -261,10 +261,11 @@ open class RSTCompositeCollectionViewPrefetchingDataSource<ContentType, Prefetch
             DispatchQueue.main.async {
                 if let collectionView = self.contentView as? UICollectionView,
                    let cellIndexPath = collectionView.indexPath(for: cell) {
-                    if self.isValidIndexPath(cellIndexPath) {
-                        let currentItem = self.item(at: cellIndexPath)
-                        if (currentItem as AnyObject) === (item as AnyObject) || cellIndexPath == indexPath {
-                            self.prefetchCompletionHandler?(cell, content, cellIndexPath, error)
+                    let localIndexPath = self.localIndexPath(for: cellIndexPath) ?? cellIndexPath
+                    if self.isValidIndexPath(localIndexPath) {
+                        let currentItem = self.item(at: localIndexPath)
+                        if (currentItem as AnyObject) === (item as AnyObject) || localIndexPath == indexPath {
+                            self.prefetchCompletionHandler?(cell, content, localIndexPath, error)
                         }
                     }
                 } else {
@@ -352,10 +353,11 @@ open class RSTCompositeTableViewPrefetchingDataSource<ContentType, PrefetchConte
             DispatchQueue.main.async {
                 if let tableView = self.contentView as? UITableView,
                    let cellIndexPath = tableView.indexPath(for: cell) {
-                    if self.isValidIndexPath(cellIndexPath) {
-                        let currentItem = self.item(at: cellIndexPath)
-                        if (currentItem as AnyObject) === (item as AnyObject) || cellIndexPath == indexPath {
-                            self.prefetchCompletionHandler?(cell, content, cellIndexPath, error)
+                    let localIndexPath = self.localIndexPath(for: cellIndexPath) ?? cellIndexPath
+                    if self.isValidIndexPath(localIndexPath) {
+                        let currentItem = self.item(at: localIndexPath)
+                        if (currentItem as AnyObject) === (item as AnyObject) || localIndexPath == indexPath {
+                            self.prefetchCompletionHandler?(cell, content, localIndexPath, error)
                         }
                     }
                 } else {
