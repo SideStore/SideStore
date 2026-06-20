@@ -8,6 +8,23 @@
 
 import UIKit
 import CoreData
+internal final class RSTProxyPredicate: NSCompoundPredicate {
+    init(predicate: NSPredicate?, externalPredicate: NSPredicate?) {
+        var subpredicates = [NSPredicate]()
+        if let externalPredicate = externalPredicate {
+            subpredicates.append(externalPredicate)
+        }
+        if let predicate = predicate {
+            subpredicates.append(predicate)
+        }
+        super.init(type: .and, subpredicates: subpredicates)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
+
 open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: UIView & RSTCellContentCell, ViewType: UIScrollView, DataSourceType>: RSTCellContentDataSource<ContentType, CellType, ViewType, DataSourceType>, NSFetchedResultsControllerDelegate {
     open var liveFetchLimit: Int = 0 {
         didSet {
@@ -16,8 +33,55 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
             reload()
         }
     }
+    
+    open var externalPredicate: NSPredicate?
+    private var isObservingPredicate = false
+    
+    private func setupPredicateObservation() {
+        guard !isObservingPredicate else { return }
+        fetchedResultsController.fetchRequest.addObserver(self, forKeyPath: "predicate", options: .new, context: nil)
+        isObservingPredicate = true
+    }
+    
+    private func teardownPredicateObservation() {
+        guard isObservingPredicate else { return }
+        fetchedResultsController.fetchRequest.removeObserver(self, forKeyPath: "predicate")
+        isObservingPredicate = false
+    }
+    
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "predicate", let fetchRequest = object as? NSFetchRequest<ContentType> {
+            let newPredicate = change?[.newKey] as? NSPredicate
+            if !(newPredicate is RSTProxyPredicate) {
+                self.externalPredicate = newPredicate
+                let proxyPredicate = RSTProxyPredicate(predicate: self.predicate, externalPredicate: self.externalPredicate)
+                fetchRequest.predicate = proxyPredicate
+            }
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
+    
+    deinit {
+        teardownPredicateObservation()
+    }
+    
     open var fetchedResultsController: NSFetchedResultsController<ContentType> {
-        didSet { fetchedResultsController.delegate = self; reload() }
+        willSet {
+            teardownPredicateObservation()
+            fetchedResultsController.fetchRequest.predicate = self.externalPredicate
+            self.externalPredicate = nil
+        }
+        didSet {
+            fetchedResultsController.delegate = self
+            
+            self.externalPredicate = fetchedResultsController.fetchRequest.predicate
+            let proxyPredicate = RSTProxyPredicate(predicate: self.predicate, externalPredicate: self.externalPredicate)
+            fetchedResultsController.fetchRequest.predicate = proxyPredicate
+            
+            setupPredicateObservation()
+            reload()
+        }
     }
     private var _itemCount: Int = 0
     open override var itemCount: Int {
@@ -40,6 +104,12 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
         self.fetchedResultsController = fetchedResultsController
         super.init()
         self.fetchedResultsController.delegate = self
+        
+        self.externalPredicate = fetchedResultsController.fetchRequest.predicate
+        let proxyPredicate = RSTProxyPredicate(predicate: self.predicate, externalPredicate: self.externalPredicate)
+        fetchedResultsController.fetchRequest.predicate = proxyPredicate
+        
+        setupPredicateObservation()
         refreshItemCount()
     }
     public convenience init(fetchRequest: NSFetchRequest<ContentType>, managedObjectContext: NSManagedObjectContext) {
@@ -75,7 +145,8 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
     }
     public override func item(at indexPath: IndexPath) -> ContentType { fetchedResultsController.object(at: indexPath) }
     public override func filterContent(with predicate: NSPredicate?) {
-        fetchedResultsController.fetchRequest.predicate = predicate
+        let proxyPredicate = RSTProxyPredicate(predicate: predicate, externalPredicate: self.externalPredicate)
+        fetchedResultsController.fetchRequest.predicate = proxyPredicate
         try? fetchedResultsController.performFetch()
         refreshItemCount()
     }

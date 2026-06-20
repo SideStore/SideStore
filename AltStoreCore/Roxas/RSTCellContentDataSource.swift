@@ -34,7 +34,11 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
     open weak var proxy: AnyObject?
     open var cellIdentifierHandler: ((IndexPath) -> String) = { _ in RSTCellContentGenericCellIdentifier }
     open var cellConfigurationHandler: ((CellType, ContentType, IndexPath) -> Void) = { _, _, _ in }
-    open var predicate: NSPredicate?
+    private var _predicate: NSPredicate?
+    open var predicate: NSPredicate? {
+        get { return _predicate }
+        set { setPredicate(newValue, refreshContent: true) }
+    }
     open weak var indexPathTranslator: RSTCellContentIndexPathTranslating?
     open var isDynamic: Bool { false }
     
@@ -123,7 +127,7 @@ open class RSTCellContentDataSource<ContentType, CellType: UIView & RSTCellConte
     open func contentView(_ contentView: ViewType, numberOfItemsInSection section: Int) -> Int { 0 }
     open func filterContent(with predicate: NSPredicate?) {}
     open func setPredicate(_ predicate: NSPredicate?, refreshContent: Bool) {
-        self.predicate = predicate
+        _predicate = predicate
         filterContent(with: predicate)
         if refreshContent { (contentView as? UICollectionView)?.reloadData(); (contentView as? UITableView)?.reloadData() }
     }
