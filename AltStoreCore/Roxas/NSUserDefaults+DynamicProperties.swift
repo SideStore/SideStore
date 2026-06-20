@@ -1,8 +1,8 @@
 //
-//  UserDefaults+AltStore.swift
+//  NSUserDefaults+DynamicProperties.swift
 //  AltStore
 //
-//  Created by Riley Testut on 6/4/19.
+//  Created by Magesh K on 6/17/26.
 //  Copyright © 2019 SideStore. All rights reserved.
 //
 

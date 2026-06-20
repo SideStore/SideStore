@@ -1,5 +1,5 @@
 //
-//  Hasher.swift
+//  RSTHasher.swift
 //  AltStoreCore
 //
 //  Created by Magesh K on 6/17/26.

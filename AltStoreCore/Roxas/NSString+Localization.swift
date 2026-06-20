@@ -1,8 +1,8 @@
 //
-//  String+SideStore.swift
+//  NSString+Localization.swift
 //  AltStoreCore
 //
-//  Created by nythepegasus on 5/9/24.
+//  Created by Magesh K on 6/17/26.
 //
 
 import UIKit
