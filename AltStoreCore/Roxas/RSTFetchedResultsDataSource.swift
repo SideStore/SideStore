@@ -77,7 +77,9 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
             self.externalPredicate = nil
         }
         didSet {
-            fetchedResultsController.delegate = self
+            if fetchedResultsController.delegate == nil {
+                fetchedResultsController.delegate = self
+            }
             
             self.externalPredicate = fetchedResultsController.fetchRequest.predicate
             let proxyPredicate = RSTProxyPredicate(predicate: self.predicate, externalPredicate: self.externalPredicate)
@@ -90,6 +92,7 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
     private var _itemCount: Int = 0
     open override var itemCount: Int {
         get {
+            performFetchIfNeeded()
             guard let sections = fetchedResultsController.sections else {
                 return 0
             }
@@ -103,11 +106,19 @@ open class RSTFetchedResultsDataSource<ContentType: NSManagedObject, CellType: U
         }
     }
     private var _backingItemCount: Int = 0
+    
+    open override var contentView: ViewType? {
+        didSet {
+            performFetchIfNeeded()
+        }
+    }
 
     public init(fetchedResultsController: NSFetchedResultsController<ContentType>) {
         self.fetchedResultsController = fetchedResultsController
         super.init()
-        self.fetchedResultsController.delegate = self
+        if fetchedResultsController.delegate == nil {
+            fetchedResultsController.delegate = self
+        }
         
         self.externalPredicate = fetchedResultsController.fetchRequest.predicate
         let proxyPredicate = RSTProxyPredicate(predicate: self.predicate, externalPredicate: self.externalPredicate)

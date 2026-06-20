@@ -101,7 +101,7 @@ final class SourcesViewController: UICollectionViewController
             self.placeholderView.bottomAnchor.constraint(equalTo: self.placeholderView.stackView.bottomAnchor),
         ])
 
-        self.navigationItem.rightBarButtonItem = self.editButtonItem
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         NotificationCenter.default.addObserver(self, selector: #selector(SourcesViewController.showInstallingAppToastView(_:)), name: AppManager.willInstallAppFromNewSourceNotification, object: nil)
         
@@ -435,7 +435,10 @@ private extension SourcesViewController
     
     func update()
     {
-        if self.dataSource.itemCount < 2
+        let sources = self.dataSource.fetchedResultsController.fetchedObjects ?? []
+        let hasOtherSources = sources.contains { $0.identifier != Source.altStoreIdentifier }
+        
+        if !hasOtherSources
         {
             // Show placeholder view
             
@@ -443,14 +446,11 @@ private extension SourcesViewController
             self.collectionView.alwaysBounceVertical = false
             
             self.setEditing(false, animated: true)
-            self.editButtonItem.isEnabled = false
         }
         else
         {
             self.placeholderView.isHidden = true
             self.collectionView.alwaysBounceVertical = true
-            
-            self.editButtonItem.isEnabled = true
         }
     }
     
@@ -495,9 +495,9 @@ extension SourcesViewController: NSFetchedResultsControllerDelegate
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) 
     {
-        self.update()
-        
         self.dataSource.controllerDidChangeContent(controller)
+        
+        self.update()
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) 
