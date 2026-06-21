@@ -629,7 +629,6 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A8BD20242F543FAD0045335F /* apps-v2.json */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "apps-v2.json"; sourceTree = "<group>"; };
 		A8EEC0502F4AF7FB00F2436D /* AltStoreCore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (174F75012F8B4F4900A53376 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, A8EEC0BF2F4AF7FB00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltStoreCore; sourceTree = "<group>"; };
 		A8EEC3482F4B0D8600F2436D /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC36A2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36C2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36B2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		A8EEC3B92F4B0EFC00F2436D /* AltWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3CA2F4B0EFC00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltWidget; sourceTree = "<group>"; };
@@ -765,7 +764,6 @@
 			children = (
 				A8BD32FA2F54444D0045335F /* AltSign */,
 				A8BD325F2F5440300045335F /* minimuxer */,
-				A8BD20242F543FAD0045335F /* apps-v2.json */,
 				A8BD325E2F5440300045335F /* libusbmuxd */,
 				A8BD30F02F5440300045335F /* libimobiledevice */,
 				A8036E802F54606400097AF1 /* libimobiledevice-glue */,
