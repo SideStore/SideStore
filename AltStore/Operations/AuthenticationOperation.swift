@@ -266,9 +266,12 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 let isAppLimitDisabled       = UserDefaults.standard.isAppLimitDisabled
 
                 UserDefaults.standard.activeAppsLimit = nil
+
+                let legacyKey = "isLegacyLapsedAccount_\(team.identifier)"
+                let isLegacyAccount = UserDefaults.standard.bool(forKey: legacyKey)
                 // TODO: @mahee96: is the minimum ver match for ios 13.3.1 check required?
                 //                 if so what is the app limit? As nil app limit specifies unlimited apps?!
-                if team.type == .free//, isMinimumVersionMatching 
+                if team.type == .free && !isLegacyAccount //, isMinimumVersionMatching 
                 {
                     if (!isAppLimitDisabled && isSparseRestorePatched) ||
                         (isAppLimitDisabled && !isSparseRestorePatched)
