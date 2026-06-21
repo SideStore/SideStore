@@ -45,6 +45,7 @@ final class AppViewController: UIViewController
     private var _backgroundBlurTintColor: UIColor?
     
     private var _preferredStatusBarStyle: UIStatusBarStyle = .default
+    private var isNavigationBarHidden = true
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 17, *)
@@ -412,10 +413,17 @@ private extension AppViewController
         let barButtonItem = self.navigationItem.rightBarButtonItem
         self.navigationItem.rightBarButtonItem = nil
         self.navigationItem.rightBarButtonItem = barButtonItem
+        
+        if self.isNavigationBarHidden
+        {
+            self.navigationBarDownloadButton.alpha = 0.0
+        }
     }
     
     func showNavigationBar()
     {
+        self.isNavigationBarHidden = false
+        
         self.navigationBarAppIconImageView.alpha = 1.0
         self.navigationBarAppNameLabel.alpha = 1.0
         self.navigationBarDownloadButton.alpha = 1.0
@@ -439,6 +447,8 @@ private extension AppViewController
     
     func hideNavigationBar()
     {
+        self.isNavigationBarHidden = true
+        
         self.navigationBarAppIconImageView.alpha = 0.0
         self.navigationBarAppNameLabel.alpha = 0.0
         self.navigationBarDownloadButton.alpha = 0.0

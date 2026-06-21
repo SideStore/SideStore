@@ -75,8 +75,6 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     
     private let viewModel: ViewModel
     
-    private var addButton: VibrantButton!
-    
     private var previousBounds: CGRect?
     private var cancellables = Set<AnyCancellable>()
     
@@ -100,12 +98,6 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     {
         super.viewDidLoad()
         
-        self.addButton = VibrantButton(type: .system)
-        self.addButton.contentInsets = PillButton.contentInsets
-        self.addButton.addTarget(self, action: #selector(SourceDetailViewController.addSource), for: .primaryActionTriggered)
-        self.addButton.sizeToFit()
-        self.view.addSubview(self.addButton)
-        
         self.navigationBarButton.addTarget(self, action: #selector(SourceDetailViewController.addSource), for: .primaryActionTriggered)
         
         Nuke.loadImage(with: self.source.effectiveIconURL, into: self.navigationBarIconView)
@@ -119,18 +111,10 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     {
         super.viewDidLayoutSubviews()
         
-        self.addButton.layer.cornerRadius = self.addButton.bounds.midY
         self.navigationBarIconView.layer.cornerRadius = self.navigationBarIconView.bounds.midY
-        
-        var addButtonSize = self.addButton.sizeThatFits(CGSize(width: Double.infinity, height: .infinity))
-        addButtonSize.width = max(addButtonSize.width, PillButton.minimumSize.width)
-        addButtonSize.height = max(addButtonSize.height, PillButton.minimumSize.height)
-        self.addButton.frame.size = addButtonSize
         
         // Place in top-right corner.
         let inset = 15.0
-        self.addButton.center.y = self.backButton.center.y
-        self.addButton.frame.origin.x = self.view.bounds.width - inset - self.addButton.bounds.width
         
         guard self.view.bounds != self.previousBounds else { return }
         self.previousBounds = self.view.bounds
@@ -166,13 +150,16 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
         if self.source.identifier == Source.altStoreIdentifier
         {
             // Users can't remove default AltStore source, so hide buttons.
-            self.addButton.isHidden = true
             self.navigationBarButton.isHidden = true
+            
+            if #available(iOS 16, *)
+            {
+                self.navigationItem.rightBarButtonItem?.isHidden = true
+            }
         }
         else
         {
             // Update isIndicatingActivity first to ensure later updates are applied correctly.
-            self.addButton.isIndicatingActivity = self.viewModel.isAddingSource
             self.navigationBarButton.isIndicatingActivity = self.viewModel.isAddingSource
             
             let title: String
@@ -181,45 +168,37 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
             {
             case true?:
                 title = NSLocalizedString("REMOVE", comment: "")
-                self.navigationBarButton.tintColor = .refreshRed
-                
-                self.addButton.isHidden = false
+                self.navigationBarButton.tintColor = self.source.effectiveTintColor?.adjustedForDisplay ?? .altPrimary
                 self.navigationBarButton.isHidden = false
                 
                 if #available(iOS 16, *)
                 {
-                    // Hide REMOVE button in navigation bar.
-                    self.navigationItem.rightBarButtonItem?.isHidden = true
+                    self.navigationItem.rightBarButtonItem?.isHidden = false
                 }
                 
             case false?:
                 title = NSLocalizedString("ADD", comment: "")
                 self.navigationBarButton.tintColor = self.source.effectiveTintColor?.adjustedForDisplay ?? .altPrimary
-                
-                self.addButton.isHidden = false
                 self.navigationBarButton.isHidden = false
                 
                 if #available(iOS 16, *)
                 {
-                    // Show ADD button in navigation bar.
                     self.navigationItem.rightBarButtonItem?.isHidden = false
                 }
                 
             case nil:
                 title = ""
-                
-                self.addButton.isHidden = true
                 self.navigationBarButton.isHidden = true
-            }
-            
-            if title != self.addButton.title
-            {
-                self.addButton.title = title
             }
             
             if title != self.navigationBarButton.title(for: .normal) && !self.navigationBarButton.isIndicatingActivity
             {
                 self.navigationBarButton.setTitle(title, for: .normal)
+                self.navigationBarButton.sizeToFit()
+                
+                let barButtonItem = self.navigationItem.rightBarButtonItem
+                self.navigationItem.rightBarButtonItem = nil
+                self.navigationItem.rightBarButtonItem = barButtonItem
             }
             
             self.view.setNeedsLayout()

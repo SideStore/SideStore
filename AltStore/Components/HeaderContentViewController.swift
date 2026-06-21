@@ -516,7 +516,7 @@ private extension HeaderContentViewController
     {
         self.navigationBarIconView.alpha = 0.0
         self.navigationBarNameLabel.alpha = 0.0
-        self.navigationBarButton.alpha = 0.0
+        self.navigationBarButton.alpha = 1.0
         
         self.updateNavigationBarAppearance(isHidden: true)
         
