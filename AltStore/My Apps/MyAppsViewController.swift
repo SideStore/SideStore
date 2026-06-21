@@ -1976,12 +1976,15 @@ extension MyAppsViewController
     
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
     {
+        guard !self.isRefreshingAllApps else { return nil }
+        
         let section = Section(rawValue: indexPath.section)!
         switch section
         {
         case .updates, .noUpdates: return nil
         case .activeApps, .inactiveApps:
             let installedApp = self.dataSource.item(at: indexPath)
+            guard !AppManager.shared.isActivelyManagingApp(withBundleID: installedApp.bundleIdentifier) else { return nil }
             
             return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { (suggestedActions) -> UIMenu? in
                 let menu = self.contextMenu(for: installedApp)
