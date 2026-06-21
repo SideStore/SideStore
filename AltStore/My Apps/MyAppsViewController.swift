@@ -827,7 +827,7 @@ private extension MyAppsViewController
             return
         }
         
-        _ = AppManager.shared.update(installedApp, presentingViewController: self) { (result) in
+        let progress = AppManager.shared.update(installedApp, presentingViewController: self) { (result) in
             DispatchQueue.main.async {
                 switch result
                 {
@@ -848,7 +848,10 @@ private extension MyAppsViewController
             }
         }
         
-        self.collectionView.reloadItems(at: [indexPath])
+        if let pillButton = sender as? PillButton
+        {
+            pillButton.progress = progress
+        }
     }
     
     @IBAction func sideloadApp(_ sender: UIBarButtonItem)

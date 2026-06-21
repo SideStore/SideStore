@@ -607,7 +607,7 @@ extension AppViewController
             return
         }
         
-        AppManager.shared.update(installedApp, to: version, presentingViewController: self) { (result) in
+        let progress = AppManager.shared.update(installedApp, to: version, presentingViewController: self) { (result) in
             DispatchQueue.main.async {
                 switch result
                 {
@@ -619,11 +619,15 @@ extension AppViewController
                     toastView.show(in: self)
                 }
                 
+                self.bannerView.button.progress = nil
+                self.navigationBarDownloadButton.progress = nil
                 self.update()
             }
         }
         
         self.update()
+        self.bannerView.button.progress = progress
+        self.navigationBarDownloadButton.progress = progress
     }
 }
 

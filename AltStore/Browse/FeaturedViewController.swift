@@ -485,14 +485,15 @@ private extension FeaturedViewController
         if let installedApp = storeApp.installedApp, !installedApp.hasUpdate
         {
             self.open(installedApp)
-        }
-        else
+        } else
         {
-            self.install(storeApp, at: indexPath)
+            self.install(storeApp, at: indexPath) { progress in
+                sender.progress = progress
+            }
         }
     }
     
-    @objc func install(_ storeApp: StoreApp, at indexPath: IndexPath)
+    func install(_ storeApp: StoreApp, at indexPath: IndexPath, progressUpdateHandler: @escaping (Progress) -> Void)
     {
         let previousProgress = AppManager.shared.installationProgress(for: storeApp)
         guard previousProgress == nil else {
@@ -503,15 +504,13 @@ private extension FeaturedViewController
         // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
         if let installedApp = storeApp.installedApp, installedApp.hasUpdate
         {
-            AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+            let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+            progressUpdateHandler(progress)
         }
         else
         {
-            AppManager.shared.install(storeApp, presentingViewController: self, completionHandler: finish(_:))
-        }
-        
-        UIView.performWithoutAnimation {
-            self.collectionView.reloadItems(at: [indexPath])
+            let group = AppManager.shared.install(storeApp, presentingViewController: self, completionHandler: finish(_:))
+            progressUpdateHandler(group.progress)
         }
         
         func finish(_ result: Result<InstalledApp, Error>)

@@ -392,14 +392,14 @@ private extension SourceDetailContentViewController
             sender.isIndicatingActivity = true
             
             Task<Void, Never> {
-                await self.downloadApp(storeApp)
+                await self.downloadApp(storeApp, sender: sender)
                 sender.isIndicatingActivity = false
             }
         }
     }
     
     @MainActor
-    func downloadApp(_ storeApp: StoreApp) async
+    func downloadApp(_ storeApp: StoreApp, sender: PillButton) async
     {
         do
         {
@@ -407,20 +407,20 @@ private extension SourceDetailContentViewController
                 // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
                 if let installedApp = storeApp.installedApp, installedApp.hasUpdate
                 {
-                    AppManager.shared.update(installedApp, presentingViewController: self) { result in
+                    let progress = AppManager.shared.update(installedApp, presentingViewController: self) { result in
                         continuation.resume(with: result.map { _ in () })
                     }
                     
-                    reload()
+                    sender.progress = progress
                 }
                 else
                 {
                     Task<Void, Never> { @MainActor in
-                        await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
+                        let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
                             continuation.resume(with: result.map { _ in () })
                         }
                         
-                        reload()
+                        sender.progress = group.progress
                     }
                 }
             }
@@ -434,20 +434,7 @@ private extension SourceDetailContentViewController
             toastView.show(in: self)
         }
         
-        self.collectionView.reloadSections([Section.featuredApps.rawValue])
-        
-        func reload()
-        {
-            UIView.performWithoutAnimation {
-                guard let index = self.appsDataSource.items.firstIndex(of: storeApp) else {
-                    self.collectionView.reloadSections([Section.featuredApps.rawValue])
-                    return
-                }
-                
-                let indexPath = IndexPath(item: index, section: Section.featuredApps.rawValue)
-                self.collectionView.reloadItems(at: [indexPath])
-            }
-        }
+        sender.progress = nil
     }
     
     func open(_ installedApp: InstalledApp)

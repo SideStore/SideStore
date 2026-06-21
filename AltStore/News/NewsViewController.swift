@@ -326,11 +326,13 @@ private extension NewsViewController
         }
         else
         {
-            self.install(storeApp, at: indexPath)
+            self.install(storeApp, at: indexPath) { progress in
+                sender.progress = progress
+            }
         }
     }
     
-    @objc func install(_ storeApp: StoreApp, at indexPath: IndexPath)
+    func install(_ storeApp: StoreApp, at indexPath: IndexPath, progressUpdateHandler: @escaping (Progress) -> Void)
     {
         let previousProgress = AppManager.shared.installationProgress(for: storeApp)
         guard previousProgress == nil else {
@@ -342,15 +344,13 @@ private extension NewsViewController
             // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
             if let installedApp = storeApp.installedApp, installedApp.hasUpdate
             {
-                AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(progress)
             }
             else
             {
-                await AppManager.shared.installAsync(storeApp, presentingViewController: self, completionHandler: finish(_:))
-            }
-            
-            UIView.performWithoutAnimation {
-                self.collectionView.reloadSections(IndexSet(integer: indexPath.section))
+                let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(group.progress)
             }
         }
         
