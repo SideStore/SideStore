@@ -58,11 +58,6 @@
 	url = https://github.com/SideStore/em_proxy
     branch = develop
 
-[submodule "Dependencies/apps-v2.json"]
-    path = Dependencies/apps-v2.json
-    url = https://github.com/SideStore/apps-v2.json
-    branch = main
-
 [submodule "Dependencies/AltSign"]
     path = Dependencies/AltSign
     url = https://github.com/SideStore/AltSign
