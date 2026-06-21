@@ -151,7 +151,6 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.backButton.tintColor = self.tintColor
         self.backButton.sizeToFit()
         self.backButton.addTarget(self.navigationController, action: #selector(UINavigationController.popViewController(animated:)), for: .primaryActionTriggered)
-        self.view.addSubview(self.backButton)
         
         
         // Content View Controller
@@ -536,12 +535,10 @@ private extension HeaderContentViewController
         if isHidden
         {
             barAppearance.configureWithTransparentBackground()
-            barAppearance.ignoresUserInteraction = true
         }
         else
         {
             barAppearance.configureWithDefaultBackground()
-            barAppearance.ignoresUserInteraction = false
         }
         
         barAppearance.titleTextAttributes = [.foregroundColor: UIColor.clear]
@@ -561,7 +558,7 @@ private extension HeaderContentViewController
             return tintColor
         }
         
-        let tintColor = isHidden ? UIColor.clear : dynamicColor
+        let tintColor = dynamicColor
         barAppearance.configureWithTintColor(tintColor)
         
         self.navigationItem.standardAppearance = barAppearance

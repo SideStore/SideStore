@@ -103,7 +103,7 @@ final class AppViewController: UIViewController
         
         self.bannerView.button.addTarget(self, action: #selector(AppViewController.performAppAction(_:)), for: .primaryActionTriggered)
         
-        self.backButtonContainerView.tintColor = self.app.tintColor
+        self.backButtonContainerView.isHidden = true
         
         self.navigationBarDownloadButton.tintColor = self.app.tintColor
         self.navigationBarAppNameLabel.text = self.app.name
@@ -461,17 +461,15 @@ private extension AppViewController
         if isHidden
         {
             barAppearance.configureWithTransparentBackground()
-            barAppearance.ignoresUserInteraction = true
         }
         else
         {
             barAppearance.configureWithDefaultBackground()
-            barAppearance.ignoresUserInteraction = false
         }
         
         barAppearance.titleTextAttributes = [.foregroundColor: UIColor.clear]
         
-        let tintColor = isHidden ? UIColor.clear : self.app.tintColor ?? .altPrimary
+        let tintColor = self.app.tintColor ?? .altPrimary
         barAppearance.configureWithTintColor(tintColor)
         
         self.navigationItem.standardAppearance = barAppearance
