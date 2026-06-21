@@ -55,6 +55,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     private var dropDestinationIndexPath: IndexPath?
     private var isCheckingForUpdates = false
     private var didChangeActiveApps = false
+    private var previousInactiveAppsCount = 0
     
     private var _imagePickerInstalledApp: InstalledApp?
     private var _viewDidAppear = false
@@ -125,6 +126,8 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         self.update()
         
         self.fetchAppIDs()
+        
+        self.previousInactiveAppsCount = self.inactiveAppsDataSource.itemCount
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -2389,6 +2392,15 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
             DispatchQueue.main.async {
                 self.collectionView.collectionViewLayout.invalidateLayout()
                 self.collectionView.performBatchUpdates(nil, completion: nil)
+                
+                let inactiveAppsCount = self.inactiveAppsDataSource.itemCount
+                if (inactiveAppsCount == 0) != (self.previousInactiveAppsCount == 0)
+                {
+                    self.previousInactiveAppsCount = inactiveAppsCount
+                    UIView.performWithoutAnimation {
+                        self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+                    }
+                }
                 
                 if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
                     self.update()
