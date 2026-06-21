@@ -1,5 +1,5 @@
 //
-//  NSUserDefaults+DynamicProperties.swift
+//  UserDefaults+AltStore.swift
 //  AltStore
 //
 //  Created by Magesh K on 6/17/26.
