@@ -1,4 +1,3 @@
 #include "../Build.xcconfig"
 
-PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM).AltBackup
-PRODUCT_BUNDLE_IDENTIFIER[config=Release] = $(ORG_IDENTIFIER).SideStore.AltBackup
+PRODUCT_BUNDLE_IDENTIFIER = $(MAIN_BUNDLE_IDENTIFIER).AltBackup

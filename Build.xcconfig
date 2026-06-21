@@ -14,23 +14,13 @@ CODE_SIGN_ENTITLEMENTS = ./AltStore/AltStoreFree.entitlements
 // Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
 
-ORG_PREFIX = $(ORG_IDENTIFIER)
-
 PRODUCT_NAME = SideStore
-//PRODUCT_NAME[configuration=Debug] = Prov Debug
 
-
-//PRODUCT_BUNDLE_IDENTIFIER[config=Debug]   =  $(ORG_PREFIX).SideStore$(BUNDLE_ID_SUFFIX)
-//PRODUCT_BUNDLE_IDENTIFIER[config=Release] =  $(ORG_PREFIX).SideStore
-// preserve unmodified bundle ID (without any extra suffixes)
-PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM)
-PRODUCT_BUNDLE_IDENTIFIER[config=Release] = $(ORG_IDENTIFIER).SideStore
-GROUP_ID = $(ORG_IDENTIFIER).SideStore
-GROUP_ID[config=Debug] = $(ORG_IDENTIFIER).SideStore.$(DEVELOPMENT_TEAM)
-
-EXTENSION_PREFIX            = $(PRODUCT_BUNDLE_IDENTIFIER)
-APP_GROUP_IDENTIFIER        = $(GROUP_ID)
-ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME)
+BASE_BUNDLE_ID                                  = $(ORG_IDENTIFIER).SideStore
+MAIN_BUNDLE_IDENTIFIER[config=Debug]            = $(BASE_BUNDLE_ID).$(DEVELOPMENT_TEAM)
+MAIN_BUNDLE_IDENTIFIER[config=Release]          = $(BASE_BUNDLE_ID)
+APP_GROUP_IDENTIFIER                            = $(MAIN_BUNDLE_IDENTIFIER)
+ICLOUD_CONTAINER_IDENTIFIER                     = iCloud.$(ORG_IDENTIFIER).$(PROJECT_NAME)
 
 // Suppress noise from os activity in xcode console log for release builds
 DEBUG_ACTIVITY_MODE = disable
