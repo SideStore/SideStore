@@ -68,6 +68,7 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     
     private var previousBounds: CGRect?
     private var cancellables = Set<AnyCancellable>()
+    private var widthConstraint: NSLayoutConstraint?
     
     init?(source: Source, coder: NSCoder)
     {
@@ -192,6 +193,19 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
                 let barButtonItem = self.navigationItem.rightBarButtonItem
                 self.navigationItem.rightBarButtonItem = nil
                 self.navigationItem.rightBarButtonItem = barButtonItem
+            }
+            
+            let currentSizeWidth = max(77, self.navigationBarButton.intrinsicContentSize.width)
+            let targetWidth = currentSizeWidth + 2
+            if let existingConstraint = self.widthConstraint
+            {
+                existingConstraint.constant = targetWidth
+            }
+            else
+            {
+                let constraint = self.navigationBarButton.widthAnchor.constraint(equalToConstant: targetWidth)
+                constraint.isActive = true
+                self.widthConstraint = constraint
             }
             
             self.view.setNeedsLayout()
