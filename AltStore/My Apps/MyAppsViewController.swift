@@ -239,7 +239,7 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             
             cell.tintColor = app.tintColor ?? .altPrimary
-            cell.versionDescriptionTextView.maximumNumberOfLines = 2
+            cell.versionDescriptionTextView.maximumNumberOfLines = 3
             cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription ?? "nil"
             
             if cell.bundleIdentifier != app.bundleIdentifier
