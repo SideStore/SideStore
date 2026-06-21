@@ -2365,19 +2365,20 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
         
         switch dataSource
         {
-        case self.activeAppsDataSource:
-            guard self.didChangeActiveApps else { break }
-            
-            DispatchQueue.main.async {
-                // Update after dataSource.controllerDidChangeContent(),
-                // or else pre-iOS 15 users might crash due to reloadSections().
-                self.update()
-                self.collectionView.collectionViewLayout.invalidateLayout()
-            }
-            
-        case self.inactiveAppsDataSource:
+        case self.activeAppsDataSource, self.inactiveAppsDataSource:
             DispatchQueue.main.async {
                 self.collectionView.collectionViewLayout.invalidateLayout()
+                self.collectionView.performBatchUpdates(nil, completion: nil)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    UIView.performWithoutAnimation {
+                        self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+                    }
+                }
+                
+                if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
+                    self.update()
+                }
             }
             
         case self.updatesDataSource:
