@@ -283,6 +283,18 @@ public extension Source
         }
     }
     
+    var isPersisted: Bool {
+        let identifier = self.identifier
+        var count = 0
+        let context = DatabaseManager.shared.viewContext
+        context.performAndWait {
+            let fetchRequest = Source.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(Source.identifier), identifier)
+            count = (try? context.count(for: fetchRequest)) ?? 0
+        }
+        return count > 0
+    }
+    
     var isRecommended: Bool {
         guard let recommendedSources = UserDefaults.shared.recommendedSources else { return false }
         

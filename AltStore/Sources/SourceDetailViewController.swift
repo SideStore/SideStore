@@ -53,16 +53,7 @@ extension SourceDetailViewController
                 .receive(on: RunLoop.main)
                 .assign(to: &self.$isSourceAdded)
             
-            Task<Void, Never> {
-                do
-                {
-                    self.isSourceAdded = try await self.source.isAdded
-                }
-                catch
-                {
-                    print("[ALTLog] Failed to check if source is added.", error)
-                }
-            }
+            self.isSourceAdded = source.isPersisted
         }
     }
 }
@@ -195,6 +186,8 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
             {
                 self.navigationBarButton.setTitle(title, for: .normal)
                 self.navigationBarButton.sizeToFit()
+                self.navigationBarButton.invalidateIntrinsicContentSize()
+                self.navigationBarButton.superview?.invalidateIntrinsicContentSize()
                 
                 let barButtonItem = self.navigationItem.rightBarButtonItem
                 self.navigationItem.rightBarButtonItem = nil

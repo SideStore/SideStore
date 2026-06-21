@@ -201,7 +201,7 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.navigationBarButton = PillButton(type: .system)
         self.navigationBarButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 9000), for: .horizontal) // Prioritize over title length.
         
-        if #available(iOS 26.0, *) {
+        if #available(iOS 16.0, *) {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarButton)
         } else {
             // Embed navigationBarButton in container view with Auto Layout to ensure it can automatically update its size.
