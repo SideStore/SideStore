@@ -412,17 +412,7 @@ private extension AppViewController
         self.bannerView.configure(for: self.app, action: buttonAction)
         
         let title = self.bannerView.button.title(for: .normal)
-        if title != self.navigationBarDownloadButton.title(for: .normal) && !self.navigationBarDownloadButton.isIndicatingActivity
-        {
-            self.navigationBarDownloadButton.setTitle(title, for: .normal)
-            self.navigationBarDownloadButton.sizeToFit()
-            self.navigationBarDownloadButton.invalidateIntrinsicContentSize()
-            self.navigationBarDownloadButton.superview?.invalidateIntrinsicContentSize()
-            
-            let barButtonItem = self.navigationItem.rightBarButtonItem
-            self.navigationItem.rightBarButtonItem = nil
-            self.navigationItem.rightBarButtonItem = barButtonItem
-        }
+        self.navigationBarDownloadButton.setTitle(title, for: .normal)
         self.navigationBarDownloadButton.progress = self.bannerView.button.progress
         self.navigationBarDownloadButton.countdownDate = self.bannerView.button.countdownDate
         
