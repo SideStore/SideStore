@@ -77,6 +77,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         // Allows us to intercept delegate callbacks.
         self.updatesDataSource.fetchedResultsController.delegate = self
         self.activeAppsDataSource.fetchedResultsController.delegate = self
+        self.inactiveAppsDataSource.fetchedResultsController.delegate = self
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -1149,23 +1150,19 @@ private extension MyAppsViewController
             {
                 let app = try result.get()
                 app.managedObjectContext?.perform {
+                    app.isActive = true
                     try? app.managedObjectContext?.save()
                 }
             }
             catch OperationError.cancelled
             {
                 // Ignore
-                DispatchQueue.main.async {
-                    installedApp.isActive = false
-                }
             }
             catch
             {
                 print("Failed to activate app:", error)
                 
                 DispatchQueue.main.async {
-                    installedApp.isActive = false
-                    
                     ToastView(error: error, opensLog: true).show(in: self)
                 }
             }
@@ -1175,35 +1172,14 @@ private extension MyAppsViewController
         {
             guard let app = ALTApplication(fileURL: installedApp.fileURL) else { return finish(.failure(OperationError.invalidApp)) }
             
-            var cancellable: AnyCancellable?
-            cancellable = DatabaseManager.shared.viewContext.registeredObjects.publisher
-                .compactMap { $0 as? InstalledApp }
-                .filter(\.isActive)
-                .map { $0.publisher(for: \.isActive) }
-                .collect()
-                .flatMap { publishers in
-                    Publishers.MergeMany(publishers)
-                }
-                .first { isActive in !isActive }
-                .sink { _ in
-                    // A previously active app is now inactive,
-                    // which means there are now enough slots to activate the app,
-                    // so pre-emptively mark it as active to provide visual feedback sooner.
-                    installedApp.isActive = true
-                    cancellable?.cancel()
-                }
-            
             AppManager.shared.deactivateApps(for: app, presentingViewController: self) { result in
-                cancellable?.cancel()
                 installedApp.managedObjectContext?.perform {
                     switch result
                     {
                     case .failure(let error):
-                        installedApp.isActive = false
                         finish(.failure(error))
                         
                     case .success:
-                        installedApp.isActive = true
                         AppManager.shared.activate(installedApp, presentingViewController: self, completionHandler: finish(_:))
                     }
                 }
@@ -1211,7 +1187,6 @@ private extension MyAppsViewController
         }
         else
         {
-            installedApp.isActive = true
             AppManager.shared.activate(installedApp, presentingViewController: self, completionHandler: finish(_:))
         }
     }
@@ -1219,8 +1194,6 @@ private extension MyAppsViewController
     func deactivate(_ installedApp: InstalledApp, completionHandler: ((Result<InstalledApp, Error>) -> Void)? = nil)
     {
         guard installedApp.isActive, minimuxerStatus else { return }
-
-        installedApp.isActive = false
         
         AppManager.shared.deactivate(installedApp, presentingViewController: self) { (result) in
             do
@@ -1233,17 +1206,12 @@ private extension MyAppsViewController
             catch OperationError.cancelled
             {
                 // Ignore
-                DispatchQueue.main.async {
-                    installedApp.isActive = true
-                }
             }
             catch
             {
                 print("Failed to deactivate app:", error)
                 
                 DispatchQueue.main.async {
-                    installedApp.isActive = true
-                    
                     ToastView(error: error, opensLog: true).show(in: self)
                 }
             }
@@ -2404,6 +2372,12 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
                 // Update after dataSource.controllerDidChangeContent(),
                 // or else pre-iOS 15 users might crash due to reloadSections().
                 self.update()
+                self.collectionView.collectionViewLayout.invalidateLayout()
+            }
+            
+        case self.inactiveAppsDataSource:
+            DispatchQueue.main.async {
+                self.collectionView.collectionViewLayout.invalidateLayout()
             }
             
         case self.updatesDataSource:
@@ -2438,6 +2412,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
         {
         case self.updatesDataSource.fetchedResultsController: return self.updatesDataSource
         case self.activeAppsDataSource.fetchedResultsController: return self.activeAppsDataSource
+        case self.inactiveAppsDataSource.fetchedResultsController: return self.inactiveAppsDataSource
         default: return nil
         }
     }
