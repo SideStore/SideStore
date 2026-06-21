@@ -426,6 +426,7 @@ private extension SourceDetailContentViewController
             }
         }
         catch is CancellationError {}
+        catch OperationError.cancelled {}
         catch
         {
             let toastView = ToastView(error: error)

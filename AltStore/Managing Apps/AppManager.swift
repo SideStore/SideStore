@@ -1116,8 +1116,6 @@ private extension AppManager
     @discardableResult
     private func perform(_ operations: [AppOperation], presentingViewController: UIViewController?, group: RefreshGroup) async throws -> RefreshGroup
     {
-        try await self.evaluateMuxerServicesRestart(presentingViewController: presentingViewController)
-
         let operations = operations.filter { self.progress(for: $0) == nil || self.progress(for: $0)?.isCancelled == true }
         
         for operation in operations
@@ -1125,6 +1123,8 @@ private extension AppManager
             let progress = Progress.discreteProgress(totalUnitCount: 100)
             self.set(progress, for: operation)
         }
+        
+        try await self.evaluateMuxerServicesRestart(presentingViewController: presentingViewController)
         
         if let viewController = presentingViewController
         {
