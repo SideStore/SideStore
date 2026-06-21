@@ -22,6 +22,7 @@ final class AppViewController: UIViewController
     private var navigationBarAnimator: UIViewPropertyAnimator?
     
     private var contentSizeObservation: NSKeyValueObservation?
+    private var downloadButtonWidthConstraint: NSLayoutConstraint?
     
     @IBOutlet private var scrollView: UIScrollView!
     @IBOutlet private var contentView: UIView!
@@ -62,6 +63,9 @@ final class AppViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        self.navigationBarDownloadButton = PillButton(type: .system)
+        self.navigationBarDownloadButton.addTarget(self, action: #selector(AppViewController.performAppAction(_:)), for: .primaryActionTriggered)
                         
         self.navigationBarTitleView.sizeToFit()
         self.navigationItem.titleView = self.navigationBarTitleView
@@ -408,9 +412,34 @@ private extension AppViewController
         self.bannerView.configure(for: self.app, action: buttonAction)
         
         let title = self.bannerView.button.title(for: .normal)
-        self.navigationBarDownloadButton.setTitle(title, for: .normal)
+        if title != self.navigationBarDownloadButton.title(for: .normal) && !self.navigationBarDownloadButton.isIndicatingActivity
+        {
+            self.navigationBarDownloadButton.setTitle(title, for: .normal)
+            self.navigationBarDownloadButton.sizeToFit()
+            self.navigationBarDownloadButton.invalidateIntrinsicContentSize()
+            self.navigationBarDownloadButton.superview?.invalidateIntrinsicContentSize()
+            
+            let barButtonItem = self.navigationItem.rightBarButtonItem
+            self.navigationItem.rightBarButtonItem = nil
+            self.navigationItem.rightBarButtonItem = barButtonItem
+        }
         self.navigationBarDownloadButton.progress = self.bannerView.button.progress
         self.navigationBarDownloadButton.countdownDate = self.bannerView.button.countdownDate
+        
+        let currentSizeWidth = max(77, self.navigationBarDownloadButton.intrinsicContentSize.width)
+        let targetWidth = currentSizeWidth + 2
+        if let existingConstraint = self.downloadButtonWidthConstraint
+        {
+            existingConstraint.constant = targetWidth
+        }
+        else
+        {
+            let constraint = self.navigationBarDownloadButton.widthAnchor.constraint(equalToConstant: targetWidth)
+            constraint.isActive = true
+            self.downloadButtonWidthConstraint = constraint
+        }
+        
+        self.view.setNeedsLayout()
         
         if self.isNavigationBarHidden
         {
