@@ -117,7 +117,7 @@ def generate_release_notes(last_successful, tag, branch):
         messages = commit_messages(last_successful, current)
 
     section = f"{TAG_MARKER} {tag}\n"
-    section += f"{HEADER_MARKER} What's Changed\n"
+    section += f"{HEADER_MARKER} What's Changed:\n"
 
     if not messages or last_successful == current:
         section += "- Nothing...\n"
