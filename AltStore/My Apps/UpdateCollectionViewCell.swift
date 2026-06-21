@@ -19,6 +19,8 @@ extension UpdateCollectionViewCell
 
 @objc final class UpdateCollectionViewCell: UICollectionViewCell
 {
+    var bundleIdentifier: String?
+    
     var mode: Mode = .expanded {
         didSet {
             switch self.mode {

@@ -239,8 +239,12 @@ private extension MyAppsViewController
             cell.versionDescriptionTextView.maximumNumberOfLines = 2
             cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription ?? "nil"
             
-            cell.bannerView.iconImageView.image = nil
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != app.bundleIdentifier
+            {
+                cell.bundleIdentifier = app.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             
             cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.configure(for: app, action: .update)
@@ -377,7 +381,12 @@ private extension MyAppsViewController
             cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.configure(for: installedApp, action: .custom((timeInterval?.uppercased())!))
             
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != installedApp.bundleIdentifier
+            {
+                cell.bundleIdentifier = installedApp.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             
             cell.bannerView.buttonLabel.isHidden = isExpired
             cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
@@ -466,7 +475,12 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             cell.tintColor = UIColor.gray
             
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != installedApp.bundleIdentifier
+            {
+                cell.bundleIdentifier = installedApp.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             cell.bannerView.buttonLabel.isHidden = true
             cell.bannerView.alpha = 1.0
             
@@ -665,8 +679,11 @@ private extension MyAppsViewController
         
         self.refreshGroup = group
         
-        UIView.performWithoutAnimation {
-            self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+        if self.isRefreshingAllApps
+        {
+            UIView.performWithoutAnimation {
+                self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+            }
         }
     }
 }
@@ -2372,12 +2389,6 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
             DispatchQueue.main.async {
                 self.collectionView.collectionViewLayout.invalidateLayout()
                 self.collectionView.performBatchUpdates(nil, completion: nil)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    UIView.performWithoutAnimation {
-                        self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
-                    }
-                }
                 
                 if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
                     self.update()

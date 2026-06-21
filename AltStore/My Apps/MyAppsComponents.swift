@@ -10,6 +10,7 @@ import UIKit
 
 final class InstalledAppCollectionViewCell: UICollectionViewCell
 {
+    var bundleIdentifier: String?
     private(set) var deactivateBadge: UIView?
     
     @IBOutlet var bannerView: AppBannerView!

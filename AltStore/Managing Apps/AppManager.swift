@@ -145,7 +145,9 @@ class AppManager: ObservableObject
                     .map { ($0, bundleIDs.contains($0.bundleIdentifier)) }
             }
             .sink { (installedApp, isRefreshing) in
-                installedApp.isRefreshing = isRefreshing
+                if installedApp.isRefreshing != isRefreshing {
+                    installedApp.isRefreshing = isRefreshing
+                }
             }
             .store(in: &self.cancellables)
     }
