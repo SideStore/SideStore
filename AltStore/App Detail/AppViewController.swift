@@ -299,11 +299,13 @@ final class AppViewController: UIViewController
             
             let fractionComplete = min(difference, range) / range
             self.navigationBarAnimator?.fractionComplete = fractionComplete
+            self.navigationBarDownloadButton.alpha = fractionComplete
         }
         else
         {
             self.navigationBarAnimator?.fractionComplete = 0.0
             self.resetNavigationBarAnimation()
+            self.hideNavigationBar()
         }
         
         let beginMovingBackButtonThreshold = (maximumContentY - minimumContentY)
@@ -410,13 +412,25 @@ private extension AppViewController
         self.navigationBarDownloadButton.progress = self.bannerView.button.progress
         self.navigationBarDownloadButton.countdownDate = self.bannerView.button.countdownDate
         
-        let barButtonItem = self.navigationItem.rightBarButtonItem
-        self.navigationItem.rightBarButtonItem = nil
-        self.navigationItem.rightBarButtonItem = barButtonItem
-        
         if self.isNavigationBarHidden
         {
+            self.navigationItem.rightBarButtonItem = nil
             self.navigationBarDownloadButton.alpha = 0.0
+        }
+        else
+        {
+            if self.navigationItem.rightBarButtonItem == nil
+            {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarDownloadButton)
+            }
+            else
+            {
+                // Force a layout refresh for the bar button item to update its width.
+                let barButtonItem = self.navigationItem.rightBarButtonItem
+                self.navigationItem.rightBarButtonItem = nil
+                self.navigationItem.rightBarButtonItem = barButtonItem
+            }
+            self.navigationBarDownloadButton.alpha = self.navigationBarAnimator?.fractionComplete ?? 1.0
         }
     }
     
@@ -427,6 +441,8 @@ private extension AppViewController
         self.navigationBarAppIconImageView.alpha = 1.0
         self.navigationBarAppNameLabel.alpha = 1.0
         self.navigationBarDownloadButton.alpha = 1.0
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarDownloadButton)
         
         self.updateNavigationBarAppearance(isHidden: false)
         
@@ -452,6 +468,8 @@ private extension AppViewController
         self.navigationBarAppIconImageView.alpha = 0.0
         self.navigationBarAppNameLabel.alpha = 0.0
         self.navigationBarDownloadButton.alpha = 0.0
+        
+        self.navigationItem.rightBarButtonItem = nil
         
         self.updateNavigationBarAppearance(isHidden: true)
         
