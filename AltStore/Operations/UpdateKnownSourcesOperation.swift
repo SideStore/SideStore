@@ -11,12 +11,7 @@ import AltStoreCore
 
 private extension URL
 {
-    // TODO: @mahee96: update this to a non-branch specific (prod-ready) location like github.io repo similar to anisette servers URL list
-    #if STAGING
-   static let sources = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/trustedapps.json")!
-    #else
-   static let sources = URL(string: "https://raw.githubusercontent.com/SideStore/SideStore/develop/trustedapps.json")!
-    #endif
+   static let sources = URL(string: "https://sidestore.io/trusted-sources")!
 }
 
 extension UpdateKnownSourcesOperation
