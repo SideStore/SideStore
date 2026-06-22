@@ -3,6 +3,13 @@ name: Alpha SideStore Build
 on:
   push:
     branches: [staging]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.gitmodules'
+      - '.github/**'
   workflow_dispatch:
 
 concurrency:

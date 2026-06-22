@@ -4,6 +4,13 @@ on:
   pull_request:
     # types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
     types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.gitmodules'
+      - '.github/**'
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
