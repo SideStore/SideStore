@@ -7,6 +7,7 @@
 //
 
 import AppIntents
+import Minimuxer
 import WidgetKit
 import AltStoreCore
 
@@ -59,6 +60,7 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
         do
         {
             try await Self.startDatabaseIfNeeded()
+            try await Self.startSideStoreServicesIfNeeded()
 
             let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
             defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
@@ -86,6 +88,77 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
 @available(iOS 17.0, *)
 fileprivate extension InstallIPAIntent
 {
+    static func startSideStoreServicesIfNeeded() async throws
+    {
+        #if !targetEnvironment(simulator)
+        if UserDefaults.standard.enableEMPforWireguard
+        {
+            startEMProxy(bind_addr: AppConstants.Proxy.serverURL)
+        }
+
+        guard !isMinimuxerReady else { return }
+
+        retargetUsbmuxdAddr()
+
+        let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
+        let loggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
+        let pairingFile = try Self.fetchPairingFile()
+
+        try minimuxerStartWithLogger(pairingFile, documentsDirectory, loggingEnabled)
+        startAutoMounter(documentsDirectory)
+
+        try await Self.waitForMinimuxer()
+        #endif
+    }
+
+    static func fetchPairingFile() throws -> String
+    {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.documentsDirectory.appendingPathComponent(pairingFileName)
+
+        if fileManager.fileExists(atPath: documentsURL.path),
+           let pairingFile = try? String(contentsOf: documentsURL),
+           !pairingFile.isEmpty
+        {
+            return pairingFile
+        }
+
+        if let url = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
+           fileManager.fileExists(atPath: url.path),
+           let data = fileManager.contents(atPath: url.path),
+           let pairingFile = String(data: data, encoding: .utf8),
+           !pairingFile.isEmpty,
+           !UserDefaults.standard.isPairingReset
+        {
+            return pairingFile
+        }
+
+        if let pairingFile = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String,
+           !pairingFile.isEmpty,
+           !pairingFile.contains("insert pairing file here"),
+           !UserDefaults.standard.isPairingReset
+        {
+            return pairingFile
+        }
+
+        throw MinimuxerError.PairingFile
+    }
+
+    static func waitForMinimuxer() async throws
+    {
+        for _ in 0..<10
+        {
+            if isMinimuxerReady
+            {
+                return
+            }
+
+            try await Task.sleep(nanoseconds: 500_000_000)
+        }
+
+        throw OperationError.unknownUDID
+    }
+
     static func startDatabaseIfNeeded() async throws
     {
         if !DatabaseManager.shared.isStarted
