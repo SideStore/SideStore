@@ -4,9 +4,12 @@ name: Pull Request Triage
 on:
   pull_request_target:
     types: [opened]
+  issues:
+    types: [opened]
 
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
@@ -22,8 +25,11 @@ jobs:
     - name: Welcome first-time contributors
       uses: actions/first-interaction@v3
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        pr-message: |-
+        issue_message: |-
+          ## Thank you for opening an issue!
+
+          A maintainer will review your issue shortly. Please make sure you've filled out all relevant information in the issue template.
+        pr_message: |-
           ## Thank you for submitting a contribution to SideStore!
 
           As this is your first pull request, [please be aware of our contributing guidelines](https://docs.sidestore.io/docs/contributing).
