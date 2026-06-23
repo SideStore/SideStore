@@ -45,8 +45,13 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
     @Parameter(title: "IPA File")
     var ipaFile: IntentFile
 
+    @Parameter(title: "Bypass Timeout Error", default: false)
+    var bypassTimeoutError: Bool
+
     static var parameterSummary: some ParameterSummary {
-        Summary("Install \(\.$ipaFile)")
+        Summary("Install \(\.$ipaFile)") {
+            \.$bypassTimeoutError
+        }
     }
 
     init()
@@ -59,20 +64,29 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
     {
         do
         {
-            try await Self.startDatabaseIfNeeded()
+            try await DatabaseManager.shared.start()
             try await Self.startSideStoreServicesIfNeeded()
 
             let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
-            defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
 
             try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
 
             let ipaURL = temporaryDirectory.appendingPathComponent("App.ipa")
             try self.ipaFile.data.write(to: ipaURL)
 
-            let intentProgress = self.progress
-            _ = try await AppManager.shared.installIPA(at: ipaURL) { progress in
-                intentProgress.addChild(progress, withPendingUnitCount: 1)
+            if self.bypassTimeoutError
+            {
+                Self.installIPABypassingTimeout(at: ipaURL, temporaryDirectory: temporaryDirectory)
+                self.progress.completedUnitCount = 1
+            }
+            else
+            {
+                defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
+
+                let intentProgress = self.progress
+                _ = try await AppManager.shared.installIPA(at: ipaURL) { progress in
+                    intentProgress.addChild(progress, withPendingUnitCount: 1)
+                }
             }
 
             return .result()
@@ -88,6 +102,35 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
 @available(iOS 17.0, *)
 fileprivate extension InstallIPAIntent
 {
+    static func installIPABypassingTimeout(at ipaURL: URL, temporaryDirectory: URL)
+    {
+        BackgroundTaskManager.shared.performExtendedBackgroundTask { (taskResult, taskCompletionHandler) in
+            guard taskResult.error == nil else
+            {
+                try? FileManager.default.removeItem(at: temporaryDirectory)
+                taskCompletionHandler()
+                return
+            }
+
+            Task.detached(priority: .userInitiated) {
+                defer
+                {
+                    try? FileManager.default.removeItem(at: temporaryDirectory)
+                    taskCompletionHandler()
+                }
+
+                do
+                {
+                    _ = try await AppManager.shared.installIPA(at: ipaURL)
+                }
+                catch
+                {
+                    Logger.sideload.error("Failed to install IPA from Shortcuts. \(error.localizedDescription, privacy: .public)")
+                }
+            }
+        }
+    }
+
     static func startSideStoreServicesIfNeeded() async throws
     {
         #if !targetEnvironment(simulator)
@@ -102,46 +145,15 @@ fileprivate extension InstallIPAIntent
 
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         let loggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
-        let pairingFile = try Self.fetchPairingFile()
+        let pairingFile = try await MainActor.run {
+            try PairingFileManager.shared.loadStoredPairingFile()
+        }
 
         try minimuxerStartWithLogger(pairingFile, documentsDirectory, loggingEnabled)
         startAutoMounter(documentsDirectory)
 
         try await Self.waitForMinimuxer()
         #endif
-    }
-
-    static func fetchPairingFile() throws -> String
-    {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.documentsDirectory.appendingPathComponent(pairingFileName)
-
-        if fileManager.fileExists(atPath: documentsURL.path),
-           let pairingFile = try? String(contentsOf: documentsURL),
-           !pairingFile.isEmpty
-        {
-            return pairingFile
-        }
-
-        if let url = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
-           fileManager.fileExists(atPath: url.path),
-           let data = fileManager.contents(atPath: url.path),
-           let pairingFile = String(data: data, encoding: .utf8),
-           !pairingFile.isEmpty,
-           !UserDefaults.standard.isPairingReset
-        {
-            return pairingFile
-        }
-
-        if let pairingFile = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String,
-           !pairingFile.isEmpty,
-           !pairingFile.contains("insert pairing file here"),
-           !UserDefaults.standard.isPairingReset
-        {
-            return pairingFile
-        }
-
-        throw MinimuxerError.PairingFile
     }
 
     static func waitForMinimuxer() async throws
@@ -157,25 +169,6 @@ fileprivate extension InstallIPAIntent
         }
 
         throw OperationError.unknownUDID
-    }
-
-    static func startDatabaseIfNeeded() async throws
-    {
-        if !DatabaseManager.shared.isStarted
-        {
-            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                DatabaseManager.shared.start { error in
-                    if let error
-                    {
-                        continuation.resume(throwing: error)
-                    }
-                    else
-                    {
-                        continuation.resume()
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -283,7 +276,7 @@ private extension RefreshAllAppsIntent
 {
     func refreshAllApps() async throws
     {
-        try await InstallIPAIntent.startDatabaseIfNeeded()
+        try await DatabaseManager.shared.start()
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         let installedApps = await context.perform { InstalledApp.fetchAppsForRefreshingAll(in: context) }

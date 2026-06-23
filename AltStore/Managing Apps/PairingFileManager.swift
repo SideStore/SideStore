@@ -18,20 +18,36 @@ final class PairingFileManager: NSObject, UIDocumentPickerDelegate {
 
     private var completion: ((URL?) -> Void)?
 
-    func fetchPairingFile(presentingVC: UIViewController) -> String? {
+    func loadStoredPairingFile() throws -> String {
         let fm = FileManager.default
-        let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(Self.pairingFileName)")
+        let documentsPath = fm.documentsDirectory.appendingPathComponent(Self.pairingFileName)
         if fm.fileExists(atPath: documentsPath.path),
            let contents = try? String(contentsOf: documentsPath), !contents.isEmpty {
             return contents
         }
+
         if let url = Bundle.main.url(forResource: "ALTPairingFile", withExtension: "mobiledevicepairing"),
            fm.fileExists(atPath: url.path),
            let data = fm.contents(atPath: url.path),
            let contents = String(data: data, encoding: .utf8),
-           !contents.isEmpty, !UserDefaults.standard.isPairingReset { return contents }
+           !contents.isEmpty, !UserDefaults.standard.isPairingReset {
+            return contents
+        }
+
         if let plistString = Bundle.main.object(forInfoDictionaryKey: "ALTPairingFile") as? String,
-           !plistString.isEmpty, !plistString.contains("insert pairing file here"), !UserDefaults.standard.isPairingReset { return plistString }
+           !plistString.isEmpty,
+           !plistString.contains("insert pairing file here"),
+           !UserDefaults.standard.isPairingReset {
+            return plistString
+        }
+
+        throw MinimuxerError.PairingFile
+    }
+
+    func fetchPairingFile(presentingVC: UIViewController) -> String? {
+        if let pairingFile = try? self.loadStoredPairingFile() {
+            return pairingFile
+        }
 
         presentPairingFileAlert(
             on: presentingVC,
