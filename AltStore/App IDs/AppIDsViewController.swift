@@ -31,10 +31,6 @@ final class AppIDsViewController: UICollectionViewController
         self.dataSource.contentView = self.collectionView
         
         self.activityIndicatorBarButtonItem.isIndicatingActivity = true
-        
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
-        self.collectionView.refreshControl = refreshControl
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -160,6 +156,7 @@ private extension AppIDsViewController
             }
             
             DispatchQueue.main.async {
+                self.didInitialFetch = true
                 self.isLoading = false
             }
         }
@@ -171,6 +168,14 @@ private extension AppIDsViewController
         {
             self.collectionView.refreshControl?.endRefreshing()
             self.activityIndicatorBarButtonItem.isIndicatingActivity = false
+            self.navigationItem.leftBarButtonItem = nil
+            
+            if self.collectionView.refreshControl == nil
+            {
+                let refreshControl = UIRefreshControl()
+                refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
+                self.collectionView.refreshControl = refreshControl
+            }
         }
     }
 }
