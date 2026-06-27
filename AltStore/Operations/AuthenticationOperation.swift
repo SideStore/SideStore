@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import Roxas
 import Network
+import CoreData
 import AltStoreCore
 import AltSign
 

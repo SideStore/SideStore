@@ -9,8 +9,8 @@
 import UIKit
 import SafariServices
 import QuickLook
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -36,7 +36,7 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
         return dateFormatter
     }()
     
-    @IBOutlet private var exportLogButton: UIBarButtonItem!
+    @IBOutlet private var exportLogButton: UIBarButtonItem?
     @IBOutlet private var clearLogButton: UIBarButtonItem!
     
     private var _exportedLogURL: URL?
@@ -50,9 +50,10 @@ final class ErrorLogViewController: UITableViewController, QLPreviewControllerDe
         super.viewDidLoad()
         
         self.tableView.dataSource = self.dataSource
+        self.dataSource.contentView = self.tableView
         self.tableView.prefetchDataSource = self.dataSource
         
-        self.exportLogButton.activityIndicatorView.color = .white
+        self.exportLogButton?.activityIndicatorView.color = .white
         
         if #unavailable(iOS 15)
         {
@@ -496,12 +497,16 @@ extension ErrorLogViewController
                     context.delete(loggedError)
                     
                     try context.save()
-                    completion(true)
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
                 }
                 catch
                 {
                     print("[ALTLog] Failed to delete LoggedError \(loggedError.objectID):", error)
-                    completion(false)
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
                 }
             }
         }

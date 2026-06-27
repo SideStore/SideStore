@@ -9,7 +9,6 @@
 import Foundation
 import AltStoreCore
 import AltSign
-import Roxas
 
 @objc(DeactivateAppOperation)
 final class DeactivateAppOperation: ResultOperation<InstalledApp>

@@ -10,10 +10,10 @@ import UIKit
 import MobileCoreServices
 import Intents
 import Combine
+import CoreData
 import UniformTypeIdentifiers
 import AltStoreCore
 import AltSign
-import Roxas
 import SemanticVersion
 
 import Nuke
@@ -55,6 +55,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     private var dropDestinationIndexPath: IndexPath?
     private var isCheckingForUpdates = false
     private var didChangeActiveApps = false
+    private var previousInactiveAppsCount = 0
     
     private var _imagePickerInstalledApp: InstalledApp?
     private var _viewDidAppear = false
@@ -77,14 +78,16 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         // Allows us to intercept delegate callbacks.
         self.updatesDataSource.fetchedResultsController.delegate = self
         self.activeAppsDataSource.fetchedResultsController.delegate = self
+        self.inactiveAppsDataSource.fetchedResultsController.delegate = self
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         self.collectionView.dragDelegate = self
         self.collectionView.dropDelegate = self
         self.collectionView.dragInteractionEnabled = true
                 
-        self.prototypeUpdateCell = UpdateCollectionViewCell.instantiate(with: UpdateCollectionViewCell.nib!)
+        self.prototypeUpdateCell = UpdateCollectionViewCell.instantiate(with: UpdateCollectionViewCell.nib)
         self.prototypeUpdateCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
         self.collectionView.register(UpdateCollectionViewCell.nib, forCellWithReuseIdentifier: "UpdateCell")
@@ -123,6 +126,8 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
         self.update()
         
         self.fetchAppIDs()
+        
+        self.previousInactiveAppsCount = self.inactiveAppsDataSource.itemCount
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -189,7 +194,7 @@ private extension MyAppsViewController
         dynamicDataSource.numberOfSectionsHandler = { 1 }
         dynamicDataSource.numberOfItemsHandler = { _ in self.updatesDataSource.itemCount == 0 ? 1 : 0 }
         dynamicDataSource.cellIdentifierHandler = { _ in "NoUpdatesCell" }
-        dynamicDataSource.cellConfigurationHandler = { (cell, _, indexPath) in
+        dynamicDataSource.dynamicCellConfigurationHandler = { (cell, indexPath) in
             let cell = cell as! NoUpdatesCollectionViewCell
             cell.layoutMargins.left = self.view.layoutMargins.left
             cell.layoutMargins.right = self.view.layoutMargins.right
@@ -234,11 +239,15 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             
             cell.tintColor = app.tintColor ?? .altPrimary
-            cell.versionDescriptionTextView.maximumNumberOfLines = 2
+            cell.versionDescriptionTextView.maximumNumberOfLines = 3
             cell.versionDescriptionTextView.text = latestSupportedVersion.localizedDescription ?? "nil"
             
-            cell.bannerView.iconImageView.image = nil
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != app.bundleIdentifier
+            {
+                cell.bundleIdentifier = app.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             
             cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.configure(for: app, action: .update)
@@ -375,7 +384,12 @@ private extension MyAppsViewController
             cell.bannerView.button.isIndicatingActivity = false
             cell.bannerView.configure(for: installedApp, action: .custom((timeInterval?.uppercased())!))
             
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != installedApp.bundleIdentifier
+            {
+                cell.bundleIdentifier = installedApp.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             
             cell.bannerView.buttonLabel.isHidden = isExpired
             cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
@@ -464,7 +478,12 @@ private extension MyAppsViewController
             cell.layoutMargins.right = self.view.layoutMargins.right
             cell.tintColor = UIColor.gray
             
-            cell.bannerView.iconImageView.isIndicatingActivity = true
+            if cell.bundleIdentifier != installedApp.bundleIdentifier
+            {
+                cell.bundleIdentifier = installedApp.bundleIdentifier
+                cell.bannerView.iconImageView.image = nil
+                cell.bannerView.iconImageView.isIndicatingActivity = true
+            }
             cell.bannerView.buttonLabel.isHidden = true
             cell.bannerView.alpha = 1.0
             
@@ -663,8 +682,11 @@ private extension MyAppsViewController
         
         self.refreshGroup = group
         
-        UIView.performWithoutAnimation {
-            self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+        if self.isRefreshingAllApps
+        {
+            UIView.performWithoutAnimation {
+                self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+            }
         }
     }
 }
@@ -805,7 +827,7 @@ private extension MyAppsViewController
             return
         }
         
-        _ = AppManager.shared.update(installedApp, presentingViewController: self) { (result) in
+        let progress = AppManager.shared.update(installedApp, presentingViewController: self) { (result) in
             DispatchQueue.main.async {
                 switch result
                 {
@@ -826,7 +848,10 @@ private extension MyAppsViewController
             }
         }
         
-        self.collectionView.reloadItems(at: [indexPath])
+        if let pillButton = sender as? PillButton
+        {
+            pillButton.progress = progress
+        }
     }
     
     @IBAction func sideloadApp(_ sender: UIBarButtonItem)
@@ -1148,23 +1173,19 @@ private extension MyAppsViewController
             {
                 let app = try result.get()
                 app.managedObjectContext?.perform {
+                    app.isActive = true
                     try? app.managedObjectContext?.save()
                 }
             }
             catch OperationError.cancelled
             {
                 // Ignore
-                DispatchQueue.main.async {
-                    installedApp.isActive = false
-                }
             }
             catch
             {
                 print("Failed to activate app:", error)
                 
                 DispatchQueue.main.async {
-                    installedApp.isActive = false
-                    
                     ToastView(error: error, opensLog: true).show(in: self)
                 }
             }
@@ -1174,35 +1195,14 @@ private extension MyAppsViewController
         {
             guard let app = ALTApplication(fileURL: installedApp.fileURL) else { return finish(.failure(OperationError.invalidApp)) }
             
-            var cancellable: AnyCancellable?
-            cancellable = DatabaseManager.shared.viewContext.registeredObjects.publisher
-                .compactMap { $0 as? InstalledApp }
-                .filter(\.isActive)
-                .map { $0.publisher(for: \.isActive) }
-                .collect()
-                .flatMap { publishers in
-                    Publishers.MergeMany(publishers)
-                }
-                .first { isActive in !isActive }
-                .sink { _ in
-                    // A previously active app is now inactive,
-                    // which means there are now enough slots to activate the app,
-                    // so pre-emptively mark it as active to provide visual feedback sooner.
-                    installedApp.isActive = true
-                    cancellable?.cancel()
-                }
-            
             AppManager.shared.deactivateApps(for: app, presentingViewController: self) { result in
-                cancellable?.cancel()
                 installedApp.managedObjectContext?.perform {
                     switch result
                     {
                     case .failure(let error):
-                        installedApp.isActive = false
                         finish(.failure(error))
                         
                     case .success:
-                        installedApp.isActive = true
                         AppManager.shared.activate(installedApp, presentingViewController: self, completionHandler: finish(_:))
                     }
                 }
@@ -1210,7 +1210,6 @@ private extension MyAppsViewController
         }
         else
         {
-            installedApp.isActive = true
             AppManager.shared.activate(installedApp, presentingViewController: self, completionHandler: finish(_:))
         }
     }
@@ -1218,8 +1217,6 @@ private extension MyAppsViewController
     func deactivate(_ installedApp: InstalledApp, completionHandler: ((Result<InstalledApp, Error>) -> Void)? = nil)
     {
         guard installedApp.isActive, minimuxerStatus else { return }
-
-        installedApp.isActive = false
         
         AppManager.shared.deactivate(installedApp, presentingViewController: self) { (result) in
             do
@@ -1232,17 +1229,12 @@ private extension MyAppsViewController
             catch OperationError.cancelled
             {
                 // Ignore
-                DispatchQueue.main.async {
-                    installedApp.isActive = true
-                }
             }
             catch
             {
                 print("Failed to deactivate app:", error)
                 
                 DispatchQueue.main.async {
-                    installedApp.isActive = true
-                    
                     ToastView(error: error, opensLog: true).show(in: self)
                 }
             }
@@ -2007,12 +1999,15 @@ extension MyAppsViewController
     
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
     {
+        guard !self.isRefreshingAllApps else { return nil }
+        
         let section = Section(rawValue: indexPath.section)!
         switch section
         {
         case .updates, .noUpdates: return nil
         case .activeApps, .inactiveApps:
             let installedApp = self.dataSource.item(at: indexPath)
+            guard !AppManager.shared.isActivelyManagingApp(withBundleID: installedApp.bundleIdentifier) else { return nil }
             
             return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { (suggestedActions) -> UIMenu? in
                 let menu = self.contextMenu(for: installedApp)
@@ -2350,18 +2345,21 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        switch dataSource
+        if self.collectionView.window != nil
         {
-        case self.activeAppsDataSource: self.didChangeActiveApps = false
-        case self.updatesDataSource where !_viewDidAppear:
-            // Responding to NSFetchedResultsController updates before the collection view has
-            // been shown may throw exceptions because the collection view cannot accurately
-            // count the number of items before the update. However, if we manually call
-            // performBatchUpdates _before_ responding to updates, the collection view can get
-            // an accurate pre-update item count.
-            self.collectionView.performBatchUpdates(nil, completion: nil)
-            
-        default: break
+            switch dataSource
+            {
+            case self.activeAppsDataSource: self.didChangeActiveApps = false
+            case self.updatesDataSource where !_viewDidAppear:
+                // Responding to NSFetchedResultsController updates before the collection view has
+                // been shown may throw exceptions because the collection view cannot accurately
+                // count the number of items before the update. However, if we manually call
+                // performBatchUpdates _before_ responding to updates, the collection view can get
+                // an accurate pre-update item count.
+                self.collectionView.performBatchUpdates(nil, completion: nil)
+                
+            default: break
+            }
         }
         
         dataSource.controllerWillChangeContent(controller)
@@ -2371,7 +2369,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: UInt(sectionIndex), for: type)
+        dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
@@ -2394,38 +2392,51 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        switch dataSource
+        if self.collectionView.window != nil
         {
-        case self.activeAppsDataSource:
-            guard self.didChangeActiveApps else { break }
-            
-            DispatchQueue.main.async {
-                // Update after dataSource.controllerDidChangeContent(),
-                // or else pre-iOS 15 users might crash due to reloadSections().
-                self.update()
-            }
-            
-        case self.updatesDataSource:
-            let previousUpdateCount = self.collectionView.numberOfItems(inSection: Section.updates.rawValue)
-            let updateCount = Int(self.updatesDataSource.itemCount)
-            
-            if previousUpdateCount == 0 && updateCount > 0
+            switch dataSource
             {
-                // Remove "No Updates Available" cell.
-                let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
-                self.collectionView.add(change)
-            }
-            else if previousUpdateCount > 0 && updateCount == 0
-            {
-                // Insert "No Updates Available" cell.
-                let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
-                self.collectionView.add(change)
+            case self.activeAppsDataSource, self.inactiveAppsDataSource:
+                DispatchQueue.main.async {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                    self.collectionView.performBatchUpdates(nil, completion: nil)
+                    
+                    let inactiveAppsCount = self.inactiveAppsDataSource.itemCount
+                    if (inactiveAppsCount == 0) != (self.previousInactiveAppsCount == 0)
+                    {
+                        self.previousInactiveAppsCount = inactiveAppsCount
+                        UIView.performWithoutAnimation {
+                            self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+                        }
+                    }
+                    
+                    if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
+                        self.update()
+                    }
+                }
                 
-                // Update unsupported updates _before_ calling controllerDidChangeContent()
-                self.updateUnsupportedUpdates()
+            case self.updatesDataSource:
+                let previousUpdateCount = self.collectionView.numberOfItems(inSection: Section.updates.rawValue)
+                let updateCount = Int(self.updatesDataSource.itemCount)
+                
+                if previousUpdateCount == 0 && updateCount > 0
+                {
+                    // Remove "No Updates Available" cell.
+                    let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
+                    self.collectionView.add(change)
+                }
+                else if previousUpdateCount > 0 && updateCount == 0
+                {
+                    // Insert "No Updates Available" cell.
+                    let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
+                    self.collectionView.add(change)
+                    
+                    // Update unsupported updates _before_ calling controllerDidChangeContent()
+                    self.updateUnsupportedUpdates()
+                }
+            
+            default: break
             }
-        
-        default: break
         }
         
         dataSource.controllerDidChangeContent(controller)
@@ -2437,6 +2448,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
         {
         case self.updatesDataSource.fetchedResultsController: return self.updatesDataSource
         case self.activeAppsDataSource.fetchedResultsController: return self.activeAppsDataSource
+        case self.inactiveAppsDataSource.fetchedResultsController: return self.inactiveAppsDataSource
         default: return nil
         }
     }

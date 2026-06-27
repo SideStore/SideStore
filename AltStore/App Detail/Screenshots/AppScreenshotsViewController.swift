@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -51,6 +50,7 @@ class AppScreenshotsViewController: UICollectionViewController
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
     }
 }
 

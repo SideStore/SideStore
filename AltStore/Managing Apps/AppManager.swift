@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 import UIKit
 import UserNotifications
 import MobileCoreServices
@@ -15,7 +16,6 @@ import Combine
 import WidgetKit
 import AltStoreCore
 import AltSign
-import Roxas
 import Minimuxer
 import UniformTypeIdentifiers
 
@@ -145,7 +145,9 @@ class AppManager: ObservableObject
                     .map { ($0, bundleIDs.contains($0.bundleIdentifier)) }
             }
             .sink { (installedApp, isRefreshing) in
-                installedApp.isRefreshing = isRefreshing
+                if installedApp.isRefreshing != isRefreshing {
+                    installedApp.isRefreshing = isRefreshing
+                }
             }
             .store(in: &self.cancellables)
     }
@@ -1141,8 +1143,6 @@ private extension AppManager
     @discardableResult
     private func perform(_ operations: [AppOperation], presentingViewController: UIViewController?, group: RefreshGroup) async throws -> RefreshGroup
     {
-        try await self.evaluateMuxerServicesRestart(presentingViewController: presentingViewController)
-
         let operations = operations.filter { self.progress(for: $0) == nil || self.progress(for: $0)?.isCancelled == true }
         
         for operation in operations
@@ -1150,6 +1150,8 @@ private extension AppManager
             let progress = Progress.discreteProgress(totalUnitCount: 100)
             self.set(progress, for: operation)
         }
+        
+        try await self.evaluateMuxerServicesRestart(presentingViewController: presentingViewController)
         
         if let viewController = presentingViewController
         {

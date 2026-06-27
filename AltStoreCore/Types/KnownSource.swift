@@ -54,7 +54,10 @@ public extension UserDefaults
             _recommendedSources = newValue?.map { $0.dictionaryRepresentation }
         }
     }
-    @NSManaged @objc(recommendedSources) private var _recommendedSources: [[String: Any]]?
+    private var _recommendedSources: [[String: Any]]? {
+        get { self.array(forKey: "recommendedSources") as? [[String: Any]] }
+        set { self.set(newValue, forKey: "recommendedSources") }
+    }
     
     @nonobjc var blockedSources: [KnownSource]? {
         get {
@@ -65,5 +68,8 @@ public extension UserDefaults
             _blockedSources = newValue?.map { $0.dictionaryRepresentation }
         }
     }
-    @NSManaged @objc(blockedSources) private var _blockedSources: [[String: Any]]?
+    private var _blockedSources: [[String: Any]]? {
+        get { self.array(forKey: "blockedSources") as? [[String: Any]] }
+        set { self.set(newValue, forKey: "blockedSources") }
+    }
 }

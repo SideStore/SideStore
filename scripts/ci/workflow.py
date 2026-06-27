@@ -389,7 +389,7 @@ def upload_release(release_name, release_tag, commit_sha, repo, upstream_tag_rec
     if is_stable:
         release_notes = re.sub(
             r'(?im)^[ \t]*#{1,6}[ \t]*what[’\']?s[ \t]+changed[ \t]*$',
-            "## What's Changed",
+            "## What's Changed:",
             release_notes,
             flags=re.IGNORECASE | re.MULTILINE,
         )

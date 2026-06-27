@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -23,6 +22,7 @@ final class AppViewController: UIViewController
     private var navigationBarAnimator: UIViewPropertyAnimator?
     
     private var contentSizeObservation: NSKeyValueObservation?
+    private var downloadButtonWidthConstraint: NSLayoutConstraint?
     
     @IBOutlet private var scrollView: UIScrollView!
     @IBOutlet private var contentView: UIView!
@@ -46,6 +46,7 @@ final class AppViewController: UIViewController
     private var _backgroundBlurTintColor: UIColor?
     
     private var _preferredStatusBarStyle: UIStatusBarStyle = .default
+    private var isNavigationBarHidden = true
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 17, *)
@@ -62,6 +63,9 @@ final class AppViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        self.navigationBarDownloadButton = PillButton(type: .system)
+        self.navigationBarDownloadButton.addTarget(self, action: #selector(AppViewController.performAppAction(_:)), for: .primaryActionTriggered)
                         
         self.navigationBarTitleView.sizeToFit()
         self.navigationItem.titleView = self.navigationBarTitleView
@@ -72,7 +76,7 @@ final class AppViewController: UIViewController
         }
         
         self.contentViewControllerShadowView = UIView()
-        self.contentViewControllerShadowView.backgroundColor = .white
+        self.contentViewControllerShadowView.backgroundColor = .altBackground
         self.contentViewControllerShadowView.layer.cornerRadius = 38
         self.contentViewControllerShadowView.layer.shadowColor = UIColor.black.cgColor
         self.contentViewControllerShadowView.layer.shadowOffset = CGSize(width: 0, height: -1)
@@ -104,7 +108,7 @@ final class AppViewController: UIViewController
         
         self.bannerView.button.addTarget(self, action: #selector(AppViewController.performAppAction(_:)), for: .primaryActionTriggered)
         
-        self.backButtonContainerView.tintColor = self.app.tintColor
+        self.backButtonContainerView.isHidden = true
         
         self.navigationBarDownloadButton.tintColor = self.app.tintColor
         self.navigationBarAppNameLabel.text = self.app.name
@@ -299,11 +303,13 @@ final class AppViewController: UIViewController
             
             let fractionComplete = min(difference, range) / range
             self.navigationBarAnimator?.fractionComplete = fractionComplete
+            self.navigationBarDownloadButton.alpha = fractionComplete
         }
         else
         {
             self.navigationBarAnimator?.fractionComplete = 0.0
             self.resetNavigationBarAnimation()
+            self.hideNavigationBar()
         }
         
         let beginMovingBackButtonThreshold = (maximumContentY - minimumContentY)
@@ -410,16 +416,52 @@ private extension AppViewController
         self.navigationBarDownloadButton.progress = self.bannerView.button.progress
         self.navigationBarDownloadButton.countdownDate = self.bannerView.button.countdownDate
         
-        let barButtonItem = self.navigationItem.rightBarButtonItem
-        self.navigationItem.rightBarButtonItem = nil
-        self.navigationItem.rightBarButtonItem = barButtonItem
+        let currentSizeWidth = max(77, self.navigationBarDownloadButton.intrinsicContentSize.width)
+        let targetWidth = currentSizeWidth + 2
+        if let existingConstraint = self.downloadButtonWidthConstraint
+        {
+            existingConstraint.constant = targetWidth
+        }
+        else
+        {
+            let constraint = self.navigationBarDownloadButton.widthAnchor.constraint(equalToConstant: targetWidth)
+            constraint.isActive = true
+            self.downloadButtonWidthConstraint = constraint
+        }
+        
+        self.view.setNeedsLayout()
+        
+        if self.isNavigationBarHidden
+        {
+            self.navigationItem.rightBarButtonItem = nil
+            self.navigationBarDownloadButton.alpha = 0.0
+        }
+        else
+        {
+            if self.navigationItem.rightBarButtonItem == nil
+            {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarDownloadButton)
+            }
+            else
+            {
+                // Force a layout refresh for the bar button item to update its width.
+                let barButtonItem = self.navigationItem.rightBarButtonItem
+                self.navigationItem.rightBarButtonItem = nil
+                self.navigationItem.rightBarButtonItem = barButtonItem
+            }
+            self.navigationBarDownloadButton.alpha = self.navigationBarAnimator?.fractionComplete ?? 1.0
+        }
     }
     
     func showNavigationBar()
     {
+        self.isNavigationBarHidden = false
+        
         self.navigationBarAppIconImageView.alpha = 1.0
         self.navigationBarAppNameLabel.alpha = 1.0
         self.navigationBarDownloadButton.alpha = 1.0
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarDownloadButton)
         
         self.updateNavigationBarAppearance(isHidden: false)
         
@@ -440,9 +482,13 @@ private extension AppViewController
     
     func hideNavigationBar()
     {
+        self.isNavigationBarHidden = true
+        
         self.navigationBarAppIconImageView.alpha = 0.0
         self.navigationBarAppNameLabel.alpha = 0.0
         self.navigationBarDownloadButton.alpha = 0.0
+        
+        self.navigationItem.rightBarButtonItem = nil
         
         self.updateNavigationBarAppearance(isHidden: true)
         
@@ -462,17 +508,15 @@ private extension AppViewController
         if isHidden
         {
             barAppearance.configureWithTransparentBackground()
-            barAppearance.ignoresUserInteraction = true
         }
         else
         {
             barAppearance.configureWithDefaultBackground()
-            barAppearance.ignoresUserInteraction = false
         }
         
         barAppearance.titleTextAttributes = [.foregroundColor: UIColor.clear]
         
-        let tintColor = isHidden ? UIColor.clear : self.app.tintColor ?? .altPrimary
+        let tintColor = self.app.tintColor ?? .altPrimary
         barAppearance.configureWithTintColor(tintColor)
         
         self.navigationItem.standardAppearance = barAppearance
@@ -608,7 +652,7 @@ extension AppViewController
             return
         }
         
-        AppManager.shared.update(installedApp, to: version, presentingViewController: self) { (result) in
+        let progress = AppManager.shared.update(installedApp, to: version, presentingViewController: self) { (result) in
             DispatchQueue.main.async {
                 switch result
                 {
@@ -620,11 +664,15 @@ extension AppViewController
                     toastView.show(in: self)
                 }
                 
+                self.bannerView.button.progress = nil
+                self.navigationBarDownloadButton.progress = nil
                 self.update()
             }
         }
         
         self.update()
+        self.bannerView.button.progress = progress
+        self.navigationBarDownloadButton.progress = progress
     }
 }
 

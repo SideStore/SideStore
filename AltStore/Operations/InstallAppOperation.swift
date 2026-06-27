@@ -9,7 +9,6 @@ import Foundation
 import Network
 import AltStoreCore
 import AltSign
-import Roxas
 
 let shortcutURLonDelay = URL(string: "shortcuts://run-shortcut?name=TurnOnDataDelay")!
 

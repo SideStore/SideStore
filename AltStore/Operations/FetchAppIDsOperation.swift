@@ -7,9 +7,9 @@
 //
 
 import Foundation
+import CoreData
 import AltStoreCore
 import AltSign
-import Roxas
 
 @objc(FetchAppIDsOperation)
 final class FetchAppIDsOperation: ResultOperation<([AppID], NSManagedObjectContext)>

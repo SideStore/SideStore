@@ -7,10 +7,9 @@
 //
 
 import Foundation
+import CoreData
 import AltStoreCore
 import AltSign
-import Roxas
-
 import Minimuxer
 
 @objc(RefreshAppOperation)

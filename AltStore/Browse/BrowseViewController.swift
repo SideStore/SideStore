@@ -8,8 +8,8 @@
 
 import UIKit
 import Combine
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 import Minimuxer
@@ -94,6 +94,7 @@ class BrowseViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         let collectionViewLayout = self.collectionViewLayout as! UICollectionViewFlowLayout
         collectionViewLayout.minimumLineSpacing = 30
@@ -544,11 +545,13 @@ private extension BrowseViewController
         }
         else
         {
-            self.install(app, at: indexPath)
+            self.install(app, at: indexPath) { progress in
+                sender.progress = progress
+            }
         }
     }
     
-    func install(_ app: StoreApp, at indexPath: IndexPath)
+    func install(_ app: StoreApp, at indexPath: IndexPath, progressUpdateHandler: @escaping (Progress) -> Void)
     {
         let previousProgress = AppManager.shared.installationProgress(for: app)
         guard previousProgress == nil else {
@@ -566,15 +569,13 @@ private extension BrowseViewController
             // if let installedApp = app.installedApp, installedApp.isUpdateAvailable
             if let installedApp = app.installedApp, installedApp.hasUpdate
             {
-                AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(progress)
             }
             else
             {
-                await AppManager.shared.installAsync(app, presentingViewController: self, completionHandler: finish(_:))
-            }
-            
-            UIView.performWithoutAnimation {
-                self.collectionView.reloadItems(at: [indexPath])
+                let group = await AppManager.shared.installAsync(app, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(group.progress)
             }
         }
         

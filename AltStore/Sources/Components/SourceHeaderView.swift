@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -59,6 +58,13 @@ class SourceHeaderView: RSTNibView
         
         self.websiteButtonContainerView.clipsToBounds = true
         self.websiteButtonContainerView.layer.cornerRadius = 14 // 22 - inset (8)
+        self.websiteButtonContainerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        if let stackView = self.findVerticalStackView(in: self)
+        {
+            stackView.isLayoutMarginsRelativeArrangement = true
+            stackView.layoutMargins = UIEdgeInsets(top: 14, left: 14, bottom: 14, right: 12)
+        }
     }
     
     override func layoutSubviews()
@@ -72,6 +78,34 @@ class SourceHeaderView: RSTNibView
             // Left-align website button text with subtitle by increasing width by label inset.
             let frame = self.websiteButton.convert(titleLabel.frame, from: titleLabel.superview)
             self.widthConstraint.constant = frame.minX
+        }
+    }
+    
+    private func findVerticalStackView(in view: UIView) -> UIStackView?
+    {
+        if let stackView = view as? UIStackView, stackView.axis == .vertical
+        {
+            return stackView
+        }
+        for subview in view.subviews
+        {
+            if let found = findVerticalStackView(in: subview)
+            {
+                return found
+            }
+        }
+        return nil
+    }
+    
+    func fittedHeight(forWidth width: CGFloat) -> CGFloat
+    {
+        if self.websiteContentView.isHidden
+        {
+            return 96
+        }
+        else
+        {
+            return 160
         }
     }
 }

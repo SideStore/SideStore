@@ -11,7 +11,6 @@ import CommonCrypto
 import Starscream
 import AltStoreCore
 import AltSign
-import Roxas
 
 class ANISETTE_VERBOSITY: Operation {} // dummy tag iface
 

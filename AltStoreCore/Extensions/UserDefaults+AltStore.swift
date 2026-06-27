@@ -2,7 +2,7 @@
 //  UserDefaults+AltStore.swift
 //  AltStore
 //
-//  Created by Riley Testut on 6/4/19.
+//  Created by Magesh K on 6/17/26.
 //  Copyright © 2019 SideStore. All rights reserved.
 //
 
@@ -17,47 +17,165 @@ public extension UserDefaults
         return sharedUserDefaults
     }()
     
-    @NSManaged var firstLaunch: Date?
-    @NSManaged var requiresAppGroupMigration: Bool
-    @NSManaged var textServer: Bool
-    @NSManaged var sidejitenable: Bool
-    @NSManaged var textInputSideJITServerurl: String?
-    @NSManaged var textInputAnisetteURL: String?
-    @NSManaged var customAnisetteURL: String?
-    @NSManaged var menuAnisetteURL: String
-    @NSManaged var menuAnisetteList: String
-    @NSManaged var menuAnisetteServersList: [String]
-    @NSManaged var preferredServerID: String?
-    
-    @NSManaged var isBackgroundRefreshEnabled: Bool
-    @NSManaged var enableEMPforWireguard: Bool
-    @NSManaged var isIdleTimeoutDisableEnabled: Bool
-    @NSManaged var isAppLimitDisabled: Bool
-    @NSManaged var isBetaUpdatesEnabled: Bool
-    @NSManaged var customizeAppId: Bool
-    @NSManaged var isExportResignedAppEnabled: Bool
-    @NSManaged var isVerboseOperationsLoggingEnabled: Bool
-    @NSManaged var isMinimuxerConsoleLoggingEnabled: Bool
-    @NSManaged var isMinimuxerStatusCheckEnabled: Bool
+    // Default track for beta updates when beta-updates are enabled
+    static let defaultBetaUpdatesTrack: String = ReleaseTracks.nightly.rawValue
 
-    @NSManaged var recreateDatabaseOnNextStart: Bool
-    @NSManaged var isPairingReset: Bool
-    @NSManaged var isDebugModeEnabled: Bool
-    @NSManaged var presentedLaunchReminderNotification: Bool
+
+    @objc var firstLaunch: Date? {
+        get { self.object(forKey: #function) as? Date }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var requiresAppGroupMigration: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var textServer: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var sidejitenable: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var textInputSideJITServerurl: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var textInputAnisetteURL: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var customAnisetteURL: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var menuAnisetteURL: String {
+        get { self.string(forKey: #function) ?? "" }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var menuAnisetteList: String {
+        get { self.string(forKey: #function) ?? "" }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var menuAnisetteServersList: [String] {
+        get { self.stringArray(forKey: #function) ?? [] }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var preferredServerID: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var legacySideloadedApps: [String]?
+    @objc var isBackgroundRefreshEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var enableEMPforWireguard: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isIdleTimeoutDisableEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isAppLimitDisabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isBetaUpdatesEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var customizeAppId: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isExportResignedAppEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isVerboseOperationsLoggingEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isMinimuxerConsoleLoggingEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isMinimuxerStatusCheckEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+
+    @objc var recreateDatabaseOnNextStart: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isPairingReset: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var isDebugModeEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var presentedLaunchReminderNotification: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var isLegacyDeactivationSupported: Bool
-    @NSManaged var activeAppLimitIncludesExtensions: Bool
+    @objc var legacySideloadedApps: [String]? {
+        get { self.stringArray(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var localServerSupportsRefreshing: Bool
+    @objc var isLegacyDeactivationSupported: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var activeAppLimitIncludesExtensions: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var patchedApps: [String]?
+    @objc var localServerSupportsRefreshing: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var trustedSourceIDs: [String]?
-    @NSManaged var trustedServerURL: String?
+    @objc var patchedApps: [String]? {
+        get { self.stringArray(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     
-    @NSManaged var betaUdpatesTrack: String?
+    @objc var trustedSourceIDs: [String]? {
+        get { self.stringArray(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var trustedServerURL: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    
+    @objc var betaUdpatesTrack: String? {
+        get { self.string(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    
+    // Including "MacDirtyCow" in name triggers false positives with malware detectors 🤷‍♂️
+    @objc var isCowExploitSupported: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    
+    @objc var permissionCheckingDisabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
+    @objc var responseCachingDisabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
 
     @nonobjc var preferredAppSorting: AppSorting {
         get {
@@ -68,10 +186,13 @@ public extension UserDefaults
             _preferredAppSorting = newValue.rawValue
         }
     }
-    @NSManaged @objc(preferredAppSorting) private var _preferredAppSorting: String?
     
-    @nonobjc
-    var activeAppsLimit: Int? {
+    @objc(preferredAppSorting) private var _preferredAppSorting: String? {
+        get { self.string(forKey: "preferredAppSorting") }
+        set { self.set(newValue, forKey: "preferredAppSorting") }
+    }
+    
+    @nonobjc var activeAppsLimit: Int? {
         get {
             return self._activeAppsLimit?.intValue
         }
@@ -86,17 +207,12 @@ public extension UserDefaults
             }
         }
     }
-    @NSManaged @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber?
     
-    // Including "MacDirtyCow" in name triggers false positives with malware detectors 🤷‍♂️
-    @NSManaged var isCowExploitSupported: Bool
+    @objc(activeAppsLimit) private var _activeAppsLimit: NSNumber? {
+        get { self.object(forKey: "activeAppsLimit") as? NSNumber }
+        set { self.set(newValue, forKey: "activeAppsLimit") }
+    }
     
-    @NSManaged var permissionCheckingDisabled: Bool
-    @NSManaged var responseCachingDisabled: Bool
-    
-    // Default track for beta updates when beta-updates are enabled
-    static let defaultBetaUpdatesTrack: String = ReleaseTracks.nightly.rawValue
-
     class func registerDefaults()
     {
         let ios13_5 = OperatingSystemVersion(majorVersion: 13, minorVersion: 5, patchVersion: 0)
@@ -115,12 +231,7 @@ public extension UserDefaults
         (ProcessInfo.processInfo.isOperatingSystemAtLeast(ios14) && !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios15_7_2)) ||
         (ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16) && !ProcessInfo.processInfo.isOperatingSystemAtLeast(ios16_2))
         
-        // TODO: @mahee96: why should the permissions checking be any different, for now, it shouldn't so commented debug mode code
-//        #if DEBUG
-//        let permissionCheckingDisabled = true
-//        #else
         let permissionCheckingDisabled = false
-//        #endif
         
         // Pre-iOS 15 doesn't support custom sorting, so default to sorting by name.
         // Otherwise, default to `default` sorting (a.k.a. "source order").

@@ -8,7 +8,6 @@
 
 import UIKit
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -106,7 +105,7 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
     {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .altBackground
         self.view.clipsToBounds = true
         
         self.navigationItem.largeTitleDisplayMode = .never
@@ -152,7 +151,6 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.backButton.tintColor = self.tintColor
         self.backButton.sizeToFit()
         self.backButton.addTarget(self.navigationController, action: #selector(UINavigationController.popViewController(animated:)), for: .primaryActionTriggered)
-        self.view.addSubview(self.backButton)
         
         
         // Content View Controller
@@ -166,7 +164,7 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.contentViewController.didMove(toParent: self)
         
         self.contentViewControllerShadowView = UIView()
-        self.contentViewControllerShadowView.backgroundColor = .white
+        self.contentViewControllerShadowView.backgroundColor = .altBackground
         self.contentViewControllerShadowView.layer.cornerRadius = 38
         self.contentViewControllerShadowView.layer.shadowColor = UIColor.black.cgColor
         self.contentViewControllerShadowView.layer.shadowOffset = CGSize(width: 0, height: -1)
@@ -201,9 +199,11 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.navigationBarTitleView.spacing = 8
         
         self.navigationBarButton = PillButton(type: .system)
-        self.navigationBarButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 9000), for: .horizontal) // Prioritize over title length.
+        // Set compression resistance to 999 instead of 9000 since Auto Layout priorities requires it to be <= 1000. 
+        // values > 1000 causes internal constraint engine corruption and crashes!
+        self.navigationBarButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 999), for: .horizontal) // Prioritize over title length.
         
-        if #available(iOS 26.0, *) {
+        if #available(iOS 16.0, *) {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.navigationBarButton)
         } else {
             // Embed navigationBarButton in container view with Auto Layout to ensure it can automatically update its size.
@@ -227,7 +227,6 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.contentSizeObservation = self.contentViewController.scrollView.observe(\.contentSize, options: [.new, .old]) { [weak self] (scrollView, change) in
             guard let size = change.newValue, let previousSize = change.oldValue, size != previousSize else { return }
             self?.view.setNeedsLayout()
-            self?.view.layoutIfNeeded()
         }
         
         // Don't call update() before subclasses have finished viewDidLoad().
@@ -327,8 +326,10 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         let backButtonPadding = 8.0
         let minimumHeaderY = backButtonFrame.maxY + backButtonPadding
         
-        let minimumContentHeight = minimumHeaderY + headerFrame.height + padding // Minimum height for header + back button + spacing.
-        let maximumContentY = max(self.view.bounds.width * 0.667, minimumContentHeight) // Initial Y-value of content view.
+        // Enforce a consistent top gap of 56pt below minimumHeaderY (64pt below back button)
+        let headerTopY = minimumHeaderY + 56.0 
+        let minimumContentHeight = minimumHeaderY + headerFrame.height + padding
+        let maximumContentY = headerTopY + headerFrame.height + padding
         
         contentFrame.origin.y = maximumContentY - self.scrollView.contentOffset.y
         headerFrame.origin.y = contentFrame.origin.y - padding - headerFrame.height
@@ -518,7 +519,7 @@ private extension HeaderContentViewController
     {
         self.navigationBarIconView.alpha = 0.0
         self.navigationBarNameLabel.alpha = 0.0
-        self.navigationBarButton.alpha = 0.0
+        self.navigationBarButton.alpha = 1.0
         
         self.updateNavigationBarAppearance(isHidden: true)
         
@@ -537,12 +538,10 @@ private extension HeaderContentViewController
         if isHidden
         {
             barAppearance.configureWithTransparentBackground()
-            barAppearance.ignoresUserInteraction = true
         }
         else
         {
             barAppearance.configureWithDefaultBackground()
-            barAppearance.ignoresUserInteraction = false
         }
         
         barAppearance.titleTextAttributes = [.foregroundColor: UIColor.clear]
@@ -562,7 +561,7 @@ private extension HeaderContentViewController
             return tintColor
         }
         
-        let tintColor = isHidden ? UIColor.clear : dynamicColor
+        let tintColor = dynamicColor
         barAppearance.configureWithTintColor(tintColor)
         
         self.navigationItem.standardAppearance = barAppearance

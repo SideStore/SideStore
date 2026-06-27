@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-import Roxas
 import AltSign
 
 import SemanticVersion

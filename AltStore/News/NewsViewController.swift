@@ -9,8 +9,8 @@
 import UIKit
 import SafariServices
 import Combine
+import CoreData
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -83,7 +83,7 @@ class NewsViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.backgroundColor = .altBackground
         
-        self.prototypeCell = NewsCollectionViewCell.instantiate(with: NewsCollectionViewCell.nib!)
+        self.prototypeCell = NewsCollectionViewCell.instantiate(with: NewsCollectionViewCell.nib)
         self.prototypeCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
         // Need to add dummy constraint + layout subviews before we can remove Interface Builder's width constraint.
@@ -98,6 +98,7 @@ class NewsViewController: UICollectionViewController, PeekPopPreviewing
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         self.collectionView.register(NewsCollectionViewCell.nib, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
         self.collectionView.register(AppBannerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "AppBanner")
@@ -325,11 +326,13 @@ private extension NewsViewController
         }
         else
         {
-            self.install(storeApp, at: indexPath)
+            self.install(storeApp, at: indexPath) { progress in
+                sender.progress = progress
+            }
         }
     }
     
-    @objc func install(_ storeApp: StoreApp, at indexPath: IndexPath)
+    func install(_ storeApp: StoreApp, at indexPath: IndexPath, progressUpdateHandler: @escaping (Progress) -> Void)
     {
         let previousProgress = AppManager.shared.installationProgress(for: storeApp)
         guard previousProgress == nil else {
@@ -341,15 +344,13 @@ private extension NewsViewController
             // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
             if let installedApp = storeApp.installedApp, installedApp.hasUpdate
             {
-                AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(progress)
             }
             else
             {
-                await AppManager.shared.installAsync(storeApp, presentingViewController: self, completionHandler: finish(_:))
-            }
-            
-            UIView.performWithoutAnimation {
-                self.collectionView.reloadSections(IndexSet(integer: indexPath.section))
+                let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self, completionHandler: finish(_:))
+                progressUpdateHandler(group.progress)
             }
         }
         
@@ -458,6 +459,10 @@ extension NewsViewController: UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize
     {
+        guard self.dataSource.contentView(collectionView, numberOfItemsInSection: section) > 0 else {
+            return .zero
+        }
+        
         let item = self.dataSource.item(at: IndexPath(row: 0, section: section))
         
         if item.storeApp != nil

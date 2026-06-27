@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import CoreData
 import SafariServices
 import AltStoreCore
-import Roxas
 
 import Nuke
 
@@ -71,6 +71,7 @@ class SourceDetailContentViewController: UICollectionViewController
         self.dataSource.proxy = self
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         
         let context = self.source.managedObjectContext ?? DatabaseManager.shared.viewContext
         NotificationCenter.default.addObserver(self, selector: #selector(SourceDetailContentViewController.didChangeApps), name: NSManagedObjectContext.didChangeObjectsNotification, object: context)
@@ -165,10 +166,7 @@ private extension SourceDetailContentViewController
     
     func makeDataSource() -> RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
     {
-        let newsDataSource = self.newsDataSource as! RSTFetchedResultsCollectionViewDataSource<NSManagedObject>
-        let appsDataSource = self.appsDataSource as! RSTArrayCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
-        
-        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [newsDataSource, appsDataSource, self.aboutDataSource])
+        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [self.newsDataSource, self.appsDataSource, self.aboutDataSource])
         return dataSource
     }
     
@@ -271,7 +269,7 @@ private extension SourceDetailContentViewController
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.numberOfItemsHandler = { [source] _ in source.localizedDescription == nil ? 0 : 1 }
         dataSource.cellIdentifierHandler = { _ in "AboutCell" }
-        dataSource.cellConfigurationHandler = { [source] (cell, _, indexPath) in
+        dataSource.dynamicCellConfigurationHandler = { [source] (cell, indexPath) in
             let cell = cell as! TextViewCollectionViewCell
             cell.contentView.layoutMargins = .zero // Fixes incorrect margins if not initially on screen.
             cell.textView.text = source.localizedDescription
@@ -394,14 +392,14 @@ private extension SourceDetailContentViewController
             sender.isIndicatingActivity = true
             
             Task<Void, Never> {
-                await self.downloadApp(storeApp)
+                await self.downloadApp(storeApp, sender: sender)
                 sender.isIndicatingActivity = false
             }
         }
     }
     
     @MainActor
-    func downloadApp(_ storeApp: StoreApp) async
+    func downloadApp(_ storeApp: StoreApp, sender: PillButton) async
     {
         do
         {
@@ -409,25 +407,26 @@ private extension SourceDetailContentViewController
                 // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
                 if let installedApp = storeApp.installedApp, installedApp.hasUpdate
                 {
-                    AppManager.shared.update(installedApp, presentingViewController: self) { result in
+                    let progress = AppManager.shared.update(installedApp, presentingViewController: self) { result in
                         continuation.resume(with: result.map { _ in () })
                     }
                     
-                    reload()
+                    sender.progress = progress
                 }
                 else
                 {
                     Task<Void, Never> { @MainActor in
-                        await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
+                        let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
                             continuation.resume(with: result.map { _ in () })
                         }
                         
-                        reload()
+                        sender.progress = group.progress
                     }
                 }
             }
         }
         catch is CancellationError {}
+        catch OperationError.cancelled {}
         catch
         {
             let toastView = ToastView(error: error)
@@ -435,20 +434,7 @@ private extension SourceDetailContentViewController
             toastView.show(in: self)
         }
         
-        self.collectionView.reloadSections([Section.featuredApps.rawValue])
-        
-        func reload()
-        {
-            UIView.performWithoutAnimation {
-                guard let index = self.appsDataSource.items.firstIndex(of: storeApp) else {
-                    self.collectionView.reloadSections([Section.featuredApps.rawValue])
-                    return
-                }
-                
-                let indexPath = IndexPath(item: index, section: Section.featuredApps.rawValue)
-                self.collectionView.reloadItems(at: [indexPath])
-            }
-        }
+        sender.progress = nil
     }
     
     func open(_ installedApp: InstalledApp)

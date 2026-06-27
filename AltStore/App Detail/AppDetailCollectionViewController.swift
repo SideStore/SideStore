@@ -8,8 +8,8 @@
 
 import UIKit
 import SwiftUI
+import CoreData
 import AltStoreCore
-import Roxas
 
 extension AppDetailCollectionViewController
 {
@@ -144,6 +144,7 @@ class AppDetailCollectionViewController: UICollectionViewController
         
         self.dataSource.proxy = self
         self.collectionView.dataSource = self.dataSource
+        self.dataSource.contentView = self.collectionView
         self.collectionView.delegate = self
     }
 }
@@ -192,7 +193,7 @@ private extension AppDetailCollectionViewController
     
     func makeDataSource() -> RSTCompositeCollectionViewDataSource<AppPermission>
     {
-        let dataSource = RSTCompositeCollectionViewDataSource(dataSources: [self.privacyDataSource, self.entitlementsDataSource])
+        let dataSource = RSTCompositeCollectionViewDataSource<AppPermission>(dataSources: [self.privacyDataSource, self.entitlementsDataSource])
         return dataSource
     }
     
@@ -201,7 +202,7 @@ private extension AppDetailCollectionViewController
         let dataSource = RSTDynamicCollectionViewDataSource<AppPermission>()
         dataSource.cellIdentifierHandler = { _ in "PrivacyCell" }
         dataSource.numberOfSectionsHandler = { 1 }
-        dataSource.cellConfigurationHandler = { [weak self] (cell, _, indexPath) in
+        dataSource.dynamicCellConfigurationHandler = { [weak self] (cell, indexPath) in
             guard let self, #available(iOS 16, *) else { return }
             
             cell.contentConfiguration = UIHostingConfiguration {
@@ -227,10 +228,10 @@ private extension AppDetailCollectionViewController
     
     func makeEntitlementsDataSource() -> RSTCompositeCollectionViewDataSource<AppPermission>
     {
-        let knownEntitlementsDataSource = RSTArrayCollectionViewDataSource(items: self.knownEntitlementPermissions)
-        let unknownEntitlementsDataSource = RSTArrayCollectionViewDataSource(items: self.unknownEntitlementPermissions)
+        let knownEntitlementsDataSource = RSTArrayCollectionViewDataSource<AppPermission>(items: self.knownEntitlementPermissions)
+        let unknownEntitlementsDataSource = RSTArrayCollectionViewDataSource<AppPermission>(items: self.unknownEntitlementPermissions)
         
-        let dataSource = RSTCompositeCollectionViewDataSource(dataSources: [knownEntitlementsDataSource, unknownEntitlementsDataSource])
+        let dataSource = RSTCompositeCollectionViewDataSource<AppPermission>(dataSources: [knownEntitlementsDataSource, unknownEntitlementsDataSource])
         dataSource.cellConfigurationHandler = { [weak self] (cell, appPermission, _) in
             let cell = cell as! UICollectionViewListCell
             let tintColor = self?.app.tintColor ?? .altPrimary
