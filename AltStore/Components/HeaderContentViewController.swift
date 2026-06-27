@@ -227,7 +227,6 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         self.contentSizeObservation = self.contentViewController.scrollView.observe(\.contentSize, options: [.new, .old]) { [weak self] (scrollView, change) in
             guard let size = change.newValue, let previousSize = change.oldValue, size != previousSize else { return }
             self?.view.setNeedsLayout()
-            self?.view.layoutIfNeeded()
         }
         
         // Don't call update() before subclasses have finished viewDidLoad().
