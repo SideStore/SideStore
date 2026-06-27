@@ -101,18 +101,17 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     
     override func viewDidLayoutSubviews()
     {
+        let inset = 15.0
+        let headerHeight = self.headerView.fittedHeight(forWidth: self.view.bounds.width - inset * 2)
+        
+        if self.headerView.frame.size.height != headerHeight
+        {
+            self.headerView.frame.size.height = headerHeight
+        }
+        
         super.viewDidLayoutSubviews()
         
         self.navigationBarIconView.layer.cornerRadius = self.navigationBarIconView.bounds.midY
-        
-        // Place in top-right corner.
-        let inset = 15.0
-        
-        guard self.view.bounds != self.previousBounds else { return }
-        self.previousBounds = self.view.bounds
-        
-        let headerSize = self.headerView.systemLayoutSizeFitting(CGSize(width: self.view.bounds.width - inset * 2, height: UIView.layoutFittingCompressedSize.height))
-        self.headerView.frame.size.height = headerSize.height
     }
     
     //MARK: Override

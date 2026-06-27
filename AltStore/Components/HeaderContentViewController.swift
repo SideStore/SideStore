@@ -327,8 +327,10 @@ class HeaderContentViewController<Header: UIView, Content: ScrollableContentView
         let backButtonPadding = 8.0
         let minimumHeaderY = backButtonFrame.maxY + backButtonPadding
         
-        let minimumContentHeight = minimumHeaderY + headerFrame.height + padding // Minimum height for header + back button + spacing.
-        let maximumContentY = max(self.view.bounds.width * 0.667, minimumContentHeight) // Initial Y-value of content view.
+        // Enforce a consistent top gap of 56pt below minimumHeaderY (64pt below back button)
+        let headerTopY = minimumHeaderY + 56.0 
+        let minimumContentHeight = minimumHeaderY + headerFrame.height + padding
+        let maximumContentY = headerTopY + headerFrame.height + padding
         
         contentFrame.origin.y = maximumContentY - self.scrollView.contentOffset.y
         headerFrame.origin.y = contentFrame.origin.y - padding - headerFrame.height
