@@ -1,12 +1,11 @@
-### Changes
+### Description of Changes
+<!-- Brief description or overview on what was changed in the PR -->
 
-<!-- Fill this list with what your PR changes. Example: -->
-- Fix bug
-- Change UI for QOL
+### Rationale behind Changes
+<!-- Why were these changes made?  What problem does it solve / area does it improve? -->
 
-<!-- If your PR is ready to be merged, you can remove this section. -->
-### Todo before merge
+### Suggested Testing Steps
+<!-- If applicable, including examples you've already tested with / recommendations for how to test further is very helpful! -->
 
-<!-- Example: -->
-- [x] Finish UI changes
-- [ ] Test
+### Did you use AI to help find, test, or implement this issue or feature?
+<!-- Answer yes or no. If you answer yes, please provide a brief explanation as to how you used it. -->

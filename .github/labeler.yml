@@ -1,0 +1,168 @@
+# Documentation - https://github.com/actions/labeler
+
+# General Labels
+'Build | Project System':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/*'
+      - '.github/**/*'
+      - '*.xcconfig'
+      - '**/*.xcconfig'
+      - '*.xcodeproj/*'
+      - '**/*.xcodeproj/*'
+      - 'Makefile'
+      - '.editorconfig'
+      - '.gitignore'
+
+'Dependencies':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dependencies/*'
+      - 'Dependencies/**/*'
+      - '.gitmodules'
+
+'Documentation':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.md'
+      - '**/*.md'
+      - 'LICENSE'
+
+'GUI/UIKit':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'SideStore/Views/*'
+      - 'SideStore/Views/**/*'
+      - 'AltStore/App Detail/*.swift'
+      - 'AltStore/Browse/*.swift'
+      - 'AltStore/Authentication/*.swift'
+      - 'AltStore/My Apps/*.swift'
+      - 'AltStore/News/*.swift'
+      - 'AltStore/Settings/*.swift'
+      - 'AltStore/Sources/*.swift'
+
+'Resources | Assets':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Resources/*'
+      - 'AltStore/Resources/**/*'
+      - 'AltStore/Base.lproj/*'
+      - 'AltStore/Base.lproj/**/*'
+      - 'AltBackup/Assets.xcassets/*'
+      - 'AltBackup/Assets.xcassets/**/*'
+      - 'AltWidget/Assets.xcassets/*'
+      - 'AltWidget/Assets.xcassets/**/*'
+
+# Tools / Features
+'Backup':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltBackup/*'
+      - 'AltBackup/**/*'
+
+'Widget':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltWidget/*'
+      - 'AltWidget/**/*'
+
+'App Detail':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/App Detail/*'
+      - 'AltStore/App Detail/**/*'
+
+'App IDs':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/App IDs/*'
+      - 'AltStore/App IDs/**/*'
+
+'Authentication':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Authentication/*'
+      - 'AltStore/Authentication/**/*'
+
+'Browse':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Browse/*'
+      - 'AltStore/Browse/**/*'
+
+'Managing Apps':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Managing Apps/*'
+      - 'AltStore/Managing Apps/**/*'
+
+'My Apps':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/My Apps/*'
+      - 'AltStore/My Apps/**/*'
+
+'News':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/News/*'
+      - 'AltStore/News/**/*'
+
+'Settings':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Settings/*'
+      - 'AltStore/Settings/**/*'
+
+'Sources':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Sources/*'
+      - 'AltStore/Sources/**/*'
+
+# Core Components
+'Core':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStoreCore/*'
+      - 'AltStoreCore/**/*'
+
+'Shared':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Shared/*'
+      - 'Shared/**/*'
+
+'SideStore':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'SideStore/*'
+      - 'SideStore/**/*'
+
+# Other Core Components
+'Operations':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Operations/*'
+      - 'AltStore/Operations/**/*'
+
+'Intents':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Intents/*'
+      - 'AltStore/Intents/**/*'
+
+'Permissions':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/Permissions/*'
+      - 'AltStore/Permissions/**/*'
+
+'App Lifecycle':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'AltStore/AppDelegate.swift'
+      - 'AltStore/SceneDelegate.swift'
+      - 'AltStore/TabBarController.swift'
+      - 'AltStore/LaunchViewController.swift'
+      - 'AltStore/AppConstants.swift'

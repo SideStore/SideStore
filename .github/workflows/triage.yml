@@ -1,0 +1,47 @@
+# Runs steps to triage a new Pull Request, such as applying labels.
+name: Pull Request Triage
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  triage:
+    if: github.repository == 'SideStore/SideStore'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Label PR based on changed files
+      uses: actions/labeler@v6
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Welcome first-time contributors
+      uses: actions/first-interaction@v3
+      with:
+        issue_message: |-
+          ## Thank you for opening an issue!
+
+          A maintainer will review your issue shortly. Please make sure you've filled out all relevant information in the issue template.
+        pr_message: |-
+          ## Thank you for submitting a contribution to SideStore!
+
+          As this is your first pull request, [please be aware of our contributing guidelines](https://docs.sidestore.io/docs/contributing).
+
+          Additionally, your pull request will need to be approved by a maintainer before GitHub Actions can run against it. [You can find more information here.](https://github.blog/2021-04-22-github-actions-update-helping-maintainers-combat-bad-actors/)
+
+          Please be patient until this happens. In the meantime, if you'd like to confirm the builds are passing, you have the option of opening a PR on your own fork, just make sure your fork's develop branch is up to date!
+
+    - name: Label First Time Contribution
+      if: |
+        github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
+        github.event.pull_request.author_association == 'FIRST_TIMER'
+      run: gh pr edit ${{ github.event.pull_request.number }} --add-label "First Time Contribution"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

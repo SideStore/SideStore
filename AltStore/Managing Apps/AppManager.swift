@@ -275,7 +275,7 @@ extension AppManager
         return authenticationOperation
     }
     
-    func deactivateApps(for app: ALTApplication, presentingViewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
+    func deactivateApps(for app: ALTApplication, presentingViewController: UIViewController?, completion: @escaping (Result<Void, Error>) -> Void)
     {
         guard !UserDefaults.standard.isAppLimitDisabled, let activeAppsLimit = UserDefaults.standard.activeAppsLimit else { return completion(.success(())) }
         
@@ -311,6 +311,11 @@ extension AppManager
             let availableActiveApps = max(activeAppsLimit - activeAppsCount, 0)
             let requiredActiveSlots = UserDefaults.standard.activeAppLimitIncludesExtensions ? (1 + app.appExtensions.count) : 1
             guard requiredActiveSlots > availableActiveApps else { return completion(.success(())) }
+
+            guard let presentingViewController else {
+                let failureReason = String(format: NSLocalizedString("SideStore needs to deactivate another app before installing %@.", comment: ""), app.name)
+                return completion(.failure(OperationError.forbidden(failureReason: failureReason)))
+            }
             
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { (action) in
@@ -762,6 +767,28 @@ extension AppManager
             
         }
         return group
+    }
+
+    func installIPA(at ipaURL: URL, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), progressHandler: ((Progress) -> Void)? = nil) async throws -> InstalledApp
+    {
+        guard ipaURL.pathExtension.lowercased() == "ipa" else { throw OperationError.invalidApp }
+
+        let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+        defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
+
+        let unzippedAppDirectory = temporaryDirectory.appendingPathComponent("App")
+        try FileManager.default.createDirectory(at: unzippedAppDirectory, withIntermediateDirectories: true)
+
+        let unzippedApplicationURL = try FileManager.default.unzipAppBundle(at: ipaURL, toDirectory: unzippedAppDirectory)
+        guard let application = ALTApplication(fileURL: unzippedApplicationURL) else { throw OperationError.invalidApp }
+
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<InstalledApp, Error>) in
+            let group = self.install(application, presentingViewController: nil, context: context) { result in
+                continuation.resume(with: result)
+            }
+
+            progressHandler?(group.progress)
+        }
     }
     
     @discardableResult
@@ -1387,14 +1414,11 @@ private extension AppManager
                     return
                 }
                                 
-                guard
-                    let app = context.app,
-                    let presentingViewController = context.authenticatedContext.presentingViewController
-                else {
-                    throw OperationError.invalidParameters("AppManager._install.deactivateAppsOperation: self.context.app or context.authenticatedContext.presentingViewController is nil")
+                guard let app = context.app else {
+                    throw OperationError.invalidParameters("AppManager._install.deactivateAppsOperation: self.context.app is nil")
                 }
-                
-                self?.deactivateApps(for: app, presentingViewController: presentingViewController) { result in
+
+                self?.deactivateApps(for: app, presentingViewController: context.authenticatedContext.presentingViewController) { result in
                     switch result
                     {
                     case .failure(let error): group.context.error = error
