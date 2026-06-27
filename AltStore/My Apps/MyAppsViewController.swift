@@ -2345,18 +2345,21 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        switch dataSource
+        if self.collectionView.window != nil
         {
-        case self.activeAppsDataSource: self.didChangeActiveApps = false
-        case self.updatesDataSource where !_viewDidAppear:
-            // Responding to NSFetchedResultsController updates before the collection view has
-            // been shown may throw exceptions because the collection view cannot accurately
-            // count the number of items before the update. However, if we manually call
-            // performBatchUpdates _before_ responding to updates, the collection view can get
-            // an accurate pre-update item count.
-            self.collectionView.performBatchUpdates(nil, completion: nil)
-            
-        default: break
+            switch dataSource
+            {
+            case self.activeAppsDataSource: self.didChangeActiveApps = false
+            case self.updatesDataSource where !_viewDidAppear:
+                // Responding to NSFetchedResultsController updates before the collection view has
+                // been shown may throw exceptions because the collection view cannot accurately
+                // count the number of items before the update. However, if we manually call
+                // performBatchUpdates _before_ responding to updates, the collection view can get
+                // an accurate pre-update item count.
+                self.collectionView.performBatchUpdates(nil, completion: nil)
+                
+            default: break
+            }
         }
         
         dataSource.controllerWillChangeContent(controller)
@@ -2366,7 +2369,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-                dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
+        dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
@@ -2389,48 +2392,51 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
     {
         guard let dataSource = self.dataSource(for: controller) else { return }
         
-        switch dataSource
+        if self.collectionView.window != nil
         {
-        case self.activeAppsDataSource, self.inactiveAppsDataSource:
-            DispatchQueue.main.async {
-                self.collectionView.collectionViewLayout.invalidateLayout()
-                self.collectionView.performBatchUpdates(nil, completion: nil)
-                
-                let inactiveAppsCount = self.inactiveAppsDataSource.itemCount
-                if (inactiveAppsCount == 0) != (self.previousInactiveAppsCount == 0)
-                {
-                    self.previousInactiveAppsCount = inactiveAppsCount
-                    UIView.performWithoutAnimation {
-                        self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+            switch dataSource
+            {
+            case self.activeAppsDataSource, self.inactiveAppsDataSource:
+                DispatchQueue.main.async {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                    self.collectionView.performBatchUpdates(nil, completion: nil)
+                    
+                    let inactiveAppsCount = self.inactiveAppsDataSource.itemCount
+                    if (inactiveAppsCount == 0) != (self.previousInactiveAppsCount == 0)
+                    {
+                        self.previousInactiveAppsCount = inactiveAppsCount
+                        UIView.performWithoutAnimation {
+                            self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+                        }
+                    }
+                    
+                    if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
+                        self.update()
                     }
                 }
                 
-                if dataSource == self.activeAppsDataSource && self.didChangeActiveApps {
-                    self.update()
-                }
-            }
-            
-        case self.updatesDataSource:
-            let previousUpdateCount = self.collectionView.numberOfItems(inSection: Section.updates.rawValue)
-            let updateCount = Int(self.updatesDataSource.itemCount)
-            
-            if previousUpdateCount == 0 && updateCount > 0
-            {
-                // Remove "No Updates Available" cell.
-                let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
-                self.collectionView.add(change)
-            }
-            else if previousUpdateCount > 0 && updateCount == 0
-            {
-                // Insert "No Updates Available" cell.
-                let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
-                self.collectionView.add(change)
+            case self.updatesDataSource:
+                let previousUpdateCount = self.collectionView.numberOfItems(inSection: Section.updates.rawValue)
+                let updateCount = Int(self.updatesDataSource.itemCount)
                 
-                // Update unsupported updates _before_ calling controllerDidChangeContent()
-                self.updateUnsupportedUpdates()
+                if previousUpdateCount == 0 && updateCount > 0
+                {
+                    // Remove "No Updates Available" cell.
+                    let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
+                    self.collectionView.add(change)
+                }
+                else if previousUpdateCount > 0 && updateCount == 0
+                {
+                    // Insert "No Updates Available" cell.
+                    let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
+                    self.collectionView.add(change)
+                    
+                    // Update unsupported updates _before_ calling controllerDidChangeContent()
+                    self.updateUnsupportedUpdates()
+                }
+            
+            default: break
             }
-        
-        default: break
         }
         
         dataSource.controllerDidChangeContent(controller)
