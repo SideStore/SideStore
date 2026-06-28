@@ -23,6 +23,7 @@ final class AppIDsViewController: UICollectionViewController
         }
     }
     private var isEditingMode = false
+    private var doneBarButtonItem: UIBarButtonItem?
     
     @IBOutlet var activityIndicatorBarButtonItem: UIBarButtonItem!
     
@@ -31,6 +32,7 @@ final class AppIDsViewController: UICollectionViewController
         super.viewDidLoad()
         
         self.navigationController?.additionalSafeAreaInsets.top = 20
+        self.doneBarButtonItem = self.navigationItem.rightBarButtonItem
         
         self.collectionView.dataSource = self.dataSource
         self.dataSource.contentView = self.collectionView
@@ -144,6 +146,11 @@ private extension AppIDsViewController
     
     @objc func fetchAppIDs()
     {
+        self.fetchAppIDsFromServer(completion: nil)
+    }
+    
+    func fetchAppIDsFromServer(completion: (() -> Void)?)
+    {
         guard !self.isLoading else { return }
         self.isLoading = true
         
@@ -165,13 +172,16 @@ private extension AppIDsViewController
             DispatchQueue.main.async {
                 self.didInitialFetch = true
                 self.isLoading = false
+                completion?()
             }
         }
     }
     
     func update()
     {
-        if !self.isLoading
+        let isInitialLoading = self.isLoading && !self.didInitialFetch
+        
+        if !isInitialLoading
         {
             self.collectionView.refreshControl?.endRefreshing()
             self.activityIndicatorBarButtonItem.isIndicatingActivity = false
@@ -195,20 +205,33 @@ private extension AppIDsViewController
                 self.navigationItem.leftBarButtonItem = nil
             }
             
-            self.navigationItem.rightBarButtonItem?.isEnabled = !self.isEditingMode
-            self.navigationItem.rightBarButtonItem?.tintColor = self.isEditingMode ? UIColor.white.withAlphaComponent(0.3) : nil
-            
-            if self.collectionView.refreshControl == nil
+            if self.isEditingMode
             {
-                let refreshControl = UIRefreshControl()
-                refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
-                self.collectionView.refreshControl = refreshControl
+                self.navigationItem.rightBarButtonItem = nil
+            }
+            else
+            {
+                self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
+            }
+            
+            if self.isEditingMode
+            {
+                self.collectionView.refreshControl = nil
+            }
+            else
+            {
+                if self.collectionView.refreshControl == nil
+                {
+                    let refreshControl = UIRefreshControl()
+                    refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
+                    self.collectionView.refreshControl = refreshControl
+                }
             }
         }
         else
         {
             self.activityIndicatorBarButtonItem.isIndicatingActivity = true
-            self.navigationItem.leftBarButtonItem = nil
+            self.navigationItem.leftBarButtonItem = self.activityIndicatorBarButtonItem
         }
     }
 }
@@ -299,7 +322,6 @@ private extension AppIDsViewController
     {
         self.isEditingMode = true
         self.collectionView.allowsMultipleSelection = true
-        self.navigationItem.rightBarButtonItem?.isEnabled = false
         self.navigationController?.isModalInPresentation = true
         
         for cell in self.collectionView.visibleCells {
@@ -325,7 +347,6 @@ private extension AppIDsViewController
                 self.collectionView.deselectItem(at: indexPath, animated: false)
             }
         }
-        self.navigationItem.rightBarButtonItem?.isEnabled = true
         self.navigationController?.isModalInPresentation = false
         
         for cell in self.collectionView.visibleCells {
@@ -379,6 +400,26 @@ private extension AppIDsViewController
         }
     }
     
+    func reselectRemainingAppIDs(bundleIdentifiers: Set<String>)
+    {
+        for section in 0..<self.collectionView.numberOfSections
+        {
+            for item in 0..<self.collectionView.numberOfItems(inSection: section)
+            {
+                let indexPath = IndexPath(item: item, section: section)
+                let appID = self.dataSource.item(at: indexPath)
+                if bundleIdentifiers.contains(appID.bundleIdentifier)
+                {
+                    self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    if let cell = self.collectionView.cellForItem(at: indexPath) as? AppBannerCollectionViewCell {
+                        cell.setEditing(true, isSelected: true, animated: false)
+                    }
+                }
+            }
+        }
+        self.updateLeftBarButtonItem()
+    }
+    
     func getSessionAndTeam() async throws -> (ALTTeam, ALTAppleAPISession)
     {
         try await withCheckedThrowingContinuation { continuation in
@@ -402,7 +443,6 @@ private extension AppIDsViewController
         let progressModel = DeleteProgressModel(total: appIDsToDelete.count)
         let overlayView = DeleteOverlayView(model: progressModel) { [weak self] in
             self?.dismiss(animated: true) {
-                self?.exitEditMode()
                 self?.fetchAppIDs()
             }
         }
@@ -506,8 +546,12 @@ private extension AppIDsViewController
                             
                             let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
-                                self.exitEditMode()
-                                self.fetchAppIDs()
+                                let remainingBundleIdentifiers = Set(appIDsToDelete[completedCount...].map { $0.bundleIdentifier })
+                                self.fetchAppIDsFromServer(completion: {
+                                    DispatchQueue.main.async {
+                                        self.reselectRemainingAppIDs(bundleIdentifiers: remainingBundleIdentifiers)
+                                    }
+                                })
                             })
                             self.present(alert, animated: true)
                         }
