@@ -56,6 +56,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
     private var appleIDEmailAddress: String?
     private var appleIDPassword: String?
     private var shouldShowInstructions = false
+    private var activeCertificates: [ALTCertificate] = []
     
     private let operationQueue = OperationQueue()
     
@@ -644,10 +645,12 @@ private extension AuthenticationOperation
             }
         }
         
-        ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
+        ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { [weak self] (certificates, error) in
+            guard let self = self else { return }
             do
             {
                 let certificates = try Result(certificates, error).get()
+                self.activeCertificates = certificates
                 
                 if
                     let data = Keychain.shared.signingCertificate,
@@ -770,29 +773,45 @@ private extension AuthenticationOperation
     {
         guard let application = ALTApplication(fileURL: Bundle.main.bundleURL), let provisioningProfile = application.provisioningProfile else { return completionHandler(false) }
         
-        // If we're not using the same certificate used to install AltStore, warn user that they need to refresh.
-        guard !provisioningProfile.certificates.contains(signer.certificate) else { return completionHandler(false) }
+        let result = SigningCertificateValidator.validate(
+            runningProfile: provisioningProfile,
+            activeCertificates: self.activeCertificates,
+            signerCertificate: signer.certificate,
+            signerTeam: signer.team
+        )
         
-//        #if DEBUG && targetEnvironment(simulator)
-//        completionHandler(false)
-//        #else
-        
-        DispatchQueue.main.async {
-            let context = AuthenticatedOperationContext(context: self.context)
-            context.operations.removeAllObjects() // Prevent deadlock due to endless waiting on previous operations to finish.
+        switch result {
+        case .success:
+            return completionHandler(false)
             
-            let refreshViewController = self.storyboard.instantiateViewController(withIdentifier: "refreshAltStoreViewController") as! RefreshAltStoreViewController
-            refreshViewController.context = context
-            refreshViewController.completionHandler = { _ in
-                completionHandler(true)
+        case .failure(let reason):
+            print("[AltSign] Signing certificate mismatch detected: \(reason)")
+            
+            // For Paid Developer accounts, if the certificate used to sign the current installation
+            // is still active on Apple's portal (which shows as .privateKeyLost or .externalSigner),
+            // we don't need to warn the user or force a refresh.
+            if signer.team.type != .free && (reason == .privateKeyLost || reason == .externalSigner) {
+                print("[AltSign] Running certificate is still active on the Paid account portal. Skipping refresh screen.")
+                return completionHandler(false)
             }
             
-            if !self.present(refreshViewController)
-            {
-                completionHandler(false)
+            DispatchQueue.main.async {
+                let context = AuthenticatedOperationContext(context: self.context)
+                context.operations.removeAllObjects() // Prevent deadlock due to endless waiting on previous operations to finish.
+                
+                let refreshViewController = self.storyboard.instantiateViewController(withIdentifier: "refreshAltStoreViewController") as! RefreshAltStoreViewController
+                refreshViewController.context = context
+                refreshViewController.mismatchReason = reason
+                refreshViewController.completionHandler = { _ in
+                    completionHandler(true)
+                }
+                
+                if !self.present(refreshViewController)
+                {
+                    completionHandler(false)
+                }
             }
         }
-//        #endif
     }
 }
 

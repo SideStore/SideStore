@@ -36,7 +36,16 @@ public class Team: BaseEntity
     /* Properties */
     @NSManaged public var name: String
     @NSManaged public var identifier: String
-    @NSManaged public var type: ALTTeamType
+    @NSManaged @objc(type) public var typeValue: Int16
+    
+    public var type: ALTTeamType {
+        get {
+            return ALTTeamType(rawValue: Int(self.typeValue)) ?? .unknown
+        }
+        set {
+            self.typeValue = Int16(newValue.rawValue)
+        }
+    }
     
     @NSManaged public var isActiveTeam: Bool
     

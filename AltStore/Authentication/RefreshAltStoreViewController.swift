@@ -13,6 +13,7 @@ import AltSign
 final class RefreshAltStoreViewController: UIViewController
 {
     var context: AuthenticatedOperationContext!
+    var mismatchReason: SigningCertificateMismatchReason?
     
     var completionHandler: ((Result<Void, Error>) -> Void)?
     
@@ -26,7 +27,47 @@ final class RefreshAltStoreViewController: UIViewController
         
         self.placeholderView.detailTextLabel.textAlignment = .left
         self.placeholderView.detailTextLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-        self.placeholderView.detailTextLabel.text = NSLocalizedString("SideStore was unable to use an existing signing certificate, so it had to create a new one. This will cause any apps installed with an existing certificate to expire — including SideStore.\n\nTo prevent SideStore from expiring early, please refresh the app now. SideStore will quit once refreshing is complete.", comment: "")
+        
+        let reason = self.mismatchReason ?? (self.context?.team?.type == .free ? .freeAccountLimitRevoked : .revoked)
+        let reasonText: String
+        
+        switch reason {
+            case .expired:
+                reasonText = NSLocalizedString("The signing certificate used to install SideStore has expired.", comment: "")
+            case .revoked:
+                reasonText = NSLocalizedString("The signing certificate used to install SideStore was revoked on the Apple Developer portal.", comment: "")
+            case .freeAccountLimitRevoked:
+                reasonText = NSLocalizedString("Free developer accounts are limited to 1 active signing certificate. Since the private key for your existing certificate was not found on this device, SideStore had to create a new certificate, which automatically revoked the old one.", comment: "")
+            case .differentAccount:
+                reasonText = NSLocalizedString("The logged-in Apple ID account has changed.", comment: "")
+            case .differentTeam:
+                reasonText = NSLocalizedString("The active developer team has changed.", comment: "")
+            case .privateKeyLost:
+                reasonText = NSLocalizedString("The private key for the active signing certificate is missing from this device's keychain.", comment: "")
+            case .externalSigner:
+                reasonText = NSLocalizedString("SideStore was installed by a different signing tool (like Xcode or AltStore).", comment: "")
+            case .corruptProfile:
+                reasonText = NSLocalizedString("The provisioning profile for SideStore is corrupt or missing.", comment: "")
+        }
+        
+        let header = NSLocalizedString("Signing certificate mismatch detected.", comment: "")
+        let paragraph1 = NSLocalizedString("To ensure you can continue using SideStore, the app must be reinstalled now using the new certificate. Otherwise, you will be unable to refresh or open SideStore once the old certificate expires.", comment: "")
+        let paragraph2 = NSLocalizedString("This reinstallation registers the new signature with the OS and will terminate SideStore. You can reopen SideStore immediately once reinstallation is completed.", comment: "")
+        
+        let fullText = "\(header)\n\n\(paragraph1)\n\n\(paragraph2)\n\nReason: \(reasonText)"
+        let attributedString = NSMutableAttributedString(string: fullText)
+        
+        if let reasonRange = fullText.range(of: "Reason:") {
+            let nsRange = NSRange(reasonRange, in: fullText)
+            let baseFont = self.placeholderView.detailTextLabel.font ?? UIFont.systemFont(ofSize: 14)
+            if let boldFontDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitBold) {
+                let boldFont = UIFont(descriptor: boldFontDescriptor, size: baseFont.pointSize)
+                attributedString.addAttribute(.font, value: boldFont, range: nsRange)
+            }
+            attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: nsRange)
+        }
+        
+        self.placeholderView.detailTextLabel.attributedText = attributedString
     }
 }
 
