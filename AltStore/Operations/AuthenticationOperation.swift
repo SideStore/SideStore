@@ -92,20 +92,47 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 let team = Keychain.shared.team
             {
                 if session.anisetteData.date.timeIntervalSinceNow < -40.0 {
-                    let anisetteData = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<ALTAnisetteData, any Error>) in
-                        let fetchAnisetteDataOperation = FetchAnisetteDataOperation(context: self.context)
-                        fetchAnisetteDataOperation.resultHandler = { (result) in
-                            c.resume(with: result)
+                    do {
+                        let anisetteData = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<ALTAnisetteData, any Error>) in
+                            let fetchAnisetteDataOperation = FetchAnisetteDataOperation(context: self.context)
+                            fetchAnisetteDataOperation.resultHandler = { (result) in
+                                c.resume(with: result)
+                            }
+                            self.operationQueue.addOperation(fetchAnisetteDataOperation)
                         }
-                        self.operationQueue.addOperation(fetchAnisetteDataOperation)
+                        session.anisetteData = anisetteData
+                    } catch {
+                        print("[Authentication] Failed to update anisette data for cached session: \(error)")
                     }
-                    session.anisetteData = anisetteData
                 }
-                self.context.team = team
-                self.context.session = session
-                self.context.certificate = certificate
-                self.finish(.success((team, certificate, session)))
-                return
+                
+                // Validate if the cached session and certificate are still active on Apple's servers
+                do {
+                    let certificates = try await withUnsafeThrowingContinuation { (c: UnsafeContinuation<[ALTCertificate], any Error>) in
+                        ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certs, err) in
+                            if let certs = certs {
+                                c.resume(returning: certs)
+                            } else {
+                                c.resume(throwing: err ?? OperationError.unknown())
+                            }
+                        }
+                    }
+                    
+                    self.activeCertificates = certificates
+                    
+                    if certificates.contains(where: { $0.serialNumber == certificate.serialNumber }) {
+                        print("[Authentication] Cached session and certificate are still valid.")
+                        self.context.team = team
+                        self.context.session = session
+                        self.context.certificate = certificate
+                        self.finish(.success((team, certificate, session)))
+                        return
+                    } else {
+                        print("[Authentication] Cached certificate is no longer active on developer portal.")
+                    }
+                } catch {
+                    print("[Authentication] Failed to validate cached session: \(error)")
+                }
             }
             
             // new login
@@ -285,14 +312,17 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 Keychain.shared.appleIDEmailAddress = self.appleIDEmailAddress ?? altTeam.account.appleID // Prefer the user's provided email address over the one associated with their account (which may be outdated).
                 Keychain.shared.appleIDPassword = self.appleIDPassword
                 
-                Keychain.shared.signingCertificate = altCertificate.p12Data()
-                Keychain.shared.signingCertificatePassword = altCertificate.machineIdentifier
-                
                 self.showInstructionsIfNecessary() { (didShowInstructions) in
                     
                     let signer = ALTSigner(team: altTeam, certificate: altCertificate)
                     // Refresh screen must go last since a successful refresh will cause the app to quit.
                     self.showRefreshScreenIfNecessary(signer: signer, session: session) { (didShowRefreshAlert) in
+                        if !didShowRefreshAlert
+                        {
+                            Keychain.shared.signingCertificate = altCertificate.p12Data()
+                            Keychain.shared.signingCertificatePassword = altCertificate.machineIdentifier
+                        }
+                        
                         super.finish(result)
                         
                         DispatchQueue.main.async {
