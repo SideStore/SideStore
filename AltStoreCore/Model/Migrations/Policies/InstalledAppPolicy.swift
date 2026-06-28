@@ -39,7 +39,7 @@ class InstalledAppToInstalledAppMigrationPolicy: NSEntityMigrationPolicy
         {
             isActive = true
         }
-        else if let team = team, let type = team.value(forKey: #keyPath(Team.type)) as? Int16, type != ALTTeamType.free.rawValue
+        else if let team = team, let type = team.value(forKey: #keyPath(Team.typeValue)) as? Int16, type != ALTTeamType.free.rawValue
         {
             isActive = true
         }

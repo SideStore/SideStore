@@ -46,7 +46,7 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
                                                                          "self.context.certificate is nil")))
         }
         
-        Logger.sideload.notice("Resigning app \(self.context.bundleIdentifier, privacy: .public)...")
+        print("Resigning app \(self.context.bundleIdentifier)...")
         
         // Prepare app bundle
         let prepareAppProgress = Progress.discreteProgress(totalUnitCount: 2)
@@ -76,7 +76,7 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
                     // Use appBundleURL since we need an app bundle, not .ipa.
                     guard let resignedApplication = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }
                     
-                    Logger.sideload.notice("Resigned app \(self.context.bundleIdentifier, privacy: .public) to \(resignedApplication.bundleIdentifier, privacy: .public).")
+                    print("Resigned app \(self.context.bundleIdentifier) to \(resignedApplication.bundleIdentifier).")
                     
                     self.finish(.success(resignedApplication))
                 }

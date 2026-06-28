@@ -287,7 +287,7 @@ private extension BrowseViewController
             if let error = error, let dataSource
             {
                 let app = dataSource.item(at: indexPath)
-                Logger.main.debug("Failed to load app icon from \(app.iconURL, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                print("Failed to load app icon from \(app.iconURL). \(error.localizedDescription)")
             }
         }
         
@@ -381,7 +381,7 @@ private extension BrowseViewController
                 Nuke.loadImage(with: iconURL, into: self.titleSourceIconView) { result in
                     switch result
                     {
-                    case .failure(let error): Logger.main.error("Failed to fetch source icon at \(iconURL, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                    case .failure(let error): print("Failed to fetch source icon at \(iconURL). \(error.localizedDescription)")
                     case .success: self.titleSourceIconView.backgroundColor = .white
                     }
                 }
@@ -475,7 +475,7 @@ private extension BrowseViewController
         }
         catch
         {
-            Logger.main.error("Failed to fetch categories. \(error.localizedDescription, privacy: .public)")
+            print("Failed to fetch categories. \(error.localizedDescription)")
             
             return []
         }

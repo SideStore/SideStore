@@ -256,7 +256,7 @@ private extension SourceDetailContentViewController
             if let error, let dataSource
             {
                 let app = dataSource.item(at: indexPath)
-                Logger.main.debug("Failed to fetch app icon from \(app.iconURL, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                print("Failed to fetch app icon from \(app.iconURL). \(error.localizedDescription)")
             }
         }
         

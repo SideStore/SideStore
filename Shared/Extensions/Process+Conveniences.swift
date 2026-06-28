@@ -44,7 +44,7 @@ extension Process
         let outputTask = Task {
             do
             {
-                let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: toolURL.lastPathComponent)
+                // let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: toolURL.lastPathComponent)
                 
                 // Automatically cancels when fileHandle closes.
                 for try await line in outputPipe.fileHandleForReading.bytes.lines
@@ -52,7 +52,7 @@ extension Process
                     process.output += line + "\n"
                     process.outputPublisher.send(line)
                     
-                    logger.notice("\(line, privacy: .public)")
+                    print("\(line)")
                 }
                 
                 try Task.checkCancellation()
@@ -64,7 +64,7 @@ extension Process
             }
             catch
             {
-                Logger.main.error("Failed to read process output. \(error.localizedDescription, privacy: .public)")
+                print("Failed to read process output. \(error.localizedDescription)")
                 
                 try Task.checkCancellation()
                 process.outputPublisher.send(completion: .failure(error))
@@ -72,7 +72,7 @@ extension Process
         }
         
         process.terminationHandler = { process in
-            Logger.main.notice("Process \(toolURL, privacy: .public) terminated with exit code \(process.terminationStatus).")
+            print("Process \(toolURL) terminated with exit code \(process.terminationStatus).")
             
             outputTask.cancel()
             process.outputPublisher.send(completion: .finished)
@@ -146,7 +146,7 @@ extension Process
         }
         catch
         {
-            Logger.main.error("Failed to close \(self.executableURL?.lastPathComponent ?? "process", privacy: .public)'s standardOutput. \(error.localizedDescription, privacy: .public)")
+            print("Failed to close \(self.executableURL?.lastPathComponent ?? "process")'s standardOutput. \(error.localizedDescription)")
         }
     }
 }

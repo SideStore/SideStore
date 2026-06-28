@@ -690,7 +690,7 @@ extension AppManager
                         }
                         catch
                         {
-                            Logger.main.error("Failed to assign error \(sanitizedError.localizedErrorCode) to source \(sourceID, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                            print("Failed to assign error \(sanitizedError.localizedErrorCode) to source \(sourceID). \(error.localizedDescription)")
                         }
                     }
                     
@@ -2067,7 +2067,7 @@ private extension AppManager
             }
             catch
             {
-                Logger.main.error("Failed to save InstalledApp to database. \(error.localizedDescription, privacy: .public)")
+                print("Failed to save InstalledApp to database. \(error.localizedDescription)")
                 throw error
             }
         }

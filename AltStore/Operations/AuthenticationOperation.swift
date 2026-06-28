@@ -221,8 +221,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         
         switch result
         {
-        case .failure(let error): Logger.sideload.error("Failed to authenticate account. \(error.localizedDescription, privacy: .public)")
-        case .success((let team, _, _)): Logger.sideload.notice("Authenticated account for team \(team.identifier, privacy: .public).")
+        case .failure(let error): print("Failed to authenticate account. \(error.localizedDescription)")
+        case .success((let team, _, _)): print("Authenticated account for team \(team.identifier).")
         }
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
@@ -374,7 +374,7 @@ private extension AuthenticationOperation
         }
         
         if let adsid = Keychain.shared.appleIDAdsid, let xcodeToken = Keychain.shared.appleIDXcodeToken {
-            Logger.sideload.notice("Authenticating Apple ID with tokens...")
+            print("Authenticating Apple ID with tokens...")
             let semaphore = DispatchSemaphore(value: 0)
             var shouldContinue = true
             Task {
@@ -386,7 +386,7 @@ private extension AuthenticationOperation
                     completionHandler(.success((account, session)))
                     shouldContinue = false
                 } catch {
-                    Logger.sideload.notice("Authentication failed with token. Fall back to email and password login: \(error)")
+                    print("Authentication failed with token. Fall back to email and password login: \(error)")
                 }
             }
             
@@ -398,7 +398,7 @@ private extension AuthenticationOperation
         
         if let appleID = Keychain.shared.appleIDEmailAddress, let password = Keychain.shared.appleIDPassword
         {
-            Logger.sideload.notice("Authenticating Apple ID...")
+            print("Authenticating Apple ID...")
             
             self.authenticate(appleID: appleID, password: password) { (result) in
                 switch result

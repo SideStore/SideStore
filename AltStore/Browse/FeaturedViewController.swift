@@ -283,7 +283,7 @@ private extension FeaturedViewController
             if let error, let dataSource
             {
                 let app = dataSource.item(at: indexPath)
-                Logger.main.debug("Failed to app icon from \(app.iconURL, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                print("Failed to app icon from \(app.iconURL). \(error.localizedDescription)")
             }
         }
         
@@ -422,7 +422,7 @@ private extension FeaturedViewController
             if let error = error, let dataSource
             {
                 let app = dataSource.item(at: indexPath)
-                Logger.main.debug("Failed to app icon from \(app.iconURL, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                print("Failed to app icon from \(app.iconURL). \(error.localizedDescription)")
             }
         }
         
@@ -525,7 +525,7 @@ private extension FeaturedViewController
                     toastView.show(in: self)
                     
                 case .success:
-                    Logger.main.info("Installed app \(storeApp.bundleIdentifier, privacy: .public) from FeaturedViewController.")
+                    print("Installed app \(storeApp.bundleIdentifier) from FeaturedViewController.")
                 }
                 
                 for indexPath in self.collectionView.indexPathsForVisibleItems
@@ -703,7 +703,7 @@ extension FeaturedViewController
         }
         catch let error as NSError
         {
-            Logger.main.error("Failed to fetch sources for preview. \(error.localizedDescription, privacy: .public)")
+            print("Failed to fetch sources for preview. \(error.localizedDescription)")
         }
     }
     
@@ -736,7 +736,7 @@ extension FeaturedViewController
             }
             catch
             {
-                Logger.main.error("Failed to fetch known sources for preview. \(error.localizedDescription, privacy: .public)")
+                print("Failed to fetch known sources for preview. \(error.localizedDescription)")
             }
         }
     }

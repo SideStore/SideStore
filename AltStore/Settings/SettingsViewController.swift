@@ -272,10 +272,10 @@ final class SettingsViewController: UITableViewController
         _ = file.startAccessingSecurityScopedResource()
         defer { file.stopAccessingSecurityScopedResource() }
         guard let accountD = try? Data(contentsOf: file) else {
-            return Logger.main.notice("Could not parse data from file \(file)")
+            return print("Could not parse data from file \(file)")
         }
         guard let account = try? Foundation.JSONDecoder().decode(ImportedAccount.self, from: accountD) else {
-            return Logger.main.notice("Could not parse data from file \(file)")
+            return print("Could not parse data from file \(file)")
         }
         print("We want to import this account probably: \(account)")
         if remove {

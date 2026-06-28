@@ -286,7 +286,7 @@ public extension DatabaseManager
             }
             catch
             {
-                Logger.main.error("Failed to update source order. \(error.localizedDescription, privacy: .public)")
+                print("Failed to update source order. \(error.localizedDescription)")
             }
             
             do
@@ -304,7 +304,7 @@ public extension DatabaseManager
             }
             catch
             {
-                Logger.main.error("Failed to update app order. \(error.localizedDescription, privacy: .public)")
+                print("Failed to update app order. \(error.localizedDescription)")
             }
         }
     }

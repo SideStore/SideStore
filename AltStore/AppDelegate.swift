@@ -225,7 +225,7 @@ private extension AppDelegate
             }
             catch
             {
-                Logger.main.error("Failed to create image disk cache. Falling back to URL cache. \(error.localizedDescription, privacy: .public)")
+                print("Failed to create image disk cache. Falling back to URL cache. \(error.localizedDescription)")
             }
         }
         
@@ -233,7 +233,7 @@ private extension AppDelegate
         
         if let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache, #available(iOS 15, *)
         {
-            Logger.main.info("Current image cache size: \(dataCache.totalSize.formatted(.byteCount(style: .file)), privacy: .public)")
+            print("Current image cache size: \(dataCache.totalSize.formatted(.byteCount(style: .file)))")
         }
     }
     

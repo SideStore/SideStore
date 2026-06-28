@@ -91,7 +91,7 @@ class AltAppIconsViewController: UICollectionViewController
         }
         catch
         {
-            Logger.main.error("Failed to load alternate icons. \(error.localizedDescription, privacy: .public)")
+            print("Failed to load alternate icons. \(error.localizedDescription)")
         }
         
         self.dataSource.proxy = self

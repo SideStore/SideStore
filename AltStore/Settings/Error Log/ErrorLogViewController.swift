@@ -444,7 +444,7 @@ private extension ErrorLogViewController
 //            }
 //            catch
 //            {
-//                Logger.main.error("Failed to export OSLog entries. \(error.localizedDescription, privacy: .public)")
+//                print("Failed to export OSLog entries. \(error.localizedDescription)")
 //                
 //                await MainActor.run {
 //                    let alertController = UIAlertController(title: NSLocalizedString("Unable to Export Detailed Log", comment: ""), message: error.localizedDescription, preferredStyle: .alert)
@@ -602,7 +602,7 @@ extension ErrorLogViewController
 //        }
 //        catch
 //        {
-//            Logger.main.error("Failed to remove temporary log directory \(parentDirectory.lastPathComponent, privacy: .public). \(error.localizedDescription, privacy: .public)")
+//            print("Failed to remove temporary log directory \(parentDirectory.lastPathComponent). \(error.localizedDescription)")
 //        }
 //        
 //        _exportedLogURL = nil

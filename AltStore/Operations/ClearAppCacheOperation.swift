@@ -120,12 +120,12 @@ private extension ClearAppCacheOperation
                 {
                     do
                     {
-                        Logger.main.debug("Removing item from temporary directory: \(fileURL.lastPathComponent, privacy: .public)")
+                        print("Removing item from temporary directory: \(fileURL.lastPathComponent)")
                         try FileManager.default.removeItem(at: fileURL)
                     }
                     catch
                     {
-                        Logger.main.error("Failed to remove \(fileURL.lastPathComponent) from temporary directory. \(error.localizedDescription, privacy: .public)")
+                        print("Failed to remove \(fileURL.lastPathComponent) from temporary directory. \(error.localizedDescription)")
                         errors.append(error)
                     }
                 }
@@ -185,13 +185,13 @@ private extension ClearAppCacheOperation
 
                             if isDirectory && !installedAppBundleIDs.contains(bundleID) && !AppManager.shared.isActivelyManagingApp(withBundleID: bundleID)
                             {
-                                Logger.main.debug("Removing backup directory for uninstalled app: \(bundleID, privacy: .public)")
+                                print("Removing backup directory for uninstalled app: \(bundleID)")
                                 try FileManager.default.removeItem(at: backupDirectory)
                             }
                         }
                         catch
                         {
-                            Logger.main.error("Failed to remove app backup directory. \(error.localizedDescription, privacy: .public)")
+                            print("Failed to remove app backup directory. \(error.localizedDescription)")
                             errors.append(error)
                         }
                     }
@@ -209,7 +209,7 @@ private extension ClearAppCacheOperation
                 }
                 catch
                 {
-                    Logger.main.error("Failed to remove app backup directory. \(error.localizedDescription, privacy: .public)")
+                    print("Failed to remove app backup directory. \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }

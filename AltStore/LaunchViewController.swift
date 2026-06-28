@@ -110,10 +110,10 @@ final class LaunchViewController: UIViewController {
         _ = file.startAccessingSecurityScopedResource()
         defer { file.stopAccessingSecurityScopedResource() }
         guard let accountD = try? Data(contentsOf: file) else {
-            return Logger.main.notice("Could not parse data from file \(file)")
+            return print("Could not parse data from file \(file)")
         }
         guard let account = try? Foundation.JSONDecoder().decode(ImportedAccount.self, from: accountD) else {
-            return Logger.main.notice("Could not parse data from file \(file)")
+            return print("Could not parse data from file \(file)")
         }
         print("We want to import this account probably: \(account)")
         if remove {
@@ -171,7 +171,7 @@ extension LaunchViewController {
         AppManager.shared.update()
         AppManager.shared.updateAllSources { result in
             guard case .failure(let error) = result else { return }
-            Logger.main.error("Failed to update sources on launch. \(error.localizedDescription, privacy: .public)")
+            print("Failed to update sources on launch. \(error.localizedDescription)")
             
             
             let errorDesc = ErrorProcessing(.fullError).getDescription(error: error as NSError)

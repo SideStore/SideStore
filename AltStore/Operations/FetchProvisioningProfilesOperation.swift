@@ -49,7 +49,7 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
         
         guard let app = self.context.app else { return self.finish(.failure(OperationError.appNotFound(name: nil))) }
         
-        Logger.sideload.notice("Fetching provisioning profiles for app \(self.context.bundleIdentifier, privacy: .public)...")
+        print("Fetching provisioning profiles for app \(self.context.bundleIdentifier)...")
         
         self.progress.totalUnitCount = Int64(1 + app.appExtensions.count)
         let effectiveBundleId = self.context.bundleIdentifier
@@ -142,7 +142,7 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
                         completionHandler(.success(profile))
                         
                     case .success:
-                        Logger.sideload.notice("Generating new free provisioning profile for App ID \(appID.bundleIdentifier, privacy: .public).")
+                        print("Generating new free provisioning profile for App ID \(appID.bundleIdentifier).")
                         
                         // Fetch new provisioning profile
                         ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
@@ -289,7 +289,7 @@ extension FetchProvisioningProfilesOperation
                 
                 if let appID = appIDs.first(where: { $0.bundleIdentifier.lowercased() == bundleIdentifier.lowercased() })
                 {
-                    Logger.sideload.notice("Using existing App ID \(appID.bundleIdentifier, privacy: .public)")
+                    print("Using existing App ID \(appID.bundleIdentifier)")
                     
                     completionHandler(.success(appID))
                 }
@@ -331,7 +331,7 @@ extension FetchProvisioningProfilesOperation
                             {
                                 let appID = try Result(appID, error).get()
                                 
-                                Logger.sideload.notice("Registered new App ID \(appID.bundleIdentifier, privacy: .public)")
+                                print("Registered new App ID \(appID.bundleIdentifier)")
                                 
                                 completionHandler(.success(appID))
                             }
@@ -472,8 +472,8 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 let result = Result(updatedAppID, error)
                 switch result
                 {
-                case .success(let appID): Logger.sideload.notice("Updated features for App ID \(appID.bundleIdentifier, privacy: .public).")
-                case .failure(let error): Logger.sideload.error("Failed to update features for App ID \(appID.bundleIdentifier, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                case .success(let appID): print("Updated features for App ID \(appID.bundleIdentifier).")
+                case .failure(let error): print("Failed to update features for App ID \(appID.bundleIdentifier). \(error.localizedDescription)")
                 }
                 
                 completionHandler(result)
@@ -494,7 +494,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
         }
                 
         guard var applicationGroups = entitlements[.appGroups] as? [String], !applicationGroups.isEmpty else {
-            Logger.sideload.notice("App ID \(appID.bundleIdentifier, privacy: .public) has no app groups, skipping assignment.")
+            print("App ID \(appID.bundleIdentifier) has no app groups, skipping assignment.")
             // Assigning an App ID to an empty app group array fails,
             // so just do nothing if there are no app groups.
             return completionHandler(.success(appID))
@@ -553,7 +553,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 switch Result(groups, error)
                 {
                 case .failure(let error):
-                    Logger.sideload.error("Failed to fetch app groups for team \(team.identifier, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                    print("Failed to fetch app groups for team \(team.identifier). \(error.localizedDescription)")
                     finish(.failure(error))
                     
                 case .success(let fetchedGroups):
@@ -581,11 +581,11 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                                 switch Result(group, error)
                                 {
                                 case .success(let group):
-                                    Logger.sideload.notice("Created new App Group \(group.groupIdentifier, privacy: .public).")
+                                    print("Created new App Group \(group.groupIdentifier).")
                                     groups.append(group)
                                     
                                 case .failure(let error):
-                                    Logger.sideload.notice("Failed to create new App Group \(adjustedGroupIdentifier, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                                    print("Failed to create new App Group \(adjustedGroupIdentifier). \(error.localizedDescription)")
                                     errors.append(error)
                                 }
                                 
@@ -606,11 +606,11 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                                 switch Result(success, error)
                                 {
                                 case .success:
-                                    Logger.sideload.notice("Assigned App ID \(appID.bundleIdentifier, privacy: .public) to App Groups \(groupIDs.description, privacy: .public).")
+                                    print("Assigned App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description).")
                                     finish(.success(appID))
                                     
                                 case .failure(let error):
-                                    Logger.sideload.error("Failed to assign App ID \(appID.bundleIdentifier, privacy: .public) to App Groups \(groupIDs.description, privacy: .public). \(error.localizedDescription, privacy: .public)")
+                                    print("Failed to assign App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description). \(error.localizedDescription)")
                                     finish(.failure(error))
                                 }
                             }

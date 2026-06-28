@@ -122,7 +122,7 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         }
 
         self.managedObjectContext.perform {
-            Logger.sideload.notice("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier), privacy: .public)")
+            print("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier))")
             
             self.startListeningForRunningApps()
             
@@ -135,7 +135,7 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
                     let filteredApps = self.installedApps.filter { !self.runningApplications.contains($0.bundleIdentifier) }
                     if !self.runningApplications.isEmpty
                     {
-                        Logger.sideload.notice("Skipping refreshing running apps: \(self.runningApplications, privacy: .public)")
+                        print("Skipping refreshing running apps: \(self.runningApplications)")
                     }
                     
                     let group = AppManager.shared.refresh(filteredApps, presentingViewController: nil)
@@ -246,7 +246,7 @@ private extension BackgroundRefreshAppsOperation
             {
                 print("Failed to refresh apps in background.", error)
 
-                Logger.sideload.error("Failed to refresh apps in background. \(error.localizedDescription, privacy: .public)")
+                print("Failed to refresh apps in background. \(error.localizedDescription)")
                 
                 content.title = NSLocalizedString("Failed to Refresh Apps", comment: "")
                 content.body = error.localizedDescription
@@ -290,7 +290,7 @@ private extension BackgroundRefreshAppsOperation
             _ = RefreshAttempt(identifier: self.refreshIdentifier, result: result, context: context)
             
             do { try context.save() }
-            catch { Logger.sideload.error("Failed to save refresh attempt. \(error.localizedDescription, privacy: .public)") }
+            catch { print("Failed to save refresh attempt. \(error.localizedDescription)") }
         }
     }
     
