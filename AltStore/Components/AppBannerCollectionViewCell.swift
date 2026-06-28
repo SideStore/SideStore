@@ -78,27 +78,40 @@ class AppBannerCollectionViewCell: UICollectionViewListCell
     
     func setEditing(_ editing: Bool, isSelected: Bool, animated: Bool = false)
     {
-        if editing
-        {
-            self.checkmarkImageView.isHidden = false
-            self.bannerViewLeadingConstraint?.isActive = false
-            self.bannerViewLeadingEditingConstraint?.isActive = true
-            
-            let systemImageName = isSelected ? "checkmark.circle.fill" : "circle"
-            self.checkmarkImageView.image = UIImage(systemName: systemImageName)
-            self.checkmarkImageView.tintColor = isSelected ? .altPrimary : .secondaryLabel
-        }
-        else
-        {
-            self.checkmarkImageView.isHidden = true
-            self.bannerViewLeadingEditingConstraint?.isActive = false
-            self.bannerViewLeadingConstraint?.isActive = true
+        let systemImageName = isSelected ? "checkmark.circle.fill" : "circle"
+        self.checkmarkImageView.image = UIImage(systemName: systemImageName)
+        self.checkmarkImageView.tintColor = isSelected ? .altPrimary : .secondaryLabel
+        
+        let changeConstraints = {
+            if editing
+            {
+                self.checkmarkImageView.isHidden = false
+                self.checkmarkImageView.alpha = 1.0
+                self.bannerViewLeadingConstraint?.isActive = false
+                self.bannerViewLeadingEditingConstraint?.isActive = true
+            }
+            else
+            {
+                self.checkmarkImageView.alpha = 0.0
+                self.bannerViewLeadingEditingConstraint?.isActive = false
+                self.bannerViewLeadingConstraint?.isActive = true
+            }
+            self.layoutIfNeeded()
         }
         
         if animated
         {
-            UIView.animate(withDuration: 0.3) {
-                self.layoutIfNeeded()
+            UIView.animate(withDuration: 0.3, animations: changeConstraints) { _ in
+                if !editing {
+                    self.checkmarkImageView.isHidden = true
+                }
+            }
+        }
+        else
+        {
+            changeConstraints()
+            if !editing {
+                self.checkmarkImageView.isHidden = true
             }
         }
     }

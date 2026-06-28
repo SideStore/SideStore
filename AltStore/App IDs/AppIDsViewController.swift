@@ -70,7 +70,8 @@ private extension AppIDsViewController
         
         let dataSource = RSTFetchedResultsCollectionViewDataSource<AppID>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.proxy = self
-        dataSource.cellConfigurationHandler = { (cell, appID, indexPath) in
+        dataSource.cellConfigurationHandler = { [weak self] (cell, appID, indexPath) in
+            guard let self = self else { return }
             let tintColor = UIColor.altPrimary
             
             let cell = cell as! AppBannerCollectionViewCell
@@ -106,7 +107,6 @@ private extension AppIDsViewController
                 let timeIntervalText = timeInterval ?? NSLocalizedString("Unknown", comment: "")
                 cell.bannerView.button.setTitle(timeIntervalText.uppercased(), for: .normal)
                 
-                // formatter.includesTimeRemainingPhrase = true
                 attributedAccessibilityLabel.mutableString.append(timeIntervalText)
             }
             else
@@ -126,7 +126,6 @@ private extension AppIDsViewController
             
             if let team = appID.team, let range = attributedBundleIdentifier.string.range(of: team.identifier.lowercased())
             {
-                // Prefer to speak the team ID one character at a time.
                 let nsRange = NSRange(range, in: attributedBundleIdentifier.string)
                 attributedBundleIdentifier.addAttributes([.accessibilitySpeechSpellOut: true], range: nsRange)
             }
@@ -134,7 +133,6 @@ private extension AppIDsViewController
             attributedAccessibilityLabel.append(attributedBundleIdentifier)
             cell.bannerView.accessibilityAttributedLabel = attributedAccessibilityLabel
             
-            // Make sure refresh button is correct size.
             cell.layoutIfNeeded()
             
             let isSelected = self.collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
@@ -149,7 +147,8 @@ private extension AppIDsViewController
         guard !self.isLoading else { return }
         self.isLoading = true
         
-        AppManager.shared.fetchAppIDs { (result) in
+        AppManager.shared.fetchAppIDs { [weak self] (result) in
+            guard let self = self else { return }
             do
             {
                 let (_, context) = try result.get()
@@ -197,7 +196,7 @@ private extension AppIDsViewController
             }
             
             self.navigationItem.rightBarButtonItem?.isEnabled = !self.isEditingMode
-            self.navigationItem.rightBarButtonItem?.tintColor = self.isEditingMode ? .systemGray : nil
+            self.navigationItem.rightBarButtonItem?.tintColor = self.isEditingMode ? UIColor.white.withAlphaComponent(0.3) : nil
             
             if self.collectionView.refreshControl == nil
             {
@@ -205,6 +204,11 @@ private extension AppIDsViewController
                 refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
                 self.collectionView.refreshControl = refreshControl
             }
+        }
+        else
+        {
+            self.activityIndicatorBarButtonItem.isIndicatingActivity = true
+            self.navigationItem.leftBarButtonItem = nil
         }
     }
 }
@@ -297,7 +301,18 @@ private extension AppIDsViewController
         self.collectionView.allowsMultipleSelection = true
         self.navigationItem.rightBarButtonItem?.isEnabled = false
         self.navigationController?.isModalInPresentation = true
-        self.collectionView.reloadData()
+        
+        for cell in self.collectionView.visibleCells {
+            if let cell = cell as? AppBannerCollectionViewCell, let indexPath = self.collectionView.indexPath(for: cell) {
+                let isSelected = self.collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
+                cell.setEditing(true, isSelected: isSelected, animated: true)
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.collectionView.reloadData()
+        }
+        
         self.update()
     }
     
@@ -312,7 +327,17 @@ private extension AppIDsViewController
         }
         self.navigationItem.rightBarButtonItem?.isEnabled = true
         self.navigationController?.isModalInPresentation = false
-        self.collectionView.reloadData()
+        
+        for cell in self.collectionView.visibleCells {
+            if let cell = cell as? AppBannerCollectionViewCell {
+                cell.setEditing(false, isSelected: false, animated: true)
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.collectionView.reloadData()
+        }
+        
         self.update()
     }
     
