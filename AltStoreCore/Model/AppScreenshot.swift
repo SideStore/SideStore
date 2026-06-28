@@ -94,7 +94,7 @@ public class AppScreenshot: BaseEntity, Decodable
     {
         super.awakeFromInsert()
         
-        self.deviceType = .iphone
+        self.deviceType = .iPhone
     }
 }
 
@@ -146,7 +146,7 @@ internal struct AppScreenshots: Decodable
             // Fallback to single array.
             
             var collection = try Collection(from: decoder)
-            collection.deviceType = .iphone
+            collection.deviceType = .iPhone
             
             self.screenshots = collection.screenshots
             
@@ -155,13 +155,13 @@ internal struct AppScreenshots: Decodable
         
         if var collection = try container.decodeIfPresent(Collection.self, forKey: .iphone)
         {
-            collection.deviceType = .iphone
+            collection.deviceType = .iPhone
             self.screenshots += collection.screenshots
         }
         
         if var collection = try container.decodeIfPresent(Collection.self, forKey: .ipad)
         {
-            collection.deviceType = .ipad
+            collection.deviceType = .iPad
             self.screenshots += collection.screenshots
         }
     }
@@ -173,7 +173,7 @@ extension AppScreenshots
     {
         var screenshots: [AppScreenshot] = []
         
-        var deviceType: ALTDeviceType = .iphone {
+        var deviceType: ALTDeviceType = .iPhone {
             didSet {
                 self.screenshots.forEach { $0.deviceType = self.deviceType }
             }

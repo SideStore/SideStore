@@ -128,15 +128,15 @@ public extension NSError
         let boldFont = ALTFont(descriptor: boldFontDescriptor, size: font.pointSize) ?? font
         #endif
 
-        var preferredKeyOrder = [
+        var preferredKeyOrder: [String] = [
             NSDebugDescriptionErrorKey,
             NSLocalizedDescriptionKey,
             NSLocalizedFailureErrorKey,
             NSLocalizedFailureReasonErrorKey,
             NSLocalizedRecoverySuggestionErrorKey,
-            ALTLocalizedTitleErrorKey,
-            ALTSourceFileErrorKey,
-            ALTSourceLineErrorKey,
+            ALTLocalizedTitleErrorKey as String,
+            ALTSourceFileErrorKey as String,
+            ALTSourceLineErrorKey as String,
             NSUnderlyingErrorKey
         ]
 
@@ -153,8 +153,8 @@ public extension NSError
         userInfo[NSLocalizedRecoverySuggestionErrorKey] = self.localizedRecoverySuggestion
 
         let sortedUserInfo = userInfo.sorted { (a, b) in
-            let indexA = preferredKeyOrder.firstIndex(of: a.key)
-            let indexB = preferredKeyOrder.firstIndex(of: b.key)
+            let indexA = preferredKeyOrder.firstIndex(of: a.key as? String ?? "")
+            let indexB = preferredKeyOrder.firstIndex(of: b.key as? String ?? "")
 
             switch (indexA, indexB)
             {
@@ -178,8 +178,8 @@ public extension NSError
             case NSLocalizedFailureReasonErrorKey: keyName = NSLocalizedString("Failure Reason", comment: "")
             case NSLocalizedRecoverySuggestionErrorKey: keyName = NSLocalizedString("Recovery Suggestion", comment: "")
             case ALTLocalizedTitleErrorKey: keyName = NSLocalizedString("Title", comment: "")
-            case ALTSourceFileErrorKey: keyName = NSLocalizedString("Source File", comment: "")
-            case ALTSourceLineErrorKey: keyName = NSLocalizedString("Source Line", comment: "")
+            case _ where key == ALTSourceFileErrorKey as String: keyName = NSLocalizedString("Source File", comment: "")
+            case _ where key == ALTSourceLineErrorKey as String: keyName = NSLocalizedString("Source Line", comment: "")
             case NSUnderlyingErrorKey: keyName = NSLocalizedString("Underlying Error", comment: "")
             default:
                 if #available(iOS 14.5, macOS 11.3, *), key == NSMultipleUnderlyingErrorsKey

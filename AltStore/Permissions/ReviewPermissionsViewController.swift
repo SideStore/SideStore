@@ -342,20 +342,23 @@ extension ReviewPermissionsViewController
 
 @available(iOS 17, *)
 #Preview(traits: .portrait) {
-    DatabaseManager.shared.startForPreview()
+    let navigationController: UINavigationController = {
+        _ = DatabaseManager.shared.startForPreview()
+        
+        let app = AnyApp(name: "Delta", bundleIdentifier: "com.rileytestut.Delta", url: nil, storeApp: nil)
+        let permissions: [ALTEntitlement] = [
+            .getTaskAllow,
+            .appGroups,
+            .interAppAudio,
+            .keychainAccessGroups,
+            .init("com.apple.developer.extended-virtual-addressing"),
+            .init("com.apple.developer.increased-memory-limit")
+        ]
+        
+        let reviewPermissionsViewController = ReviewPermissionsViewController(app: app, permissions: permissions, mode: .all)
+        
+        return UINavigationController(rootViewController: reviewPermissionsViewController)
+    }()
     
-    let app = AnyApp(name: "Delta", bundleIdentifier: "com.rileytestut.Delta", url: nil, storeApp: nil)
-    let permissions: [ALTEntitlement] = [
-        .getTaskAllow,
-        .appGroups,
-        .interAppAudio,
-        .keychainAccessGroups,
-        .init("com.apple.developer.extended-virtual-addressing"),
-        .init("com.apple.developer.increased-memory-limit")
-    ]
-    
-    let reviewPermissionsViewController = ReviewPermissionsViewController(app: app, permissions: permissions, mode: .all)
-    
-    let navigationController = UINavigationController(rootViewController: reviewPermissionsViewController)
-    return navigationController
+    navigationController
 }

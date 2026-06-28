@@ -68,10 +68,10 @@ public extension ALTLocalizedError
 
     var errorUserInfo: [String : Any] {
         let userInfo: [String: Any?] = [
-            NSLocalizedFailureErrorKey: self.errorFailure,
-            ALTLocalizedTitleErrorKey: self.errorTitle,
-            ALTSourceFileErrorKey: self.sourceFile,
-            ALTSourceLineErrorKey: self.sourceLine,
+            NSLocalizedFailureErrorKey      : self.errorFailure,
+            ALTLocalizedTitleErrorKey       : self.errorTitle,
+            ALTSourceFileErrorKey as String : self.sourceFile,
+            ALTSourceLineErrorKey as String : self.sourceLine,
         ]
 
         return userInfo.compactMapValues { $0 }

@@ -9,6 +9,17 @@
 import Foundation
 import Network
 
+@objc(ALTConnection)
+public protocol Connection: NSObjectProtocol {
+    @objc(sendData:completionHandler:)
+    func __send(_ data: Data, completionHandler: @escaping (Bool, Error?) -> Void)
+    
+    @objc(receiveDataWithExpectedSize:completionHandler:)
+    func __receiveData(expectedSize: Int, completionHandler: @escaping (Data?, Error?) -> Void)
+    
+    @objc func disconnect()
+}
+
 public extension Connection
 {
     func send(_ data: Data, completionHandler: @escaping (Result<Void, ALTServerError>) -> Void)

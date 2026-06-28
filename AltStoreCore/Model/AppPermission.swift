@@ -14,8 +14,11 @@ import AltSign
 @objc(AppPermission) @dynamicMemberLookup
 public class AppPermission: BaseEntity
 {
-    /* Properties */
-    @NSManaged public var type: ALTAppPermissionType
+    @nonobjc public var type: ALTAppPermissionType {
+        get { ALTAppPermissionType(rawValue: _type) }
+        set { _type = newValue.rawValue }
+    }
+    @NSManaged @objc(type) public var _type: String
     
     // usageDescription must be non-optional for backwards compatibility,
     // so we store non-optional value and provide public accessor with optional return type.

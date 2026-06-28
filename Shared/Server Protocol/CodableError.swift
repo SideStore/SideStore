@@ -8,8 +8,7 @@
 
 import Foundation
 
-// Can only automatically conform ALTServerError.Code to Codable, not ALTServerError itself
-extension ALTServerError.Code: Codable {}
+// // Conformance to Codable is already declared on ALTServerError.Code (ALTServerErrorEnum) in its definition.
 
 private extension ErrorUserInfoKey
 {

@@ -22,12 +22,12 @@ class AppPermission17To17_1MigrationPolicy: NSEntityMigrationPolicy {
         }
         
         // Extract the type value from source
-        if let type = sInstance.value(forKey: #keyPath(AppPermission.type)) as? String {
+        if let type = sInstance.value(forKey: #keyPath(AppPermission._type)) as? String {
             // this is for backwards compatibility <0.5.10
             // if older type was a valid permission, then consider it as "privacy" in the newer "type".
             if let permission = self.derivePermissionFromType(type) {
                 destinationPermission.setValue(permission, forKey: #keyPath(AppPermission._permission))
-                destinationPermission.setValue("privacy", forKey: #keyPath(AppPermission.type))
+                destinationPermission.setValue("privacy", forKey: #keyPath(AppPermission._type))
             }
         }
         

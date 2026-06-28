@@ -33,8 +33,9 @@ extension ALTAppPermissionType
     }
 }
 
-public protocol ALTAppPermission: RawRepresentable<String>, Hashable
+public protocol ALTAppPermission: Hashable
 {
+    var rawValue: String { get }
     var type: ALTAppPermissionType { get }
     var synthesizedName: String? { get } // Kupo!
     

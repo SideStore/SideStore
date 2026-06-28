@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import CAltSign
+import AltSign
 
 extension ALTApplication: Identifiable {}
 
