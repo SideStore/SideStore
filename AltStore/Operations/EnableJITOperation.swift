@@ -70,15 +70,15 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                                let endRange = message.range(of: "</p>", range: startRange.upperBound..<message.endIndex) {
                                 let pContent = message[startRange.upperBound..<endRange.lowerBound]
                                 self.finish(.failure(OperationError.SideJITIssue(error: String(pContent))))
-                                print(message + " + " + String(pContent))
+                                self.debugLog(message + " + " + String(pContent))
                             } else {
-                                print(message)
+                                self.debugLog(message)
                                 self.finish(.failure(OperationError.SideJITIssue(error: message)))
                             }
                         }
                     case .success():
                         self.finish(.success(()))
-                        print("JIT Enabled Successfully :3 (code made by Stossy11!)")
+                        self.debugLog("JIT Enabled Successfully :3 (code made by Stossy11!)")
                     }
                 }
                 return
@@ -99,6 +99,17 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
                     }
                 }
             }
+        }
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: type(of: self))
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

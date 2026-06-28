@@ -87,7 +87,7 @@ class BackupAppOperation: ResultOperation<Void>
                                 // Failed too quickly for human to respond to alert, possibly still finalizing installation.
                                 // Try again in a couple seconds.
                                 
-                                print("Failed to open app too quickly, retrying after a few seconds...")
+                                self.debugLog("Failed to open app too quickly, retrying after a few seconds...")
                                                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                                     UIApplication.shared.open(openURL, options: [:]) { (success) in
@@ -185,6 +185,17 @@ private extension BackupAppOperation
             
             let result = notification.userInfo?[AppDelegate.appBackupResultKey] as? Result<Void, Error> ?? .failure(OperationError.unknownResult)
             self?.finish(result)
+        }
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: BackupAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

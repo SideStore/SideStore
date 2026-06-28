@@ -122,7 +122,7 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         }
 
         self.managedObjectContext.perform {
-            print("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier))")
+            self.debugLog("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier))")
             
             self.startListeningForRunningApps()
             
@@ -135,7 +135,7 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
                     let filteredApps = self.installedApps.filter { !self.runningApplications.contains($0.bundleIdentifier) }
                     if !self.runningApplications.isEmpty
                     {
-                        print("Skipping refreshing running apps: \(self.runningApplications)")
+                        self.verboseLog("Skipping refreshing running apps: \(self.runningApplications)")
                     }
                     
                     let group = AppManager.shared.refresh(filteredApps, presentingViewController: nil)
@@ -244,13 +244,13 @@ private extension BackgroundRefreshAppsOperation
 
             catch
             {
-                print("Failed to refresh apps in background.", error)
+                self.debugLog("Failed to refresh apps in background. \(error)")
 
-                print("Failed to refresh apps in background. \(error.localizedDescription)")
+                self.debugLog("Failed to refresh apps in background. \(error.localizedDescription)")
                 
                 content.title = NSLocalizedString("Failed to Refresh Apps", comment: "")
                 content.body = error.localizedDescription
-
+ 
                 shouldPresentAlert = true
             }
 
@@ -290,12 +290,23 @@ private extension BackgroundRefreshAppsOperation
             _ = RefreshAttempt(identifier: self.refreshIdentifier, result: result, context: context)
             
             do { try context.save() }
-            catch { print("Failed to save refresh attempt. \(error.localizedDescription)") }
+            catch { debugLog("Failed to save refresh attempt. \(error.localizedDescription)") }
         }
     }
     
     func cancelFinishedRefreshingNotification()
     {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [self.refreshIdentifier])
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: BackgroundRefreshAppsOperation.self)
+        if isLoggingEnabled {
+            print(text)
+        }
     }
 }

@@ -35,7 +35,7 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
         do
         {
             if let error = self.context.error {
-                print("RefreshAppOperation.main: ERROR: self.context.app = \(self.context.app!); self.context.error is \(error)")
+                debugLog("RefreshAppOperation.main: ERROR: self.context.app = \(self.context.app!); self.context.error is \(error)")
                 return self.finish(.failure(error))
             }
             
@@ -71,6 +71,22 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
                     }
                 }
             }
+        }
+    }
+}
+
+private extension RefreshAppOperation
+{
+    func debugLog(_ text: String)
+    {
+        print(text)
+    }
+
+    func verboseLog(_ text: String)
+    {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RefreshAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

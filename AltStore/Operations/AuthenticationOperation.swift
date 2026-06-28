@@ -83,6 +83,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
             self.finish(.failure(error))
             return
         }
+        
+        AltSign.setLogging(OperationsLoggingControl.getFromDatabase(for: AuthenticationOperation.self))
 
         Task {
             // try to use cached session
@@ -102,7 +104,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                         }
                         session.anisetteData = anisetteData
                     } catch {
-                        print("[Authentication] Failed to update anisette data for cached session: \(error)")
+                        self.verboseLog("[Authentication] Failed to update anisette data for cached session: \(error)")
                     }
                 }
                 
@@ -121,17 +123,17 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                     self.activeCertificates = certificates
                     
                     if certificates.contains(where: { $0.serialNumber == certificate.serialNumber }) {
-                        print("[Authentication] Cached session and certificate are still valid.")
+                        self.debugLog("[Authentication] Cached session and certificate are still valid.")
                         self.context.team = team
                         self.context.session = session
                         self.context.certificate = certificate
                         self.finish(.success((team, certificate, session)))
                         return
                     } else {
-                        print("[Authentication] Cached certificate is no longer active on developer portal.")
+                        self.debugLog("[Authentication] Cached certificate is no longer active on developer portal.")
                     }
                 } catch {
-                    print("[Authentication] Failed to validate cached session: \(error)")
+                    self.debugLog("[Authentication] Failed to validate cached session: \(error)")
                 }
             }
             
@@ -249,8 +251,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         
         switch result
         {
-        case .failure(let error): print("Failed to authenticate account. \(error.localizedDescription)")
-        case .success((let team, _, _)): print("Authenticated account for team \(team.identifier).")
+        case .failure(let error): self.debugLog("Failed to authenticate account. \(error.localizedDescription)")
+        case .success((let team, _, _)): self.debugLog("Authenticated account for team \(team.identifier).")
         }
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
@@ -315,6 +317,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 self.showInstructionsIfNecessary() { (didShowInstructions) in
                     
                     let signer = ALTSigner(team: altTeam, certificate: altCertificate)
+                    AltSign.setLogging(OperationsLoggingControl.getFromDatabase(for: AuthenticationOperation.self))
                     // Refresh screen must go last since a successful refresh will cause the app to quit.
                     self.showRefreshScreenIfNecessary(signer: signer, session: session) { (didShowRefreshAlert) in
                         if !didShowRefreshAlert
@@ -405,7 +408,7 @@ private extension AuthenticationOperation
         }
         
         if let adsid = Keychain.shared.appleIDAdsid, let xcodeToken = Keychain.shared.appleIDXcodeToken {
-            print("Authenticating Apple ID with tokens...")
+            self.verboseLog("Authenticating Apple ID with tokens...")
             let semaphore = DispatchSemaphore(value: 0)
             var shouldContinue = true
             Task {
@@ -417,7 +420,7 @@ private extension AuthenticationOperation
                     completionHandler(.success((account, session)))
                     shouldContinue = false
                 } catch {
-                    print("Authentication failed with token. Fall back to email and password login: \(error)")
+                    self.debugLog("Authentication failed with token. Fall back to email and password login: \(error)")
                 }
             }
             
@@ -429,7 +432,7 @@ private extension AuthenticationOperation
         
         if let appleID = Keychain.shared.appleIDEmailAddress, let password = Keychain.shared.appleIDPassword
         {
-            print("Authenticating Apple ID...")
+            self.debugLog("Authenticating Apple ID...")
             
             self.authenticate(appleID: appleID, password: password) { (result) in
                 switch result
@@ -815,13 +818,13 @@ private extension AuthenticationOperation
             return completionHandler(false)
             
         case .failure(let reason):
-            print("[AltSign] Signing certificate mismatch detected: \(reason)")
+            self.debugLog("[AltSign] Signing certificate mismatch detected: \(reason)")
             
             // For Paid Developer accounts, if the certificate used to sign the current installation
             // is still active on Apple's portal (which shows as .privateKeyLost or .externalSigner),
             // we don't need to warn the user or force a refresh.
             if signer.team.type != .free && (reason == .privateKeyLost || reason == .externalSigner) {
-                print("[AltSign] Running certificate is still active on the Paid account portal. Skipping refresh screen.")
+                self.debugLog("[AltSign] Running certificate is still active on the Paid account portal. Skipping refresh screen.")
                 return completionHandler(false)
             }
             
@@ -852,6 +855,18 @@ extension AuthenticationOperation
         guard let textField = notification.object as? UITextField else { return }
         
         self.submitCodeAction?.isEnabled = (textField.text ?? "").count == 6
+    }
+
+    func debugLog(_ text: String) {
+        print(text)
+    }
+
+    func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: AuthenticationOperation.self)
+        if isLoggingEnabled {
+            // logging enabled, so log it
+            print(text)
+        }
     }
 }
 

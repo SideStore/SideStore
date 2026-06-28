@@ -35,7 +35,7 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
             return self.finish(.failure(OperationError.invalidParameters("RemoveAppOperation.main: self.context.installedApp is nil")))
         }
         
-        print("Removing app \(self.context.bundleIdentifier)...")
+        debugLog("Removing app \(self.context.bundleIdentifier)...")
         
         installedApp.managedObjectContext?.perform {
             let resignedBundleIdentifier = installedApp.resignedBundleIdentifier
@@ -53,6 +53,22 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
                 installedApp.isActive = false
                 self.finish(.success(installedApp))
             }
+        }
+    }
+}
+
+private extension RemoveAppOperation
+{
+    func debugLog(_ text: String)
+    {
+        print(text)
+    }
+
+    func verboseLog(_ text: String)
+    {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

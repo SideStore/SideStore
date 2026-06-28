@@ -65,17 +65,33 @@ final class RemoveAppBackupOperation: ResultOperation<Void>
 //                    
 //                    #else
                     
-                    print("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
+                    self.debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
                     self.finish(.failure(error))
                     
 //                    #endif
                 }
                 catch
                 {
-                    print("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
+                    self.debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
                     self.finish(.failure(error))
                 }
             }
+        }
+    }
+}
+
+private extension RemoveAppBackupOperation
+{
+    func debugLog(_ text: String)
+    {
+        print(text)
+    }
+
+    func verboseLog(_ text: String)
+    {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppBackupOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

@@ -48,8 +48,11 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
     
     
     private static func removeExtensions(from extensions: Set<ALTApplication>) throws {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppExtensionsOperation.self)
         for appExtension in extensions {
-            print("Deleting extension \(appExtension.bundleIdentifier)")
+            if isLoggingEnabled {
+                print("Deleting extension \(appExtension.bundleIdentifier)")
+            }
             try FileManager.default.removeItem(at: appExtension.fileURL)
         }
     }
@@ -203,7 +206,7 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
         guard let extensionsInExistingApp = localAppExtensions else {
             let diagnosticsMsg = "RemoveAppExtensionsOperation: ExistingApp is nil, Hence keeping all app extensions from targetAppBundle"
                                + "RemoveAppExtensionsOperation: ExistingAppEx: nil; targetAppBundleEx: \(targetAppExNames)"
-            print(diagnosticsMsg)
+            verboseLog(diagnosticsMsg)
             return Set()    // nothing is excess since we are keeping all, so returning empty
         }
         
@@ -216,22 +219,33 @@ final class RemoveAppExtensionsOperation: ResultOperation<Void>
     
         let isMatching = (targetAppEx.count == existingAppEx.count) && excessExtensionsInTargetApp.isEmpty
         let diagnosticsMsg = "RemoveAppExtensionsOperation: App Extensions in localAppBundle and targetAppBundle are matching: \(isMatching)\n"
-                           + "RemoveAppExtensionsOperation: \nlocalAppBundleEx: \(existingAppExNames); \ntargetAppBundleEx: \(String(describing: targetAppExNames))\n"
-        print(diagnosticsMsg)
+                            + "RemoveAppExtensionsOperation: \nlocalAppBundleEx: \(existingAppExNames); \ntargetAppBundleEx: \(String(describing: targetAppExNames))\n"
+        verboseLog(diagnosticsMsg)
 
         return excessExtensionsInTargetApp
     }
     
     private func backgroundModeExtensionsCleanup(excessExtensions: Set<ALTApplication>) {
         // perform silent extensions cleanup for those that aren't already present in existing app
-        print("\n    Performing background mode Extensions removal    \n")
-        print("RemoveAppExtensionsOperation: Excess Extensions In TargetAppBundle: \(excessExtensions.map{$0.bundleIdentifier})")
+        debugLog("\n    Performing background mode Extensions removal    \n")
+        verboseLog("RemoveAppExtensionsOperation: Excess Extensions In TargetAppBundle: \(excessExtensions.map{$0.bundleIdentifier})")
         
         do {
             try Self.removeExtensions(from: excessExtensions)
             return self.finish(.success(()))
         } catch {
             return self.finish(.failure(error))
+        }
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppExtensionsOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

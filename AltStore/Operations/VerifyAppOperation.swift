@@ -120,7 +120,7 @@ private extension VerifyAppOperation
         let sha256Hash = SHA256.hash(data: data)
         let hashString = sha256Hash.compactMap { String(format: "%02x", $0) }.joined()
         
-        print("Comparing app hash (\(hashString)) against expected hash (\(expectedHash))...")
+        verboseLog("Comparing app hash (\(hashString)) against expected hash (\(expectedHash))...")
         
         guard hashString == expectedHash else { throw VerificationError.mismatchedHash(hashString, expectedHash: expectedHash, app: app) }
     }
@@ -302,6 +302,17 @@ private extension VerifyAppOperation
             }
             
             presentingViewController.present(navigationController, animated: true)
+        }
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: VerifyAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

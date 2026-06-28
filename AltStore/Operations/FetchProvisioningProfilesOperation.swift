@@ -49,7 +49,7 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
         
         guard let app = self.context.app else { return self.finish(.failure(OperationError.appNotFound(name: nil))) }
         
-        print("Fetching provisioning profiles for app \(self.context.bundleIdentifier)...")
+        self.debugLog("Fetching provisioning profiles for app \(self.context.bundleIdentifier)...")
         
         self.progress.totalUnitCount = Int64(1 + app.appExtensions.count)
         let effectiveBundleId = self.context.bundleIdentifier
@@ -142,7 +142,7 @@ class FetchProvisioningProfilesOperation: ResultOperation<[String: ALTProvisioni
                         completionHandler(.success(profile))
                         
                     case .success:
-                        print("Generating new free provisioning profile for App ID \(appID.bundleIdentifier).")
+                        self.debugLog("Generating new free provisioning profile for App ID \(appID.bundleIdentifier).")
                         
                         // Fetch new provisioning profile
                         ALTAppleAPI.shared.fetchProvisioningProfile(for: appID, deviceType: .iphone, team: team, session: session) { (profile, error) in
@@ -289,7 +289,7 @@ extension FetchProvisioningProfilesOperation
                 
                 if let appID = appIDs.first(where: { $0.bundleIdentifier.lowercased() == bundleIdentifier.lowercased() })
                 {
-                    print("Using existing App ID \(appID.bundleIdentifier)")
+                    self.verboseLog("Using existing App ID \(appID.bundleIdentifier)")
                     
                     completionHandler(.success(appID))
                 }
@@ -331,7 +331,7 @@ extension FetchProvisioningProfilesOperation
                             {
                                 let appID = try Result(appID, error).get()
                                 
-                                print("Registered new App ID \(appID.bundleIdentifier)")
+                                self.debugLog("Registered new App ID \(appID.bundleIdentifier)")
                                 
                                 completionHandler(.success(appID))
                             }
@@ -371,6 +371,17 @@ extension FetchProvisioningProfilesOperation
             {
                 completionHandler(.failure(error))
             }
+        }
+    }
+
+    func debugLog(_ text: String) {
+        print(text)
+    }
+
+    func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: type(of: self))
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }
@@ -472,8 +483,8 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 let result = Result(updatedAppID, error)
                 switch result
                 {
-                case .success(let appID): print("Updated features for App ID \(appID.bundleIdentifier).")
-                case .failure(let error): print("Failed to update features for App ID \(appID.bundleIdentifier). \(error.localizedDescription)")
+                case .success(let appID): self.verboseLog("Updated features for App ID \(appID.bundleIdentifier).")
+                case .failure(let error): self.debugLog("Failed to update features for App ID \(appID.bundleIdentifier). \(error.localizedDescription)")
                 }
                 
                 completionHandler(result)
@@ -494,7 +505,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
         }
                 
         guard var applicationGroups = entitlements[.appGroups] as? [String], !applicationGroups.isEmpty else {
-            print("App ID \(appID.bundleIdentifier) has no app groups, skipping assignment.")
+            verboseLog("App ID \(appID.bundleIdentifier) has no app groups, skipping assignment.")
             // Assigning an App ID to an empty app group array fails,
             // so just do nothing if there are no app groups.
             return completionHandler(.success(appID))
@@ -502,12 +513,12 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
         
         if app.isAltStoreApp
         {
-            print("Application groups before modifying for SideStore: \(applicationGroups)")
+            verboseLog("Application groups before modifying for SideStore: \(applicationGroups)")
             
             // Remove app groups that contain AltStore since they can be problematic (cause SideStore to expire early)
             for (index, group) in applicationGroups.enumerated() {
                 if group.contains("AltStore") {
-                    print("Removing application group: \(group)")
+                    verboseLog("Removing application group: \(group)")
                     applicationGroups.remove(at: index)
                 }
             }
@@ -534,7 +545,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 applicationGroups.append(altStoreAppGroupID)
             }
         }
-        print("Application groups: \(applicationGroups)")
+        verboseLog("Application groups: \(applicationGroups)")
         
         // Dispatch onto global queue to prevent appGroupsLock deadlock.
         DispatchQueue.global().async {
@@ -553,7 +564,7 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                 switch Result(groups, error)
                 {
                 case .failure(let error):
-                    print("Failed to fetch app groups for team \(team.identifier). \(error.localizedDescription)")
+                    self.debugLog("Failed to fetch app groups for team \(team.identifier). \(error.localizedDescription)")
                     finish(.failure(error))
                     
                 case .success(let fetchedGroups):
@@ -581,11 +592,11 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                                 switch Result(group, error)
                                 {
                                 case .success(let group):
-                                    print("Created new App Group \(group.groupIdentifier).")
+                                    self.verboseLog("Created new App Group \(group.groupIdentifier).")
                                     groups.append(group)
                                     
                                 case .failure(let error):
-                                    print("Failed to create new App Group \(adjustedGroupIdentifier). \(error.localizedDescription)")
+                                    self.debugLog("Failed to create new App Group \(adjustedGroupIdentifier). \(error.localizedDescription)")
                                     errors.append(error)
                                 }
                                 
@@ -606,11 +617,11 @@ class FetchProvisioningProfilesInstallOperation: FetchProvisioningProfilesOperat
                                 switch Result(success, error)
                                 {
                                 case .success:
-                                    print("Assigned App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description).")
+                                    self.verboseLog("Assigned App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description).")
                                     finish(.success(appID))
                                     
                                 case .failure(let error):
-                                    print("Failed to assign App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description). \(error.localizedDescription)")
+                                    self.debugLog("Failed to assign App ID \(appID.bundleIdentifier) to App Groups \(groupIDs.description). \(error.localizedDescription)")
                                     finish(.failure(error))
                                 }
                             }

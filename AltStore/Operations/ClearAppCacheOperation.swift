@@ -120,12 +120,12 @@ private extension ClearAppCacheOperation
                 {
                     do
                     {
-                        print("Removing item from temporary directory: \(fileURL.lastPathComponent)")
+                        self.verboseLog("Removing item from temporary directory: \(fileURL.lastPathComponent)")
                         try FileManager.default.removeItem(at: fileURL)
                     }
                     catch
                     {
-                        print("Failed to remove \(fileURL.lastPathComponent) from temporary directory. \(error.localizedDescription)")
+                        self.debugLog("Failed to remove \(fileURL.lastPathComponent) from temporary directory. \(error.localizedDescription)")
                         errors.append(error)
                     }
                 }
@@ -185,13 +185,13 @@ private extension ClearAppCacheOperation
 
                             if isDirectory && !installedAppBundleIDs.contains(bundleID) && !AppManager.shared.isActivelyManagingApp(withBundleID: bundleID)
                             {
-                                print("Removing backup directory for uninstalled app: \(bundleID)")
+                                self.verboseLog("Removing backup directory for uninstalled app: \(bundleID)")
                                 try FileManager.default.removeItem(at: backupDirectory)
                             }
                         }
                         catch
                         {
-                            print("Failed to remove app backup directory. \(error.localizedDescription)")
+                            self.debugLog("Failed to remove app backup directory. \(error.localizedDescription)")
                             errors.append(error)
                         }
                     }
@@ -209,10 +209,21 @@ private extension ClearAppCacheOperation
                 }
                 catch
                 {
-                    print("Failed to remove app backup directory. \(error.localizedDescription)")
+                    self.debugLog("Failed to remove app backup directory. \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }
+        }
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: ClearAppCacheOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

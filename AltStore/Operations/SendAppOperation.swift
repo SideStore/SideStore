@@ -41,7 +41,7 @@ final class SendAppOperation: ResultOperation<()>
 
         let app = AnyApp(name: resignedApp.name, bundleIdentifier: self.context.bundleIdentifier, url: resignedApp.fileURL, storeApp: nil)
         let fileURL = InstalledApp.refreshedIPAURL(for: app)
-        print("AFC App `fileURL`: \(fileURL.absoluteString)")
+        verboseLog("AFC App `fileURL`: \(fileURL.absoluteString)")
 
         // only when minimuxer is not ready and below 26.4 should we turn off data
         if #available(iOS 26.4, *) {
@@ -55,7 +55,7 @@ final class SendAppOperation: ResultOperation<()>
         if context.shouldTurnOffData {
             // Wait for Shortcut to Finish Before Proceeding
             UIApplication.shared.open(shortcutURLoff, options: [:]) { _ in
-                print("Shortcut finished execution. Proceeding with file transfer.")
+                self.debugLog("Shortcut finished execution. Proceeding with file transfer.")
 
                 DispatchQueue.global().async {
                     self.processFile(at: fileURL, for: app.bundleIdentifier)
@@ -70,7 +70,7 @@ final class SendAppOperation: ResultOperation<()>
 
     private func processFile(at fileURL: URL, for bundleIdentifier: String) {
         guard let data = NSData(contentsOf: fileURL) else {
-            print("IPA doesn't exist????")
+            debugLog("IPA doesn't exist????")
             return self.finish(.failure(OperationError(.appNotFound(name: bundleIdentifier))))
         }
 
@@ -83,6 +83,22 @@ final class SendAppOperation: ResultOperation<()>
             self.finish(.failure(MinimuxerError.RwAfc))
             self.progress.completedUnitCount += 1
             self.finish(.success(()))
+        }
+    }
+}
+
+private extension SendAppOperation
+{
+    func debugLog(_ text: String)
+    {
+        print(text)
+    }
+
+    func verboseLog(_ text: String)
+    {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: SendAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

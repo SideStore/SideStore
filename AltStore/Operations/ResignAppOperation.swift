@@ -46,7 +46,7 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
                                                                          "self.context.certificate is nil")))
         }
         
-        print("Resigning app \(self.context.bundleIdentifier)...")
+        debugLog("Resigning app \(self.context.bundleIdentifier)...")
         
         // Prepare app bundle
         let prepareAppProgress = Progress.discreteProgress(totalUnitCount: 2)
@@ -71,12 +71,12 @@ final class ResignAppOperation: ResultOperation<ALTApplication>
                     )
                     let destinationURL = InstalledApp.refreshedIPAURL(for: updatedApp)
                     try FileManager.default.copyItem(at: resignedURL, to: destinationURL, shouldReplace: true)
-                    print("Successfully resigned app to \(destinationURL.absoluteString)")
+                    self.debugLog("Successfully resigned app to \(destinationURL.absoluteString)")
                     
                     // Use appBundleURL since we need an app bundle, not .ipa.
                     guard let resignedApplication = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }
                     
-                    print("Resigned app \(self.context.bundleIdentifier) to \(resignedApplication.bundleIdentifier).")
+                    self.debugLog("Resigned app \(self.context.bundleIdentifier) to \(resignedApplication.bundleIdentifier).")
                     
                     self.finish(.success(resignedApplication))
                 }
@@ -174,7 +174,7 @@ private extension ResignAppOperation
             let codeSignaturePath = bundle.bundleURL.appendingPathComponent("_CodeSignature").absoluteString.replacingOccurrences(of: "file://", with: "")
             if FileManager.default.fileExists(atPath: codeSignaturePath) {
                 try FileManager.default.removeItem(atPath: codeSignaturePath)
-                print("Removed _CodeSignature folder at \(codeSignaturePath)")
+                self.verboseLog("Removed _CodeSignature folder at \(codeSignaturePath)")
             }
         }
         
@@ -282,6 +282,7 @@ private extension ResignAppOperation
     func resignAppBundle(at fileURL: URL, team: ALTTeam, certificate: ALTCertificate, profiles: [ALTProvisioningProfile], completionHandler: @escaping (Result<URL, Error>) -> Void) -> Progress
     {
         let signer = ALTSigner(team: team, certificate: certificate)
+        AltSign.setLogging(OperationsLoggingControl.getFromDatabase(for: ResignAppOperation.self))
         let progress = signer.signApp(at: fileURL, provisioningProfiles: profiles) { (success, error) in
             do
             {
@@ -321,5 +322,17 @@ private extension ResignAppOperation
         
         // Save updated Manifest.plist to disk.
         try manifestPlist.write(to: manifestPlistURL)
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: ResignAppOperation.self)
+        if isLoggingEnabled {
+            // logging enabled, so log it
+            print(text)
+        }
     }
 }

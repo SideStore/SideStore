@@ -99,10 +99,10 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     let resignedBundleID = appExtension.bundleIdentifier
                     let appExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: parentBundleID)
                     
-                    print("`parentBundleID`: \(parentBundleID)")
-                    print("`resignedParentBundleID`: \(resignedParentBundleID)")
-                    print("`appExBundleID`: \(appExBundleID)")
-                    print("`resignedAppExBundleID`: \(resignedBundleID)")
+                    self.debugLog("`parentBundleID`: \(parentBundleID)")
+                    self.debugLog("`resignedParentBundleID`: \(resignedParentBundleID)")
+                    self.debugLog("`appExBundleID`: \(appExBundleID)")
+                    self.debugLog("`resignedAppExBundleID`: \(resignedBundleID)")
                     
                     let installedExtension: InstalledExtension
                     
@@ -131,9 +131,9 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 for staleAppExn in staleAppExns {
                     do {
                         try FileManager.default.removeItem(at: staleAppExn.fileURL)
-                        print("InstallAppOperation.appExtensions: removed stale app-extension: \(staleAppExn.fileURL)")
+                        self.debugLog("InstallAppOperation.appExtensions: removed stale app-extension: \(staleAppExn.fileURL)")
                     } catch {
-                        print("InstallAppOperation.appExtensions processing error Error: \(error)")
+                        self.debugLog("InstallAppOperation.appExtensions processing error Error: \(error)")
                     }
                 }
             }
@@ -181,24 +181,24 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                     // we need to flush changes to the disk now in case the changes are lost when iOS kills current process
                     try installedApp.managedObjectContext?.save()
                 } catch {
-                    print("Failed to flush installedApp to disk: \(error)")
+                    self.debugLog("Failed to flush installedApp to disk: \(error)")
                 }
                 
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     if UIApplication.shared.applicationState != .active {
-                        print("We are not in the foreground, let's not do anything")
+                        self.debugLog("We are not in the foreground, let's not do anything")
                         return
                     }
                     if !installing {
-                        print("Installing finished")
+                        self.debugLog("Installing finished")
                         return
                     }
-                    print("We are still installing after 3 seconds")
+                    self.debugLog("We are still installing after 3 seconds")
                     UNUserNotificationCenter.current().getNotificationSettings { settings in
                         switch (settings.authorizationStatus) {
                         case .authorized, .ephemeral, .provisional:
-                            print("Notifications are enabled")
+                            self.verboseLog("Notifications are enabled")
 
                             let content = UNMutableNotificationContent()
                             content.title = "Refreshing..."
@@ -207,15 +207,15 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                             UNUserNotificationCenter.current().add(notification)
                             break
                         default:
-                            print("Notifications are not enabled")
+                            self.verboseLog("Notifications are not enabled")
 
                             let alert = UIAlertController(title: "Finish Refresh", message: "Please reopen SideStore after the process is finished.To finish refreshing, SideStore must be moved to the background. To do this, you can either go to the Home Screen manually or by hitting Continue. Please reopen SideStore after doing this.", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default, handler: { _ in
-                                print("Going home")
+                                self.debugLog("Going home")
                                 // Cell Shortcut
                                 if self.context.shouldTurnOffData {
                                     UIApplication.shared.open(shortcutURLonDelay, options: [:]) { _ in
-                                        print("Cell OFF Shortcut finished execution.")}
+                                        self.debugLog("Cell OFF Shortcut finished execution.")}
                                 }
                                 UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                             }))
@@ -228,14 +228,14 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                                     }
                                     topController.present(alert, animated: true)
                                 } else {
-                                    print("No key window? Let's just go home")
+                                    self.debugLog("No key window? Let's just go home")
                                 }
                             }
                         }
                     }
                     // Cell Shortcut
                     if self.context.shouldTurnOffData {
-                        UIApplication.shared.open(shortcutURLonDelay, options: [:]) { _ in print("Cell OFF Shortcut finished execution.")}
+                        UIApplication.shared.open(shortcutURLonDelay, options: [:]) { _ in self.debugLog("Cell OFF Shortcut finished execution.")}
                     }
                     UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                 }
@@ -266,12 +266,12 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             {
                 if(FileManager.default.fileExists(atPath: fileURL.path)){
                     try FileManager.default.removeItem(at: fileURL)
-                    print("Removed refreshed IPA")
+                    debugLog("Removed refreshed IPA")
                 }
             }
             catch
             {
-                print("Failed to remove refreshed .ipa: \(error)")
+                debugLog("Failed to remove refreshed .ipa: \(error)")
             }
         }
         
@@ -292,7 +292,20 @@ private extension InstallAppOperation
         }
         catch
         {
-            print("Failed to remove temporary directory.", error)
+            debugLog("Failed to remove temporary directory. \(error)")
+        }
+    }
+
+    func debugLog(_ text: String)
+    {
+        print(text)
+    }
+
+    func verboseLog(_ text: String)
+    {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: InstallAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
         }
     }
 }

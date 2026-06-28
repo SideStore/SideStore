@@ -54,7 +54,7 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
             return
         }
 
-        print("Downloading App:", self.bundleIdentifier)
+        debugLog("Downloading App: \(self.bundleIdentifier)")
 
         // Set _after_ checking self.context.error to prevent overwriting localized failure for previous errors.
         self.localizedFailure = String(format: NSLocalizedString("%@ could not be downloaded.", comment: ""), self.appName)
@@ -130,7 +130,7 @@ final class DownloadAppOperation: ResultOperation<ALTApplication>
             }
             catch
             {
-                print("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory).", error)
+                debugLog("Failed to remove DownloadAppOperation temporary directory: \(self.temporaryDirectory). \(error)")
             }
         }
 
@@ -153,7 +153,7 @@ private extension DownloadAppOperation
     }
     
     func printWithTid(_ msg: String){
-        print("DownloadAppOperation: Thread: \(Thread.current.name ?? Thread.current.description) - " + msg)
+        verboseLog("DownloadAppOperation: Thread: \(Thread.current.name ?? Thread.current.description) - " + msg)
     }
     
     func download(@Managed _ app: AppProtocol)
@@ -445,5 +445,16 @@ private extension DownloadAppOperation
         progress.addChild(downloadTask.progress, withPendingUnitCount: 1)
         
         downloadTask.resume()
+    }
+
+    private func debugLog(_ text: String) {
+        print(text)
+    }
+
+    private func verboseLog(_ text: String) {
+        let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: DownloadAppOperation.self)
+        if isLoggingEnabled {
+            print(text)
+        }
     }
 }

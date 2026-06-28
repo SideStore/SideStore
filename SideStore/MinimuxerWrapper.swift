@@ -190,7 +190,7 @@ func dumpProfiles(_ docsPath: String) throws -> String {
 func setMinimuxerDebug(_ debug: Bool) {
     defer { print("[SideStore] setMinimuxerDebug(debug) completed") }
     print("[SideStore] setMinimuxerDebug(debug) invoked")
-    Minimuxer.setDebug(debug)
+    Minimuxer.setLogging(debug)
 }
 
 extension MinimuxerError: @retroactive LocalizedError {
