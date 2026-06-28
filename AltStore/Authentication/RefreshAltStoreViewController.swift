@@ -18,6 +18,7 @@ final class RefreshAltStoreViewController: UIViewController
     var completionHandler: ((Result<Void, Error>) -> Void)?
     
     @IBOutlet private var placeholderView: RSTPlaceholderView!
+    @IBOutlet private var reinstallButton: PillButton!
     
     override func viewDidLoad()
     {
@@ -50,24 +51,66 @@ final class RefreshAltStoreViewController: UIViewController
                 reasonText = NSLocalizedString("The provisioning profile for SideStore is corrupt or missing.", comment: "")
         }
         
+        let isRevocationExpected = (reason == .revoked || reason == .freeAccountLimitRevoked || reason == .privateKeyLost)
+        let buttonTitle = isRevocationExpected ?
+            NSLocalizedString("Revoke and Refresh Now", comment: "") :
+            NSLocalizedString("Refresh Now", comment: "")
+        self.reinstallButton.setTitle(buttonTitle, for: .normal)
+        self.reinstallButton.fontSize = 16
+        
         let header = NSLocalizedString("Signing certificate mismatch detected.", comment: "")
-        let paragraph1 = NSLocalizedString("To ensure you can continue using SideStore, the app must be reinstalled now using the new certificate. Otherwise, you will be unable to refresh or open SideStore once the old certificate expires.", comment: "")
+        let paragraph1 = NSLocalizedString("To ensure you can continue using SideStore, \nthe app must be reinstalled now using the new certificate. Otherwise, you will be unable to refresh or open SideStore once the old certificate expires.", comment: "")
         let paragraph2 = NSLocalizedString("This reinstallation registers the new signature with the OS and will terminate SideStore. You can reopen SideStore immediately once reinstallation is completed.", comment: "")
         
-        let fullText = "\(header)\n\n\(paragraph1)\n\n\(paragraph2)\n\nReason: \(reasonText)"
+        let fullText = "\(header)\n\n\(paragraph1)\n\n\(paragraph2)"
         let attributedString = NSMutableAttributedString(string: fullText)
         
-        if let reasonRange = fullText.range(of: "Reason:") {
-            let nsRange = NSRange(reasonRange, in: fullText)
-            let baseFont = self.placeholderView.detailTextLabel.font ?? UIFont.systemFont(ofSize: 14)
-            if let boldFontDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitBold) {
-                let boldFont = UIFont(descriptor: boldFontDescriptor, size: baseFont.pointSize)
-                attributedString.addAttribute(.font, value: boldFont, range: nsRange)
-            }
+        if let headerRange = fullText.range(of: header) {
+            let nsRange = NSRange(headerRange, in: fullText)
             attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: nsRange)
         }
         
         self.placeholderView.detailTextLabel.attributedText = attributedString
+        
+        // Separator Line
+        let separator = UIView()
+        separator.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        // Reason Bold Prefix
+        let reasonLabel = UILabel()
+        reasonLabel.text = NSLocalizedString("Reason:", comment: "")
+        reasonLabel.textColor = .white
+        reasonLabel.font = UIFont.boldSystemFont(ofSize: 14)
+        reasonLabel.setContentHuggingPriority(.required, for: .horizontal)
+        
+        // Reason Description
+        let reasonTextLabel = UILabel()
+        reasonTextLabel.text = reasonText
+        reasonTextLabel.textColor = UIColor.white.withAlphaComponent(0.6)
+        reasonTextLabel.font = UIFont.systemFont(ofSize: 14)
+        reasonTextLabel.numberOfLines = 0
+        
+        // Horizontal Container for key-value layout
+        let reasonContainer = UIStackView(arrangedSubviews: [reasonLabel, reasonTextLabel])
+        reasonContainer.axis = .horizontal
+        reasonContainer.alignment = .top
+        reasonContainer.spacing = 8
+        
+        // Add to standard Stack View hierarchy
+        self.placeholderView.stackView.addArrangedSubview(separator)
+        self.placeholderView.stackView.addArrangedSubview(reasonContainer)
+        
+        // Pin edges to match the width of the stack view
+        separator.leadingAnchor.constraint(equalTo: self.placeholderView.stackView.leadingAnchor).isActive = true
+        separator.trailingAnchor.constraint(equalTo: self.placeholderView.stackView.trailingAnchor).isActive = true
+        
+        reasonContainer.leadingAnchor.constraint(equalTo: self.placeholderView.stackView.leadingAnchor).isActive = true
+        reasonContainer.trailingAnchor.constraint(equalTo: self.placeholderView.stackView.trailingAnchor).isActive = true
+        
+        self.placeholderView.stackView.setCustomSpacing(20, after: self.placeholderView.detailTextLabel)
+        self.placeholderView.stackView.setCustomSpacing(15, after: separator)
     }
 }
 

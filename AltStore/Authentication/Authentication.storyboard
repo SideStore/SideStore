@@ -489,6 +489,7 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="placeholderView" destination="fpO-Bf-gFY" id="q7d-au-d94"/>
+                        <outlet property="reinstallButton" destination="xcg-hT-tDe" id="M5L-r0-Zg7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Chr-7g-qEw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

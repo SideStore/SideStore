@@ -69,7 +69,11 @@ public struct SigningCertificateValidator {
         }
         
         // 3. Revoked Certificate
-        let isRunningCertActive = activeCertificates.contains { $0.serialNumber == runningCert.serialNumber }
+        let isRunningCertActive = runningProfile.certificates.contains { profileCert in
+            activeCertificates.contains { activeCert in
+                activeCert.serialNumber == profileCert.serialNumber
+            }
+        }
         if !isRunningCertActive {
             if signerTeam.type == .free {
                 return .failure(.freeAccountLimitRevoked)
@@ -79,7 +83,12 @@ public struct SigningCertificateValidator {
         }
         
         // 4. Mismatch / Private Key Lost / External Signer
-        if runningCert.serialNumber != signerCertificate.serialNumber {
+        let hasCurrentSignerCert = runningProfile.certificates.contains { $0.serialNumber == signerCertificate.serialNumber }
+        if !hasCurrentSignerCert {
+            let activeProfileCert = runningProfile.certificates.first { profileCert in
+                activeCertificates.contains { $0.serialNumber == profileCert.serialNumber }
+            }
+            let runningCert = activeProfileCert ?? runningProfile.certificates.first ?? signerCertificate
             if let machineName = runningCert.machineName, (machineName.starts(with: "SideStore") || machineName.starts(with: "AltStore")) {
                 return .failure(.privateKeyLost)
             } else {
