@@ -85,7 +85,7 @@ struct VPNConfigurationView: View {
                 } footer: {
                     HStack(alignment: .top, spacing: 0) {
                         Text("Note: ")
-                        Text("'Device IP' is mandatory and should match exactly as in the VPN's configuration")
+                        Text("'Device IP' is mandatory and should match exactly as in the target VPN's config")
                     }
                 }
             }
