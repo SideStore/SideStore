@@ -25,6 +25,8 @@ final class AppIDsViewController: UICollectionViewController
     private var isEditingMode = false
     private var doneBarButtonItem: UIBarButtonItem?
     
+    private weak var footerView: TextCollectionReusableView?
+    
     @IBOutlet var activityIndicatorBarButtonItem: UIBarButtonItem!
     
     override func viewDidLoad()
@@ -36,6 +38,7 @@ final class AppIDsViewController: UICollectionViewController
         
         self.collectionView.dataSource = self.dataSource
         self.dataSource.contentView = self.collectionView
+        self.dataSource.fetchedResultsController.delegate = self
         
         self.activityIndicatorBarButtonItem.isIndicatingActivity = true
     }
@@ -234,6 +237,18 @@ private extension AppIDsViewController
             self.navigationItem.leftBarButtonItem = self.activityIndicatorBarButtonItem
         }
     }
+    
+    func footerText() -> String {
+        let count = self.dataSource.itemCount
+        return count == 1
+            ? NSLocalizedString("1 App ID", comment: "")
+            : String(format: NSLocalizedString("%@ App IDs", comment: ""), NSNumber(value: count))
+    }
+    
+    func refreshFooter()
+    {
+        self.footerView?.textLabel.text = self.footerText()
+    }
 }
 
 extension AppIDsViewController: UICollectionViewDelegateFlowLayout
@@ -297,17 +312,8 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
             
         case UICollectionView.elementKindSectionFooter:
             let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: indexPath) as! TextCollectionReusableView
-            
-            let count = self.dataSource.itemCount
-            if count == 1
-            {
-                footerView.textLabel.text = NSLocalizedString("1 App ID", comment: "")
-            }
-            else
-            {
-                footerView.textLabel.text = String(format: NSLocalizedString("%@ App IDs", comment: ""), NSNumber(value: count))
-            }
-            
+            self.footerView = footerView  // keep direct reference for live updates
+            footerView.textLabel.text = self.footerText()
             return footerView
             
         default: fatalError()
@@ -588,6 +594,35 @@ extension AppIDsViewController
             if let cell = collectionView.cellForItem(at: indexPath) as? AppBannerCollectionViewCell {
                 cell.setEditing(true, isSelected: false, animated: true)
             }
+        }
+    }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate (proxy)
+extension AppIDsViewController: NSFetchedResultsControllerDelegate
+{
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        self.dataSource.controllerWillChangeContent(controller)
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType)
+    {
+        self.dataSource.controller(controller, didChange: sectionInfo, atSectionIndex: sectionIndex, for: type)
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
+    {
+        self.dataSource.controller(controller, didChange: anObject, at: indexPath, for: type, newIndexPath: newIndexPath)
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        // Forward to the data source first so it performs animated cell batch updates
+        self.dataSource.controllerDidChangeContent(controller)
+        
+        DispatchQueue.main.async {
+            self.refreshFooter()
         }
     }
 }
