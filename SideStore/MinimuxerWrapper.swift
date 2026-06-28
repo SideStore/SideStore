@@ -32,15 +32,53 @@ func bindTunnelConfig() {
 }
 
 
-var isMinimuxerReady: Bool {
-    var result = true
+enum MinimuxerStatus: LocalizedError {
+    case ready
+    case noConnection
+    case noVPN
+
+    public var errorDescription: String? {
+        switch self {
+        case .ready:
+            return nil
+        case .noConnection:
+            return NSLocalizedString("No Network Connection", comment: "")
+        case .noVPN:
+            return NSLocalizedString("No VPN Connection", comment: "")
+        }
+    }
+
+    public var failureReason: String? {
+        switch self {
+        case .ready:
+            return nil
+        case .noConnection:
+            return NSLocalizedString("You do not appear to be connected to Wi-Fi, Bridge or a Wired network connection! Please connect to a Wi-Fi, Bridge or Wired connection before attempting futher operations", comment: "")
+        case .noVPN:
+            return NSLocalizedString("Unable to communicate with the device. Please make sure LocalDevVPN is enabled and running! If it is connected, replace your pairing with iloader. If issue still persists, try restarting the device.", comment: "")
+        }
+    }
+}
+
+var minimuxerStatus: MinimuxerStatus {
     #if targetEnvironment(simulator)
-    print("[SideStore] isMinimuxerReady = true on simulator")
+    print("[SideStore] minimuxerStatus = true on simulator")
+    return .ready
     #else
-    result = Minimuxer.ready()
-    print("[SideStore] isMinimuxerReady = \(result)")
+    let result = Minimuxer.ready()
+    switch result {
+    case .success(let isReady):
+        print("[SideStore] minimuxerStatus = \(isReady)")
+        return isReady ? .ready : .noConnection
+    case .failure(let error):
+        print("[SideStore] minimuxerStatus = false, error: \(error)")
+        if error == .NoVPN {
+            return .noVPN
+        } else {
+            return .noConnection
+        }
+    }
     #endif
-    return result
 }
 
 
@@ -191,13 +229,22 @@ func minimuxerSetLogging(_ enabled: Bool) {
     Minimuxer.setLogging(enabled)
 }
 
+extension Result {
+    var isSuccess: Bool {
+        if case .success = self { return true }
+        return false
+    }
+}
+
 extension MinimuxerError: @retroactive LocalizedError {
     public var failureReason: String? {
         switch self {
         case .NoDevice:
             return NSLocalizedString("Cannot fetch the device from the muxer", comment: "")
         case .NoConnection:
-            return NSLocalizedString("Unable to connect to the device, make sure LocalDevVPN is enabled and you're connected to Wi-Fi. This could mean an invalid pairing.", comment: "")
+            return NSLocalizedString("You do not appear to be connected to Wi-Fi or a wired network connection! Please connect to a Wi-Fi or wired connection.", comment: "")
+        case .NoVPN:
+            return NSLocalizedString("Unable to connect to the device. Please make sure LocalDevVPN is enabled and running! If it is connected, replace your pairing with iloader.", comment: "")
         case .PairingFile:
             return NSLocalizedString("Invalid pairing file. Your pairing file either didn't have a UDID, or it wasn't a valid plist. Please use iloader to replace it.", comment: "")
         case .CreateDebug:

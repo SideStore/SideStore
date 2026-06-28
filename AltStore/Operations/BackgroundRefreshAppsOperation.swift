@@ -232,7 +232,7 @@ private extension BackgroundRefreshAppsOperation
                 content.title = NSLocalizedString("Refreshed Apps", comment: "")
                 content.body = NSLocalizedString("All apps have been refreshed.", comment: "")
             }
-            catch ~OperationError.Code.noWiFi, ~RefreshErrorCode.noInstalledApps
+            catch ~OperationError.Code.noConnection, ~OperationError.Code.noVPN, ~RefreshErrorCode.noInstalledApps
             {
                 shouldPresentAlert = false
             }

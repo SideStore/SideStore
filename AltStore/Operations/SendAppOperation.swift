@@ -46,7 +46,7 @@ final class SendAppOperation: ResultOperation<()>
         // only when minimuxer is not ready and below 26.4 should we turn off data
         if #available(iOS 26.4, *) {
             context.shouldTurnOffData = false
-        } else if !isMinimuxerReady {
+        } else if minimuxerStatus != .ready {
             context.shouldTurnOffData = true
         } else {
             context.shouldTurnOffData = false

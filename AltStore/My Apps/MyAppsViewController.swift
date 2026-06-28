@@ -169,11 +169,14 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
     {
     }
 
-    var minimuxerStatus: Bool {
+    var isMinimuxerReady: Bool {
         // added isMinimuxerStatusCheckEnabled to forcefully ignore minimuxer status if status check is disabled in settings
-        if UserDefaults.standard.isMinimuxerStatusCheckEnabled && !isMinimuxerReady {
-            ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No Wi-Fi or VPN!")).show(in: self)
-            return false
+        if UserDefaults.standard.isMinimuxerStatusCheckEnabled {
+            let status = minimuxerStatus
+            if status != .ready {
+                ToastView(error: status).show(in: self)
+                return false
+            }
         }
         return true
     }
@@ -774,7 +777,7 @@ private extension MyAppsViewController
     
     @IBAction func refreshAllApps(_ sender: UIBarButtonItem)
     {
-        guard minimuxerStatus else { return }
+        guard isMinimuxerReady else { return }
 
         let installedApps = InstalledApp.fetchAppsForRefreshingAll(in: DatabaseManager.shared.viewContext)
         guard !installedApps.isEmpty else {
@@ -856,7 +859,7 @@ private extension MyAppsViewController
     
     @IBAction func sideloadApp(_ sender: UIBarButtonItem)
     {
-        guard minimuxerStatus else { return }
+        guard isMinimuxerReady else { return }
 
         let supportedTypes = UTType.types(tag: "ipa", tagClass: .filenameExtension, conformingTo: nil)
         
@@ -1142,7 +1145,7 @@ private extension MyAppsViewController
     {
        // we do need minimuxer, coz it needs to talk to misagent daemon which manages profiles 
        // so basically loopback vpn is still required
-       guard minimuxerStatus else { return }     // we don't need minimuxer when renewing appIDs only do we, heck we can even do it on mobile internet
+       guard isMinimuxerReady else { return }     // we don't need minimuxer when renewing appIDs only do we, heck we can even do it on mobile internet
 
         let previousProgress = AppManager.shared.refreshProgress(for: installedApp)
         guard previousProgress == nil else {
@@ -1165,7 +1168,7 @@ private extension MyAppsViewController
     
     func activate(_ installedApp: InstalledApp)
     {
-        guard minimuxerStatus else { return }
+        guard isMinimuxerReady else { return }
 
         func finish(_ result: Result<InstalledApp, Error>)
         {
@@ -1216,7 +1219,7 @@ private extension MyAppsViewController
     
     func deactivate(_ installedApp: InstalledApp, completionHandler: ((Result<InstalledApp, Error>) -> Void)? = nil)
     {
-        guard installedApp.isActive, minimuxerStatus else { return }
+        guard installedApp.isActive, isMinimuxerReady else { return }
         
         AppManager.shared.deactivate(installedApp, presentingViewController: self) { (result) in
             do
@@ -1277,7 +1280,7 @@ private extension MyAppsViewController
     
     func backup(_ installedApp: InstalledApp)
     {
-        guard minimuxerStatus else { return }
+        guard isMinimuxerReady else { return }
 
         let title = NSLocalizedString("Start Backup?", comment: "")
         let message = NSLocalizedString("This will replace any previous backups. Please leave SideStore open until the backup is complete.", comment: "")
@@ -1361,7 +1364,7 @@ private extension MyAppsViewController
     
     func restore(_ installedApp: InstalledApp)
     {
-        guard minimuxerStatus else { return }
+        guard isMinimuxerReady else { return }
 
         let message = String(format: NSLocalizedString("This will replace all data you currently have in %@.", comment: ""), installedApp.name)
         let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to restore this backup?", comment: ""), message: message, preferredStyle: .actionSheet)
@@ -1468,7 +1471,7 @@ private extension MyAppsViewController
         let sidejitenabled = UserDefaults.standard.sidejitenable
         
         if #unavailable(iOS 17), !sidejitenabled {
-            guard minimuxerStatus else { return }
+            guard isMinimuxerReady else { return }
         }
         
         AppManager.shared.enableJIT(for: installedApp) { result in

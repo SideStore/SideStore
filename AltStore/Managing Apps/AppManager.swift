@@ -1640,22 +1640,37 @@ private extension AppManager
                 completionHandler(.success(installedApp))
 
 
-            // refreshing local app's provisioning profile means talking to misagent daemon
-            // which requires loopback vpn
+            case .failure(MinimuxerError.NoConnection):
+                completionHandler(.failure(OperationError.noConnection))
+                
+            case .failure(MinimuxerError.NoVPN):
+                completionHandler(.failure(OperationError.noVPN))
+
             case .failure(MinimuxerError.ProfileInstall):
-                completionHandler(.failure(OperationError.noWiFi))
+                let error: OperationError
+                switch minimuxerStatus {
+                case .ready:
+                    error = .noConnection
+                case .noConnection:
+                    error = .noConnection
+                case .noVPN:
+                    error = .noVPN
+                }
+                completionHandler(.failure(error))
                 
             case .failure(ALTServerError.unknownRequest), .failure(OperationError.appNotFound(name: app.name)):
                 // Fall back to installation if AltServer doesn't support newer provisioning profile requests,
                 // OR if the cached app could not be found and we may need to redownload it.
                 app.managedObjectContext?.performAndWait { // Must performAndWait to ensure we add operations before we return.
-                    if isMinimuxerReady {
+                    switch minimuxerStatus {
+                    case .ready:
                         let installProgress = self._install(app, operation: operation, group: group) { (result) in
                             completionHandler(result)
                         }
                         progress.addChild(installProgress, withPendingUnitCount: 40)
-                    } else {
-                        completionHandler(.failure(OperationError.noWiFi))
+                    case let status:
+                        let error: OperationError = (status == .noVPN) ? .noVPN : .noConnection
+                        completionHandler(.failure(error))
                     }
                 }
                 
