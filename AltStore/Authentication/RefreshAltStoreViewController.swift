@@ -38,7 +38,7 @@ final class RefreshAltStoreViewController: UIViewController
             case .revoked:
                 reasonText = NSLocalizedString("The signing certificate used to install SideStore was revoked on the Apple Developer portal.", comment: "")
             case .freeAccountLimitRevoked:
-                reasonText = NSLocalizedString("Free developer accounts are limited to 1 active signing certificate. Since the private key for your existing certificate was not found on this device, SideStore had to create a new certificate, which automatically revoked the old one.", comment: "")
+                reasonText = NSLocalizedString("Free developer accounts are limited to 1 active signing certificate. Since the private key for the active certificate was not found on this device, SideStore will create a new certificate. This will automatically revoke the active certificate, which may disable installations on other devices or made by Xcode.", comment: "")
             case .differentAccount:
                 reasonText = NSLocalizedString("The logged-in Apple ID account has changed.", comment: "")
             case .differentTeam:
@@ -51,12 +51,12 @@ final class RefreshAltStoreViewController: UIViewController
                 reasonText = NSLocalizedString("The provisioning profile for SideStore is corrupt or missing.", comment: "")
         }
         
-        let isRevocationExpected = (reason == .revoked || reason == .freeAccountLimitRevoked || reason == .privateKeyLost)
+        let isRevocationExpected = (reason == .privateKeyLost || reason == .freeAccountLimitRevoked)
         let buttonTitle = isRevocationExpected ?
             NSLocalizedString("Revoke and Refresh Now", comment: "") :
             NSLocalizedString("Refresh Now", comment: "")
         self.reinstallButton.setTitle(buttonTitle, for: .normal)
-        self.reinstallButton.fontSize = 16
+        self.reinstallButton.fontSize = 15
         
         let header = NSLocalizedString("Signing certificate mismatch detected.", comment: "")
         let paragraph1 = NSLocalizedString("To ensure you can continue using SideStore, \nthe app must be reinstalled now using the new certificate. Otherwise, you will be unable to refresh or open SideStore once the old certificate expires.", comment: "")

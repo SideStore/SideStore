@@ -78,6 +78,14 @@ class PillButton: UIButton
         }
     }
     
+    var fontSize: CGFloat? {
+        didSet {
+            self.update()
+        }
+    }
+    
+    private var storyboardFontSize: CGFloat?
+    
     private let progressView = UIProgressView(progressViewStyle: .default)
     
     private lazy var displayLink: CADisplayLink = {
@@ -120,7 +128,7 @@ class PillButton: UIButton
     override func awakeFromNib()
     {
         super.awakeFromNib()
-        
+        self.storyboardFontSize = self.titleLabel?.font.pointSize
         self.initialize()
     }
     
@@ -198,7 +206,9 @@ private extension PillButton
         self.progressView.progressTintColor = self.progressTintColor ?? self.tintColor
         
         // Update font after init because the original titleLabel is replaced.
-        self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        let size = self.fontSize ?? self.storyboardFontSize ?? 14
+        self.titleLabel?.font = UIFont.boldSystemFont(ofSize: size)
+        self.titleLabel?.adjustsFontSizeToFitWidth = false
         
         switch self.style
         {
