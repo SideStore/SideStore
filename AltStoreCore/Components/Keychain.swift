@@ -59,17 +59,19 @@ public class Keychain
     @KeychainItem(key: "appleIDXcodeToken")
     public var appleIDXcodeToken: String?
     
-    @KeychainItem(key: "signingCertificatePrivateKey")
-    public var signingCertificatePrivateKey: Data?
-    
-    @KeychainItem(key: "signingCertificateSerialNumber")
-    public var signingCertificateSerialNumber: String?
-    
     @KeychainItem(key: "signingCertificate")
     public var signingCertificate: Data?
     
     @KeychainItem(key: "signingCertificatePassword")
     public var signingCertificatePassword: String?
+    
+    // Legacy
+    @KeychainItem(key: "signingCertificatePrivateKey")
+    public var signingCertificatePrivateKey: Data?
+    
+    // Legacy
+    @KeychainItem(key: "signingCertificateSerialNumber")
+    public var signingCertificateSerialNumber: String?
     
     @KeychainItem(key: "identifier")
     public var identifier: String?
@@ -93,8 +95,16 @@ public class Keychain
         self.appleIDPassword = nil
         self.appleIDAdsid = nil
         self.appleIDXcodeToken = nil
+        
+        // Legacy
         self.signingCertificatePrivateKey = nil
         self.signingCertificateSerialNumber = nil
+
+        // mahee96: clear signing certificate, so that next login will fetch fresh up-to-date cert!
+        // user's who use paid certs from 3rd party need to reimport after re-logging in
+        // coz this reset (ie sign-out) wipes the keychain to get to clean slate.
+        self.signingCertificate = nil
+        self.signingCertificatePassword = nil
         
         self.certificate = nil
         self.session = nil
