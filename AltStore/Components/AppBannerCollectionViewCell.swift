@@ -11,6 +11,10 @@ import UIKit
 class AppBannerCollectionViewCell: UICollectionViewListCell
 {
     let bannerView = AppBannerView(frame: .zero)
+    let checkmarkImageView = UIImageView(frame: .zero)
+    
+    private var bannerViewLeadingConstraint: NSLayoutConstraint?
+    private var bannerViewLeadingEditingConstraint: NSLayoutConstraint?
     
     override init(frame: CGRect)
     {
@@ -28,6 +32,11 @@ class AppBannerCollectionViewCell: UICollectionViewListCell
     
     private func initialize()
     {
+        // Remove any storyboard-created duplicate subviews.
+        for subview in self.contentView.subviews {
+            subview.removeFromSuperview()
+        }
+        
         // Prevent content "squishing" when scrolling offscreen.
         self.insetsLayoutMarginsFromSafeArea = false
         self.contentView.insetsLayoutMarginsFromSafeArea = false
@@ -39,14 +48,64 @@ class AppBannerCollectionViewCell: UICollectionViewListCell
         self.contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.contentView.preservesSuperviewLayoutMargins = true
         
+        self.checkmarkImageView.translatesAutoresizingMaskIntoConstraints = false
+        self.checkmarkImageView.contentMode = .scaleAspectFit
+        self.checkmarkImageView.isHidden = true
+        self.contentView.addSubview(self.checkmarkImageView)
+        
         self.bannerView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.bannerView)
+        
+        let leadingNormal = self.bannerView.leadingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.leadingAnchor)
+        let leadingEditing = self.bannerView.leadingAnchor.constraint(equalTo: self.checkmarkImageView.trailingAnchor, constant: 12)
+        
+        self.bannerViewLeadingConstraint = leadingNormal
+        self.bannerViewLeadingEditingConstraint = leadingEditing
         
         NSLayoutConstraint.activate([
             self.bannerView.topAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.topAnchor),
             self.bannerView.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
-            self.bannerView.leadingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.leadingAnchor),
             self.bannerView.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor),
+            
+            self.checkmarkImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            self.checkmarkImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            self.checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
+            self.checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
+            
+            leadingNormal
         ])
+    }
+    
+    func setEditing(_ editing: Bool, isSelected: Bool, animated: Bool = false)
+    {
+        if editing
+        {
+            self.checkmarkImageView.isHidden = false
+            self.bannerViewLeadingConstraint?.isActive = false
+            self.bannerViewLeadingEditingConstraint?.isActive = true
+            
+            let systemImageName = isSelected ? "checkmark.circle.fill" : "circle"
+            self.checkmarkImageView.image = UIImage(systemName: systemImageName)
+            self.checkmarkImageView.tintColor = isSelected ? .altPrimary : .secondaryLabel
+        }
+        else
+        {
+            self.checkmarkImageView.isHidden = true
+            self.bannerViewLeadingEditingConstraint?.isActive = false
+            self.bannerViewLeadingConstraint?.isActive = true
+        }
+        
+        if animated
+        {
+            UIView.animate(withDuration: 0.3) {
+                self.layoutIfNeeded()
+            }
+        }
+    }
+    
+    override func prepareForReuse()
+    {
+        super.prepareForReuse()
+        self.setEditing(false, isSelected: false)
     }
 }
