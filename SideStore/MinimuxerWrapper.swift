@@ -32,30 +32,21 @@ func bindTunnelConfig() {
 }
 
 
-enum MinimuxerStatus: LocalizedError {
+enum MinimuxerStatus {
     case ready
     case noConnection
     case noVPN
+}
 
-    public var errorDescription: String? {
+extension MinimuxerStatus {
+    var operationError: OperationError? {
         switch self {
         case .ready:
             return nil
         case .noConnection:
-            return NSLocalizedString("No Network Connection", comment: "")
+            return .noConnection
         case .noVPN:
-            return NSLocalizedString("No VPN Connection", comment: "")
-        }
-    }
-
-    public var failureReason: String? {
-        switch self {
-        case .ready:
-            return nil
-        case .noConnection:
-            return NSLocalizedString("You do not appear to be connected to Wi-Fi, Bridge or a Wired network connection! Please connect to a Wi-Fi, Bridge or Wired connection before attempting futher operations", comment: "")
-        case .noVPN:
-            return NSLocalizedString("Unable to communicate with the device. Please make sure LocalDevVPN is enabled and running! If it is connected, replace your pairing with iloader. If issue still persists, try restarting the device.", comment: "")
+            return .noVPN
         }
     }
 }
@@ -72,10 +63,10 @@ var minimuxerStatus: MinimuxerStatus {
         return isReady ? .ready : .noConnection
     case .failure(let error):
         print("[SideStore] minimuxerStatus = false, error: \(error)")
-        if error == .NoVPN {
-            return .noVPN
-        } else {
+        if error == .NoConnection {
             return .noConnection
+        } else {
+            return .noVPN
         }
     }
     #endif

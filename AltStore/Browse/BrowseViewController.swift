@@ -559,8 +559,8 @@ private extension BrowseViewController
             return
         }
 
-        if minimuxerStatus != .ready {
-            let toastView = ToastView(error: minimuxerStatus)
+        if let error = minimuxerStatus.operationError {
+            let toastView = ToastView(error: error)
             toastView.show(in: self)
             return
         }
