@@ -251,8 +251,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         
         switch result
         {
-        case .failure(let error): self.debugLog("Failed to authenticate account. \(error.localizedDescription)")
-        case .success((let team, _, _)): self.debugLog("Authenticated account for team \(team.identifier).")
+        case .failure(let error): self.verboseLog("Failed to authenticate account. \(error.localizedDescription)")
+        case .success((let team, _, _)): self.verboseLog("Authenticated account for team \(team.identifier).")
         }
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()

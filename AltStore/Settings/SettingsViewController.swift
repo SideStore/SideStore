@@ -802,7 +802,9 @@ private extension SettingsViewController
     
     func clearCache()
     {
-        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to clear SideStore's cache?", comment: ""),
+        let cacheSizeString = CacheManager.shared.formattedCacheSize()
+        let title = String(format: NSLocalizedString("Are you sure you want to clear SideStore's cache\n\nCache Size: (%@)?", comment: ""), cacheSizeString)
+        let alertController = UIAlertController(title: title,
                                                 message: NSLocalizedString("This will remove all temporary files as well as backups for uninstalled apps.", comment: ""),
                                                 preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { [weak self] _ in

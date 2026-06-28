@@ -171,7 +171,7 @@ class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
 
     var minimuxerStatus: Bool {
         // added isMinimuxerStatusCheckEnabled to forcefully ignore minimuxer status if status check is disabled in settings
-        guard !UserDefaults.standard.isMinimuxerStatusCheckEnabled || isMinimuxerReady else {
+        if UserDefaults.standard.isMinimuxerStatusCheckEnabled && !isMinimuxerReady {
             ToastView(error: (OperationError.noWiFi as NSError).withLocalizedTitle("No Wi-Fi or VPN!")).show(in: self)
             return false
         }
