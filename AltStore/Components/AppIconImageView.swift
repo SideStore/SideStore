@@ -32,10 +32,19 @@ class AppIconImageView: UIImageView
         set {
             if let newImage = newValue, newImage.hasAlphaChannel
             {
+                if newImage.isPredominantlyLight
+                {
+                    self.backgroundColor = .black
+                }
+                else
+                {
+                    self.backgroundColor = .white
+                }
                 super.image = newImage.withDropShadow(color: .black, radius: 4, offset: CGSize(width: 0, height: 1.5), opacity: 0.25)
             }
             else
             {
+                self.backgroundColor = .white
                 super.image = newValue
             }
         }
@@ -92,6 +101,59 @@ private extension UIImage
         return alphaInfo != .none &&
                alphaInfo != .noneSkipLast &&
                alphaInfo != .noneSkipFirst
+    }
+    
+    var isPredominantlyLight: Bool {
+        guard let cgImage = self.cgImage else { return false }
+        
+        let width = 16
+        let height = 16
+        let bytesPerPixel = 4
+        let bytesPerRow = width * bytesPerPixel
+        let bitsPerComponent = 8
+        
+        var rawData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let context = CGContext(
+            data: &rawData,
+            width: width,
+            height: height,
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+        )
+        
+        guard let context = context else { return false }
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        var totalLuminance: CGFloat = 0.0
+        var totalOpaquePixels: CGFloat = 0.0
+        
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = (y * width + x) * bytesPerPixel
+                let r = CGFloat(rawData[offset])
+                let g = CGFloat(rawData[offset + 1])
+                let b = CGFloat(rawData[offset + 2])
+                let a = CGFloat(rawData[offset + 3]) / 255.0
+                
+                // Only consider pixels that are not fully transparent (alpha > 0.1)
+                if a > 0.1 {
+                    // Relative luminance formula
+                    let luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0
+                    totalLuminance += luminance * a
+                    totalOpaquePixels += a
+                }
+            }
+        }
+        
+        if totalOpaquePixels == 0 {
+            return false
+        }
+        
+        let averageLuminance = totalLuminance / totalOpaquePixels
+        return averageLuminance > 0.5
     }
     
     func withDropShadow(color: UIColor, radius: CGFloat, offset: CGSize, opacity: Float) -> UIImage?
