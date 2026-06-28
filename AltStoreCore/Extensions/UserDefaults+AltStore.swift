@@ -245,8 +245,8 @@ public extension UserDefaults
             #keyPath(UserDefaults.isDebugModeEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerConsoleLoggingEnabled): false, // minimuxer logging is disabled by default for console loggin
-            #keyPath(UserDefaults.isMinimuxerStatusCheckEnabled): false, // minimuxer status check is disabled by default to support LocalDevVPN based cellular refresh
-            #keyPath(UserDefaults.recreateDatabaseOnNextStart): false, 
+            #keyPath(UserDefaults.isMinimuxerStatusCheckEnabled): true, // minimuxer status check is disabled by default to support LocalDevVPN based cellular refresh
+            #keyPath(UserDefaults.recreateDatabaseOnNextStart): false,
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
             #keyPath(UserDefaults.enableEMPforWireguard): false,
             #keyPath(UserDefaults.isIdleTimeoutDisableEnabled): true,

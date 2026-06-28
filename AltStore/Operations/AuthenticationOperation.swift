@@ -818,13 +818,13 @@ private extension AuthenticationOperation
             return completionHandler(false)
             
         case .failure(let reason):
-            self.debugLog("[AltSign] Signing certificate mismatch detected: \(reason)")
+            self.debugLog("[Authentication] Signing certificate mismatch detected: \(reason)")
             
             // For Paid Developer accounts, if the certificate used to sign the current installation
             // is still active on Apple's portal (which shows as .privateKeyLost or .externalSigner),
             // we don't need to warn the user or force a refresh.
             if signer.team.type != .free && (reason == .privateKeyLost || reason == .externalSigner) {
-                self.debugLog("[AltSign] Running certificate is still active on the Paid account portal. Skipping refresh screen.")
+                self.debugLog("[Authentication] Running certificate is still active on the Paid account portal. Skipping refresh screen.")
                 return completionHandler(false)
             }
             
