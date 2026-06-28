@@ -721,6 +721,7 @@ private extension SettingsViewController
     @IBAction func toggleMinimuxerConsoleLogging(_ sender: UISwitch) {
         // update it in database
         UserDefaults.standard.isMinimuxerConsoleLoggingEnabled = sender.isOn
+        minimuxerSetLogging(sender.isOn)
     }
 
     @IBAction func toggleMinimuxerStatusCheck(_ sender: UISwitch) {

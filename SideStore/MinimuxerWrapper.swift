@@ -58,10 +58,10 @@ func markMuxerServicesNeedsRestart(error: Error) {
     AppManager.markMuxerServicesNeedsRestart(error: error)
 }
 
-func minimuxerStartWithLogger(_ pairingFile: String, _ logPath: String, _ loggingEnabled: Bool) throws {
-    defer { print("[SideStore] minimuxerStartWithLogger(pairingFile, logPath, dest, loggingEnabled) completed") }
+func minimuxerStart(_ pairingFile: String) throws {
+    defer { print("[SideStore] minimuxerStart(pairingFile) completed") }
     #if targetEnvironment(simulator)
-    print("[SideStore] minimuxerStartWithLogger(pairingFile, logPath, loggingEnabled) is no-op on simulator")
+    print("[SideStore] minimuxerStart(pairingFile) is no-op on simulator")
     #else
     // refresh config if any
     bindTunnelConfig()
@@ -78,10 +78,8 @@ func minimuxerStartWithLogger(_ pairingFile: String, _ logPath: String, _ loggin
     // observe network route changes (and update device endpoint from vpn(utun))
     NetworkObserver.shared.start()
     
-    print("[SideStore] minimuxerStartWithLogger(pairingFile, logPath, dest, loggingEnabled) invoked")
-    try Minimuxer.startWithLogger(pairingFile: pairingFile,
-                                  logPath: logPath,
-                                  isConsoleLoggingEnabled: loggingEnabled)
+    print("[SideStore] minimuxerStart(pairingFile) invoked")
+    try Minimuxer.start(pairingFile: pairingFile)
     #endif
 }
 
@@ -187,10 +185,10 @@ func dumpProfiles(_ docsPath: String) throws -> String {
     #endif
 }
 
-func setMinimuxerDebug(_ debug: Bool) {
-    defer { print("[SideStore] setMinimuxerDebug(debug) completed") }
-    print("[SideStore] setMinimuxerDebug(debug) invoked")
-    Minimuxer.setLogging(debug)
+func minimuxerSetLogging(_ enabled: Bool) {
+    defer { print("[SideStore] minimuxerSetLogging(enabled) completed") }
+    print("[SideStore] minimuxerSetLogging(enabled) invoked")
+    Minimuxer.setLogging(enabled)
 }
 
 extension MinimuxerError: @retroactive LocalizedError {

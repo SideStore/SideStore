@@ -90,7 +90,8 @@ final class LaunchViewController: UIViewController {
         let documentsDirectory = FileManager.default.documentsDirectory.absoluteString
         do {
             let loggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
-            try minimuxerStartWithLogger(pairing_file, documentsDirectory, loggingEnabled)
+            minimuxerSetLogging(loggingEnabled)
+            try minimuxerStart(pairing_file)
         } catch {
             try! FileManager.default.removeItem(at: FileManager.default.documentsDirectory.appendingPathComponent(pairingFileName))
             displayError("minimuxer failed to start, please restart SideStore. \((error as? LocalizedError)?.failureReason ?? "UNKNOWN ERROR")")

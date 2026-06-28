@@ -106,11 +106,10 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         do {
             // enable minimuxer console logging only if enabled in settings
             let isMinimuxerConsoleLoggingEnabled = UserDefaults.standard.isMinimuxerConsoleLoggingEnabled
+            minimuxerSetLogging(isMinimuxerConsoleLoggingEnabled)
 
-            try minimuxerStartWithLogger(
-                try String(contentsOf: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)")),
-                documentsDirectory,
-                isMinimuxerConsoleLoggingEnabled
+            try minimuxerStart(
+                try String(contentsOf: FileManager.default.documentsDirectory.appendingPathComponent("\(pairingFileName)"))
             )
         } catch {
             self.finish(.failure(error))
