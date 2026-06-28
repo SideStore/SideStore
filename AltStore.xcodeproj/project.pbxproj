@@ -79,8 +79,11 @@
 		A8038AC82F54687A00097AF1 /* libem_proxy_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8EB8CBC2F5453CD0094BC01 /* libem_proxy_static.a */; };
 		A803924B2F552F4C00097AF1 /* Minimuxer in Frameworks */ = {isa = PBXBuildFile; productRef = A803924A2F552F4C00097AF1 /* Minimuxer */; };
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
-		A823609F2FF0B46900AD4DAF /* AltSign in Frameworks */ = {isa = PBXBuildFile; productRef = A823609E2FF0B46900AD4DAF /* AltSign */; };
-		A82360A12FF0B47500AD4DAF /* AltSign in Frameworks */ = {isa = PBXBuildFile; productRef = A82360A02FF0B47500AD4DAF /* AltSign */; };
+		A823609F2FF0B46900AD4DAF /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A823609E2FF0B46900AD4DAF /* AltSign-Static */; };
+		A82360A12FF0B47500AD4DAF /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A82360A02FF0B47500AD4DAF /* AltSign-Static */; };
+		A823DC502FF0D82100AD4DAF /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; };
+		A823DC512FF0D82100AD4DAF /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A823E5262FF0DB5500AD4DAF /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; };
 		A83FE3672EC90482005ACE9A /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = A83FE3662EC90482005ACE9A /* Starscream */; };
 		A83FE3772EC905E3005ACE9A /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A83FE3762EC905E3005ACE9A /* KeychainAccess */; };
 		A844287D2FE791EA003CC103 /* Minimuxer in Frameworks */ = {isa = PBXBuildFile; productRef = A844287C2FE791EA003CC103 /* Minimuxer */; };
@@ -222,26 +225,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A8635D0A2F4CF17A00E66784 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A8C6D5102D1EE8AC00DF01F1 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BF088D2B2501A087008082D9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -289,11 +272,11 @@
 		A8036E7F2F54606400097AF1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A8036EA72F54642D00097AF1 /* libimobiledevice.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libimobiledevice.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8037A0D2F54664300097AF1 /* libem_proxy_swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libem_proxy_swift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = Dependencies/AltSign/Dependencies/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A84596F12F7DC4C90000B8CD /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		A84596F22F7DC4C90000B8CD /* .gitmodules */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitmodules; sourceTree = "<group>"; };
 		A84596F32F7DC4C90000B8CD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A84596F42F7DC4C90000B8CD /* trustedapps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = trustedapps.json; sourceTree = "<group>"; };
-		A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = Dependencies/AltSign/Dependencies/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A8BD20292F543FD40045335F /* client_privatekey */ = {isa = PBXFileReference; lastKnownFileType = text; path = client_privatekey; sourceTree = "<group>"; };
 		A8BD202A2F543FD40045335F /* client_publickey */ = {isa = PBXFileReference; lastKnownFileType = text; path = client_publickey; sourceTree = "<group>"; };
 		A8BD202B2F543FD40045335F /* emp.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = emp.conf; sourceTree = "<group>"; };
@@ -521,12 +504,6 @@
 			);
 			target = BF58047A246A28F7008AE704 /* AltBackup */;
 		};
-		A8EEC36C2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-			);
-			target = BF66EE7D2501AE50007EE018 /* AltStoreCore */;
-		};
 		A8EEC3CA2F4B0EFC00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -609,7 +586,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A8EEC0502F4AF7FB00F2436D /* AltStoreCore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (174F75012F8B4F4900A53376 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, A8EEC0BF2F4AF7FB00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltStoreCore; sourceTree = "<group>"; };
-		A8EEC3482F4B0D8600F2436D /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC36A2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36C2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36B2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		A8EEC3482F4B0D8600F2436D /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC36A2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36B2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		A8EEC3B92F4B0EFC00F2436D /* AltWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3CA2F4B0EFC00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltWidget; sourceTree = "<group>"; };
 		A8EEC3D92F4B0FC800F2436D /* AltBackup */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3E22F4B0FC800F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltBackup; sourceTree = "<group>"; };
 		A8EEC71D2F4B10D900F2436D /* xcconfigs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = xcconfigs; sourceTree = "<group>"; };
@@ -638,7 +615,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */,
-				A823609F2FF0B46900AD4DAF /* AltSign in Frameworks */,
+				A823609F2FF0B46900AD4DAF /* AltSign-Static in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,7 +623,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A82360A12FF0B47500AD4DAF /* AltSign in Frameworks */,
+				A82360A12FF0B47500AD4DAF /* AltSign-Static in Frameworks */,
 				A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */,
 				A83FE3772EC905E3005ACE9A /* KeychainAccess in Frameworks */,
 			);
@@ -1136,7 +1113,7 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A8635D052F4CF16D00E66784 /* OpenSSL.xcframework */,
+				A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */,
 				BF580497246A3D19008AE704 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -1256,7 +1233,6 @@
 				BF580477246A28F7008AE704 /* Sources */,
 				BF580478246A28F7008AE704 /* Frameworks */,
 				BF580479246A28F7008AE704 /* Resources */,
-				A8C6D5102D1EE8AC00DF01F1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1278,7 +1254,6 @@
 				BF66EE7A2501AE50007EE018 /* Sources */,
 				BF66EE7B2501AE50007EE018 /* Frameworks */,
 				BF66EE7C2501AE50007EE018 /* Resources */,
-				A8635D0A2F4CF17A00E66784 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1292,7 +1267,7 @@
 			packageProductDependencies = (
 				A82067C32D03E0DE00645C0D /* SemanticVersion */,
 				A83FE3762EC905E3005ACE9A /* KeychainAccess */,
-				A82360A02FF0B47500AD4DAF /* AltSign */,
+				A82360A02FF0B47500AD4DAF /* AltSign-Static */,
 			);
 			productName = AltStoreCore;
 			productReference = BF66EE7E2501AE50007EE018 /* AltStoreCore.framework */;
@@ -2380,15 +2355,15 @@
 			package = A82067C22D03E0DE00645C0D /* XCRemoteSwiftPackageReference "SemanticVersion" */;
 			productName = SemanticVersion;
 		};
-		A823609E2FF0B46900AD4DAF /* AltSign */ = {
+		A823609E2FF0B46900AD4DAF /* AltSign-Static */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A844287A2FE791BB003CC103 /* XCLocalSwiftPackageReference "Dependencies/AltSign" */;
-			productName = AltSign;
+			productName = "AltSign-Static";
 		};
-		A82360A02FF0B47500AD4DAF /* AltSign */ = {
+		A82360A02FF0B47500AD4DAF /* AltSign-Static */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A844287A2FE791BB003CC103 /* XCLocalSwiftPackageReference "Dependencies/AltSign" */;
-			productName = AltSign;
+			productName = "AltSign-Static";
 		};
 		A83FE3662EC90482005ACE9A /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
