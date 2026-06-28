@@ -51,10 +51,27 @@ public final class CacheManager {
     
     public func formattedCacheSize() -> String {
         let size = calculateCacheSize()
+        guard size > 0 else { return "0 KB" }
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useAll]
         formatter.countStyle = .file
         return formatter.string(fromByteCount: size)
+    }
+    
+    public func formattedCacheSize(completion: @escaping (String) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let size = self.calculateCacheSize()
+            let result: String
+            if size <= 0 {
+                result = "0 KB"
+            } else {
+                let formatter = ByteCountFormatter()
+                formatter.allowedUnits = [.useAll]
+                formatter.countStyle = .file
+                result = formatter.string(fromByteCount: size)
+            }
+            completion(result)
+        }
     }
     
     private func getDirectorySize(at url: URL) -> Int64 {

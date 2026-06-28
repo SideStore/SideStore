@@ -802,9 +802,10 @@ private extension SettingsViewController
     
     func clearCache()
     {
-        let cacheSizeString = CacheManager.shared.formattedCacheSize()
-        let title = String(format: NSLocalizedString("Are you sure you want to clear SideStore's cache\n\nCache Size: (%@)?", comment: ""), cacheSizeString)
-        let alertController = UIAlertController(title: title,
+        let makeCacheTitle: (String) -> String = { sizeString in
+            String(format: NSLocalizedString("Are you sure you want to clear SideStore's cache?\n\nCache Size: %@", comment: ""), sizeString)
+        }
+        let alertController = UIAlertController(title: makeCacheTitle(NSLocalizedString("Calculating…", comment: "")),
                                                 message: NSLocalizedString("This will remove all temporary files as well as backups for uninstalled apps.", comment: ""),
                                                 preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style) { [weak self] _ in
@@ -833,6 +834,13 @@ private extension SettingsViewController
         }
         
         self.present(alertController, animated: true)
+        
+        // Update title once the actual cache size is computed in background
+        CacheManager.shared.formattedCacheSize { [weak alertController] sizeString in
+            DispatchQueue.main.async {
+                alertController?.title = makeCacheTitle(sizeString)
+            }
+        }
     }
     
     @IBAction func handleDebugModeGesture(_ gestureRecognizer: UISwipeGestureRecognizer)
