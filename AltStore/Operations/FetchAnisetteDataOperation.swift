@@ -71,16 +71,60 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
     
 
     func getAnisetteServerUrl(_ viewContext: UIViewController?, completion: @escaping (String?, Error?) -> Void) {
-        var serverUrls = UserDefaults.standard.menuAnisetteServersList
-        let currentServer = UserDefaults.standard.menuAnisetteURL
-
-        // Prioritize the current server by moving it to the top of the list
-        if let currentServerIndex = serverUrls.firstIndex(of: currentServer) {
-            serverUrls.remove(at: currentServerIndex)
-            serverUrls.insert(currentServer, at: 0)
+        let serverUrls = UserDefaults.standard.menuAnisetteServersList
+        guard !serverUrls.isEmpty else {
+            let error = NSError(domain: "AnisetteError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No anisette servers configured."])
+            completion(nil, error)
+            return
         }
+
+        let lastServer = UserDefaults.standard.menuAnisetteURL
+        let startIndex = serverUrls.firstIndex(of: lastServer) ?? 0
         
-        tryNextServer(from: serverUrls, viewContext, currentIndex: 0, completion: completion)
+        Task {
+            for triedCount in 0..<serverUrls.count {
+                let currentIndex = (startIndex + triedCount) % serverUrls.count
+                let currentServerUrlString = serverUrls[currentIndex]
+
+                guard let url = URL(string: currentServerUrlString) else {
+                    let errmsg = "Skipping invalid URL: \(currentServerUrlString)"
+                    self.verboseLog(errmsg)
+                    showToast(viewContext: viewContext, message: errmsg)
+                    continue
+                }
+
+                let success = await pingServerAsync(url)
+                if success {
+                    let okmsg = "Found working server: \(url.absoluteString)"
+                    self.verboseLog(okmsg)
+                    if triedCount > 0 {
+                        self.showToast(viewContext: viewContext, message: okmsg)
+                    }
+                    UserDefaults.standard.menuAnisetteURL = url.absoluteString
+                    completion(url.absoluteString, nil)
+                    return
+                } else {
+                    let errmsg = "Failed to reach server: \(url.absoluteString), trying next server."
+                    self.verboseLog(errmsg)
+                    self.showToast(viewContext: viewContext, message: errmsg)
+                }
+            }
+
+            // Loop exhausted: Save the next index to cycle uniformly
+            let nextIndex = (startIndex + 1) % serverUrls.count
+            UserDefaults.standard.menuAnisetteURL = serverUrls[nextIndex]
+
+            let error = NSError(domain: "AnisetteError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid server found."])
+            completion(nil, error)
+        }
+    }
+    
+    private func pingServerAsync(_ url: URL) async -> Bool {
+        await withCheckedContinuation { continuation in
+            pingServer(url) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
     }
     
     private func showToast(viewContext: UIViewController?, message: String){
@@ -91,45 +135,6 @@ final class FetchAnisetteDataOperation: ResultOperation<ALTAnisetteData>, WebSoc
 //            toastView.detailTextLabel.textColor = .altPrimary
             DispatchQueue.main.async {
                 toastView.show(in: viewContext)
-            }
-        }
-    }
-
-    private func tryNextServer(from serverUrls: [String], _ viewContext: UIViewController?,currentIndex: Int, completion: @escaping (String?, Error?) -> Void) {
-        // Check if all URLs have been exhausted
-        guard currentIndex < serverUrls.count else {
-            let error = NSError(domain: "AnisetteError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid server found."])
-            completion(nil, error)
-            return
-        }
-
-        let currentServerUrlString = serverUrls[currentIndex]
-        guard let url = URL(string: currentServerUrlString) else {
-            // Invalid URL, skip to next
-            let errmsg = "Skipping invalid URL: \(currentServerUrlString)"
-            self.verboseLog(errmsg)
-            showToast(viewContext: viewContext, message: errmsg)
-            tryNextServer(from: serverUrls, viewContext, currentIndex: currentIndex + 1, completion: completion)
-            return
-        }
-
-        // Attempt to ping the current URL
-        pingServer(url) { success, error in
-            if success {
-                // If the server is reachable, return the URL
-                let okmsg = "Found working server: \(url.absoluteString)"
-                self.verboseLog(okmsg)
-                if(currentIndex > 0){
-                    // notify user if available server is different the user-specified one
-                    self.showToast(viewContext: viewContext, message: okmsg)
-                }
-                completion(url.absoluteString, nil)
-            } else {
-                // If not, try the next URL
-                let errmsg = "Failed to reach server: \(url.absoluteString), trying next server."
-                self.verboseLog(errmsg)
-                self.showToast(viewContext: viewContext, message: errmsg)
-                self.tryNextServer(from: serverUrls, viewContext, currentIndex: currentIndex + 1, completion: completion)
             }
         }
     }
