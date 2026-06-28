@@ -185,7 +185,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 }
                 
                 // Reinstalling ourself will hang until we leave the app, so we need to exit it without force closing
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     if UIApplication.shared.applicationState != .active {
                         self.debugLog("We are not in the foreground, let's not do anything")
                         return
@@ -194,7 +194,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                         self.debugLog("Installing finished")
                         return
                     }
-                    self.debugLog("We are still installing after 3 seconds")
+                    self.debugLog("We are still installing after 1 seconds")
                     UNUserNotificationCenter.current().getNotificationSettings { settings in
                         switch (settings.authorizationStatus) {
                         case .authorized, .ephemeral, .provisional:
