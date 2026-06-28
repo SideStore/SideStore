@@ -81,9 +81,8 @@
 		A82067C42D03E0DE00645C0D /* SemanticVersion in Frameworks */ = {isa = PBXBuildFile; productRef = A82067C32D03E0DE00645C0D /* SemanticVersion */; };
 		A823609F2FF0B46900AD4DAF /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A823609E2FF0B46900AD4DAF /* AltSign-Static */; };
 		A82360A12FF0B47500AD4DAF /* AltSign-Static in Frameworks */ = {isa = PBXBuildFile; productRef = A82360A02FF0B47500AD4DAF /* AltSign-Static */; };
-		A823DC502FF0D82100AD4DAF /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; };
-		A823DC512FF0D82100AD4DAF /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A823E5262FF0DB5500AD4DAF /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */; };
+		A823DC542FF0D82100AD4DAF /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = A823DC532FF0D82100AD4DAF /* OpenSSL */; };
+		A82526E72FF0E1C000FB2EDD /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = A82526E62FF0E1C000FB2EDD /* OpenSSL */; };
 		A83FE3672EC90482005ACE9A /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = A83FE3662EC90482005ACE9A /* Starscream */; };
 		A83FE3772EC905E3005ACE9A /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A83FE3762EC905E3005ACE9A /* KeychainAccess */; };
 		A844287D2FE791EA003CC103 /* Minimuxer in Frameworks */ = {isa = PBXBuildFile; productRef = A844287C2FE791EA003CC103 /* Minimuxer */; };
@@ -227,7 +226,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		BF088D2B2501A087008082D9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
@@ -272,7 +271,6 @@
 		A8036E7F2F54606400097AF1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A8036EA72F54642D00097AF1 /* libimobiledevice.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libimobiledevice.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8037A0D2F54664300097AF1 /* libem_proxy_swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libem_proxy_swift.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:67RAULRX93:Marcin Krzyzanowski"; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = Dependencies/AltSign/Dependencies/OpenSSL.xcframework; sourceTree = "<group>"; };
 		A84596F12F7DC4C90000B8CD /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		A84596F22F7DC4C90000B8CD /* .gitmodules */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitmodules; sourceTree = "<group>"; };
 		A84596F32F7DC4C90000B8CD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -614,6 +612,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A82526E72FF0E1C000FB2EDD /* OpenSSL in Frameworks */,
 				BF580498246A3D19008AE704 /* UIKit.framework in Frameworks */,
 				A823609F2FF0B46900AD4DAF /* AltSign-Static in Frameworks */,
 			);
@@ -649,6 +648,7 @@
 				A8EB89D02F5451C20094BC01 /* KeychainAccess in Frameworks */,
 				A844287D2FE791EA003CC103 /* Minimuxer in Frameworks */,
 				A8C2260E2EC9039A00047C0D /* Nuke in Frameworks */,
+				A823DC542FF0D82100AD4DAF /* OpenSSL in Frameworks */,
 				A83FE3672EC90482005ACE9A /* Starscream in Frameworks */,
 				A8EB89CE2F5451B50094BC01 /* SemanticVersion in Frameworks */,
 				BF66EE852501AE50007EE018 /* AltStoreCore.framework in Frameworks */,
@@ -1113,7 +1113,6 @@
 		BFD247852284BB3300981D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A823DC4E2FF0D80A00AD4DAF /* OpenSSL.xcframework */,
 				BF580497246A3D19008AE704 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -1320,6 +1319,9 @@
 				A8EEC8412F4B146A00F2436D /* AltStore */,
 			);
 			name = SideStore;
+			packageProductDependencies = (
+				A823DC532FF0D82100AD4DAF /* OpenSSL */,
+			);
 			productName = AltStore;
 			productReference = BFD2476A2284B9A500981D42 /* SideStore.app */;
 			productType = "com.apple.product-type.application";
@@ -2364,6 +2366,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A844287A2FE791BB003CC103 /* XCLocalSwiftPackageReference "Dependencies/AltSign" */;
 			productName = "AltSign-Static";
+		};
+		A823DC532FF0D82100AD4DAF /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A844287A2FE791BB003CC103 /* XCLocalSwiftPackageReference "Dependencies/AltSign" */;
+			productName = OpenSSL;
+		};
+		A82526E62FF0E1C000FB2EDD /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A844287A2FE791BB003CC103 /* XCLocalSwiftPackageReference "Dependencies/AltSign" */;
+			productName = OpenSSL;
 		};
 		A83FE3662EC90482005ACE9A /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
