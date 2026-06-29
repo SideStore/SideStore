@@ -277,70 +277,7 @@ class CertificatesViewModel: ObservableObject {
                             
                             self.saveLocalCertificate(certificate)
                             
-                            Keychain.shared.signingCertificate = certificate.p12Data()
-                            Keychain.shared.signingCertificatePassword = certificate.machineIdentifier
-                            
-                            self.fetchActiveSerialNumber()
-                            self.alertMessage = "Certificate created and set as active signing certificate successfully."
-                            self.showAlert = true
-                            
-                            self.loadCertificates(presentingViewController: nil)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func uploadCertificate(_ certificate: ALTCertificate) {
-        guard let team = self.team, let session = self.session else {
-            self.errorMessage = "Not authenticated"
-            return
-        }
-        
-        self.isLoading = true
-        self.errorMessage = nil
-        
-        let name = certificate.machineName ?? certificate.name
-        
-        ALTAppleAPI.shared.addCertificate(machineName: name, to: team, session: session) { [weak self] (newCert, error) in
-            guard let self = self else { return }
-            
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    self.errorMessage = error.localizedDescription
-                }
-                return
-            }
-            
-            guard let newCert = newCert, let privateKey = newCert.privateKey else {
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    self.errorMessage = "Missing private key from newly created certificate."
-                }
-                return
-            }
-            
-            self.deleteLocalCertificate(serialNumber: certificate.serialNumber)
-            
-            ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { [weak self] (certs, error) in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    if let error = error {
-                        self.errorMessage = error.localizedDescription
-                    } else if let certs = certs {
-                        if let matched = certs.first(where: { $0.serialNumber == newCert.serialNumber }) {
-                            matched.privateKey = privateKey
-                            self.saveLocalCertificate(matched)
-                            
-                            if self.activeSerialNumber == certificate.serialNumber {
-                                Keychain.shared.signingCertificate = matched.p12Data()
-                                Keychain.shared.signingCertificatePassword = matched.machineIdentifier
-                            }
-                            
-                            self.alertMessage = "Certificate uploaded/registered to Apple's portal successfully."
+                            self.alertMessage = "Certificate created successfully."
                             self.showAlert = true
                             
                             self.loadCertificates(presentingViewController: nil)
@@ -445,10 +382,7 @@ struct CertificatesView: View {
     var body: some View {
         ZStack {
             List {
-                Section(
-                    header: Text("Active Local Certificate"),
-                    footer: Text("Deactivate Locally only removes the certificate from the local device's storage. The certificate remains perfectly valid on Apple's developer servers, meaning any apps signed with this certificate on other devices (or other SideStore installations) will continue to work.")
-                ) {
+                Section("Active Local Certificate") {
                     if let activeSerial = viewModel.activeSerialNumber {
                         HStack {
                             Image(systemName: "checkmark.seal.fill")
@@ -464,6 +398,13 @@ struct CertificatesView: View {
                             }
                         }
                         .padding(.vertical, 4)
+                        
+                        SwiftUI.Button(role: .destructive) {
+                            showDeactivateConfirmation = true
+                        } label: {
+                            Text("Deactivate Locally")
+                                .fontWeight(.medium)
+                        }
                     } else {
                         Text("No active local certificate found. Create a new certificate or import a .p12 file to sign your apps.")
                             .foregroundColor(.secondary)
@@ -471,19 +412,11 @@ struct CertificatesView: View {
                     }
                 }
                 
-                if viewModel.activeSerialNumber != nil {
-                    Section {
-                        SwiftUI.Button(role: .destructive) {
-                            showDeactivateConfirmation = true
-                        } label: {
-                            Text("Deactivate Locally")
-                                .fontWeight(.medium)
-                        }
-                    }
-                }
+                let privateCerts = viewModel.certificates.filter { $0.privateKey != nil }
+                let publicCerts = viewModel.certificates.filter { $0.privateKey == nil }
                 
-                Section(header: Text("Certificates List")) {
-                    if viewModel.certificates.isEmpty {
+                if viewModel.certificates.isEmpty {
+                    Section(header: Text("Certificates")) {
                         if viewModel.isLoading {
                             Text("Fetching certificates...")
                                 .foregroundColor(.secondary)
@@ -491,92 +424,20 @@ struct CertificatesView: View {
                             Text("No certificates found.")
                                 .foregroundColor(.secondary)
                         }
-                    } else {
-                        ForEach(viewModel.certificates, id: \.serialNumber) { cert in
-                            let isActive = cert.serialNumber == viewModel.activeSerialNumber
-                            let isRemote = cert.identifier != nil
-                            
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(cert.machineName ?? cert.name)
-                                        .font(.headline)
-                                    Text("Serial: " + cert.serialNumber)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    if let ident = cert.identifier {
-                                        Text("ID: " + ident)
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                                
-                                Spacer()
-                                
-                                if isActive {
-                                    Text("Active")
-                                        .font(.caption)
-                                        .fontWeight(.bold)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.green.opacity(0.2))
-                                        .foregroundColor(.green)
-                                        .cornerRadius(6)
-                                } else if isRemote && viewModel.isPaidAccount {
-                                    SwiftUI.Button(role: .destructive) {
-                                        self.certificateToRevoke = cert
-                                        self.showRevokeConfirmation = true
-                                    } label: {
-                                        Text("Revoke")
-                                            .font(.subheadline)
-                                    }
-                                    .buttonStyle(.bordered)
-                                    .tint(.red)
-                                } else if !isRemote && viewModel.isPaidAccount {
-                                    SwiftUI.Button {
-                                        viewModel.uploadCertificate(cert)
-                                    } label: {
-                                        Text("Upload")
-                                            .font(.subheadline)
-                                    }
-                                    .buttonStyle(.bordered)
-                                    .tint(.accentColor)
-                                }
+                    }
+                } else {
+                    if !privateCerts.isEmpty {
+                        Section(header: Text("Private Certificates")) {
+                            ForEach(privateCerts, id: \.serialNumber) { cert in
+                                certificateRow(cert: cert, hasPrivateKey: true)
                             }
-                            .padding(.vertical, 4)
-                            .contentShape(Rectangle())
-                            .contextMenu {
-                                if cert.privateKey != nil && !isActive {
-                                    SwiftUI.Button {
-                                        viewModel.makeCertificateActive(cert)
-                                    } label: {
-                                        Label("Replace Current Signing Certificate", systemImage: "key.fill")
-                                    }
-                                }
-                                
-                                SwiftUI.Button {
-                                    UIPasteboard.general.string = cert.serialNumber
-                                } label: {
-                                    Label("Copy S/N", systemImage: "doc.on.doc")
-                                }
-                                
-                                SwiftUI.Button {
-                                    if cert.privateKey != nil {
-                                        self.certificateToExport = cert
-                                        self.exportPasswordInput = ""
-                                        self.showExportPasswordPrompt = true
-                                    } else {
-                                        exportPublicCertificate(cert)
-                                    }
-                                } label: {
-                                    Label("Export (.p12)", systemImage: "square.and.arrow.up")
-                                }
-                                
-                                SwiftUI.Button(role: .destructive) {
-                                    self.certificateToDelete = cert
-                                    self.showDeleteConfirmation = true
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
+                        }
+                    }
+                    
+                    if !publicCerts.isEmpty {
+                        Section(header: Text("Public Certificates")) {
+                            ForEach(publicCerts, id: \.serialNumber) { cert in
+                                certificateRow(cert: cert, hasPrivateKey: false)
                             }
                         }
                     }
@@ -758,6 +619,86 @@ struct CertificatesView: View {
             }
         } catch {
             viewModel.errorMessage = "Failed to write temp export file: " + error.localizedDescription
+        }
+    }
+    
+    @ViewBuilder
+    private func certificateRow(cert: ALTCertificate, hasPrivateKey: Bool) -> some View {
+        let isActive = cert.serialNumber == viewModel.activeSerialNumber
+        let isRemote = cert.identifier != nil
+        
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(cert.machineName ?? cert.name)
+                    .font(.headline)
+                Text("Serial: " + cert.serialNumber)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                if let ident = cert.identifier {
+                    Text("ID: " + ident)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            Spacer()
+            
+            if isActive {
+                Text("Active")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green.opacity(0.2))
+                    .foregroundColor(.green)
+                    .cornerRadius(6)
+            } else if isRemote && viewModel.isPaidAccount {
+                SwiftUI.Button(role: .destructive) {
+                    self.certificateToRevoke = cert
+                    self.showRevokeConfirmation = true
+                } label: {
+                    Text("Revoke")
+                        .font(.subheadline)
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
+            }
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .contextMenu {
+            if hasPrivateKey && !isActive {
+                SwiftUI.Button {
+                    viewModel.makeCertificateActive(cert)
+                } label: {
+                    Label("Activate", systemImage: "key.fill")
+                }
+            }
+            
+            SwiftUI.Button {
+                UIPasteboard.general.string = cert.serialNumber
+            } label: {
+                Label("Copy S/N", systemImage: "doc.on.doc")
+            }
+            
+            SwiftUI.Button {
+                if hasPrivateKey {
+                    self.certificateToExport = cert
+                    self.exportPasswordInput = ""
+                    self.showExportPasswordPrompt = true
+                } else {
+                    exportPublicCertificate(cert)
+                }
+            } label: {
+                Label(hasPrivateKey ? "Export (.p12)" : "Export (.der)", systemImage: "square.and.arrow.up")
+            }
+            
+            SwiftUI.Button(role: .destructive) {
+                self.certificateToDelete = cert
+                self.showDeleteConfirmation = true
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
         }
     }
 }
