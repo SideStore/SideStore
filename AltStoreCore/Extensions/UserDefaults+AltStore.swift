@@ -106,6 +106,10 @@ public extension UserDefaults
         get { self.bool(forKey: #function) }
         set { self.set(newValue, forKey: #function) }
     }
+    @objc var keepSigningCertsAfterLogout: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
 
     @objc var recreateDatabaseOnNextStart: Bool {
         get { self.bool(forKey: #function) }
@@ -261,6 +265,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.permissionCheckingDisabled): permissionCheckingDisabled,
             #keyPath(UserDefaults._preferredAppSorting): preferredAppSorting.rawValue,
             #keyPath(UserDefaults.betaUdpatesTrack): defaultBetaUpdatesTrack,
+            #keyPath(UserDefaults.keepSigningCertsAfterLogout): true,
         ] as [String: Any]
         
         UserDefaults.standard.register(defaults: defaults)

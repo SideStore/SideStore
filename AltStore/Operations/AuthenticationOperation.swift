@@ -651,7 +651,27 @@ private extension AuthenticationOperation
                 let alertController = UIAlertController(title: NSLocalizedString("Would you like to revoke your previous certificates?\n\(certsText)", comment: ""), message: nil, preferredStyle: .alert)
                 
                 let noAction = UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .default) { (action) in
-                    requestCertificate()
+                    if team.type == .free {
+                        let warningAlert = UIAlertController(
+                            title: NSLocalizedString("Warning", comment: ""),
+                            message: NSLocalizedString("SideStore cannot manage the existing certificate without owning its private key. The apps signed with the existing certificate will expire soon unless they are resigned and renewed explicitly by SideStore.", comment: ""),
+                            preferredStyle: .alert
+                        )
+                        warningAlert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                            requestCertificate()
+                        })
+                        
+                        if self.navigationController.presentingViewController != nil
+                        {
+                            self.navigationController.present(warningAlert, animated: true, completion: nil)
+                        }
+                        else
+                        {
+                            self.presentingViewController?.present(warningAlert, animated: true, completion: nil)
+                        }
+                    } else {
+                        requestCertificate()
+                    }
                 }
                 let yesAction = UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default) { (action) in
                     for certificate in ourCertificates {

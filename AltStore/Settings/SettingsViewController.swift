@@ -671,9 +671,21 @@ private extension SettingsViewController
     
     @objc func signOut(_ sender: UIBarButtonItem)
     {
-        func signOut()
-        {
-            DatabaseManager.shared.signOut { (error) in
+        let contentVC = SignOutAlertViewController()
+        
+        let alertController = UIAlertController(
+            title: NSLocalizedString("Sign Out", comment: ""),
+            message: NSLocalizedString("Are you sure you want to sign out? You will no longer be able to install or refresh apps once you sign out.", comment: ""),
+            preferredStyle: .alert
+        )
+        
+        alertController.setValue(contentVC, forKey: "contentViewController")
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil)
+        
+        let signOutAction = UIAlertAction(title: NSLocalizedString("Sign Out", comment: ""), style: .destructive) { _ in
+            let keepCert = contentVC.isChecked
+            DatabaseManager.shared.signOut(keepCertificate: keepCert) { (error) in
                 DispatchQueue.main.async {
                     if let error = error
                     {
@@ -686,11 +698,9 @@ private extension SettingsViewController
             }
         }
         
-        let alertController = UIAlertController(title: NSLocalizedString("Are you sure you want to sign out?", comment: ""), message: NSLocalizedString("You will no longer be able to install or refresh apps once you sign out.", comment: ""), preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Sign Out", comment: ""), style: .destructive) { _ in signOut() })
-        alertController.addAction(.cancel)
-        //Fix crash on iPad
-        alertController.popoverPresentationController?.barButtonItem = sender
+        alertController.addAction(cancelAction)
+        alertController.addAction(signOutAction)
+        
         self.present(alertController, animated: true, completion: nil)
     }
     

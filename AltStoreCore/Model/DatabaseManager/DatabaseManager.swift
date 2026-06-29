@@ -216,7 +216,7 @@ public extension DatabaseManager
         }
     }
     
-    func signOut(completionHandler: @escaping (Error?) -> Void)
+    func signOut(keepCertificate: Bool = false, completionHandler: @escaping (Error?) -> Void)
     {
         self.persistentContainer.performBackgroundTask { (context) in
             if let account = self.activeAccount(in: context)
@@ -233,7 +233,7 @@ public extension DatabaseManager
             {
                 try context.save()
                 
-                Keychain.shared.reset()
+                Keychain.shared.reset(keepCertificate: keepCertificate)
                 
                 completionHandler(nil)
             }

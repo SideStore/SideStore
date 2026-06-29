@@ -89,22 +89,21 @@ public class Keychain
     {
     }
     
-    public func reset()
+    public func reset(keepCertificate: Bool = false)
     {
         self.appleIDEmailAddress = nil
         self.appleIDPassword = nil
         self.appleIDAdsid = nil
         self.appleIDXcodeToken = nil
         
-        // Legacy
-        self.signingCertificatePrivateKey = nil
-        self.signingCertificateSerialNumber = nil
+        if !keepCertificate {
+            // Legacy
+            self.signingCertificatePrivateKey = nil
+            self.signingCertificateSerialNumber = nil
 
-        // mahee96: clear signing certificate, so that next login will fetch fresh up-to-date cert!
-        // user's who use paid certs from 3rd party need to reimport after re-logging in
-        // coz this reset (ie sign-out) wipes the keychain to get to clean slate.
-        self.signingCertificate = nil
-        self.signingCertificatePassword = nil
+            self.signingCertificate = nil
+            self.signingCertificatePassword = nil
+        }
         
         self.certificate = nil
         self.session = nil
