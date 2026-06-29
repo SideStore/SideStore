@@ -566,10 +566,10 @@ struct CertificatesView: View {
                 if let displayIdent = displayIdentifier(for: cert, hasPrivateKey: hasPrivateKey) {
                     (
                         Text("ID: ")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                         +
                         Text(displayIdent)
-                            .font(.system(size: 9, design: .monospaced))
+                            .font(.system(size: 10, design: .monospaced))
                     )
                     .foregroundColor(.gray)
                 }
