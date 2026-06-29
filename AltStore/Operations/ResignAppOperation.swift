@@ -209,7 +209,7 @@ private extension ResignAppOperation
                     
                     if
                         let data = Keychain.shared.signingCertificate,
-                        let signingCertificate = ALTCertificate(p12Data: data, password: nil),
+                        let signingCertificate = try? ALTCertificate(p12Data: data, password: nil),
                         let encryptingPassword = Keychain.shared.signingCertificatePassword
                     {
                         additionalValues[Bundle.Info.certificateID] = signingCertificate.serialNumber

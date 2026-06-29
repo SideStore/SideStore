@@ -45,10 +45,8 @@ class CertificatesViewModel: ObservableObject {
     }
     
     func fetchActiveSerialNumber() {
-        if let serial = Keychain.shared.signingCertificateSerialNumber {
-            self.activeSerialNumber = serial
-        } else if let data = Keychain.shared.signingCertificate,
-                  let cert = ALTCertificate(p12Data: data, password: nil) {
+        if let data = Keychain.shared.signingCertificate,
+           let cert = try? ALTCertificate(p12Data: data, password: nil) {
             self.activeSerialNumber = cert.serialNumber
         } else {
             self.activeSerialNumber = nil
@@ -65,7 +63,7 @@ class CertificatesViewModel: ObservableObject {
         for serial in serials {
             if let data = try? self.certificateKeychain.getData("importedCert_" + serial) {
                 var loadedCert: ALTCertificate? = nil
-                if let cert = ALTCertificate(p12Data: data, password: "") {
+                if let cert = try? ALTCertificate(p12Data: data, password: "") {
                     loadedCert = cert
                 } else if let cert = ALTCertificate(data: data) {
                     loadedCert = cert
@@ -126,7 +124,7 @@ class CertificatesViewModel: ObservableObject {
     
     private var activeLocalCert: ALTCertificate? {
         guard let data = Keychain.shared.signingCertificate else { return nil }
-        if let cert = ALTCertificate(p12Data: data, password: nil) {
+        if let cert = try? ALTCertificate(p12Data: data, password: nil) {
             if let metadata = UserDefaults.standard.dictionary(forKey: "certMetadata_" + cert.serialNumber) as? [String: String] {
                 cert.machineName = metadata["machineName"]
                 cert.identifier = metadata["identifier"]
@@ -277,7 +275,7 @@ class CertificatesViewModel: ObservableObject {
         }
         
         // 2. Otherwise, treat as PKCS#12 format and try to unlock.
-        if let altCert = ALTCertificate(p12Data: certData, password: password) {
+        if let altCert = try? ALTCertificate(p12Data: certData, password: password) {
             saveLocalCertificate(altCert)
             return true
         }

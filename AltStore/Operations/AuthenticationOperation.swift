@@ -712,7 +712,7 @@ private extension AuthenticationOperation
                 
                 if
                     let data = Keychain.shared.signingCertificate,
-                    let localCertificate = ALTCertificate(p12Data: data, password: nil),
+                    let localCertificate = try? ALTCertificate(p12Data: data, password: nil),
                     let certificate = certificates.first(where: { $0.serialNumber == localCertificate.serialNumber })
                 {
                     // We have a certificate stored in the keychain and it hasn't been revoked.
@@ -720,22 +720,12 @@ private extension AuthenticationOperation
                     completionHandler(.success(localCertificate))
                 }
                 else if
-                    let serialNumber = Keychain.shared.signingCertificateSerialNumber,
-                    let privateKey = Keychain.shared.signingCertificatePrivateKey,
-                    let certificate = certificates.first(where: { $0.serialNumber == serialNumber })
-                {
-                    // LEGACY
-                    // We have the private key for one of the certificates, so add it to certificate and use it.
-                    certificate.privateKey = privateKey
-                    completionHandler(.success(certificate))
-                }
-                else if
                     let serialNumber = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.certificateID) as? String,
                     let certificate = certificates.first(where: { $0.serialNumber == serialNumber }),
                     let machineIdentifier = certificate.machineIdentifier,
                     FileManager.default.fileExists(atPath: Bundle.main.certificateURL.path),
                     let data = try? Data(contentsOf: Bundle.main.certificateURL),
-                    let localCertificate = ALTCertificate(p12Data: data, password: machineIdentifier)
+                    let localCertificate = try? ALTCertificate(p12Data: data, password: machineIdentifier)
                 {
                     // We have an embedded certificate that hasn't been revoked.
                     localCertificate.machineIdentifier = machineIdentifier

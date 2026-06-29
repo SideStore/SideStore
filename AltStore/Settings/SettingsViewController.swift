@@ -290,13 +290,14 @@ final class SettingsViewController: UITableViewController
         Keychain.shared.identifier = account.local_user
         signIn()
         update()
-        if let altCert = ALTCertificate(p12Data: account.cert, password: account.certpass) {
+        do {
+            let altCert = try ALTCertificate(p12Data: account.cert, password: account.certpass)
             Keychain.shared.signingCertificate = altCert.encryptedP12Data(withPassword: "")!
             Keychain.shared.signingCertificatePassword = account.certpass
             let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(account.email)'!", comment: ""), detailText: "SideStore should be fully operational!")
             return toastView.show(in: self)
-        } else {
-            let toastView = ToastView(text: NSLocalizedString("Failed to import account certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct. Still imported account/adi.pb details!")
+        } catch {
+            let toastView = ToastView(text: NSLocalizedString("Failed to import account certificate!", comment: ""), detailText: "Error: \(error.localizedDescription). Still imported account/adi.pb details!")
             return toastView.show(in: self)
         }
     }
@@ -1508,8 +1509,11 @@ extension SettingsViewController
                         return
                     }
                     
-                    guard let altCert = ALTCertificate(p12Data: certData, password: password) else {
-                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
+                    let altCert: ALTCertificate
+                    do {
+                        altCert = try ALTCertificate(p12Data: certData, password: password)
+                    } catch {
+                        let toastView = ToastView(text: NSLocalizedString("Failed to import certificate!", comment: ""), detailText: error.localizedDescription)
                         toastView.show(in: self)
                         return
                     }
@@ -1552,7 +1556,7 @@ extension SettingsViewController
                         return
                     }
                     
-                    guard let altCert = ALTCertificate(p12Data: certData, password: nil) else {
+                    guard let altCert = try? ALTCertificate(p12Data: certData, password: nil) else {
                         let toastView = ToastView(text: NSLocalizedString("Failed to export certificate!", comment: ""), detailText: "Failed to create ALTCertificate. Check if the password is correct.")
                         toastView.show(in: self)
                         return

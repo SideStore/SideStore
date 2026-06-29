@@ -1600,7 +1600,8 @@ private extension AppManager
         context.app = ALTApplication(fileURL: app.fileURL)
         context.useMainProfile = app.useMainProfile
 
-        if let activeSerial = group.context.certificate?.serialNumber ?? Keychain.shared.signingCertificateSerialNumber,
+        let activeSerial = group.context.certificate?.serialNumber ?? (Keychain.shared.signingCertificate.flatMap { try? ALTCertificate(p12Data: $0, password: nil) }?.serialNumber)
+        if let activeSerial = activeSerial,
            let appSerial = app.certificateSerialNumber,
            activeSerial != appSerial
         {
