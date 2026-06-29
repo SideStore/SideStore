@@ -326,7 +326,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate?, 
                 Keychain.shared.appleIDEmailAddress = self.appleIDEmailAddress ?? altTeam.account.appleID // Prefer the user's provided email address over the one associated with their account (which may be outdated).
                 Keychain.shared.appleIDPassword = self.appleIDPassword
                 
-                if let altCertificate = altCertificate
+                if let altCertificate = altCertificate, !self.skipCertificateProvisioning
                 {
                     self.showInstructionsIfNecessary() { (didShowInstructions) in
                         
