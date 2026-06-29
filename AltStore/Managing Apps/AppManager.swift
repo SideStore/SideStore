@@ -1596,36 +1596,37 @@ private extension AppManager
     {
         let progress = Progress.discreteProgress(totalUnitCount: 100)
         
+        let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
+        context.app = ALTApplication(fileURL: app.fileURL)
+        context.useMainProfile = app.useMainProfile
+
         if let activeSerial = group.context.certificate?.serialNumber ?? Keychain.shared.signingCertificateSerialNumber,
            let appSerial = app.certificateSerialNumber,
            activeSerial != appSerial
         {
             let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
-            completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
-            return progress
+            context.error = OperationError.refreshAppFailed(message: errMessage)
         }
         
-        let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
-        context.app = ALTApplication(fileURL: app.fileURL)
-        context.useMainProfile = app.useMainProfile
-       // Since this doesn't involve modifying app bundle which will cause re-install, this is safe  in refresh path
-       //App-Extensions: Ensure DB data and disk state must match
-       let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
-       let diskAppEx: Set<ALTApplication> = Set(context.app!.appExtensions)
-       let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
-       let dbAppExNames = dbAppEx.map{ $0.bundleIdentifier }            
-       let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
-
-       let validateAppExtensionsOperation = RSTAsyncBlockOperation { op in
-           
-           let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
-                          + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
-           print(errMessage)
-           if(!isMatching){
-               completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
-           }
-           op.finish()
-       }
+        if context.error == nil
+        {
+            // Since this doesn't involve modifying app bundle which will cause re-install, this is safe in refresh path
+            // App-Extensions: Ensure DB data and disk state must match
+            let dbAppEx: Set<InstalledExtension> = Set(app.appExtensions)
+            if let appObj = context.app {
+                let diskAppEx: Set<ALTApplication> = Set(appObj.appExtensions)
+                let diskAppExNames = diskAppEx.map { $0.bundleIdentifier }
+                let dbAppExNames = dbAppEx.map { $0.bundleIdentifier }
+                let isMatching = Set(dbAppExNames) == Set(diskAppExNames)
+                
+                if !isMatching {
+                    let errMessage = "AppManager.refresh: App Extensions in DB and Disk are matching: \(isMatching)\n"
+                                   + "AppManager.refresh: dbAppEx: \(dbAppExNames); diskAppEx: \(String(describing: diskAppExNames))\n"
+                    print(errMessage)
+                    context.error = OperationError.refreshAppFailed(message: errMessage)
+                }
+            }
+        }
         
         /* Fetch Provisioning Profiles */
         let fetchProvisioningProfilesOperation = FetchProvisioningProfilesRefreshOperation(context: context)

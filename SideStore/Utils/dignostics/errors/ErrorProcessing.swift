@@ -60,7 +60,7 @@ class ErrorProcessing {
     func getDescriptionText(error: NSError,_ depth: Int = 0) -> String{
         // closure
         let recurseErrors = { error in
-            self.getDescriptionText(error: error, depth+1)        // recursively process underlying error(s) if any
+            self.getDescriptionText(error: error, depth+1)
         }
         
         var description = ""
