@@ -81,6 +81,7 @@ extension SettingsViewController
         case certificateManagement
         case enableEMPForWiregaurd
         case customizeAppId
+        case cacheManagement
     }
     
     private enum SigningSettingsRow: Int, CaseIterable {
@@ -1405,6 +1406,17 @@ extension SettingsViewController
                 let certificateManagementView = CertificatesView(presentingViewController: self)
                 let vc = UIHostingController(rootView: certificateManagementView)
                 self.prepare(for: UIStoryboardSegue(identifier: "certificateManagement", source: self, destination: vc), sender: nil)
+                
+            case .cacheManagement:
+                let cacheManagementView = CacheManagementView()
+                let vc = UIHostingController(rootView: cacheManagementView)
+                
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithDefaultBackground()
+                vc.navigationItem.scrollEdgeAppearance = appearance
+                vc.navigationItem.standardAppearance = appearance
+                
+                navigationController?.pushViewController(vc, animated: true)
                 
             case .refreshAttempts, .enableEMPForWiregaurd, .customizeAppId: break
             }
