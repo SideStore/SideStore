@@ -280,8 +280,11 @@ extension AppManager
         guard !UserDefaults.standard.isAppLimitDisabled, let activeAppsLimit = UserDefaults.standard.activeAppsLimit else { return completion(.success(())) }
         
         DispatchQueue.main.async {
+            // Only apps signed with a free developer certificate count toward the 3-app free account limit.
+            // Apps signed with a paid certificate coexist independently and must not be counted here.
             let activeApps = InstalledApp.fetchActiveApps(in: DatabaseManager.shared.viewContext)
                 .filter { $0.bundleIdentifier != app.bundleIdentifier } // Don't count app towards total if it matches activating app
+                .filter { ($0.team?.type ?? .unknown) == .free }        // Only free-cert-signed apps count against the free limit
                 .sorted { ($0.name, $0.refreshedDate) < ($1.name, $1.refreshedDate) }
             
             var title: String = NSLocalizedString("Cannot Activate More than 3 Apps", comment: "")
@@ -298,7 +301,7 @@ extension AppManager
                     title = NSLocalizedString("Cannot Activate More than 3 Apps and App Extensions", comment: "")
                     
                     let appExtensionText = app.appExtensions.count == 1 ? NSLocalizedString("app extension", comment: "") : NSLocalizedString("app extensions", comment: "")
-                    message = String(format: NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions, and “%@” contains %@ %@. Please choose an app to deactivate.", comment: ""), app.name, NSNumber(value: app.appExtensions.count), appExtensionText)
+                    message = String(format: NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions, and \"%@\" contains %@ %@. Please choose an app to deactivate.", comment: ""), app.name, NSNumber(value: app.appExtensions.count), appExtensionText)
                 }
             }
             else

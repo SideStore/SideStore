@@ -152,6 +152,7 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 fetchRequest.includesPendingChanges = false
                 
                 var activeApps = InstalledApp.fetch(fetchRequest, in: backgroundContext)
+                    .filter { ($0.team?.type ?? .unknown) == .free } // Only free-cert-signed apps count against the free limit
                 if !activeApps.contains(installedApp)
                 {
                     let activeAppsCount = activeApps.map { $0.requiredActiveSlots }.reduce(0, +)
