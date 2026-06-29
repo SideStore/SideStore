@@ -139,8 +139,10 @@ class CertificatesViewModel: ObservableObject {
     
     // MARK: - Fetch & Load
     
-    func loadCertificates(presentingViewController: UIViewController?, completion: (() -> Void)? = nil) {
-        self.isLoading = true
+    func loadCertificates(presentingViewController: UIViewController?, isPullToRefresh: Bool = false, completion: (() -> Void)? = nil) {
+        if !isPullToRefresh {
+            self.isLoading = true
+        }
         self.errorMessage = nil
         self.fetchActiveSerialNumber()
         

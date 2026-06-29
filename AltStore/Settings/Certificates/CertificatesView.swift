@@ -156,7 +156,7 @@ struct CertificatesView: View {
             }
             .refreshable {
                 await withCheckedContinuation { continuation in
-                    viewModel.loadCertificates(presentingViewController: presentingViewController) {
+                    viewModel.loadCertificates(presentingViewController: presentingViewController, isPullToRefresh: true) {
                         continuation.resume()
                     }
                 }
