@@ -251,14 +251,14 @@ extension AppManager
     }
     
     @discardableResult
-    func authenticate(presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), completionHandler: @escaping (Result<(ALTTeam, ALTCertificate, ALTAppleAPISession), Error>) -> Void) -> AuthenticationOperation
+    func authenticate(presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), skipDeviceRegistration: Bool = true, completionHandler: @escaping (Result<(ALTTeam, ALTCertificate, ALTAppleAPISession), Error>) -> Void) -> AuthenticationOperation
     {
         if let operation = context.authenticationOperation
         {
             return operation
         }
         
-        let authenticationOperation = AuthenticationOperation(context: context, presentingViewController: presentingViewController)
+        let authenticationOperation = AuthenticationOperation(context: context, presentingViewController: presentingViewController, skipDeviceRegistration: skipDeviceRegistration)
         authenticationOperation.resultHandler = { (result) in
             switch result
             {
@@ -1162,7 +1162,7 @@ private extension AppManager
         var authenticationOperation: AuthenticationOperation?
         if group.context.session == nil
         {
-            authenticationOperation = self.authenticate(presentingViewController: presentingViewController, context: group.context) { (result) in
+            authenticationOperation = self.authenticate(presentingViewController: presentingViewController, context: group.context, skipDeviceRegistration: false) { (result) in
                 switch result
                 {
                 case .failure(let error): group.context.error = error

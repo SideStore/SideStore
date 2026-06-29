@@ -62,16 +62,19 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
     
     private var submitCodeAction: UIAlertAction?
     
-    init(context: AuthenticatedOperationContext, presentingViewController: UIViewController?)
+    let skipDeviceRegistration: Bool
+
+    init(context: AuthenticatedOperationContext, presentingViewController: UIViewController?, skipDeviceRegistration: Bool = false)
     {
         self.context = context
         self.presentingViewController = presentingViewController
+        self.skipDeviceRegistration = skipDeviceRegistration
         
         super.init()
         
         self.context.authenticationOperation = self
         self.operationQueue.name = "com.altstore.AuthenticationOperation"
-        self.progress.totalUnitCount = 4
+        self.progress.totalUnitCount = skipDeviceRegistration ? 3 : 4
     }
     
     override func main()
@@ -166,13 +169,15 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 self.progress.completedUnitCount += 1
                 guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                 
-                let _ = try await withUnsafeThrowingContinuation { c in
-                    self.registerCurrentDevice(for: team, session: session) { (result) in
-                        c.resume(with: result)
+                if !self.skipDeviceRegistration {
+                    let _ = try await withUnsafeThrowingContinuation { c in
+                        self.registerCurrentDevice(for: team, session: session) { (result) in
+                            c.resume(with: result)
+                        }
                     }
+                    self.progress.completedUnitCount += 1
+                    guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                 }
-                self.progress.completedUnitCount += 1
-                guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                 
                 try await withUnsafeThrowingContinuation { c in
                     self.save(team) { (result) in

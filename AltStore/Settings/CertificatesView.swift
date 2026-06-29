@@ -260,12 +260,9 @@ class CertificatesViewModel: ObservableObject {
                 
                 self.certificates = merged
             } catch {
-                if presentingViewController != nil {
-                    let errorString = error.localizedDescription
-                    let isCancelled = error is CancellationError
-                    if !isCancelled {
-                        self.errorMessage = errorString
-                    }
+                let isCancelled = error is CancellationError
+                if !isCancelled {
+                    self.errorMessage = error.localizedDescription
                 }
             }
         }
@@ -485,11 +482,15 @@ struct CertificatesView: View {
     @State private var certificateToDelete: ALTCertificate? = nil
     
     private var privateCerts: [ALTCertificate] {
-        viewModel.certificates.filter { $0.privateKey != nil }
+        viewModel.certificates
+            .filter { $0.privateKey != nil }
+            .sorted(by: { $0.creationDate > $1.creationDate })
     }
     
     private var publicCerts: [ALTCertificate] {
-        viewModel.certificates.filter { $0.privateKey == nil }
+        viewModel.certificates
+            .filter { $0.privateKey == nil }
+            .sorted(by: { $0.creationDate > $1.creationDate })
     }
     
     var body: some View {
@@ -820,9 +821,9 @@ struct CertificatesView: View {
                     .buttonStyle(.plain)
                 }
                 
-                Image(systemName: "chevron.right")
-                    .foregroundColor(Color(.tertiaryLabel))
-                    .font(.footnote)
+                 Image(systemName: "chevron.right")
+                     .foregroundColor(Color(.tertiaryLabel))
+                     .font(.footnote)
             }
         }
         .padding(.vertical, 4)
@@ -1259,8 +1260,64 @@ struct CertificateDetailView: View {
                 Section {
                     detailRow(title: "Public Key", value: details.publicKeyType)
                     detailRow(title: "Signature Algorithm", value: details.signatureAlgorithm)
-                    detailRowWithCopy(title: "SHA-1 Fingerprint", value: details.fingerprintSHA1, isCopied: $copiedFingerprintSHA1)
-                    detailRowWithCopy(title: "SHA-256 Fingerprint", value: details.fingerprintSHA256, isCopied: $copiedFingerprintSHA256)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("SHA-1 Fingerprint")
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            
+                            SwiftUI.Button {
+                                UIPasteboard.general.string = details.fingerprintSHA1
+                                copiedFingerprintSHA1 = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    copiedFingerprintSHA1 = false
+                                }
+                            } label: {
+                                Image(systemName: copiedFingerprintSHA1 ? "checkmark" : "doc.on.doc")
+                                    .font(.footnote)
+                                    .foregroundColor(copiedFingerprintSHA1 ? .green : .accentColor)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        Text(details.fingerprintSHA1)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .textSelection(.enabled)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding(.vertical, 4)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("SHA-256 Fingerprint")
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            
+                            SwiftUI.Button {
+                                UIPasteboard.general.string = details.fingerprintSHA256
+                                copiedFingerprintSHA256 = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    copiedFingerprintSHA256 = false
+                                }
+                            } label: {
+                                Image(systemName: copiedFingerprintSHA256 ? "checkmark" : "doc.on.doc")
+                                    .font(.footnote)
+                                    .foregroundColor(copiedFingerprintSHA256 ? .green : .accentColor)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        Text(details.fingerprintSHA256)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .textSelection(.enabled)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding(.vertical, 4)
                 } header: {
                     Text("Signature & Public Key Details")
                 }
@@ -1301,13 +1358,13 @@ struct CertificateDetailView: View {
                         
                         if showPrivateKey {
                             Text(privateKey.base64EncodedString())
-                                .font(.system(.caption, design: .monospaced))
+                                .font(.system(size: 11, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .textSelection(.enabled)
                                 .lineLimit(nil)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("••••••••••••••••••••••••••••••••")
+                            Text("••••••••••••••••••••••••••••")
                                 .font(.system(.body, design: .monospaced))
                                 .foregroundColor(.secondary)
                         }
@@ -1339,7 +1396,7 @@ struct CertificateDetailView: View {
                         
                         ScrollView(.vertical, showsIndicators: true) {
                             Text(String(data: certData, encoding: .utf8) ?? certData.base64EncodedString())
-                                .font(.system(.caption, design: .monospaced))
+                                .font(.system(size: 11, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .textSelection(.enabled)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1423,5 +1480,33 @@ struct CertificateDetailView: View {
                 .padding(.leading, 8)
             }
         }
+    }
+}
+
+extension ALTCertificate {
+    var creationDate: Date {
+        guard let data = self.data,
+              let cleanDer = getDERData(from: data) else {
+            return Date.distantPast
+        }
+        var offset = 0
+        guard let outerSeq = parseASN1TLV(cleanDer, offset: &offset), outerSeq.tag == 0x30 else { return Date.distantPast }
+        var tbsOffset = 0
+        guard let tbsSeq = parseASN1TLV(outerSeq.data, offset: &tbsOffset), tbsSeq.tag == 0x30 else { return Date.distantPast }
+        
+        var innerOffset = 0
+        if innerOffset < tbsSeq.data.count && tbsSeq.data[innerOffset] == 0xA0 {
+            _ = parseASN1TLV(tbsSeq.data, offset: &innerOffset)
+        }
+        
+        guard let _ = parseASN1TLV(tbsSeq.data, offset: &innerOffset) else { return Date.distantPast }
+        guard let _ = parseASN1TLV(tbsSeq.data, offset: &innerOffset) else { return Date.distantPast }
+        guard let _ = parseASN1TLV(tbsSeq.data, offset: &innerOffset) else { return Date.distantPast }
+        
+        guard let validityItem = parseASN1TLV(tbsSeq.data, offset: &innerOffset) else { return Date.distantPast }
+        var valOffset = 0
+        guard let notBeforeItem = parseASN1TLV(validityItem.data, offset: &valOffset) else { return Date.distantPast }
+        
+        return parseDate(from: notBeforeItem) ?? Date.distantPast
     }
 }
