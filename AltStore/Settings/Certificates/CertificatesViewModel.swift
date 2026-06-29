@@ -193,6 +193,13 @@ class CertificatesViewModel: ObservableObject {
                 completion?()
             }
             
+            guard Keychain.shared.appleIDEmailAddress != nil && Keychain.shared.appleIDPassword != nil else {
+                if isPullToRefresh {
+                    self.errorMessage = OperationError.notAuthenticated.localizedDescription
+                }
+                return
+            }
+            
             do {
                 let (team, session) = try await DeveloperPortalService.shared.authenticate(presentingViewController: presentingViewController)
                 self.team = team
