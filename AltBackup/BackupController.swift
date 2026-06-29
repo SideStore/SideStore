@@ -308,7 +308,17 @@ private extension BackupController
         for fileURL in try FileManager.default.contentsOfDirectory(at: sourceDirectoryURL, includingPropertiesForKeys: [.isDirectoryKey], options: options)
         {
             let isDirectory = try fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false
-            let destinationURL = destinationDirectoryURL.appendingPathComponent(fileURL.lastPathComponent)
+            let lastComponent = fileURL.lastPathComponent
+            // TODO: mahee96: during restore (ie activate) sometimes the Snapshot restoration cause problem (maybe app is alive and dir is still in use?)
+            //                but I initially thought excluding them should be fine, but for now I am unsure of its effects
+            //                since the dir could be too huge like cache for games etc where it could amount to GBs of data and user would be frustrated if missing
+            //                lets revisit later
+            // if isDirectory && (lastComponent == "Caches" || lastComponent == "Snapshots")
+            // {
+            //     continue
+            // }
+            
+            let destinationURL = destinationDirectoryURL.appendingPathComponent(lastComponent)
             
             if FileManager.default.fileExists(atPath: destinationURL.path)
             {
