@@ -1596,6 +1596,15 @@ private extension AppManager
     {
         let progress = Progress.discreteProgress(totalUnitCount: 100)
         
+        if let activeSerial = group.context.certificate?.serialNumber ?? Keychain.shared.signingCertificateSerialNumber,
+           let appSerial = app.certificateSerialNumber,
+           activeSerial != appSerial
+        {
+            let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
+            completionHandler(.failure(OperationError.refreshAppFailed(message: errMessage)))
+            return progress
+        }
+        
         let context = AppOperationContext(bundleIdentifier: app.bundleIdentifier, authenticatedContext: group.context)
         context.app = ALTApplication(fileURL: app.fileURL)
         context.useMainProfile = app.useMainProfile
