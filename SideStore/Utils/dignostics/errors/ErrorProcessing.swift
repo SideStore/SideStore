@@ -6,6 +6,8 @@
 //  Copyright © 2025 SideStore. All rights reserved.
 //
 
+import AltStoreCore
+
 class ErrorProcessing {
     
     enum InfoMode: String {
@@ -66,7 +68,9 @@ class ErrorProcessing {
         let processMoreErrors = recur ? recurseErrors : {_ in ""}
         
         let underlyingErrors = error.underlyingErrors
-        if !underlyingErrors.isEmpty {
+        if let wrappedError = (error as? ALTWrappedError)?.wrappedError {
+            description += getDescriptionText(error: wrappedError, depth + 1)
+        } else if !underlyingErrors.isEmpty {
             description += underlyingErrors.map{ error in
                 let error = error as NSError
                 return processError(error, getMoreErrors: processMoreErrors)

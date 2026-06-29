@@ -67,12 +67,19 @@ public extension ALTLocalizedError
     }
 
     var errorUserInfo: [String : Any] {
-        let userInfo: [String: Any?] = [
+        var userInfo: [String: Any?] = [
+            NSLocalizedDescriptionKey       : self.errorDescription,
+            NSLocalizedFailureReasonErrorKey: self.failureReason,
             NSLocalizedFailureErrorKey      : self.errorFailure,
             ALTLocalizedTitleErrorKey       : self.errorTitle,
             ALTSourceFileErrorKey as String : self.sourceFile,
             ALTSourceLineErrorKey as String : self.sourceLine,
         ]
+
+        for (key, value) in self.userInfoValues
+        {
+            userInfo[key] = value
+        }
 
         return userInfo.compactMapValues { $0 }
     }
