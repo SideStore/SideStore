@@ -251,14 +251,14 @@ extension AppManager
     }
     
     @discardableResult
-    func authenticate(presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), skipDeviceRegistration: Bool = true, completionHandler: @escaping (Result<(ALTTeam, ALTCertificate, ALTAppleAPISession), Error>) -> Void) -> AuthenticationOperation
+    func authenticate(presentingViewController: UIViewController?, context: AuthenticatedOperationContext = AuthenticatedOperationContext(), skipDeviceRegistration: Bool = true, skipCertificateProvisioning: Bool = false, completionHandler: @escaping (Result<(ALTTeam, ALTCertificate?, ALTAppleAPISession), Error>) -> Void) -> AuthenticationOperation
     {
         if let operation = context.authenticationOperation
         {
             return operation
         }
         
-        let authenticationOperation = AuthenticationOperation(context: context, presentingViewController: presentingViewController, skipDeviceRegistration: skipDeviceRegistration)
+        let authenticationOperation = AuthenticationOperation(context: context, presentingViewController: presentingViewController, skipDeviceRegistration: skipDeviceRegistration, skipCertificateProvisioning: skipCertificateProvisioning)
         authenticationOperation.resultHandler = { (result) in
             switch result
             {

@@ -386,7 +386,7 @@ struct CertificatesView: View {
     @ViewBuilder
     private func certificateRow(cert: ALTCertificate, hasPrivateKey: Bool) -> some View {
         let isActive = cert.serialNumber == viewModel.activeSerialNumber
-        let isRemote = cert.identifier != nil
+        let isRemote = viewModel.remoteSerials.contains(cert.serialNumber)
         
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -407,6 +407,16 @@ struct CertificatesView: View {
                     Text("Validity: \(brief.validFrom) - \(brief.validUntil)")
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
+                }
+                if let requester = cert.requesterEmail, !requester.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "eye")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                        Text("Requester: \(requester)")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             

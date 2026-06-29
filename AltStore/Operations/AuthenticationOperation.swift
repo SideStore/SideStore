@@ -39,7 +39,7 @@ enum AuthenticationErrorCode: Int, ALTErrorEnum, CaseIterable
 }
 
 @objc(AuthenticationOperation)
-final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, ALTAppleAPISession)>
+final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate?, ALTAppleAPISession)>
 {
     let context: AuthenticatedOperationContext
     
@@ -63,12 +63,14 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
     private var submitCodeAction: UIAlertAction?
     
     let skipDeviceRegistration: Bool
+    let skipCertificateProvisioning: Bool
 
-    init(context: AuthenticatedOperationContext, presentingViewController: UIViewController?, skipDeviceRegistration: Bool = false)
+    init(context: AuthenticatedOperationContext, presentingViewController: UIViewController?, skipDeviceRegistration: Bool = false, skipCertificateProvisioning: Bool = false)
     {
         self.context = context
         self.presentingViewController = presentingViewController
         self.skipDeviceRegistration = skipDeviceRegistration
+        self.skipCertificateProvisioning = skipCertificateProvisioning
         
         super.init()
         
@@ -125,8 +127,8 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                     
                     self.activeCertificates = certificates
                     
-                    if certificates.contains(where: { $0.serialNumber == certificate.serialNumber }) {
-                        self.debugLog("[Authentication] Cached session and certificate are still valid.")
+                    if self.skipCertificateProvisioning || certificates.contains(where: { $0.serialNumber == certificate.serialNumber }) {
+                        self.debugLog("[Authentication] Cached session and certificate (or skipProvisioning) are still valid.")
                         self.context.team = team
                         self.context.session = session
                         self.context.certificate = certificate
@@ -160,12 +162,17 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 self.progress.completedUnitCount += 1
                 guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                 
-                let certificate = try await withUnsafeThrowingContinuation { c in
-                    self.fetchCertificate(for: team, session: session) { (result) in
-                        c.resume(with: result)
+                let certificate: ALTCertificate?
+                if self.skipCertificateProvisioning {
+                    certificate = Keychain.shared.signingCertificate.flatMap { try? ALTCertificate(p12Data: $0, password: nil) }
+                } else {
+                    certificate = try await withUnsafeThrowingContinuation { c in
+                        self.fetchCertificate(for: team, session: session) { (result) in
+                            c.resume(with: result)
+                        }
                     }
+                    self.context.certificate = certificate
                 }
-                self.context.certificate = certificate
                 self.progress.completedUnitCount += 1
                 guard !self.isCancelled else { return self.finish(.failure(OperationError.cancelled)) }
                 
@@ -250,7 +257,7 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
         }
     }
     
-    override func finish(_ result: Result<(ALTTeam, ALTCertificate, ALTAppleAPISession), Error>)
+    override func finish(_ result: Result<(ALTTeam, ALTCertificate?, ALTAppleAPISession), Error>)
     {
         guard !self.isFinished else { return }
         
@@ -319,23 +326,34 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate, A
                 Keychain.shared.appleIDEmailAddress = self.appleIDEmailAddress ?? altTeam.account.appleID // Prefer the user's provided email address over the one associated with their account (which may be outdated).
                 Keychain.shared.appleIDPassword = self.appleIDPassword
                 
-                self.showInstructionsIfNecessary() { (didShowInstructions) in
+                if let altCertificate = altCertificate
+                {
+                    self.showInstructionsIfNecessary() { (didShowInstructions) in
+                        
+                        let signer = ALTSigner(team: altTeam, certificate: altCertificate)
+                        AltSign.setLogging(OperationsLoggingControl.getFromDatabase(for: AuthenticationOperation.self))
+                        // Refresh screen must go last since a successful refresh will cause the app to quit.
+                        self.showRefreshScreenIfNecessary(signer: signer, session: session) { (didShowRefreshAlert) in
+                            if !didShowRefreshAlert
+                            {
+                                Keychain.shared.signingCertificate = altCertificate.p12Data()
+                                Keychain.shared.signingCertificatePassword = altCertificate.machineIdentifier
+                            }
+                            
+                            super.finish(result)
+                            
+                            DispatchQueue.main.async {
+                                self.navigationController.dismiss(animated: true, completion: nil)
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    super.finish(result)
                     
-                    let signer = ALTSigner(team: altTeam, certificate: altCertificate)
-                    AltSign.setLogging(OperationsLoggingControl.getFromDatabase(for: AuthenticationOperation.self))
-                    // Refresh screen must go last since a successful refresh will cause the app to quit.
-                    self.showRefreshScreenIfNecessary(signer: signer, session: session) { (didShowRefreshAlert) in
-                        if !didShowRefreshAlert
-                        {
-                            Keychain.shared.signingCertificate = altCertificate.p12Data()
-                            Keychain.shared.signingCertificatePassword = altCertificate.machineIdentifier
-                        }
-                        
-                        super.finish(result)
-                        
-                        DispatchQueue.main.async {
-                            self.navigationController.dismiss(animated: true, completion: nil)
-                        }
+                    DispatchQueue.main.async {
+                        self.navigationController.dismiss(animated: true, completion: nil)
                     }
                 }
             }
@@ -655,6 +673,36 @@ private extension AuthenticationOperation
             DispatchQueue.main.async {
                 let alertController = UIAlertController(title: NSLocalizedString("Would you like to revoke your previous certificates?\n\(certsText)", comment: ""), message: nil, preferredStyle: .alert)
                 
+                func present(_ vc: UIAlertController)
+                {
+                    if self.navigationController.presentingViewController != nil
+                    {
+                        self.navigationController.present(vc, animated: true, completion: nil)
+                    }
+                    else if let presentingViewController = self.presentingViewController
+                    {
+                        presentingViewController.present(vc, animated: true, completion: nil)
+                    }
+                    else if let topViewController = UIApplication.shared.connectedScenes
+                        .filter({ $0.activationState == .foregroundActive })
+                        .compactMap({ $0 as? UIWindowScene })
+                        .first?.windows
+                        .first(where: { $0.isKeyWindow })?
+                        .rootViewController
+                    {
+                        var top = topViewController
+                        while let presented = top.presentedViewController {
+                            top = presented
+                        }
+                        top.present(vc, animated: true, completion: nil)
+                    }
+                    else
+                    {
+                        self.debugLog("[Authentication] Could not find any view controller to present alert. Falling back to default request.")
+                        requestCertificate()
+                    }
+                }
+
                 let noAction = UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .default) { (action) in
                     if team.type == .free {
                         let warningAlert = UIAlertController(
@@ -666,14 +714,7 @@ private extension AuthenticationOperation
                             requestCertificate()
                         })
                         
-                        if self.navigationController.presentingViewController != nil
-                        {
-                            self.navigationController.present(warningAlert, animated: true, completion: nil)
-                        }
-                        else
-                        {
-                            self.presentingViewController?.present(warningAlert, animated: true, completion: nil)
-                        }
+                        present(warningAlert)
                     } else {
                         requestCertificate()
                     }
@@ -692,14 +733,7 @@ private extension AuthenticationOperation
                 alertController.addAction(noAction)
                 alertController.addAction(yesAction)
                 
-                if self.navigationController.presentingViewController != nil
-                {
-                    self.navigationController.present(alertController, animated: true, completion: nil)
-                }
-                else
-                {
-                    self.presentingViewController?.present(alertController, animated: true, completion: nil)
-                }
+                present(alertController)
             }
         }
         

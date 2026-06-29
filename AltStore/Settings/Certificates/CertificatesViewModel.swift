@@ -28,6 +28,7 @@ class CertificatesViewModel: ObservableObject {
     @Published var activeSerialNumber: String? = nil
     @Published var alertMessage: String? = nil
     @Published var showAlert = false
+    @Published var remoteSerials: Set<String> = []
     
     // Bulk import properties
     @Published var pendingImports: [PendingImport] = []
@@ -160,8 +161,7 @@ class CertificatesViewModel: ObservableObject {
             }
             
             do {
-                let authVC = Keychain.shared.appleIDEmailAddress != nil ? nil : presentingViewController
-                let (team, session) = try await DeveloperPortalService.shared.authenticate(presentingViewController: authVC)
+                let (team, session) = try await DeveloperPortalService.shared.authenticate(presentingViewController: presentingViewController)
                 self.team = team
                 self.session = session
                 
@@ -197,6 +197,7 @@ class CertificatesViewModel: ObservableObject {
                 }
                 
                 self.certificates = merged
+                self.remoteSerials = matchedRemoteSerials
             } catch {
                 let isCancelled = error is CancellationError
                 if !isCancelled {

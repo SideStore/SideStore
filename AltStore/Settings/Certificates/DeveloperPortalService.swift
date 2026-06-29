@@ -15,7 +15,7 @@ struct DeveloperPortalService {
     
     func authenticate(presentingViewController: UIViewController?) async throws -> (ALTTeam, ALTAppleAPISession) {
         try await withCheckedThrowingContinuation { continuation in
-            AppManager.shared.authenticate(presentingViewController: presentingViewController) { result in
+            AppManager.shared.authenticate(presentingViewController: presentingViewController, skipCertificateProvisioning: true) { result in
                 switch result {
                 case .success(let (team, _, session)):
                     continuation.resume(returning: (team, session))
