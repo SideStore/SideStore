@@ -1165,8 +1165,10 @@ private extension AppManager
             authenticationOperation = self.authenticate(presentingViewController: presentingViewController, context: group.context, skipDeviceRegistration: false) { (result) in
                 switch result
                 {
-                case .failure(let error): group.context.error = error
-                case .success: break
+                case .failure(let error):
+                    group.context.error = error
+                case .success:
+                    break
                 }
             }
         }

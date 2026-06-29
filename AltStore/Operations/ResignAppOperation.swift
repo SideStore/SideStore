@@ -207,10 +207,13 @@ private extension ResignAppOperation
                     additionalValues[Bundle.Info.deviceID] = udid
                     additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
                     
+                    let data = Keychain.shared.signingCertificate
+                    let signingCertificate = data.flatMap { (try? ALTCertificate(p12Data: $0, password: "")) ?? (try? ALTCertificate(p12Data: $0, password: nil)) }
+                    let encryptingPassword = Keychain.shared.signingCertificatePassword
+                    
                     if
-                        let data = Keychain.shared.signingCertificate,
-                        let signingCertificate = try? ALTCertificate(p12Data: data, password: nil),
-                        let encryptingPassword = Keychain.shared.signingCertificatePassword
+                        let signingCertificate = signingCertificate,
+                        let encryptingPassword = encryptingPassword
                     {
                         additionalValues[Bundle.Info.certificateID] = signingCertificate.serialNumber
                         

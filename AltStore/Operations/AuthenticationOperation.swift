@@ -324,7 +324,9 @@ final class AuthenticationOperation: ResultOperation<(ALTTeam, ALTCertificate?, 
                 
                 // Update keychain
                 Keychain.shared.appleIDEmailAddress = self.appleIDEmailAddress ?? altTeam.account.appleID // Prefer the user's provided email address over the one associated with their account (which may be outdated).
-                Keychain.shared.appleIDPassword = self.appleIDPassword
+                if let appleIDPassword = self.appleIDPassword {
+                    Keychain.shared.appleIDPassword = appleIDPassword
+                }
                 
                 if let altCertificate = altCertificate, !self.skipCertificateProvisioning
                 {
@@ -625,7 +627,9 @@ private extension AuthenticationOperation
                 do
                 {
                     let certificate = try Result(certificate, error).get()
-                    guard let privateKey = certificate.privateKey else { throw AuthenticationError(.missingPrivateKey) }
+                    guard let privateKey = certificate.privateKey else {
+                        throw AuthenticationError(.missingPrivateKey)
+                    }
                     ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { (certificates, error) in
                         do
                         {
@@ -720,15 +724,29 @@ private extension AuthenticationOperation
                     }
                 }
                 let yesAction = UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default) { (action) in
+                    var remainingRevokes = ourCertificates.count
+                    var firstError: Error? = nil
+                    
                     for certificate in ourCertificates {
                         ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { (success, error) in
-                            if let error = error, !success
-                            {
-                                completionHandler(.failure(error))
+                            DispatchQueue.main.async {
+                                if let error = error, !success {
+                                    if firstError == nil {
+                                        firstError = error
+                                    }
+                                }
+                                
+                                remainingRevokes -= 1
+                                if remainingRevokes == 0 {
+                                    if let error = firstError {
+                                        completionHandler(.failure(error))
+                                    } else {
+                                        requestCertificate()
+                                    }
+                                }
                             }
                         }
                     }
-                    requestCertificate()
                 }
                 alertController.addAction(noAction)
                 alertController.addAction(yesAction)
@@ -744,28 +762,35 @@ private extension AuthenticationOperation
                 let certificates = try Result(certificates, error).get()
                 self.activeCertificates = certificates
                 
-                if
-                    let data = Keychain.shared.signingCertificate,
-                    let localCertificate = try? ALTCertificate(p12Data: data, password: nil),
-                    let certificate = certificates.first(where: { $0.serialNumber == localCertificate.serialNumber })
-                {
-                    // We have a certificate stored in the keychain and it hasn't been revoked.
-                    localCertificate.machineIdentifier = certificate.machineIdentifier
-                    completionHandler(.success(localCertificate))
+                if let data = Keychain.shared.signingCertificate {
+                    let localWithNil = try? ALTCertificate(p12Data: data, password: nil)
+                    let localWithEmpty = try? ALTCertificate(p12Data: data, password: "")
+                    
+                    if let localCertificate = localWithNil ?? localWithEmpty,
+                       let certificate = certificates.first(where: { $0.serialNumber == localCertificate.serialNumber }) {
+                        localCertificate.machineIdentifier = certificate.machineIdentifier
+                        completionHandler(.success(localCertificate))
+                        return
+                    }
                 }
-                else if
-                    let serialNumber = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.certificateID) as? String,
-                    let certificate = certificates.first(where: { $0.serialNumber == serialNumber }),
-                    let machineIdentifier = certificate.machineIdentifier,
-                    FileManager.default.fileExists(atPath: Bundle.main.certificateURL.path),
-                    let data = try? Data(contentsOf: Bundle.main.certificateURL),
-                    let localCertificate = try? ALTCertificate(p12Data: data, password: machineIdentifier)
-                {
-                    // We have an embedded certificate that hasn't been revoked.
-                    localCertificate.machineIdentifier = machineIdentifier
-                    completionHandler(.success(localCertificate))
+                
+                if let serialNumber = Bundle.main.object(forInfoDictionaryKey: Bundle.Info.certificateID) as? String {
+                    if let certificate = certificates.first(where: { $0.serialNumber == serialNumber }) {
+                        let fileExists = FileManager.default.fileExists(atPath: Bundle.main.certificateURL.path)
+                        if fileExists,
+                           let data = try? Data(contentsOf: Bundle.main.certificateURL) {
+                            let machineIdentifier = certificate.machineIdentifier
+                            let localCertificate = try? ALTCertificate(p12Data: data, password: machineIdentifier)
+                            if let localCertificate = localCertificate {
+                                localCertificate.machineIdentifier = machineIdentifier
+                                completionHandler(.success(localCertificate))
+                                return
+                            }
+                        }
+                    }
                 }
-                else if certificates.isEmpty
+                
+                if certificates.isEmpty
                 {
                     // No certificates, so request a new one.
                     requestCertificate()

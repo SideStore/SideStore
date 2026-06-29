@@ -77,12 +77,14 @@ class CertificatesViewModel: ObservableObject {
     }
     
     func fetchActiveSerialNumber() {
-        if let data = Keychain.shared.signingCertificate,
-           let cert = try? ALTCertificate(p12Data: data, password: nil) {
-            self.activeSerialNumber = cert.serialNumber
-        } else {
-            self.activeSerialNumber = nil
+        if let data = Keychain.shared.signingCertificate {
+            let cert = (try? ALTCertificate(p12Data: data, password: "")) ?? (try? ALTCertificate(p12Data: data, password: nil))
+            if let cert = cert {
+                self.activeSerialNumber = cert.serialNumber
+                return
+            }
         }
+        self.activeSerialNumber = nil
     }
     
     // MARK: - Local Storage Helpers
@@ -156,7 +158,8 @@ class CertificatesViewModel: ObservableObject {
     
     private var activeLocalCert: ALTCertificate? {
         guard let data = Keychain.shared.signingCertificate else { return nil }
-        if let cert = try? ALTCertificate(p12Data: data, password: nil) {
+        let cert = (try? ALTCertificate(p12Data: data, password: "")) ?? (try? ALTCertificate(p12Data: data, password: nil))
+        if let cert = cert {
             if let metadata = UserDefaults.standard.dictionary(forKey: "certMetadata_" + cert.serialNumber) as? [String: String] {
                 cert.machineName = metadata["machineName"]
                 cert.identifier = metadata["identifier"]
@@ -193,7 +196,9 @@ class CertificatesViewModel: ObservableObject {
                 completion?()
             }
             
-            guard Keychain.shared.appleIDEmailAddress != nil && Keychain.shared.appleIDPassword != nil else {
+            let hasPassword = Keychain.shared.appleIDPassword != nil
+            let hasToken = Keychain.shared.appleIDXcodeToken != nil
+            guard Keychain.shared.appleIDEmailAddress != nil && (hasPassword || hasToken) else {
                 if isPullToRefresh {
                     self.errorMessage = OperationError.notAuthenticated.localizedDescription
                 }
@@ -211,11 +216,15 @@ class CertificatesViewModel: ObservableObject {
                 var matchedRemoteSerials = Set<String>()
                 
                 for remoteCert in remoteCerts {
-                    if let localCopy = localCerts.first(where: { $0.serialNumber == remoteCert.serialNumber }) {
-                        remoteCert.privateKey = localCopy.privateKey
-                    } else if let active = activeCert, active.serialNumber == remoteCert.serialNumber {
-                        remoteCert.privateKey = active.privateKey
+                    var resolvedPrivateKey: Data? = nil
+                    
+                    if let active = activeCert, active.serialNumber == remoteCert.serialNumber, active.privateKey != nil {
+                        resolvedPrivateKey = active.privateKey
+                    } else if let localCopy = localCerts.first(where: { $0.serialNumber == remoteCert.serialNumber && $0.privateKey != nil }) {
+                        resolvedPrivateKey = localCopy.privateKey
                     }
+                    
+                    remoteCert.privateKey = resolvedPrivateKey
                     
                     // Automatically cache/save the fetched remote certificate locally!
                     self.saveLocalCertificate(remoteCert)

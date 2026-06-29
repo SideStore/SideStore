@@ -616,7 +616,7 @@ struct CertificatesView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
                         .font(.title3)
-                } else if isRemote && viewModel.isPaidAccount {
+                } else if isRemote {
                     SwiftUI.Button {
                         self.certificateToRevoke = cert
                         self.showRevokeConfirmation = true
