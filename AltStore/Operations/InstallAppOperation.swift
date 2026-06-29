@@ -46,97 +46,103 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             return self.finish(.failure(OperationError.invalidParameters("InstallAppOperation.main: self.context.certificate or self.context.resignedApp or self.context.provisioningProfiles is nil")))
         }
 
+        #if !targetEnvironment(simulator)
+        guard resignedApp.provisioningProfile != nil else {
+            return self.finish(.failure(OperationError.invalidApp))
+        }
+        #endif
+
         @Managed var appVersion = self.context.appVersion
         let storeBuildVersion = $appVersion.buildVersion
         
         let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         backgroundContext.perform {
-            
-            
-            /* App */
-            let installedApp: InstalledApp
-            
-            // Fetch + update rather than insert + resolve merge conflicts to prevent potential context-level conflicts.
-            if let app = InstalledApp.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), self.context.bundleIdentifier), in: backgroundContext)
+            do
             {
-                installedApp = app
-            }
-            else
-            {
-                installedApp = InstalledApp(resignedApp: resignedApp,
-                                            originalBundleIdentifier: self.context.bundleIdentifier,
-                                            certificateSerialNumber: certificate.serialNumber,
-                                            storeBuildVersion: storeBuildVersion,
-                                            context: backgroundContext)
-            }
-            
-            installedApp.update(resignedApp: resignedApp, certificateSerialNumber: certificate.serialNumber, storeBuildVersion: storeBuildVersion)
-            installedApp.useMainProfile = self.context.useMainProfile
-
-            installedApp.needsResign = false
-            
-            if let team = DatabaseManager.shared.activeTeam(in: backgroundContext)
-            {
-                installedApp.team = team
-            }
-            
-            /* App Extensions */
-            var installedExtensions = Set<InstalledExtension>()
-            
-            if
-                let bundle = Bundle(url: resignedApp.fileURL),
-                let directory = bundle.builtInPlugInsURL,
-                let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants])
-            {
-                for case let fileURL as URL in enumerator
-                {
-                    guard let appExtensionBundle = Bundle(url: fileURL) else { continue }
-                    guard let appExtension = ALTApplication(fileURL: appExtensionBundle.bundleURL) else { continue }
-                    
-                    let parentBundleID = self.context.bundleIdentifier
-                    let resignedParentBundleID = resignedApp.bundleIdentifier
-                    
-                    let resignedBundleID = appExtension.bundleIdentifier
-                    let appExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: parentBundleID)
-                    
-                    self.debugLog("`parentBundleID`: \(parentBundleID)")
-                    self.debugLog("`resignedParentBundleID`: \(resignedParentBundleID)")
-                    self.debugLog("`appExBundleID`: \(appExBundleID)")
-                    self.debugLog("`resignedAppExBundleID`: \(resignedBundleID)")
-                    
-                    let installedExtension: InstalledExtension
-                    
-                    if let appExtension = installedApp.appExtensions.first(where: { $0.bundleIdentifier == appExBundleID })
-                    {
-                        installedExtension = appExtension
-                    }
-                    else
-                    {
-                        installedExtension = InstalledExtension(resignedAppExtension: appExtension, originalBundleIdentifier: appExBundleID, context: backgroundContext)
-                    }
-                    
-                    installedExtension.update(resignedAppExtension: appExtension)
-                    
-                    installedExtensions.insert(installedExtension)
-                }
-            }
-            
-            installedApp.appExtensions = installedExtensions
-
-            // Remove stale "PlugIns" (Extensions) from currently installed App
-            if let installedAppExns = ALTApplication(fileURL: installedApp.fileURL)?.appExtensions {
-                let currentAppExns = Set(installedApp.appExtensions).map{ $0.bundleIdentifier }
-                let staleAppExns = installedAppExns.filter{ !currentAppExns.contains($0.bundleIdentifier) }
+                /* App */
+                let installedApp: InstalledApp
                 
-                for staleAppExn in staleAppExns {
-                    do {
-                        try FileManager.default.removeItem(at: staleAppExn.fileURL)
-                        self.debugLog("InstallAppOperation.appExtensions: removed stale app-extension: \(staleAppExn.fileURL)")
-                    } catch {
-                        self.debugLog("InstallAppOperation.appExtensions processing error Error: \(error)")
+                // Fetch + update rather than insert + resolve merge conflicts to prevent potential context-level conflicts.
+                if let app = InstalledApp.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), self.context.bundleIdentifier), in: backgroundContext)
+                {
+                    installedApp = app
+                }
+                else
+                {
+                    installedApp = try InstalledApp(resignedApp: resignedApp,
+                                                originalBundleIdentifier: self.context.bundleIdentifier,
+                                                certificateSerialNumber: certificate.serialNumber,
+                                                storeBuildVersion: storeBuildVersion,
+                                                context: backgroundContext)
+                }
+                
+                installedApp.update(resignedApp: resignedApp, certificateSerialNumber: certificate.serialNumber, storeBuildVersion: storeBuildVersion)
+                installedApp.useMainProfile = self.context.useMainProfile
+
+                installedApp.needsResign = false
+                
+                if let team = DatabaseManager.shared.activeTeam(in: backgroundContext)
+                {
+                    installedApp.team = team
+                }
+                
+                /* App Extensions */
+                var installedExtensions = Set<InstalledExtension>()
+                
+                if
+                    let bundle = Bundle(url: resignedApp.fileURL),
+                    let directory = bundle.builtInPlugInsURL,
+                    let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants])
+                {
+                    for case let fileURL as URL in enumerator
+                    {
+                        guard let appExtensionBundle = Bundle(url: fileURL) else { continue }
+                        guard let appExtension = ALTApplication(fileURL: appExtensionBundle.bundleURL) else { continue }
+                        
+                        let parentBundleID = self.context.bundleIdentifier
+                        let resignedParentBundleID = resignedApp.bundleIdentifier
+                        
+                        let resignedBundleID = appExtension.bundleIdentifier
+                        let appExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: parentBundleID)
+                        
+                        self.debugLog("`parentBundleID`: \(parentBundleID)")
+                        self.debugLog("`resignedParentBundleID`: \(resignedParentBundleID)")
+                        self.debugLog("`appExBundleID`: \(appExBundleID)")
+                        self.debugLog("`resignedAppExBundleID`: \(resignedBundleID)")
+                        
+                        let installedExtension: InstalledExtension
+                        
+                        if let appExtension = installedApp.appExtensions.first(where: { $0.bundleIdentifier == appExBundleID })
+                        {
+                            installedExtension = appExtension
+                        }
+                        else
+                        {
+                            installedExtension = try InstalledExtension(resignedAppExtension: appExtension, originalBundleIdentifier: appExBundleID, context: backgroundContext)
+                        }
+                        
+                        installedExtension.update(resignedAppExtension: appExtension)
+                        
+                        installedExtensions.insert(installedExtension)
                     }
                 }
-            }
+                
+                installedApp.appExtensions = installedExtensions
+
+                // Remove stale "PlugIns" (Extensions) from currently installed App
+                if let installedAppExns = ALTApplication(fileURL: installedApp.fileURL)?.appExtensions {
+                    let currentAppExns = Set(installedApp.appExtensions).map{ $0.bundleIdentifier }
+                    let staleAppExns = installedAppExns.filter{ !currentAppExns.contains($0.bundleIdentifier) }
+                    
+                    for staleAppExn in staleAppExns {
+                        do {
+                            try FileManager.default.removeItem(at: staleAppExn.fileURL)
+                            self.debugLog("InstallAppOperation.appExtensions: removed stale app-extension: \(staleAppExn.fileURL)")
+                        } catch {
+                            self.debugLog("InstallAppOperation.appExtensions processing error Error: \(error)")
+                        }
+                    }
+                }
             
             
             self.context.beginInstallationHandler?(installedApp)
@@ -261,6 +267,11 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 installing = false
                 self.finish(.failure(error))
             }
+        }
+        catch
+        {
+            self.finish(.failure(error))
+        }
         }
     }
     

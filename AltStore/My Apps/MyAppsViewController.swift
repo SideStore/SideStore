@@ -1873,9 +1873,9 @@ extension MyAppsViewController
         if installedApp.bundleIdentifier == StoreApp.altstoreAppID
         {
             #if BETA
-            actions = [refreshAction, changeIconMenu]
+            actions = [refreshAction, resignAction, changeIconMenu]
             #else
-            actions = [refreshAction]
+            actions = [refreshAction, resignAction]
             #endif
         }
         else

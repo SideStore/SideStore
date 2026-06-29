@@ -181,7 +181,7 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         super.init(entity: entity, insertInto: context)
     }
     
-    public init(resignedApp: ALTApplication, originalBundleIdentifier: String, certificateSerialNumber: String?, storeBuildVersion: String?, context: NSManagedObjectContext)
+    public init(resignedApp: ALTApplication, originalBundleIdentifier: String, certificateSerialNumber: String?, storeBuildVersion: String?, context: NSManagedObjectContext) throws
     {
         super.init(entity: InstalledApp.entity(), insertInto: context)
         
@@ -192,7 +192,14 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         self.refreshedDate = Date()
         self.installedDate = Date()
         
-        self.expirationDate = self.refreshedDate.addingTimeInterval(60 * 60 * 24 * 7) // Rough estimate until we get real values from provisioning profile.
+        #if targetEnvironment(simulator)
+        self.expirationDate = self.refreshedDate.addingTimeInterval(60 * 60 * 24 * 7)
+        #else
+        guard let expirationDate = resignedApp.provisioningProfile?.expirationDate else {
+            throw ALTError.invalidApp(reason: "The app is missing a valid provisioning profile.")
+        }
+        self.expirationDate = expirationDate
+        #endif
         
         // In practice this update() is redundant because we always call update() again after init from callers,
         // but better to have an init that is guaranteed to successfully initialize an object
