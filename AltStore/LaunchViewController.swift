@@ -64,10 +64,12 @@ final class LaunchViewController: UIViewController {
     }
 
     private func doPostLaunch() {
-        SideJITManager.shared.checkAndPromptIfNeeded(presentingVC: self)
-        if #available(iOS 17, *), UserDefaults.standard.sidejitenable {
-            DispatchQueue.global().async { SideJITManager.shared.askForNetwork() }
-            print("SideJITServer Enabled")
+        Task.detached { [weak self] in
+            await SideJITManager.shared.checkAndPromptIfNeeded(presentingVC: self)
+            if #available(iOS 17, *), UserDefaults.standard.sidejitenable {
+                await SideJITManager.shared.askForNetwork()
+                print("SideJITServer Enabled")
+            }
         }
 
         #if !targetEnvironment(simulator)
@@ -310,39 +312,43 @@ final class SplashView: UIView {
 // MARK: - SideJITManager
 final class SideJITManager {
     static let shared = SideJITManager()
-    func checkAndPromptIfNeeded(presentingVC: UIViewController) {
+    
+    func checkAndPromptIfNeeded(presentingVC: UIViewController?) async {
         guard #available(iOS 17, *), !UserDefaults.standard.sidejitenable else { return }
-        DispatchQueue.global().async {
-            self.isSideJITServerDetected { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success():
-                        let alert = UIAlertController(title: "SideJITServer Detected", message: "Would you like to enable SideJITServer", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in UserDefaults.standard.sidejitenable = true })
-                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                        presentingVC.present(alert, animated: true)
-                    case .failure(_): print("Cannot find sideJITServer")
-                    }
-                }
+        do {
+            try await self.isSideJITServerDetected()
+            await MainActor.run {
+                guard let presentingVC else { return }
+                let alert = UIAlertController(
+                    title: "SideJITServer Detected",
+                    message: "Would you like to enable SideJITServer",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in UserDefaults.standard.sidejitenable = true })
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                presentingVC.present(alert, animated: true)
             }
+        } catch {
+            print("Cannot find sideJITServer")
         }
     }
 
-    func askForNetwork() {
+    func askForNetwork() async {
         let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
         let SJSURL = address.isEmpty ? "http://sidejitserver._http._tcp.local:8080" : address
-        URLSession.shared.dataTask(with: URL(string: "\(SJSURL)/re/")!) { data, resp, err in
-            print("data: \(String(describing: data)), response: \(String(describing: resp)), error: \(String(describing: err))")
-        }.resume()
+        guard let url = URL(string: "\(SJSURL)/re/") else { return }
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            print("data: \(data), response: \(response)")
+        } catch {
+            print("error: \(error)")
+        }
     }
 
-    func isSideJITServerDetected(completion: @escaping (Result<Void, Error>) -> Void) {
+    func isSideJITServerDetected() async throws {
         let address = UserDefaults.standard.textInputSideJITServerurl ?? ""
         let SJSURL = address.isEmpty ? "http://sidejitserver._http._tcp.local:8080" : address
-        guard let url = URL(string: SJSURL) else { return }
-        URLSession.shared.dataTask(with: url) { _, _, error in
-            if let error = error { completion(.failure(error)); return }
-            completion(.success(()))
-        }.resume()
+        guard let url = URL(string: SJSURL) else { throw URLError(.badURL) }
+        _ = try await URLSession.shared.data(from: url)
     }
 }

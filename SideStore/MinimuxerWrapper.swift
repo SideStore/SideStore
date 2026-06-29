@@ -199,7 +199,9 @@ func startAutoMounter(_ docsPath: String) {
     print("[SideStore] startAutoMounter(docsPath) is no-op on simulator")
     #else
     print("[SideStore] startAutoMounter(docsPath) invoked")
-    Minimuxer.startAutoMounter(docsPath: docsPath)
+    Task {
+        await Minimuxer.startAutoMounter(docsPath: docsPath)
+    }
     #endif
 }
 
