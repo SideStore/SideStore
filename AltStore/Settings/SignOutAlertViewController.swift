@@ -12,7 +12,7 @@ class SignOutAlertViewController: UIViewController {
     let checkboxButton = UIButton(type: .system)
     var isChecked: Bool = true {
         didSet {
-            let configuration = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+            let configuration = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
             let imageName = isChecked ? "checkmark.square.fill" : "square"
             let image = UIImage(systemName: imageName, withConfiguration: configuration)
             checkboxButton.setImage(image, for: .normal)

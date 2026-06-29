@@ -78,6 +78,7 @@ extension SettingsViewController
         case resetPairingFile
         case anisetteServers
         case vpnConfiguration
+        case certificateManagement
         case enableEMPForWiregaurd
         case customizeAppId
     }
@@ -388,7 +389,7 @@ final class SettingsViewController: UITableViewController
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "anisetteServers" {
+        if segue.identifier == "anisetteServers" || segue.identifier == "certificateManagement" {
             let controller = segue.destination
             
             // disable bottom tab bar since 'back' button is already available
@@ -1399,6 +1400,12 @@ extension SettingsViewController
                 vc.navigationItem.standardAppearance = appearance
 
                 navigationController?.pushViewController(vc, animated: true)
+                
+            case .certificateManagement:
+                let certificateManagementView = CertificatesView(presentingViewController: self)
+                let vc = UIHostingController(rootView: certificateManagementView)
+                self.prepare(for: UIStoryboardSegue(identifier: "certificateManagement", source: self, destination: vc), sender: nil)
+                
             case .refreshAttempts, .enableEMPForWiregaurd, .customizeAppId: break
             }
         case .signing:
