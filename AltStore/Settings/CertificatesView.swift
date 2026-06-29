@@ -513,11 +513,17 @@ struct CertificatesView: View {
                         }
                         .padding(.vertical, 4)
                         
-                        SwiftUI.Button(role: .destructive) {
-                            showDeactivateConfirmation = true
-                        } label: {
-                            Text("Deactivate Locally")
-                                .fontWeight(.medium)
+                        HStack {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.title2)
+                                .opacity(0)
+                            
+                            SwiftUI.Button(role: .destructive) {
+                                showDeactivateConfirmation = true
+                            } label: {
+                                Text("Deactivate Locally")
+                                    .fontWeight(.medium)
+                            }
                         }
                     } else {
                         if viewModel.team == nil {
