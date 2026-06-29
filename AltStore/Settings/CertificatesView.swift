@@ -16,6 +16,63 @@ struct PendingImport {
     let filename: String
 }
 
+struct DeveloperPortalService {
+    static let shared = DeveloperPortalService()
+    
+    func authenticate(presentingViewController: UIViewController?) async throws -> (ALTTeam, ALTAppleAPISession) {
+        try await withCheckedThrowingContinuation { continuation in
+            AppManager.shared.authenticate(presentingViewController: presentingViewController) { result in
+                switch result {
+                case .success(let (team, _, session)):
+                    continuation.resume(returning: (team, session))
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    func fetchCertificates(team: ALTTeam, session: ALTAppleAPISession) async throws -> [ALTCertificate] {
+        try await withCheckedThrowingContinuation { continuation in
+            ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { certs, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let certs = certs {
+                    continuation.resume(returning: certs)
+                } else {
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+    }
+    
+    func createCertificate(machineName: String, team: ALTTeam, session: ALTAppleAPISession) async throws -> ALTCertificate {
+        try await withCheckedThrowingContinuation { continuation in
+            ALTAppleAPI.shared.addCertificate(machineName: machineName, to: team, session: session) { cert, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let cert = cert {
+                    continuation.resume(returning: cert)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "SideStoreError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to create certificate: no certificate returned."]))
+                }
+            }
+        }
+    }
+    
+    func revokeCertificate(_ certificate: ALTCertificate, team: ALTTeam, session: ALTAppleAPISession) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { success, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: success)
+                }
+            }
+        }
+    }
+}
+
 class CertificatesViewModel: ObservableObject {
     @Published var certificates: [ALTCertificate] = []
     @Published var isLoading = false
@@ -61,23 +118,30 @@ class CertificatesViewModel: ObservableObject {
         var localCerts: [ALTCertificate] = []
         let serials = UserDefaults.standard.stringArray(forKey: "importedCertificateSerials") ?? []
         for serial in serials {
-            if let data = try? Keychain.shared.keychain.getData("importedCert_" + serial),
-               let cert = ALTCertificate(p12Data: data, password: "") {
-                localCerts.append(cert)
+            if let data = try? Keychain.shared.keychain.getData("importedCert_" + serial) {
+                if let cert = ALTCertificate(p12Data: data, password: "") {
+                    localCerts.append(cert)
+                } else if let cert = ALTCertificate(data: data) {
+                    localCerts.append(cert)
+                }
             }
         }
         return localCerts
     }
     
     func saveLocalCertificate(_ cert: ALTCertificate) {
-        if let data = cert.p12Data() {
-            try? Keychain.shared.keychain.set(data, key: "importedCert_" + cert.serialNumber)
-            
-            var serials = UserDefaults.standard.stringArray(forKey: "importedCertificateSerials") ?? []
-            if !serials.contains(cert.serialNumber) {
-                serials.append(cert.serialNumber)
-                UserDefaults.standard.set(serials, forKey: "importedCertificateSerials")
-            }
+        if let p12Data = cert.p12Data() {
+            try? Keychain.shared.keychain.set(p12Data, key: "importedCert_" + cert.serialNumber)
+        } else if let derData = cert.data {
+            try? Keychain.shared.keychain.set(derData, key: "importedCert_" + cert.serialNumber)
+        } else {
+            return
+        }
+        
+        var serials = UserDefaults.standard.stringArray(forKey: "importedCertificateSerials") ?? []
+        if !serials.contains(cert.serialNumber) {
+            serials.append(cert.serialNumber)
+            UserDefaults.standard.set(serials, forKey: "importedCertificateSerials")
         }
     }
     
@@ -96,7 +160,7 @@ class CertificatesViewModel: ObservableObject {
     
     // MARK: - Fetch & Load
     
-    func loadCertificates(presentingViewController: UIViewController?) {
+    func loadCertificates(presentingViewController: UIViewController?, completion: (() -> Void)? = nil) {
         self.isLoading = true
         self.errorMessage = nil
         self.fetchActiveSerialNumber()
@@ -104,65 +168,63 @@ class CertificatesViewModel: ObservableObject {
         let localCerts = self.loadLocalCertificates()
         let activeCert = self.activeLocalCert
         
-        AppManager.shared.authenticate(presentingViewController: presentingViewController) { [weak self] result in
-            guard let self = self else { return }
+        // Show local certificates immediately
+        var mergedLocal = localCerts
+        if let active = activeCert, !mergedLocal.contains(where: { $0.serialNumber == active.serialNumber }) {
+            mergedLocal.append(active)
+        }
+        self.certificates = mergedLocal
+        
+        Task { @MainActor in
+            defer {
+                self.isLoading = false
+                completion?()
+            }
             
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let (team, _, session)):
-                    self.team = team
-                    self.session = session
-                    
-                    ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { [weak self] (certs, error) in
-                        guard let self = self else { return }
-                        DispatchQueue.main.async {
-                            self.isLoading = false
-                            if let error = error {
-                                self.errorMessage = error.localizedDescription
-                                var merged = localCerts
-                                if let active = activeCert, !merged.contains(where: { $0.serialNumber == active.serialNumber }) {
-                                    merged.append(active)
-                                }
-                                self.certificates = merged
-                            } else if let remoteCerts = certs {
-                                var merged: [ALTCertificate] = []
-                                var matchedRemoteSerials = Set<String>()
-                                
-                                for remoteCert in remoteCerts {
-                                    if let localCopy = localCerts.first(where: { $0.serialNumber == remoteCert.serialNumber }) {
-                                        remoteCert.privateKey = localCopy.privateKey
-                                    } else if let active = activeCert, active.serialNumber == remoteCert.serialNumber {
-                                        remoteCert.privateKey = active.privateKey
-                                    }
-                                    merged.append(remoteCert)
-                                    matchedRemoteSerials.insert(remoteCert.serialNumber)
-                                }
-                                
-                                for localCert in localCerts {
-                                    if !matchedRemoteSerials.contains(localCert.serialNumber) {
-                                        merged.append(localCert)
-                                    }
-                                }
-                                
-                                if let active = activeCert, !matchedRemoteSerials.contains(active.serialNumber) {
-                                    if !localCerts.contains(where: { $0.serialNumber == active.serialNumber }) {
-                                        merged.append(active)
-                                    }
-                                }
-                                
-                                self.certificates = merged
-                            }
-                        }
+            do {
+                let (team, session) = try await DeveloperPortalService.shared.authenticate(presentingViewController: presentingViewController)
+                self.team = team
+                self.session = session
+                
+                let remoteCerts = try await DeveloperPortalService.shared.fetchCertificates(team: team, session: session)
+                
+                var merged: [ALTCertificate] = []
+                var matchedRemoteSerials = Set<String>()
+                
+                for remoteCert in remoteCerts {
+                    if let localCopy = localCerts.first(where: { $0.serialNumber == remoteCert.serialNumber }) {
+                        remoteCert.privateKey = localCopy.privateKey
+                    } else if let active = activeCert, active.serialNumber == remoteCert.serialNumber {
+                        remoteCert.privateKey = active.privateKey
                     }
                     
-                case .failure(let error):
-                    self.isLoading = false
-                    self.errorMessage = error.localizedDescription
-                    var merged = localCerts
-                    if let active = activeCert, !merged.contains(where: { $0.serialNumber == active.serialNumber }) {
+                    // Automatically cache/save the fetched remote certificate locally!
+                    self.saveLocalCertificate(remoteCert)
+                    
+                    merged.append(remoteCert)
+                    matchedRemoteSerials.insert(remoteCert.serialNumber)
+                }
+                
+                for localCert in localCerts {
+                    if !matchedRemoteSerials.contains(localCert.serialNumber) {
+                        merged.append(localCert)
+                    }
+                }
+                
+                if let active = activeCert, !matchedRemoteSerials.contains(active.serialNumber) {
+                    if !localCerts.contains(where: { $0.serialNumber == active.serialNumber }) {
                         merged.append(active)
                     }
-                    self.certificates = merged
+                }
+                
+                self.certificates = merged
+            } catch {
+                if presentingViewController != nil {
+                    let errorString = error.localizedDescription
+                    let isCancelled = error is CancellationError
+                    if !isCancelled {
+                        self.errorMessage = errorString
+                    }
                 }
             }
         }
@@ -246,43 +308,33 @@ class CertificatesViewModel: ObservableObject {
         self.isLoading = true
         self.errorMessage = nil
         
-        ALTAppleAPI.shared.addCertificate(machineName: machineName, to: team, session: session) { [weak self] (newCert, error) in
-            guard let self = self else { return }
-            
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    self.errorMessage = error.localizedDescription
-                }
-                return
+        Task { @MainActor in
+            defer {
+                self.isLoading = false
             }
             
-            guard let newCert = newCert, let privateKey = newCert.privateKey else {
-                DispatchQueue.main.async {
-                    self.isLoading = false
+            do {
+                let newCert = try await DeveloperPortalService.shared.createCertificate(machineName: machineName, team: team, session: session)
+                guard let privateKey = newCert.privateKey else {
                     self.errorMessage = "Missing private key from newly created certificate."
+                    return
                 }
-                return
-            }
-            
-            ALTAppleAPI.shared.fetchCertificates(for: team, session: session) { [weak self] (certs, error) in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    if let error = error {
-                        self.errorMessage = error.localizedDescription
-                    } else if let certs = certs {
-                        if let certificate = certs.first(where: { $0.serialNumber == newCert.serialNumber }) {
-                            certificate.privateKey = privateKey
-                            
-                            self.saveLocalCertificate(certificate)
-                            
-                            self.alertMessage = "Certificate created successfully."
-                            self.showAlert = true
-                            
-                            self.loadCertificates(presentingViewController: nil)
-                        }
-                    }
+                
+                let remoteCerts = try await DeveloperPortalService.shared.fetchCertificates(team: team, session: session)
+                if let certificate = remoteCerts.first(where: { $0.serialNumber == newCert.serialNumber }) {
+                    certificate.privateKey = privateKey
+                    self.saveLocalCertificate(certificate)
+                    
+                    self.alertMessage = "Certificate created successfully."
+                    self.showAlert = true
+                    
+                    self.loadCertificates(presentingViewController: nil)
+                }
+            } catch {
+                let errorString = error.localizedDescription
+                let isCancelled = error is CancellationError
+                if !isCancelled {
+                    self.errorMessage = errorString
                 }
             }
         }
@@ -297,14 +349,14 @@ class CertificatesViewModel: ObservableObject {
         self.isLoading = true
         self.errorMessage = nil
         
-        ALTAppleAPI.shared.revoke(certificate, for: team, session: session) { [weak self] (success, error) in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
+        Task { @MainActor in
+            defer {
                 self.isLoading = false
-                if let error = error {
-                    self.errorMessage = error.localizedDescription
-                } else if success {
+            }
+            
+            do {
+                let success = try await DeveloperPortalService.shared.revokeCertificate(certificate, team: team, session: session)
+                if success {
                     self.deleteLocalCertificate(serialNumber: certificate.serialNumber)
                     self.certificates.removeAll(where: { $0.serialNumber == certificate.serialNumber })
                     
@@ -317,6 +369,12 @@ class CertificatesViewModel: ObservableObject {
                     self.showAlert = true
                 } else {
                     self.errorMessage = "Failed to revoke certificate."
+                }
+            } catch {
+                let errorString = error.localizedDescription
+                let isCancelled = error is CancellationError
+                if !isCancelled {
+                    self.errorMessage = errorString
                 }
             }
         }
@@ -356,6 +414,11 @@ class CertificatesViewModel: ObservableObject {
         self.alertMessage = "Local certificate deactivated."
         self.showAlert = true
     }
+    
+    func isCertificateLocallyCached(_ certificate: ALTCertificate) -> Bool {
+        let serials = UserDefaults.standard.stringArray(forKey: "importedCertificateSerials") ?? []
+        return serials.contains(certificate.serialNumber) || certificate.serialNumber == self.activeSerialNumber
+    }
 }
 
 struct CertificatesView: View {
@@ -378,6 +441,14 @@ struct CertificatesView: View {
     @State private var certificateToExport: ALTCertificate? = nil
     @State private var certificateToRevoke: ALTCertificate? = nil
     @State private var certificateToDelete: ALTCertificate? = nil
+    
+    private var privateCerts: [ALTCertificate] {
+        viewModel.certificates.filter { $0.privateKey != nil }
+    }
+    
+    private var publicCerts: [ALTCertificate] {
+        viewModel.certificates.filter { $0.privateKey == nil }
+    }
     
     var body: some View {
         ZStack {
@@ -412,22 +483,27 @@ struct CertificatesView: View {
                     }
                 }
                 
-                let privateCerts = viewModel.certificates.filter { $0.privateKey != nil }
-                let publicCerts = viewModel.certificates.filter { $0.privateKey == nil }
-                
                 if viewModel.certificates.isEmpty {
                     Section(header: Text("Certificates")) {
                         if viewModel.isLoading {
                             Text("Fetching certificates...")
                                 .foregroundColor(.secondary)
                         } else {
-                            Text("No certificates found.")
-                                .foregroundColor(.secondary)
+                            if viewModel.team == nil {
+                                Text("No local certificates found (not signed in).")
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("No certificates found.")
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 } else {
                     if !privateCerts.isEmpty {
-                        Section(header: Text("Private Certificates")) {
+                        Section(
+                            header: Text("Private Certificates"),
+                            footer: publicCerts.isEmpty ? Text("Suffix (R) indicates the certificate is registered remotely on Apple's developer portal.") : nil
+                        ) {
                             ForEach(privateCerts, id: \.serialNumber) { cert in
                                 certificateRow(cert: cert, hasPrivateKey: true)
                             }
@@ -435,11 +511,21 @@ struct CertificatesView: View {
                     }
                     
                     if !publicCerts.isEmpty {
-                        Section(header: Text("Public Certificates")) {
+                        Section(
+                            header: Text("Public Certificates"),
+                            footer: Text("Suffix (R) indicates the certificate is registered remotely on Apple's developer portal.")
+                        ) {
                             ForEach(publicCerts, id: \.serialNumber) { cert in
                                 certificateRow(cert: cert, hasPrivateKey: false)
                             }
                         }
+                    }
+                }
+            }
+            .refreshable {
+                await withCheckedContinuation { continuation in
+                    viewModel.loadCertificates(presentingViewController: presentingViewController) {
+                        continuation.resume()
                     }
                 }
             }
@@ -463,7 +549,7 @@ struct CertificatesView: View {
                 }
             }
             .onAppear {
-                viewModel.loadCertificates(presentingViewController: presentingViewController)
+                viewModel.loadCertificates(presentingViewController: nil)
             }
             
             if viewModel.isLoading {
@@ -629,7 +715,7 @@ struct CertificatesView: View {
         
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(cert.machineName ?? cert.name)
+                Text((cert.machineName ?? cert.name) + (isRemote ? " (R)" : ""))
                     .font(.headline)
                 Text("Serial: " + cert.serialNumber)
                     .font(.subheadline)
@@ -693,11 +779,13 @@ struct CertificatesView: View {
                 Label(hasPrivateKey ? "Export (.p12)" : "Export (.der)", systemImage: "square.and.arrow.up")
             }
             
-            SwiftUI.Button(role: .destructive) {
-                self.certificateToDelete = cert
-                self.showDeleteConfirmation = true
-            } label: {
-                Label("Delete", systemImage: "trash")
+            if viewModel.isCertificateLocallyCached(cert) {
+                SwiftUI.Button(role: .destructive) {
+                    self.certificateToDelete = cert
+                    self.showDeleteConfirmation = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
             }
         }
     }
