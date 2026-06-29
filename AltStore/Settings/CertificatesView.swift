@@ -477,9 +477,15 @@ struct CertificatesView: View {
                                 .fontWeight(.medium)
                         }
                     } else {
-                        Text("No active local certificate found. Create a new certificate or import a .p12 file to sign your apps.")
-                            .foregroundColor(.secondary)
-                            .font(.subheadline)
+                        if viewModel.team == nil {
+                            Text("No active local certificate found. Import a .p12 file to sign your apps.")
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                        } else {
+                            Text("No active local certificate found. Create a new certificate or import a .p12 file to sign your apps.")
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                        }
                     }
                 }
                 
@@ -539,6 +545,7 @@ struct CertificatesView: View {
                         Image(systemName: "plus")
                     }
                     .accessibilityLabel("Create Certificate")
+                    .disabled(viewModel.team == nil)
                     
                     SwiftUI.Button {
                         self.showFileImporter = true
