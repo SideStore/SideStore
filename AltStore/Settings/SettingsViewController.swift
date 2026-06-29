@@ -72,16 +72,17 @@ extension SettingsViewController
     
     private enum AdvancedSettingsRow: Int, CaseIterable
     {
-        case sendFeedback
-        case refreshAttempts
-        case refreshSideJITServer
-        case resetPairingFile
-        case anisetteServers
-        case vpnConfiguration
-        case certificateManagement
-        case enableEMPForWiregaurd
-        case customizeAppId
-        case cacheManagement
+        case sendFeedback           // row 0 - Send Feedback
+        case refreshAttempts        // row 1 - View Refresh Attempts
+        case refreshSideJITServer   // row 2 - SideJITServer
+        case resetPairingFile       // row 3 - Reset Pairing File
+        case anisetteServers        // row 4 - Anisette Servers
+        case vpnConfiguration       // row 5 - VPN Configuration
+        case certificateManagement  // row 6 - Certificate Management
+        case cacheManagement        // row 7 - Cache Management
+        case exportResignedApp      // row 8 - Export Resigned Apps (moved here from diagnostics)
+        case enableEMPForWiregaurd  // row 9 - Enable EMP for wireguard
+        case customizeAppId         // row 10 - Enable AppId Customization
     }
     
     private enum SigningSettingsRow: Int, CaseIterable {
@@ -98,14 +99,14 @@ extension SettingsViewController
 
     private enum DiagnosticsRow: Int, CaseIterable
     {
-        case responseCaching
-        case exportResignedApp
-        case verboseOperationsLogging
-        case exportDatabase
-        case deleteDatabase
-        case operationsLoggingControl
-        case recreateDatabase
-        case minimuxerConsoleLogging
+        case responseCaching            // row 0 - Disable Response Caching
+        case verboseOperationsLogging   // row 1 - Enable Verbose Ops Logging
+        case exportDatabase             // row 2 - Export Database
+        case deleteDatabase             // row 3 - Delete Database
+        case operationsLoggingControl   // row 4 - Operations Logging Control
+        case recreateDatabase           // row 5 - Recreate Database on Next Start
+        case minimuxerConsoleLogging    // row 6 - Minimuxer Console Logging
+        case minimuxerStatusCheck       // row 7 - Minimuxer Status Check
     }
 }
 
@@ -1418,7 +1419,7 @@ extension SettingsViewController
                 
                 navigationController?.pushViewController(vc, animated: true)
                 
-            case .refreshAttempts, .enableEMPForWiregaurd, .customizeAppId: break
+            case .refreshAttempts, .exportResignedApp, .enableEMPForWiregaurd, .customizeAppId: break
             }
         case .signing:
             let row = SigningSettingsRow.allCases[indexPath.row]
@@ -1622,7 +1623,7 @@ extension SettingsViewController
                 let segue = UIStoryboardSegue(identifier: "operationsLoggingControl", source: self, destination: operationsLoggingController)
                 self.present(segue.destination, animated: true, completion: nil)
                 
-            case .responseCaching, .exportResignedApp, .verboseOperationsLogging, .minimuxerConsoleLogging, .recreateDatabase : break
+            case .responseCaching, .verboseOperationsLogging, .minimuxerConsoleLogging, .minimuxerStatusCheck, .recreateDatabase : break
             }
             
             
