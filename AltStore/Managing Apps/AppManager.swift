@@ -923,6 +923,34 @@ extension AppManager
         }
     }
     
+    @discardableResult
+    func resign(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+    {
+        let group = RefreshGroup()
+        group.completionHandler = { (results) in
+            do
+            {
+                guard let result = results.values.first else { throw group.context.error ?? OperationError.unknown() }
+                let installedApp = try result.get()
+                completionHandler(.success(installedApp))
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        Task {
+            do {
+                try await self.perform([.resign(installedApp)], presentingViewController: presentingViewController, group: group)
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        return group
+    }
+    
     func backup(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
     {
         let group = RefreshGroup()
@@ -1103,13 +1131,15 @@ private extension AppManager
         case deactivate(InstalledApp)
         case backup(InstalledApp)
         case restore(InstalledApp)
+        case resign(InstalledApp)
         
         var app: AppProtocol {
             switch self
             {
             case .install(let app), .update(let app), .refresh(let app as AppProtocol),
                  .activate(let app as AppProtocol), .deactivate(let app as AppProtocol),
-                 .backup(let app as AppProtocol), .restore(let app as AppProtocol):
+                 .backup(let app as AppProtocol), .restore(let app as AppProtocol),
+                 .resign(let app as AppProtocol):
                 return app
             }
         }
@@ -1139,6 +1169,7 @@ private extension AppManager
             case .deactivate: return .deactivate
             case .backup: return .backup
             case .restore: return .restore
+            case .resign: return .install
             }
         }
     }
@@ -1207,6 +1238,12 @@ private extension AppManager
                         self.finish(operation, result: result, group: group, progress: progress)
                     }
                     progress?.addChild(updateProgress, withPendingUnitCount: 80)
+                    
+                case .resign(let app):
+                    let resignProgress = self._install(app, operation: operation, group: group, reviewPermissions: .none) { (result) in
+                        self.finish(operation, result: result, group: group, progress: progress)
+                    }
+                    progress?.addChild(resignProgress, withPendingUnitCount: 80)
                     
                 case .activate(let app) where UserDefaults.standard.isLegacyDeactivationSupported: fallthrough
                 case .refresh(let app):
@@ -1295,7 +1332,11 @@ private extension AppManager
         
         if let installedApp = app as? InstalledApp
         {
-            if let storeApp = installedApp.storeApp, !FileManager.default.fileExists(atPath: installedApp.fileURL.path)
+            if case .resign = appOperation {
+                // For resign, we MUST use the cached app bundle and not download from the store/web
+                downloadingApp = installedApp
+            }
+            else if let storeApp = installedApp.storeApp, !FileManager.default.fileExists(atPath: installedApp.fileURL.path)
             {
                 // Cached app has been deleted, so we need to redownload it.
                 downloadingApp = storeApp
@@ -2206,7 +2247,7 @@ private extension AppManager
         switch operation
         {
         case .install, .update: return self.installationProgress[bundleID]
-        case .refresh, .activate, .deactivate, .backup, .restore: return self.refreshProgress[bundleID]
+        case .refresh, .activate, .deactivate, .backup, .restore, .resign: return self.refreshProgress[bundleID]
         }
     }
     
@@ -2221,7 +2262,7 @@ private extension AppManager
         switch operation
         {
         case .install, .update: self.installationProgress[bundleID] = progress
-        case .refresh, .activate, .deactivate, .backup, .restore: self.refreshProgress[bundleID] = progress
+        case .refresh, .activate, .deactivate, .backup, .restore, .resign: self.refreshProgress[bundleID] = progress
         }
     }
 }

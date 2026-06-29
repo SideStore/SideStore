@@ -246,6 +246,17 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
                 try installIPA(installedApp.bundleIdentifier)
                 installing = false
                 installedApp.refreshedDate = Date()
+                
+                if let resignedAppURL = self.context.resignedApp?.fileURL {
+                    let cachedAppURL = InstalledApp.fileURL(for: installedApp)
+                    do {
+                        try FileManager.default.copyItem(at: resignedAppURL, to: cachedAppURL, shouldReplace: true)
+                        self.debugLog("Successfully overwrote cached app with resigned app at \(cachedAppURL.path)")
+                    } catch {
+                        self.debugLog("Failed to overwrite cached app with resigned app: \(error)")
+                    }
+                }
+                
                 self.finish(.success(installedApp))
             } catch let error {
                 installing = false
