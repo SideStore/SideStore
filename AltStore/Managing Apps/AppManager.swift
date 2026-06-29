@@ -1651,8 +1651,20 @@ private extension AppManager
            let appSerial = app.certificateSerialNumber,
            activeSerial != appSerial
         {
-            let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
-            context.error = OperationError.refreshAppFailed(message: errMessage)
+            if group.context.presentingViewController == nil
+            {
+                print("AppManager.refresh: Certificate mismatch detected in headless mode for \(app.name). Active: \(activeSerial), App: \(appSerial). Auto-resigning instead of throwing mismatch error.")
+                let resignProgress = self._install(app, operation: .resign(app), group: group, reviewPermissions: .none) { (result) in
+                    completionHandler(result)
+                }
+                return resignProgress
+            }
+            else
+            {
+                print("AppManager.refresh: Certificate mismatch detected for \(app.name). Active Certificate SN: \(activeSerial), Target Certificate SN: \(appSerial).")
+                let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
+                context.error = OperationError.refreshAppFailed(message: errMessage)
+            }
         }
         
         if context.error == nil
@@ -2174,6 +2186,7 @@ private extension AppManager
             case .deactivate: localizedTitle = String(format: NSLocalizedString("Failed to Deactivate %@", comment: ""), appName)
             case .backup: localizedTitle = String(format: NSLocalizedString("Failed to Backup %@", comment: ""), appName)
             case .restore: localizedTitle = String(format: NSLocalizedString("Failed to Restore %@ Backup", comment: ""), appName)
+            case .resign: localizedTitle = String(format: NSLocalizedString("Failed to Resign %@", comment: ""), appName)
             }
             let error = nsError.withLocalizedTitle(localizedTitle)
             group.set(.failure(error), forAppWithBundleIdentifier: operation.bundleIdentifier)
