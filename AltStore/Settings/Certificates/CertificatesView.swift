@@ -28,6 +28,7 @@ struct CertificatesView: View {
     @State private var showDeleteConfirmation = false
     @State private var showExportPasswordPrompt = false
     @State private var hasInitialLoaded = false
+    @State private var hasCopiedActiveSerialNumber = false
     
     @State private var newMachineName = ""
     @State private var exportPasswordInput = ""
@@ -46,25 +47,86 @@ struct CertificatesView: View {
             .filter { $0.privateKey == nil }
             .sorted(by: { $0.creationDate > $1.creationDate })
     }
+    private func displayActiveSerial(activeSerial: String) -> String {
+        let isSerialRevealed = viewModel.revealedSerials.contains(activeSerial)
+        if viewModel.isGlobalHideActive && !isSerialRevealed {
+            return "••••••••••••••••"
+        } else {
+            return activeSerial
+        }
+    }
     
     @ViewBuilder
     private var activeLocalCertificateSection: some View {
         Section("Active Local Certificate") {
             if let activeSerial = viewModel.activeSerialNumber {
+                let displaySerial = displayActiveSerial(activeSerial: activeSerial)
+                
                 HStack {
                     Image(systemName: "checkmark.seal.fill")
                         .foregroundColor(.green)
                         .font(.title2)
                     
                     VStack(alignment: .leading) {
-                        Text("Active Signing Certificate")
-                            .font(.headline)
-                        Text("SN: " + activeSerial)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 6) {
+                            Text("Active Signing Certificate")
+                                .font(.headline)
+                            
+                            SwiftUI.Button {
+                                UIPasteboard.general.string = activeSerial
+                                let generator = UINotificationFeedbackGenerator()
+                                generator.notificationOccurred(.success)
+                                hasCopiedActiveSerialNumber = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    hasCopiedActiveSerialNumber = false
+                                }
+                            } label: {
+                                Image(systemName: hasCopiedActiveSerialNumber ? "checkmark" : "doc.on.doc")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(hasCopiedActiveSerialNumber ? .green : .secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        
+                        (
+                            Text("SN: ")
+                                .font(.footnote)
+                            +
+                            Text(displaySerial)
+                                .font(.system(size: 13, design: .monospaced))
+                        )
+                        .foregroundColor(.secondary)
+                            .onTapGesture {
+                                if viewModel.isGlobalHideActive {
+                                    if viewModel.revealedSerials.contains(activeSerial) {
+                                        viewModel.revealedSerials.remove(activeSerial)
+                                    } else {
+                                        viewModel.revealedSerials.insert(activeSerial)
+                                    }
+                                }
+                            }
                     }
                 }
                 .padding(.vertical, 4)
+                .contentShape(Rectangle())
+                .contextMenu {
+                    if viewModel.isGlobalHideActive {
+                        SwiftUI.Button {
+                            if viewModel.revealedSerials.contains(activeSerial) {
+                                viewModel.revealedSerials.remove(activeSerial)
+                            } else {
+                                viewModel.revealedSerials.insert(activeSerial)
+                            }
+                        } label: {
+                            Label(viewModel.revealedSerials.contains(activeSerial) ? "Hide Details" : "Reveal Details", systemImage: viewModel.revealedSerials.contains(activeSerial) ? "eye.slash" : "eye")
+                        }
+                    }
+                    SwiftUI.Button {
+                        UIPasteboard.general.string = activeSerial
+                    } label: {
+                        Label("Copy S/N", systemImage: "doc.on.doc")
+                    }
+                }
                 
                 HStack {
                     Image(systemName: "checkmark.seal.fill")
@@ -121,7 +183,19 @@ struct CertificatesView: View {
                         .buttonStyle(.plain)
                     }
                 } header: {
-                    Text("Private Certificates")
+                    HStack {
+                        Text("Private Certificates")
+                        Spacer()
+                        SwiftUI.Button {
+                            viewModel.isPrivateSectionHideActive.toggle()
+                        } label: {
+                            Image(systemName: viewModel.isPrivateSectionHideActive ? "eye.slash" : "eye")
+                                .font(.subheadline)
+                                .foregroundColor(viewModel.isGlobalHideActive ? .gray : .accentColor)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(viewModel.isGlobalHideActive)
+                    }
                 } footer: {
                     if publicCerts.isEmpty {
                         Text("Suffix (R) indicates the certificate is registered remotely on Apple's developer portal.")
@@ -140,7 +214,19 @@ struct CertificatesView: View {
                         .buttonStyle(.plain)
                     }
                 } header: {
-                    Text("Public Certificates")
+                    HStack {
+                        Text("Public Certificates")
+                        Spacer()
+                        SwiftUI.Button {
+                            viewModel.isPublicSectionHideActive.toggle()
+                        } label: {
+                            Image(systemName: viewModel.isPublicSectionHideActive ? "eye.slash" : "eye")
+                                .font(.subheadline)
+                                .foregroundColor(viewModel.isGlobalHideActive ? .gray : .accentColor)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(viewModel.isGlobalHideActive)
+                    }
                 } footer: {
                     Text("Suffix (R) indicates the certificate is registered remotely on Apple's developer portal.")
                 }
@@ -164,6 +250,13 @@ struct CertificatesView: View {
             .navigationTitle("Certificates")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    SwiftUI.Button {
+                        viewModel.isGlobalHideActive.toggle()
+                    } label: {
+                        Image(systemName: viewModel.isGlobalHideActive ? "eye.slash" : "eye")
+                    }
+                    .accessibilityLabel("Toggle Hide Sensitive Information")
+                    
                     SwiftUI.Button {
                         self.newMachineName = "SideStore - \(UIDevice.current.name)"
                         self.showCreateDialog = true
@@ -383,40 +476,136 @@ struct CertificatesView: View {
         }
     }
     
+    private func maskPartially(_ string: String) -> String {
+        guard string.count > 8 else { return "••••••••" }
+        return "\(string.prefix(4))••••••••\(string.suffix(4))"
+    }
+    
+    private func displaySerial(for cert: ALTCertificate, hasPrivateKey: Bool) -> String {
+        let isRowLocallyRevealed = viewModel.revealedSerials.contains(cert.serialNumber)
+        let isSectionHidden = hasPrivateKey ? viewModel.isPrivateSectionHideActive : viewModel.isPublicSectionHideActive
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
+        if isGlobalHidden && !isRowLocallyRevealed {
+            return "••••••••••••••••"
+        } else if isSectionHidden && !isRowLocallyRevealed {
+            return maskPartially(cert.serialNumber)
+        } else {
+            return cert.serialNumber
+        }
+    }
+    
+    private func displayIdentifier(for cert: ALTCertificate, hasPrivateKey: Bool) -> String? {
+        guard let ident = cert.identifier else { return nil }
+        let isRowLocallyRevealed = viewModel.revealedSerials.contains(cert.serialNumber)
+        let isSectionHidden = hasPrivateKey ? viewModel.isPrivateSectionHideActive : viewModel.isPublicSectionHideActive
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
+        if (isGlobalHidden || isSectionHidden) && !isRowLocallyRevealed {
+            return "••••••••••"
+        } else {
+            return ident
+        }
+    }
+
+    private func displayRequester(for cert: ALTCertificate, hasPrivateKey: Bool) -> String? {
+        guard let requester = cert.requesterEmail, !requester.isEmpty else { return nil }
+        let isRowLocallyRevealed = viewModel.revealedSerials.contains(cert.serialNumber)
+        let isSectionHidden = hasPrivateKey ? viewModel.isPrivateSectionHideActive : viewModel.isPublicSectionHideActive
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
+        if (isGlobalHidden || isSectionHidden) && !isRowLocallyRevealed {
+            return "••••••••••"
+        } else {
+            return requester
+        }
+    }
+
+    private func displayBriefType(for brief: CertificateBriefInfo, cert: ALTCertificate) -> String {
+        let isRowLocallyRevealed = viewModel.revealedSerials.contains(cert.serialNumber)
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
+        if isGlobalHidden && !isRowLocallyRevealed {
+            return "••••••••••"
+        } else {
+            return brief.type
+        }
+    }
+
+    private func displayBriefValidity(for brief: CertificateBriefInfo, cert: ALTCertificate) -> String {
+        let isRowLocallyRevealed = viewModel.revealedSerials.contains(cert.serialNumber)
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
+        if isGlobalHidden && !isRowLocallyRevealed {
+            return "••••••••••"
+        } else {
+            return "\(brief.validFrom) - \(brief.validUntil)"
+        }
+    }
+    
     @ViewBuilder
     private func certificateRow(cert: ALTCertificate, hasPrivateKey: Bool) -> some View {
         let isActive = cert.serialNumber == viewModel.activeSerialNumber
         let isRemote = viewModel.remoteSerials.contains(cert.serialNumber)
         
+        let isSectionHidden = hasPrivateKey ? viewModel.isPrivateSectionHideActive : viewModel.isPublicSectionHideActive
+        let isGlobalHidden = viewModel.isGlobalHideActive
+        
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text((cert.machineName ?? cert.name) + (isRemote ? " (R)" : ""))
                     .font(.headline)
-                Text("Serial: " + cert.serialNumber)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.secondary)
-                if let ident = cert.identifier {
-                    Text("ID: " + ident)
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(.gray)
+                (
+                    Text("Serial: ")
+                        .font(.system(size: 11))
+                    +
+                    Text(displaySerial(for: cert, hasPrivateKey: hasPrivateKey))
+                        .font(.system(size: 11, design: .monospaced))
+                )
+                .foregroundColor(.secondary)
+                if let displayIdent = displayIdentifier(for: cert, hasPrivateKey: hasPrivateKey) {
+                    (
+                        Text("ID: ")
+                            .font(.system(size: 9))
+                        +
+                        Text(displayIdent)
+                            .font(.system(size: 9, design: .monospaced))
+                    )
+                    .foregroundColor(.gray)
                 }
                 if let brief = getBriefInfo(for: cert.data) {
-                    Text("Type: \(brief.type)")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
-                    Text("Validity: \(brief.validFrom) - \(brief.validUntil)")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
-                }
-                if let requester = cert.requesterEmail, !requester.isEmpty {
-                    HStack(spacing: 4) {
-                        Image(systemName: "eye")
-                            .font(.system(size: 9))
-                            .foregroundColor(.secondary)
-                        Text("Requester: \(requester)")
+                    let displayType = displayBriefType(for: brief, cert: cert)
+                    let isTypeHidden = displayType.contains("•")
+                    (
+                        Text("Type: ")
                             .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                    }
+                        +
+                        Text(displayType)
+                            .font(isTypeHidden ? .system(size: 10, design: .monospaced) : .system(size: 10))
+                    )
+                    .foregroundColor(.secondary)
+                    
+                    let displayValidity = displayBriefValidity(for: brief, cert: cert)
+                    let isValidityHidden = displayValidity.contains("•")
+                    (
+                        Text("Validity: ")
+                            .font(.system(size: 10))
+                        +
+                        Text(displayValidity)
+                            .font(isValidityHidden ? .system(size: 10, design: .monospaced) : .system(size: 10))
+                    )
+                    .foregroundColor(.secondary)
+                }
+                if let displayReq = displayRequester(for: cert, hasPrivateKey: hasPrivateKey) {
+                    let isReqHidden = displayReq.contains("•")
+                    (
+                        Text("Requester: ")
+                            .font(.system(size: 10))
+                        +
+                        Text(displayReq)
+                            .font(isReqHidden ? .system(size: 10, design: .monospaced) : .system(size: 10))
+                    )
+                    .foregroundColor(.secondary)
                 }
             }
             
@@ -447,6 +636,17 @@ struct CertificatesView: View {
         .padding(.vertical, 4)
         .contentShape(Rectangle())
         .contextMenu {
+            if isGlobalHidden || isSectionHidden {
+                SwiftUI.Button {
+                    if viewModel.revealedSerials.contains(cert.serialNumber) {
+                        viewModel.revealedSerials.remove(cert.serialNumber)
+                    } else {
+                        viewModel.revealedSerials.insert(cert.serialNumber)
+                    }
+                } label: {
+                    Label(viewModel.revealedSerials.contains(cert.serialNumber) ? "Hide Details" : "Reveal Details", systemImage: viewModel.revealedSerials.contains(cert.serialNumber) ? "eye.slash" : "eye")
+                }
+            }
             if hasPrivateKey && !isActive {
                 SwiftUI.Button {
                     viewModel.makeCertificateActive(cert)

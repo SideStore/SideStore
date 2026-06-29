@@ -30,6 +30,24 @@ class CertificatesViewModel: ObservableObject {
     @Published var showAlert = false
     @Published var remoteSerials: Set<String> = []
     
+    // Privacy and masking properties
+    @Published var isGlobalHideActive = false {
+        didSet {
+            revealedSerials.removeAll()
+        }
+    }
+    @Published var isPrivateSectionHideActive = false {
+        didSet {
+            revealedSerials.removeAll()
+        }
+    }
+    @Published var isPublicSectionHideActive = false {
+        didSet {
+            revealedSerials.removeAll()
+        }
+    }
+    @Published var revealedSerials: Set<String> = []
+    
     // Bulk import properties
     @Published var pendingImports: [PendingImport] = []
     @Published var currentImportIndex = 0
