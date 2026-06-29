@@ -15,55 +15,59 @@ struct CacheManagementView: View {
     
     var body: some View {
         ZStack {
-            List {
-                Section(header: Text("Internal App Cache"), footer: Text("Cached unzipped app bundles stored in SideStore's private container. These are used during automatic background refreshes and resigns.")) {
-                    if viewModel.internalApps.isEmpty {
-                        Text("No cached internal apps.")
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .padding(.vertical, 4)
-                    } else {
-                        ForEach(viewModel.internalApps) { item in
-                            CacheItemRow(item: item, onExport: {
-                                viewModel.activeExportURL = item.url
-                            }, onDelete: {
-                                viewModel.itemToDelete = item
-                            })
+            if viewModel.isLoading && viewModel.internalApps.isEmpty && viewModel.resignedApps.isEmpty {
+                ProgressView("Loading Cache...")
+                    .scaleEffect(1.1)
+            } else {
+                List {
+                    Section(header: Text("Internal App Cache"), footer: Text("Cached unzipped app bundles stored in SideStore's private container. These are used during automatic background refreshes and resigns.")) {
+                        if viewModel.internalApps.isEmpty {
+                            Text("No cached internal apps.")
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .padding(.vertical, 4)
+                        } else {
+                            ForEach(viewModel.internalApps) { item in
+                                CacheItemRow(item: item, onExport: {
+                                    viewModel.activeExportURL = item.url
+                                }, onDelete: {
+                                    viewModel.itemToDelete = item
+                                })
+                            }
+                            .onDelete { indexSet in
+                                if let index = indexSet.first {
+                                    viewModel.itemToDelete = viewModel.internalApps[index]
+                                }
+                            }
                         }
-                        .onDelete { indexSet in
-                            if let index = indexSet.first {
-                                viewModel.itemToDelete = viewModel.internalApps[index]
+                    }
+                    
+                    Section(header: Text("Exported Resigned Apps"), footer: Text("Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app.")) {
+                        if viewModel.resignedApps.isEmpty {
+                            Text("No exported resigned apps.")
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .padding(.vertical, 4)
+                        } else {
+                            ForEach(viewModel.resignedApps) { item in
+                                CacheItemRow(item: item, onExport: {
+                                    viewModel.activeExportURL = item.url
+                                }, onDelete: {
+                                    viewModel.deleteItem(item)
+                                })
+                            }
+                            .onDelete { indexSet in
+                                if let index = indexSet.first {
+                                    viewModel.deleteItem(viewModel.resignedApps[index])
+                                }
                             }
                         }
                     }
                 }
-                
-                Section(header: Text("Exported Resigned Apps"), footer: Text("Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app.")) {
-                    if viewModel.resignedApps.isEmpty {
-                        Text("No exported resigned apps.")
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .padding(.vertical, 4)
-                    } else {
-                        ForEach(viewModel.resignedApps) { item in
-                            CacheItemRow(item: item, onExport: {
-                                viewModel.activeExportURL = item.url
-                            }, onDelete: {
-                                viewModel.deleteItem(item)
-                            })
-                        }
-                        .onDelete { indexSet in
-                            if let index = indexSet.first {
-                                viewModel.deleteItem(viewModel.resignedApps[index])
-                            }
-                        }
-                    }
-                }
+                .listStyle(InsetGroupedListStyle())
             }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Cache Management")
             
-            if viewModel.isLoading {
+            if viewModel.isLoading && !(viewModel.internalApps.isEmpty && viewModel.resignedApps.isEmpty) {
                 Color.black.opacity(0.3)
                     .edgesIgnoringSafeArea(.all)
                 
@@ -73,6 +77,7 @@ struct CacheManagementView: View {
                     .shadow(radius: 10)
             }
         }
+        .navigationTitle("Cache Management")
         .onAppear {
             viewModel.loadCacheItems()
         }

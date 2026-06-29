@@ -26,7 +26,7 @@ struct CacheItem: Identifiable, Equatable {
 class CacheViewModel: ObservableObject {
     @Published var internalApps: [CacheItem] = []
     @Published var resignedApps: [CacheItem] = []
-    @Published var isLoading = false
+    @Published var isLoading = true
     @Published var errorMessage: String? = nil {
         didSet {
             showErrorAlert = errorMessage != nil
