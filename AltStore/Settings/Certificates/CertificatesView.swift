@@ -329,10 +329,20 @@ class CertificatesViewModel: ObservableObject {
         defer { url.stopAccessingSecurityScopedResource() }
         
         guard let certData = try? Data(contentsOf: url) else { return false }
-        guard let altCert = ALTCertificate(p12Data: certData, password: password) else { return false }
         
-        saveLocalCertificate(altCert)
-        return true
+        // 1. Try public-only certificate format (DER/PEM) first. If valid, import immediately without password prompt.
+        if let rawCert = ALTCertificate(data: certData) {
+            saveLocalCertificate(rawCert)
+            return true
+        }
+        
+        // 2. Otherwise, treat as PKCS#12 format and try to unlock.
+        if let altCert = ALTCertificate(p12Data: certData, password: password) {
+            saveLocalCertificate(altCert)
+            return true
+        }
+        
+        return false
     }
     
     // MARK: - Certificate Management Actions
@@ -462,7 +472,10 @@ class CertificatesViewModel: ObservableObject {
 struct CertificatesView: View {
     weak var presentingViewController: UIViewController?
     
-    private let p12Type = UTType(filenameExtension: "p12") ?? .data
+    private var allowedImportTypes: [UTType] {
+        let extensions = ["p12", "pfx", "pkcs12", "der", "cer", "crt", "pem"]
+        return extensions.compactMap { UTType(filenameExtension: $0) }
+    }
     
     @StateObject private var viewModel = CertificatesViewModel()
     
@@ -507,7 +520,7 @@ struct CertificatesView: View {
                                 Text("Active Signing Certificate")
                                     .font(.headline)
                                 Text("SN: " + activeSerial)
-                                    .font(.subheadline)
+                                    .font(.footnote)
                                     .foregroundColor(.secondary)
                             }
                         }
@@ -713,7 +726,7 @@ struct CertificatesView: View {
         }
         .fileImporter(
             isPresented: $showFileImporter,
-            allowedContentTypes: [p12Type],
+            allowedContentTypes: allowedImportTypes,
             allowsMultipleSelection: true
         ) { result in
             switch result {
@@ -753,13 +766,42 @@ struct CertificatesView: View {
         }
     }
     
-    private func exportPublicCertificate(_ cert: ALTCertificate) {
+    private func exportPublicCertificateAsDER(_ cert: ALTCertificate) {
         guard let data = cert.data else {
             viewModel.errorMessage = "Public certificate data is missing."
             return
         }
         
         let filename = (cert.machineName ?? cert.name) + ".der"
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        
+        do {
+            let derData = getDERData(from: data) ?? data
+            try derData.write(to: tempURL)
+            
+            let activityVC = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
+            
+            if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+                let presenter = rootVC.presentedViewController ?? rootVC
+                if let popover = activityVC.popoverPresentationController {
+                    popover.sourceView = presenter.view
+                    popover.sourceRect = CGRect(x: presenter.view.bounds.midX, y: presenter.view.bounds.midY, width: 0, height: 0)
+                    popover.permittedArrowDirections = []
+                }
+                presenter.present(activityVC, animated: true, completion: nil)
+            }
+        } catch {
+            viewModel.errorMessage = "Failed to write temp export file: " + error.localizedDescription
+        }
+    }
+    
+    private func exportPublicCertificateAsPEM(_ cert: ALTCertificate) {
+        guard let data = cert.data else {
+            viewModel.errorMessage = "Public certificate data is missing."
+            return
+        }
+        
+        let filename = (cert.machineName ?? cert.name) + ".pem"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
         
         do {
@@ -778,6 +820,18 @@ struct CertificatesView: View {
             }
         } catch {
             viewModel.errorMessage = "Failed to write temp export file: " + error.localizedDescription
+        }
+    }
+    
+    private func copyPublicCertificateAsPEM(_ cert: ALTCertificate) {
+        guard let data = cert.data else {
+            viewModel.errorMessage = "Public certificate data is missing."
+            return
+        }
+        if let pemString = String(data: data, encoding: .utf8) {
+            UIPasteboard.general.string = pemString
+        } else {
+            UIPasteboard.general.string = data.base64EncodedString()
         }
     }
     
@@ -849,16 +903,32 @@ struct CertificatesView: View {
                 Label("Copy S/N", systemImage: "doc.on.doc")
             }
             
-            SwiftUI.Button {
-                if hasPrivateKey {
+            if hasPrivateKey {
+                SwiftUI.Button {
                     self.certificateToExport = cert
                     self.exportPasswordInput = ""
                     self.showExportPasswordPrompt = true
-                } else {
-                    exportPublicCertificate(cert)
+                } label: {
+                    Label("Export (.p12)", systemImage: "square.and.arrow.up")
                 }
-            } label: {
-                Label(hasPrivateKey ? "Export (.p12)" : "Export (.der)", systemImage: "square.and.arrow.up")
+            } else {
+                SwiftUI.Button {
+                    exportPublicCertificateAsDER(cert)
+                } label: {
+                    Label("Export (.der)", systemImage: "square.and.arrow.up")
+                }
+                
+                SwiftUI.Button {
+                    exportPublicCertificateAsPEM(cert)
+                } label: {
+                    Label("Export (.pem)", systemImage: "square.and.arrow.up")
+                }
+                
+                SwiftUI.Button {
+                    copyPublicCertificateAsPEM(cert)
+                } label: {
+                    Label("Copy (.pem)", systemImage: "doc.on.doc")
+                }
             }
             
             if viewModel.isCertificateLocallyCached(cert) {
