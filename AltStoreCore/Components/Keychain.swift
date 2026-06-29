@@ -94,11 +94,15 @@ public class Keychain
     
     private func migrateLegacyKeychainItems()
     {
+        let signingCertificateKey = "signingCertificate"
+        let privateKeyKey = "signingCertificatePrivateKey"
+        let serialNumberKey = "signingCertificateSerialNumber"
+        
         // 1. Check if signingCertificate contains data and is NOT a PKCS#12 archive
-        guard let certData = self.signingCertificate, !certData.isPKCS12 else { return }
+        guard let certData = try? self.keychain.getData(signingCertificateKey), !certData.isPKCS12 else { return }
         
         // 2. Check if we have the private key
-        guard let privateKey = self.signingCertificatePrivateKey else { return }
+        guard let privateKey = try? self.keychain.getData(privateKeyKey) else { return }
         
         // 3. Load the raw certificate
         guard let cert = ALTCertificate(data: certData) else { return }
@@ -108,12 +112,12 @@ public class Keychain
         if let p12Data = cert.p12Data()
         {
             // 5. Store the new PKCS12 format in signingCertificate slot
-            self.signingCertificate = p12Data
-            self.signingCertificatePassword = ""
+            try? self.keychain.set(p12Data, key: signingCertificateKey)
+            try? self.keychain.set("", key: "signingCertificatePassword")
             
             // 6. Clear legacy keys
-            self.signingCertificatePrivateKey = nil
-            self.signingCertificateSerialNumber = nil
+            try? self.keychain.remove(privateKeyKey)
+            try? self.keychain.remove(serialNumberKey)
             
             print("[Keychain] Successfully migrated legacy certificate and private key to PKCS12 format and cleared legacy keys.")
         }
