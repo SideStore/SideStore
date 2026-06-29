@@ -36,6 +36,7 @@ class CertificatesViewModel: ObservableObject {
             revealedSerials.removeAll()
         }
     }
+    #if DEBUG
     @Published var isPrivateSectionHideActive = false {
         didSet {
             revealedSerials.removeAll()
@@ -46,6 +47,18 @@ class CertificatesViewModel: ObservableObject {
             revealedSerials.removeAll()
         }
     }
+    #else
+    @Published var isPrivateSectionHideActive = true {
+        didSet {
+            revealedSerials.removeAll()
+        }
+    }
+    @Published var isPublicSectionHideActive = true {
+        didSet {
+            revealedSerials.removeAll()
+        }
+    }
+    #endif
     @Published var revealedSerials: Set<String> = []
     
     // Bulk import properties
