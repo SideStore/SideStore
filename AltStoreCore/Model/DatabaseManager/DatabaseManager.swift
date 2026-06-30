@@ -472,8 +472,7 @@ private extension DatabaseManager
                 
                 let fileURL = installedApp.fileURL
                 
-                // @mahee96: it shouldn't matter if it is debug/release, the file is expected to be in its place (except for simulator probably coz it doesn't suppor app installs anyway)
-                #if DEBUG && targetEnvironment(simulator)
+                #if DEBUG
                 let replaceCachedApp = true
                 #else
                 let replaceCachedApp = !FileManager.default.fileExists(atPath: fileURL.path) || installedApp.version != localApp.version || installedApp.buildVersion != localApp.buildVersion
