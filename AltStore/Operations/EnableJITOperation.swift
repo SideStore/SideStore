@@ -52,52 +52,67 @@ final class EnableJITOperation<Context: EnableJITContext>: ResultOperation<Void>
             return self.finish(.failure(OperationError.invalidParameters("EnableJITOperation.main: self.context.installedApp is nil")))
         }
         
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await self.enableJIT(for: installedApp)
+                self.finish(.success(()))
+            } catch {
+                self.finish(.failure(error))
+            }
+        }
+    }
+
+    private func enableJIT(for installedApp: InstalledApp) async throws
+    {
         let userdefaults = UserDefaults.standard
         
         if #available(iOS 17, *), userdefaults.sidejitenable {
-            let SideJITIP = userdefaults.textInputSideJITServerurl ?? "http://sidejitserver._http._tcp.local:8080"
-            installedApp.managedObjectContext?.perform {
-                enableJITSideJITServer(serverURL: URL(string: SideJITIP)!, installedApp: installedApp) { result in
+            let sideJITIP = userdefaults.textInputSideJITServerurl ?? "http://sidejitserver._http._tcp.local:8080"
+            guard let serverURL = URL(string: sideJITIP) else {
+                throw OperationError.unableToConnectSideJIT
+            }
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                enableJITSideJITServer(serverURL: serverURL, installedApp: installedApp) { result in
                     switch result {
+                    case .success:
+                        self.debugLog("JIT Enabled Successfully :3 (code made by Stossy11!)")
+                        continuation.resume()
                     case .failure(let error):
                         switch error {
                         case .invalidURL, .errorConnecting:
-                            self.finish(.failure(OperationError.unableToConnectSideJIT))
+                            continuation.resume(throwing: OperationError.unableToConnectSideJIT)
                         case .deviceNotFound:
-                            self.finish(.failure(OperationError.unableToRespondSideJITDevice))
+                            continuation.resume(throwing: OperationError.unableToRespondSideJITDevice)
                         case .other(let message):
                             if let startRange = message.range(of: "<p>"),
                                let endRange = message.range(of: "</p>", range: startRange.upperBound..<message.endIndex) {
                                 let pContent = message[startRange.upperBound..<endRange.lowerBound]
-                                self.finish(.failure(OperationError.SideJITIssue(error: String(pContent))))
                                 self.debugLog(message + " + " + String(pContent))
+                                continuation.resume(throwing: OperationError.SideJITIssue(error: String(pContent)))
                             } else {
                                 self.debugLog(message)
-                                self.finish(.failure(OperationError.SideJITIssue(error: message)))
+                                continuation.resume(throwing: OperationError.SideJITIssue(error: message))
                             }
                         }
-                    case .success():
-                        self.finish(.success(()))
-                        self.debugLog("JIT Enabled Successfully :3 (code made by Stossy11!)")
                     }
                 }
-                return
             }
-      } else {
-            installedApp.managedObjectContext?.perform {
-                var retries = 3
-                while (retries > 0){
+        } else {
+            guard let ctx = installedApp.managedObjectContext else {
+                throw OperationError.invalidParameters("EnableJITOperation: installedApp.managedObjectContext is nil")
+            }
+            try await ctx.perform {
+                var lastError: Error?
+                for _ in 0..<3 {
                     do {
                         try debugApp(installedApp.resignedBundleIdentifier)
-                        self.finish(.success(()))
-                        retries = 0
+                        return
                     } catch {
-                        retries -= 1
-                        if (retries <= 0){
-                            self.finish(.failure(error))
-                        }
+                        lastError = error
                     }
                 }
+                if let error = lastError { throw error }
             }
         }
     }

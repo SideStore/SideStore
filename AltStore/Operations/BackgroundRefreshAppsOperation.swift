@@ -10,40 +10,33 @@ import UIKit
 import CoreData
 import AltStoreCore
 
-
 typealias RefreshError = RefreshErrorCode.Error
-enum RefreshErrorCode: Int, ALTErrorEnum, CaseIterable
-{
+enum RefreshErrorCode: Int, ALTErrorEnum, CaseIterable {
     case noInstalledApps
     
     var errorFailureReason: String {
-        switch self
-        {
+        switch self {
         case .noInstalledApps: return NSLocalizedString("No active apps require refreshing.", comment: "")
         }
     }
 }
 
-private extension CFNotificationName
-{
+private extension CFNotificationName {
     static let requestAppState = CFNotificationName("com.altstore.RequestAppState" as CFString)
     static let appIsRunning = CFNotificationName("com.altstore.AppState.Running" as CFString)
     
-    static func requestAppState(for appID: String) -> CFNotificationName
-    {
+    static func requestAppState(for appID: String) -> CFNotificationName {
         let name = String(CFNotificationName.requestAppState.rawValue) + "." + appID
         return CFNotificationName(name as CFString)
     }
     
-    static func appIsRunning(for appID: String) -> CFNotificationName
-    {
+    static func appIsRunning(for appID: String) -> CFNotificationName {
         let name = String(CFNotificationName.appIsRunning.rawValue) + "." + appID
         return CFNotificationName(name as CFString)
     }
 }
 
-private let ReceivedApplicationState: @convention(c) (CFNotificationCenter?, UnsafeMutableRawPointer?, CFNotificationName?, UnsafeRawPointer?, CFDictionary?) -> Void =
-{ (center, observer, name, object, userInfo) in
+private let ReceivedApplicationState: @convention(c) (CFNotificationCenter?, UnsafeMutableRawPointer?, CFNotificationName?, UnsafeRawPointer?, CFDictionary?) -> Void = { (center, observer, name, object, userInfo) in
     guard let name = name, let observer = observer else { return }
     
     let operation = unsafeBitCast(observer, to: BackgroundRefreshAppsOperation.self)
@@ -51,8 +44,7 @@ private let ReceivedApplicationState: @convention(c) (CFNotificationCenter?, Uns
 }
 
 @objc(BackgroundRefreshAppsOperation)
-final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<InstalledApp, Error>]>
-{
+final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<InstalledApp, Error>]> {
     let installedApps: [InstalledApp]
     private let managedObjectContext: NSManagedObjectContext
     
@@ -62,16 +54,14 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
     private let refreshIdentifier: String = UUID().uuidString
     private var runningApplications: Set<String> = []
     
-    init(installedApps: [InstalledApp])
-    {
+    init(installedApps: [InstalledApp]) {
         self.installedApps = installedApps
         self.managedObjectContext = installedApps.compactMap({ $0.managedObjectContext }).first ?? DatabaseManager.shared.persistentContainer.newBackgroundContext()
         
         super.init()
     }
     
-    override func finish(_ result: Result<[String: Result<InstalledApp, Error>], Error>)
-    {
+    override func finish(_ result: Result<[String: Result<InstalledApp, Error>], Error>) {
         super.finish(result)
         
         self.scheduleFinishedRefreshingNotification(for: result, delay: 0)
@@ -80,17 +70,14 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
             self.stopListeningForRunningApps()
         }
         
-        DispatchQueue.main.async {
-            if UIApplication.shared.applicationState == .background
-                {
+        Task { @MainActor in
+            if UIApplication.shared.applicationState == .background {
                     
-                }
+            }
         }
-              
     }
     
-    override func main()
-    {
+    override func main() {
         super.main()
         
         guard !self.installedApps.isEmpty else {
@@ -121,65 +108,64 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         }
 
         self.managedObjectContext.perform {
-            self.debugLog("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier))")
-            
-            self.startListeningForRunningApps()
-            
-            // Wait for 2 seconds (1 now, 1 later in FindServerOperation) to:
-            // a) give us time to discover AltServers
-            // b) give other processes a chance to respond to requestAppState notification
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.managedObjectContext.perform {
-                    
-                    let filteredApps = self.installedApps.filter { !self.runningApplications.contains($0.bundleIdentifier) }
-                    if !self.runningApplications.isEmpty
-                    {
-                        self.verboseLog("Skipping refreshing running apps: \(self.runningApplications)")
-                    }
-                    
-                    let group = AppManager.shared.refresh(filteredApps, presentingViewController: nil)
-                    group.beginInstallationHandler = { (installedApp) in
-                        guard installedApp.bundleIdentifier == StoreApp.altstoreAppID else { return }
-                        
-                        // We're starting to install AltStore, which means the app is about to quit.
-                        // So, we schedule a "refresh successful" local notification to be displayed after a delay,
-                        // but if the app is still running, we cancel the notification.
-                        // Then, we schedule another notification and repeat the process.
-                        
-                        // Also since AltServer has already received the app, it can finish installing even if we're no longer running in background.
-                        
-                        if let error = group.context.error
-                        {
-                            self.scheduleFinishedRefreshingNotification(for: .failure(error))
-                        }
-                        else
-                        {
-                            var results = group.results
-                            results[installedApp.bundleIdentifier] = .success(installedApp)
-                            
-                            self.scheduleFinishedRefreshingNotification(for: .success(results))
-                        }
-                    }
-                    group.completionHandler = { (results) in
-                        self.finish(.success(results))
-                    }
-                    
-                    self.progress.addChild(group.progress, withPendingUnitCount: 1)
-                }
+            self.performBackgroundRefresh()
+        }
+    }
+    
+    private func performBackgroundRefresh() {
+        self.debugLog("Refreshing apps in background: \(self.installedApps.map(\.bundleIdentifier))")
+        
+        self.startListeningForRunningApps()
+        
+        // Wait for 2 seconds (1 now, 1 later in FindServerOperation) to:
+        // a) give us time to discover AltServers
+        // b) give other processes a chance to respond to requestAppState notification
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            await self.managedObjectContext.perform {
+                self.triggerAppManagerRefresh()
             }
         }
     }
-}
-
-private extension BackgroundRefreshAppsOperation
-{
-    func startListeningForRunningApps()
-    {
+    
+    private func triggerAppManagerRefresh() {
+        let filteredApps = self.installedApps.filter { !self.runningApplications.contains($0.bundleIdentifier) }
+        if !self.runningApplications.isEmpty {
+            self.verboseLog("Skipping refreshing running apps: \(self.runningApplications)")
+        }
+        
+        let group = AppManager.shared.refresh(filteredApps, presentingViewController: nil)
+        group.beginInstallationHandler = { (installedApp) in
+            guard installedApp.bundleIdentifier == StoreApp.altstoreAppID else { return }
+            
+            // We're starting to install AltStore, which means the app is about to quit.
+            // So, we schedule a "refresh successful" local notification to be displayed after a delay,
+            // but if the app is still running, we cancel the notification.
+            // Then, we schedule another notification and repeat the process.
+            
+            // Also since AltServer has already received the app, it can finish installing even if we're no longer running in background.
+            
+            if let error = group.context.error {
+                self.scheduleFinishedRefreshingNotification(for: .failure(error))
+            } else {
+                var results = group.results
+                results[installedApp.bundleIdentifier] = .success(installedApp)
+                
+                self.scheduleFinishedRefreshingNotification(for: .success(results))
+            }
+        }
+        group.completionHandler = { (results) in
+            self.finish(.success(results))
+        }
+        
+        self.progress.addChild(group.progress, withPendingUnitCount: 1)
+    }
+    
+    private func startListeningForRunningApps() {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
         let observer = Unmanaged.passUnretained(self).toOpaque()
         
-        for installedApp in self.installedApps
-        {
+        for installedApp in self.installedApps {
             let appIsRunningNotification = CFNotificationName.appIsRunning(for: installedApp.bundleIdentifier)
             CFNotificationCenterAddObserver(notificationCenter, observer, ReceivedApplicationState, appIsRunningNotification.rawValue, nil, .deliverImmediately)
             
@@ -188,61 +174,47 @@ private extension BackgroundRefreshAppsOperation
         }
     }
     
-    func stopListeningForRunningApps()
-    {
+    private func stopListeningForRunningApps() {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
         let observer = Unmanaged.passUnretained(self).toOpaque()
         
-        for installedApp in self.installedApps
-        {
+        for installedApp in self.installedApps {
             let appIsRunningNotification = CFNotificationName.appIsRunning(for: installedApp.bundleIdentifier)
             CFNotificationCenterRemoveObserver(notificationCenter, observer, appIsRunningNotification, nil)
         }
     }
     
-    func receivedApplicationState(notification: CFNotificationName)
-    {
+    fileprivate func receivedApplicationState(notification: CFNotificationName) {
         let baseName = String(CFNotificationName.appIsRunning.rawValue)
         
         let appID = String(notification.rawValue).replacingOccurrences(of: baseName + ".", with: "")
         self.runningApplications.insert(appID)
     }
     
-    func scheduleFinishedRefreshingNotification(for result: Result<[String: Result<InstalledApp, Error>], Error>, delay: TimeInterval = 5)
-    {
-        func scheduleFinishedRefreshingNotification()
-        {
+    private func scheduleFinishedRefreshingNotification(for result: Result<[String: Result<InstalledApp, Error>], Error>, delay: TimeInterval = 5) {
+        func scheduleFinishedRefreshingNotification() {
             self.cancelFinishedRefreshingNotification()
             
             let content = UNMutableNotificationContent()
             
             var shouldPresentAlert = true
             
-            do
-            {
+            do {
                 let results = try result.get()
                 shouldPresentAlert = !results.isEmpty
                 
-                for (_, result) in results
-                {
+                for (_, result) in results {
                     guard case let .failure(error) = result else { continue }
                     throw error
                 }
                 
                 content.title = NSLocalizedString("Refreshed Apps", comment: "")
                 content.body = NSLocalizedString("All apps have been refreshed.", comment: "")
-            }
-            catch ~OperationError.Code.noConnection, ~OperationError.Code.noVPN, ~RefreshErrorCode.noInstalledApps
-            {
+            } catch ~OperationError.Code.noConnection, ~OperationError.Code.noVPN, ~RefreshErrorCode.noInstalledApps {
                 shouldPresentAlert = false
-            }
-            catch ~OperationError.Code.serverNotFound where self.ignoresServerNotFoundError
-            {
+            } catch ~OperationError.Code.serverNotFound where self.ignoresServerNotFoundError {
                 shouldPresentAlert = false
-            }
-
-            catch
-            {
+            } catch {
                 self.debugLog("Failed to refresh apps in background. \(error)")
 
                 self.debugLog("Failed to refresh apps in background. \(error.localizedDescription)")
@@ -253,16 +225,14 @@ private extension BackgroundRefreshAppsOperation
                 shouldPresentAlert = true
             }
 
-            if shouldPresentAlert
-            {
+            if shouldPresentAlert {
                 // Using nil if delay == 0 fixes race condition where multiple notifications can appear (or none).
                 let trigger = delay == 0 ? nil : UNTimeIntervalNotificationTrigger(timeInterval: delay + 1, repeats: false)
                 
                 let request = UNNotificationRequest(identifier: self.refreshIdentifier, content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request)
                 
-                if delay > 0
-                {
+                if delay > 0 {
                     DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
                         UNUserNotificationCenter.current().getPendingNotificationRequests() { (requests) in
                             // If app is still running at this point, we schedule another notification with same identifier.
@@ -278,8 +248,7 @@ private extension BackgroundRefreshAppsOperation
             }
         }
         
-        if self.presentsFinishedNotification
-        {
+        if self.presentsFinishedNotification {
             scheduleFinishedRefreshingNotification()
         }        
         
@@ -293,8 +262,7 @@ private extension BackgroundRefreshAppsOperation
         }
     }
     
-    func cancelFinishedRefreshingNotification()
-    {
+    private func cancelFinishedRefreshingNotification() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [self.refreshIdentifier])
     }
 

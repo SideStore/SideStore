@@ -46,38 +46,35 @@ class UpdateKnownSourcesOperation: ResultOperation<([KnownSource], [KnownSource]
     {
         super.main()
         
-        let dataTask = self.session.dataTask(with: .sources) { (data, response, error) in
-            do
-            {
-                if let response = response as? HTTPURLResponse
-                {
-                    guard response.statusCode != 404 else {
-                        self.finish(.failure(URLError(.fileDoesNotExist, userInfo: [NSURLErrorKey: URL.sources])))
-                        return
-                    }
-                }
-                
-                guard let data = data else { throw error! }
-                
-                let response = try Foundation.JSONDecoder().decode(Response.self, from: data)
-                let sources = (trusted: response.trusted ?? [], blocked: response.blocked ?? [])
-                
-                // Cache sources
-                UserDefaults.shared.recommendedSources = sources.trusted
-                UserDefaults.shared.blockedSources = sources.blocked
-                
-                // Cache trusted source IDs.
-                UserDefaults.shared.trustedSourceIDs = sources.trusted.map { $0.identifier }
-                
-                
-                self.finish(.success(sources))
-            }
-            catch
-            {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let result = try await self.fetchKnownSources()
+                self.finish(.success(result))
+            } catch {
                 self.finish(.failure(error))
             }
         }
+    }
+    
+    private func fetchKnownSources() async throws -> ([KnownSource], [KnownSource])
+    {
+        let (data, response) = try await self.session.data(from: .sources)
         
-        dataTask.resume()
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 404 {
+            throw URLError(.fileDoesNotExist, userInfo: [NSURLErrorKey: URL.sources])
+        }
+        
+        let decoded = try Foundation.JSONDecoder().decode(Response.self, from: data)
+        let sources = (trusted: decoded.trusted ?? [], blocked: decoded.blocked ?? [])
+        
+        // Cache sources
+        UserDefaults.shared.recommendedSources = sources.trusted
+        UserDefaults.shared.blockedSources = sources.blocked
+        
+        // Cache trusted source IDs.
+        UserDefaults.shared.trustedSourceIDs = sources.trusted.map { $0.identifier }
+        
+        return sources
     }
 }

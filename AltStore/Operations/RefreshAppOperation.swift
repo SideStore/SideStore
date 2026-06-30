@@ -44,46 +44,53 @@ final class RefreshAppOperation: ResultOperation<InstalledApp>
             }
             
             guard let app = self.context.app else { return self.finish(.failure(OperationError(.appNotFound(name: nil)))) }
-
-            for p in profiles {
+            
+            Task { [weak self] in
+                guard let self else { return }
                 do {
-                    try installProvisioningProfiles(p.value.data)
+                    let installed = try await self.refresh(app: app, profiles: profiles)
+                    self.finish(.success(installed))
                 } catch {
-                    self.finish(.failure(MinimuxerError.ProfileInstall))
-                }
-
-                DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
-                    
-                    self.progress.completedUnitCount += 1
-                    
-                    let predicate = NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), app.bundleIdentifier)
-                    self.managedObjectContext.perform {
-                        guard let installedApp = InstalledApp.first(satisfying: predicate, in: self.managedObjectContext) else {
-                            self.finish(.failure(OperationError(.appNotFound(name: app.name))))
-                            return
-                        }
-                        installedApp.update(provisioningProfile: p.value)
-                        for installedExtension in installedApp.appExtensions {
-                            guard let provisioningProfile = profiles[installedExtension.bundleIdentifier] else { continue }
-                            installedExtension.update(provisioningProfile: provisioningProfile)
-                        }
-                        self.finish(.success(installedApp))
-                    }
+                    self.finish(.failure(error))
                 }
             }
         }
     }
-}
-
-private extension RefreshAppOperation
-{
-    func debugLog(_ text: String)
-    {
+    
+    private func refresh(app: ALTApplication, profiles: [String: ALTProvisioningProfile]) async throws -> InstalledApp {
+        for p in profiles {
+            do {
+                try installProvisioningProfiles(p.value.data)
+            } catch {
+                throw MinimuxerError.ProfileInstall
+            }
+        }
+        
+        return try await self.managedObjectContext.perform {
+            try self.updateInstalledApp(for: app, profiles: profiles)
+        }
+    }
+    
+    private func updateInstalledApp(for app: ALTApplication, profiles: [String: ALTProvisioningProfile]) throws -> InstalledApp {
+        self.progress.completedUnitCount += 1
+        
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), app.bundleIdentifier)
+        guard let installedApp = InstalledApp.first(satisfying: predicate, in: self.managedObjectContext) else {
+            throw OperationError(.appNotFound(name: app.name))
+        }
+        installedApp.update(provisioningProfile: profiles.values.first!)
+        for installedExtension in installedApp.appExtensions {
+            guard let provisioningProfile = profiles[installedExtension.bundleIdentifier] else { continue }
+            installedExtension.update(provisioningProfile: provisioningProfile)
+        }
+        return installedApp
+    }
+    
+    private func debugLog(_ text: String) {
         print(text)
     }
 
-    func verboseLog(_ text: String)
-    {
+    private func verboseLog(_ text: String) {
         let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RefreshAppOperation.self)
         if isLoggingEnabled {
             print(text)

@@ -8,6 +8,7 @@
 
 import Foundation
 import AltStoreCore
+import CoreData
 
 @objc(RemoveAppOperation)
 final class RemoveAppOperation: ResultOperation<InstalledApp>
@@ -37,35 +38,49 @@ final class RemoveAppOperation: ResultOperation<InstalledApp>
         
         debugLog("Removing app \(self.context.bundleIdentifier)...")
         
-        installedApp.managedObjectContext?.perform {
-            let resignedBundleIdentifier = installedApp.resignedBundleIdentifier
-            
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                try removeApp(resignedBundleIdentifier)
+                let result = try await self.remove(installedApp)
+                self.finish(.success(result))
             } catch {
-                return self.finish(.failure(error))
-            }
-            
-            DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
-                self.progress.completedUnitCount += 1
-                
-                let installedApp = context.object(with: installedApp.objectID) as! InstalledApp
-                installedApp.isActive = false
-                self.finish(.success(installedApp))
+                self.finish(.failure(error))
             }
         }
     }
-}
+    
+    private func remove(_ installedApp: InstalledApp) async throws -> InstalledApp {
+        let resignedBundleIdentifier = await installedApp.managedObjectContext?.perform {
+            self.resignedBundleIdentifier(for: installedApp)
+        }
+        guard let resignedBundleIdentifier else {
+            throw OperationError.invalidParameters("RemoveAppOperation: installedApp.managedObjectContext is nil")
+        }
+        
+        try removeApp(resignedBundleIdentifier)
+        
+        let backgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
+        return await backgroundContext.perform {
+            self.markInactive(installedApp, in: backgroundContext)
+        }
+    }
+    
+    private func resignedBundleIdentifier(for installedApp: InstalledApp) -> String {
+        installedApp.resignedBundleIdentifier
+    }
+    
+    private func markInactive(_ installedApp: InstalledApp, in backgroundContext: NSManagedObjectContext) -> InstalledApp {
+        self.progress.completedUnitCount += 1
+        let installedApp = backgroundContext.object(with: installedApp.objectID) as! InstalledApp
+        installedApp.isActive = false
+        return installedApp
+    }
 
-private extension RemoveAppOperation
-{
-    func debugLog(_ text: String)
-    {
+    private func debugLog(_ text: String) {
         print(text)
     }
 
-    func verboseLog(_ text: String)
-    {
+    private func verboseLog(_ text: String) {
         let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppOperation.self)
         if isLoggingEnabled {
             print(text)
