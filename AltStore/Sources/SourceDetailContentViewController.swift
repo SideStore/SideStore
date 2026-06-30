@@ -391,7 +391,7 @@ private extension SourceDetailContentViewController
         {
             sender.isIndicatingActivity = true
             
-            Task<Void, Never> {
+            Task {
                 await self.downloadApp(storeApp, sender: sender)
                 sender.isIndicatingActivity = false
             }
@@ -415,7 +415,7 @@ private extension SourceDetailContentViewController
                 }
                 else
                 {
-                    Task<Void, Never> { @MainActor in
+                    Task { @MainActor in
                         let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
                             continuation.resume(with: result.map { _ in () })
                         }

@@ -565,7 +565,7 @@ private extension BrowseViewController
             return
         }
         
-        Task<Void, Never>(priority: .userInitiated) { @MainActor in
+        Task(priority: .userInitiated) { @MainActor in
             // if let installedApp = app.installedApp, installedApp.isUpdateAvailable
             if let installedApp = app.installedApp, installedApp.hasUpdate
             {

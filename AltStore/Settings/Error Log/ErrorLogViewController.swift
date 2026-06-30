@@ -403,7 +403,7 @@ private extension ErrorLogViewController
 //    {
 //        self.exportLogButton.isIndicatingActivity = true
 //        
-//        Task<Void, Never>.detached(priority: .userInitiated) {
+//        Task.detached(priority: .userInitiated) {
 //            do
 //            {
 //                let store = try OSLogStore(scope: .currentProcessIdentifier)

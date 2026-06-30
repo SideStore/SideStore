@@ -409,7 +409,7 @@ private extension SourcesViewController
     
     func remove(_ source: Source, completionHandler: ((Bool) -> Void)? = nil)
     {
-        Task<Void, Never> {
+        Task {
             do
             {
                 try await AppManager.shared.remove(source, presentingViewController: self)

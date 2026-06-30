@@ -340,7 +340,7 @@ private extension NewsViewController
             return
         }
         
-        Task<Void, Never>(priority: .userInitiated) { @MainActor in
+        Task(priority: .userInitiated) { @MainActor in
             // if let installedApp = storeApp.installedApp, installedApp.isUpdateAvailable
             if let installedApp = storeApp.installedApp, installedApp.hasUpdate
             {

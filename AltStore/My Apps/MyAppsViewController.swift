@@ -1550,7 +1550,7 @@ private extension MyAppsViewController
         guard !self.isCheckingForUpdates else { return }
         self.isCheckingForUpdates = true
         
-        Task<Void, Never> {
+        Task {
             do
             {
                 // async-let so the for-loop below runs first, ensuring we catch didFetchSourceNotification.
