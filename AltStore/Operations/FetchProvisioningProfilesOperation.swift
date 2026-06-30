@@ -286,7 +286,14 @@ extension FetchProvisioningProfilesOperation
             do
             {
                 let appIDs = try Result(appIDs, error).get()
+
+                let legacyKey = "isLegacyLapsedAccount_\(team.identifier)"
                 
+                if team.type == .free && appIDs.count > Team.maximumFreeAppIDs
+                {
+                    UserDefaults.standard.set(true, forKey: legacyKey)
+                }
+
                 if let appID = appIDs.first(where: { $0.bundleIdentifier.lowercased() == bundleIdentifier.lowercased() })
                 {
                     self.verboseLog("Using existing App ID \(appID.bundleIdentifier)")
@@ -300,7 +307,9 @@ extension FetchProvisioningProfilesOperation
                     
                     let sortedExpirationDates = appIDs.compactMap { $0.expirationDate }.sorted(by: { $0 < $1 })
                     
-                    if team.type == .free
+                    let isLegacyAccount = UserDefaults.standard.bool(forKey: legacyKey)
+
+                    if team.type == .free && !isLegacyAccount
                     {
                         if requiredAppIDs > availableAppIDs
                         {
