@@ -1716,15 +1716,7 @@ private extension AppManager
                 completionHandler(.failure(OperationError.noVPN))
 
             case .failure(MinimuxerError.ProfileInstall):
-                let error: OperationError
-                switch minimuxerStatus {
-                case .ready:
-                    error = .noConnection
-                case .noConnection:
-                    error = .noConnection
-                case .noVPN:
-                    error = .noVPN
-                }
+                let error = minimuxerStatus.operationError ?? OperationError.unknown()
                 completionHandler(.failure(error))
                 
             case .failure(ALTServerError.unknownRequest), .failure(OperationError.appNotFound(name: app.name)):
@@ -1738,7 +1730,7 @@ private extension AppManager
                         }
                         progress.addChild(installProgress, withPendingUnitCount: 40)
                     case let status:
-                        let error: OperationError = (status == .noVPN) ? .noVPN : .noConnection
+                        let error = status.operationError ?? OperationError.unknown()
                         completionHandler(.failure(error))
                     }
                 }
