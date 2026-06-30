@@ -31,7 +31,7 @@ class CoreDataHelper{
         
         // Load the model from the bundle
         guard let modelURL = bundle.url(forResource: STORE_XCMODELD_NAME, withExtension: "momd"),
-              let model = NSManagedObjectModel(contentsOf: modelURL) else {
+              let _ = NSManagedObjectModel(contentsOf: modelURL) else {
             
             let errorDescription = "Failed to load model \(STORE_XCMODELD_NAME) from AltStoreCore bundle"
             throw getCoreDataError(code: 2, localizedDescription: errorDescription)

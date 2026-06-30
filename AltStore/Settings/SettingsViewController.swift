@@ -1449,10 +1449,11 @@ extension SettingsViewController
                     guard let url else {
                         return
                     }
-                    importVc.delegate = ImportExport.documentPickerHandler
-                    self.present(importVc, animated: true)
                     _ = url.startAccessingSecurityScopedResource()
                     defer { url.stopAccessingSecurityScopedResource() }
+
+                    importVc.delegate = ImportExport.documentPickerHandler
+                    self.present(importVc, animated: true)
                 }
                 Task {
                     let certUrl = await withUnsafeContinuation { c in

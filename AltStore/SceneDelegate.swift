@@ -225,7 +225,7 @@ func exportPairingFile(_ urlname: String) {
             return
         }
         
-        var urlStr = "\(urlname)://pairingFile?data=$(BASE64_PAIRING)"
+        let urlStr = "\(urlname)://pairingFile?data=$(BASE64_PAIRING)"
         let finished = urlStr.replacingOccurrences(of: "$(BASE64_PAIRING)", with: encodedCert, options: .literal, range: nil)
         
         print(finished)
