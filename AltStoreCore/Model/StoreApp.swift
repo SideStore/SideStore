@@ -41,7 +41,8 @@ public enum ReleaseTracks: String, CodingKey, CaseIterable
 public extension StoreApp
 {
     static var altstoreAppID: String {
-        return Bundle.Info.appbundleIdentifier
+        // Bundle.Info.storeAppBundleIdentifier
+        Bundle.Info.appbundleIdentifier
     }
     
     static let dolphinAppID = "me.oatmealdome.dolphinios-njb"
