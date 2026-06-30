@@ -147,16 +147,6 @@ final class InstallAppOperation: ResultOperation<InstalledApp>
             
             self.context.beginInstallationHandler?(installedApp)
             
-            if let resignedAppURL = self.context.resignedApp?.fileURL {
-                let cachedAppURL = InstalledApp.fileURL(for: installedApp)
-                do {
-                    try FileManager.default.copyItem(at: resignedAppURL, to: cachedAppURL, shouldReplace: true)
-                    self.debugLog("Successfully overwrote cached app with resigned app at \(cachedAppURL.path)")
-                } catch {
-                    self.debugLog("Failed to overwrite cached app with resigned app: \(error)")
-                }
-            }
-            
             // Temporary directory and resigned .ipa no longer needed, so delete them now to ensure AltStore doesn't quit before we get the chance to.
             self.cleanUp()
             
