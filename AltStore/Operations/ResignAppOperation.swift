@@ -25,9 +25,20 @@ final class ResignAppOperation: ResultOperation<ALTApplication> {
     override func main() {
         super.main()
         
+        Task.detached { [weak self] in
+            guard let self else { return }
+            do {
+                let resignedApplication = try await self.execute()
+                self.finish(.success(resignedApplication))
+            } catch {
+                self.finish(.failure(error))
+            }
+        }
+    }
+    
+    private func execute() async throws -> ALTApplication {
         if let error = self.context.error {
-            self.finish(.failure(error))
-            return
+            throw error
         }
         
         guard
@@ -36,10 +47,10 @@ final class ResignAppOperation: ResultOperation<ALTApplication> {
             let team = self.context.team,
             let certificate = self.context.certificate
         else {
-            return self.finish(.failure(OperationError.invalidParameters("ResignAppOperation.main: " +
-                                                                         "self.context.team or " +
-                                                                         "self.context.provisioningProfiles or" +
-                                                                         "self.context.certificate is nil")))
+            throw OperationError.invalidParameters("ResignAppOperation.main: " +
+                                                   "self.context.team or " +
+                                                   "self.context.provisioningProfiles or" +
+                                                   "self.context.certificate is nil")
         }
         
         debugLog("Resigning app \(self.context.bundleIdentifier)...")
@@ -50,33 +61,26 @@ final class ResignAppOperation: ResultOperation<ALTApplication> {
         
         let effectiveBundleId = self.context.bundleIdentifier
         
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let appBundleURL = try await self.prepareAppBundle(for: app, profiles: profiles, appexBundleIds: context.appexBundleIds ?? [:], parentProgress: prepareAppProgress)
-                
-                let resignedURL = try await self.resignAppBundle(at: appBundleURL, team: team, certificate: certificate, profiles: Array(profiles.values), parentProgress: prepareAppProgress)
-                
-                let updatedApp = AnyApp(
-                    name: app.name,
-                    bundleIdentifier: effectiveBundleId,
-                    url: app.fileURL,
-                    storeApp: app.storeApp
-                )
-                let destinationURL = InstalledApp.refreshedIPAURL(for: updatedApp)
-                try FileManager.default.copyItem(at: resignedURL, to: destinationURL, shouldReplace: true)
-                self.debugLog("Successfully resigned app to \(destinationURL.absoluteString)")
-                
-                // Use appBundleURL since we need an app bundle, not .ipa.
-                guard let resignedApplication = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }
-                
-                self.debugLog("Resigned app \(self.context.bundleIdentifier) to \(resignedApplication.bundleIdentifier).")
-                
-                self.finish(.success(resignedApplication))
-            } catch {
-                self.finish(.failure(error))
-            }
-        }
+        let appBundleURL = try await self.prepareAppBundle(for: app, profiles: profiles, appexBundleIds: context.appexBundleIds ?? [:], parentProgress: prepareAppProgress)
+        
+        let resignedURL = try await self.resignAppBundle(at: appBundleURL, team: team, certificate: certificate, profiles: Array(profiles.values), parentProgress: prepareAppProgress)
+        
+        let updatedApp = AnyApp(
+            name: app.name,
+            bundleIdentifier: effectiveBundleId,
+            url: app.fileURL,
+            storeApp: app.storeApp
+        )
+        let destinationURL = InstalledApp.refreshedIPAURL(for: updatedApp)
+        try FileManager.default.copyItem(at: resignedURL, to: destinationURL, shouldReplace: true)
+        self.debugLog("Successfully resigned app to \(destinationURL.absoluteString)")
+        
+        // Use appBundleURL since we need an app bundle, not .ipa.
+        guard let resignedApplication = ALTApplication(fileURL: appBundleURL) else { throw OperationError.invalidApp }
+        
+        self.debugLog("Resigned app \(self.context.bundleIdentifier) to \(resignedApplication.bundleIdentifier).")
+        
+        return resignedApplication
     }
     
     func process<T>(_ result: Result<T, Error>) -> T? {
@@ -104,96 +108,91 @@ final class ResignAppOperation: ResultOperation<ALTApplication> {
         let openURL = InstalledApp.openAppURL(for: AnyApp(from: app, bundleId: context.bundleIdentifier))
         let fileURL = app.fileURL
 
-        return try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global().async {
-                do {
-                    let appBundleURL = self.context.temporaryDirectory.appendingPathComponent("App.app")
-                    try FileManager.default.copyItem(at: fileURL, to: appBundleURL)
-                    
-                    // Become current so we can observe progress from unzipAppBundle().
-                    progress.becomeCurrent(withPendingUnitCount: 1)
-                    
-                    guard let appBundle = Bundle(url: appBundleURL) else { throw ALTError(.missingAppBundle) }
-                    guard let infoDictionary = appBundle.completeInfoDictionary else { throw ALTError(.missingInfoPlist) }
-                    
-                    var allURLSchemes = infoDictionary[Bundle.Info.urlTypes] as? [[String: Any]] ?? []
-                    
-                    let altstoreURLScheme = ["CFBundleTypeRole": "Editor",
-                                             "CFBundleURLName": bundleIdentifier,
-                                             "CFBundleURLSchemes": [openURL.scheme!]] as [String : Any]
-                    allURLSchemes.append(altstoreURLScheme)
-                    
-                    var additionalValues: [String: Any] = [Bundle.Info.urlTypes: allURLSchemes]
+        let appBundleURL = self.context.temporaryDirectory.appendingPathComponent("App.app")
+        try FileManager.default.copyItem(at: fileURL, to: appBundleURL)
+        
+        // Become current so we can observe progress from unzipAppBundle().
+        progress.becomeCurrent(withPendingUnitCount: 1)
+        defer {
+            progress.resignCurrent()
+        }
+        
+        guard let appBundle = Bundle(url: appBundleURL) else { throw ALTError(.missingAppBundle) }
+        guard let infoDictionary = appBundle.completeInfoDictionary else { throw ALTError(.missingInfoPlist) }
+        
+        var allURLSchemes = infoDictionary[Bundle.Info.urlTypes] as? [[String: Any]] ?? []
+        
+        let altstoreURLScheme = ["CFBundleTypeRole": "Editor",
+                                 "CFBundleURLName": bundleIdentifier,
+                                 "CFBundleURLSchemes": [openURL.scheme!]] as [String : Any]
+        allURLSchemes.append(altstoreURLScheme)
+        
+        var additionalValues: [String: Any] = [Bundle.Info.urlTypes: allURLSchemes]
 
-                    if app.isAltStoreApp {
-                        guard let udid = fetchUDID() else { throw OperationError.unknownUDID }
-                        guard Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) is String else { throw OperationError.unknownUDID }
-                        additionalValues[Bundle.Info.devicePairingString] = "<insert pairing file here>"
-                        additionalValues[Bundle.Info.deviceID] = udid
-                        additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
-                        
-                        let data = Keychain.shared.signingCertificate
-                        let signingCertificate = data.flatMap { (try? ALTCertificate(p12Data: $0, password: "")) ?? (try? ALTCertificate(p12Data: $0, password: nil)) }
-                        let encryptingPassword = Keychain.shared.signingCertificatePassword
-                        
-                        if
-                            let signingCertificate = signingCertificate,
-                            let encryptingPassword = encryptingPassword {
-                            additionalValues[Bundle.Info.certificateID] = signingCertificate.serialNumber
-                            
-                            let encryptedData = signingCertificate.encryptedP12Data(withPassword: encryptingPassword)
-                            try encryptedData?.write(to: appBundle.certificateURL, options: .atomic)
-                        } else {
-                            // The embedded certificate + certificate identifier are already in app bundle, no need to update them.
-                        }
-                    } else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetchUDID() {
-                        // There is an ALTDeviceID entry, so assume the app is using AltKit and replace it with the device's UDID.
-                        additionalValues[Bundle.Info.deviceID] = udid
-                        additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
-                    }
-                    
-                    let iconScale = Int(UIScreen.main.scale)
-                    
-                    if let alternateIconURL = self.context.alternateIconURL,
-                       case let data = try Data(contentsOf: alternateIconURL),
-                       let image = UIImage(data: data),
-                       let icon = image.resizing(toFill: CGSize(width: 60 * iconScale, height: 60 * iconScale)),
-                       let iconData = icon.pngData() {
-                        let iconName = "AltIcon"
-                        let iconURL = appBundleURL.appendingPathComponent(iconName + "@\(iconScale)x.png")
-                        try iconData.write(to: iconURL, options: .atomic)
-                        
-                        let iconDictionary = ["CFBundlePrimaryIcon": ["CFBundleIconFiles": [iconName]]]
-                        additionalValues["CFBundleIcons"] = iconDictionary
-                    }
-                    
-                    // Prepare app
-                    try self.prepare(appBundle, bundleID: bundleIdentifier, additionalInfoDictionaryValues: additionalValues, profiles: profiles, appexBundleIds: appexBundleIds)
-                    try self.removeMissingAppExtensionReferences(from: appBundle)
-                    
-                    if let directory = appBundle.builtInPlugInsURL, let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants]) {
-                        for case let fileURL as URL in enumerator {
-                            // for both sim and device, in debug mode builds, remove the tests bundles (if any)
-                            #if DEBUG
-                            guard !fileURL.lastPathComponent.lowercased().contains(".xctest") else {
-                                // Remove embedded XCTest (+ dSYM) bundle from copied app bundle.
-                                try FileManager.default.removeItem(at: fileURL)
-                                continue
-                            }
-                            #endif
-                            
-                            guard let appExtension = Bundle(url: fileURL) else { throw ALTError(.missingAppBundle) }
-                            let updatedAppExBundleId = appExtension.bundleIdentifier?.replacingOccurrences(of: app.bundleIdentifier, with: bundleIdentifier)
-                            try self.prepare(appExtension, bundleID: updatedAppExBundleId, profiles: profiles, appexBundleIds: appexBundleIds)
-                        }
-                    }
-                    
-                    continuation.resume(returning: appBundleURL)
-                } catch {
-                    continuation.resume(throwing: error)
+        if app.isAltStoreApp {
+            guard let udid = fetchUDID() else { throw OperationError.unknownUDID }
+            guard Bundle.main.object(forInfoDictionaryKey: Bundle.Info.devicePairingString) is String else { throw OperationError.unknownUDID }
+            additionalValues[Bundle.Info.devicePairingString] = "<insert pairing file here>"
+            additionalValues[Bundle.Info.deviceID] = udid
+            additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
+            
+            let data = Keychain.shared.signingCertificate
+            let signingCertificate = data.flatMap { (try? ALTCertificate(p12Data: $0, password: "")) ?? (try? ALTCertificate(p12Data: $0, password: nil)) }
+            let encryptingPassword = Keychain.shared.signingCertificatePassword
+            
+            if
+                let signingCertificate = signingCertificate,
+                let encryptingPassword = encryptingPassword {
+                additionalValues[Bundle.Info.certificateID] = signingCertificate.serialNumber
+                
+                let encryptedData = signingCertificate.encryptedP12Data(withPassword: encryptingPassword)
+                try encryptedData?.write(to: appBundle.certificateURL, options: .atomic)
+            } else {
+                // The embedded certificate + certificate identifier are already in app bundle, no need to update them.
+            }
+        } else if infoDictionary.keys.contains(Bundle.Info.deviceID), let udid = fetchUDID() {
+            // There is an ALTDeviceID entry, so assume the app is using AltKit and replace it with the device's UDID.
+            additionalValues[Bundle.Info.deviceID] = udid
+            additionalValues[Bundle.Info.serverID] = UserDefaults.standard.preferredServerID
+        }
+        
+        let iconScale = Int(UIScreen.main.scale)
+        
+        if let alternateIconURL = self.context.alternateIconURL,
+           case let data = try Data(contentsOf: alternateIconURL),
+           let image = UIImage(data: data),
+           let icon = image.resizing(toFill: CGSize(width: 60 * iconScale, height: 60 * iconScale)),
+           let iconData = icon.pngData() {
+            let iconName = "AltIcon"
+            let iconURL = appBundleURL.appendingPathComponent(iconName + "@\(iconScale)x.png")
+            try iconData.write(to: iconURL, options: .atomic)
+            
+            let iconDictionary = ["CFBundlePrimaryIcon": ["CFBundleIconFiles": [iconName]]]
+            additionalValues["CFBundleIcons"] = iconDictionary
+        }
+        
+        // Prepare app
+        try self.prepare(appBundle, bundleID: bundleIdentifier, additionalInfoDictionaryValues: additionalValues, profiles: profiles, appexBundleIds: appexBundleIds)
+        try self.removeMissingAppExtensionReferences(from: appBundle)
+        
+        if let directory = appBundle.builtInPlugInsURL, let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants]) {
+            for case let fileURL as URL in enumerator {
+                // for both sim and device, in debug mode builds, remove the tests bundles (if any)
+                #if DEBUG
+                guard !fileURL.lastPathComponent.lowercased().contains(".xctest") else {
+                    // Remove embedded XCTest (+ dSYM) bundle from copied app bundle.
+                    try FileManager.default.removeItem(at: fileURL)
+                    continue
                 }
+                #endif
+                
+                guard let appExtension = Bundle(url: fileURL) else { throw ALTError(.missingAppBundle) }
+                let updatedAppExBundleId = appExtension.bundleIdentifier?.replacingOccurrences(of: app.bundleIdentifier, with: bundleIdentifier)
+                try self.prepare(appExtension, bundleID: updatedAppExBundleId, profiles: profiles, appexBundleIds: appexBundleIds)
             }
         }
+        
+        return appBundleURL
     }
     
     private func prepare(_ bundle: Bundle, bundleID identifier: String?, additionalInfoDictionaryValues: [String: Any] = [:], profiles: [String: ALTProvisioningProfile], appexBundleIds: [String: String]) throws {

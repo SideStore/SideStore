@@ -233,16 +233,16 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
                 UNUserNotificationCenter.current().add(request)
                 
                 if delay > 0 {
-                    DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
-                        UNUserNotificationCenter.current().getPendingNotificationRequests() { (requests) in
-                            // If app is still running at this point, we schedule another notification with same identifier.
-                            // This prevents the currently scheduled notification from displaying, and starts another countdown timer.
-                            // First though, make sure there _is_ still a pending request, otherwise it's been cancelled
-                            // and we should stop polling.
-                            guard requests.contains(where: { $0.identifier == self.refreshIdentifier }) else { return }
-                            
-                            scheduleFinishedRefreshingNotification()
-                        }
+                    Task {
+                        try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                        let requests = await UNUserNotificationCenter.current().pendingNotificationRequests()
+                        // If app is still running at this point, we schedule another notification with same identifier.
+                        // This prevents the currently scheduled notification from displaying, and starts another countdown timer.
+                        // First though, make sure there _is_ still a pending request, otherwise it's been cancelled
+                        // and we should stop polling.
+                        guard requests.contains(where: { $0.identifier == self.refreshIdentifier }) else { return }
+                        
+                        scheduleFinishedRefreshingNotification()
                     }
                 }
             }
@@ -255,11 +255,15 @@ final class BackgroundRefreshAppsOperation: ResultOperation<[String: Result<Inst
         // Perform synchronously to ensure app doesn't quit before we've finishing saving to disk.
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         context.performAndWait {
-            _ = RefreshAttempt(identifier: self.refreshIdentifier, result: result, context: context)
-            
-            do { try context.save() }
-            catch { debugLog("Failed to save refresh attempt. \(error.localizedDescription)") }
+            self.saveRefreshAttempt(result: result, in: context)
         }
+    }
+    
+    private func saveRefreshAttempt(result: Result<[String: Result<InstalledApp, Error>], Error>, in context: NSManagedObjectContext) {
+        _ = RefreshAttempt(identifier: self.refreshIdentifier, result: result, context: context)
+        
+        do { try context.save() }
+        catch { debugLog("Failed to save refresh attempt. \(error.localizedDescription)") }
     }
     
     private func cancelFinishedRefreshingNotification() {
