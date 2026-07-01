@@ -217,7 +217,7 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
     {
         self.viewModel.isAddingSource = true
         
-        Task<Void, Never> { /* @MainActor in */ // Already on MainActor, even though this function wasn't called from async context.
+        Task { /* @MainActor in */ // Already on MainActor, even though this function wasn't called from async context.
             var errorTitle = NSLocalizedString("Unable to Add Source", comment: "")
             
             do

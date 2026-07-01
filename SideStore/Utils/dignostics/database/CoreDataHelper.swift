@@ -15,10 +15,11 @@ import AltStoreCore
 class CoreDataHelper{
     
     private static let STORE_XCMODELD_NAME = "AltStore"
-    private static let COREDATA_BUNDLE_ID = "com.SideStore.SideStore.AltStoreCore"
+    // private static let COREDATA_BUNDLE_ID = "com.SideStore.SideStore.AltStoreCore"
+    private static let COREDATA_BUNDLE_ID = "\(Bundle.Info.appbundleIdentifier).AltStoreCore"
     
     // Create a serial dispatch queue to lock access to the Core Data store
-    private static let datastoreQueue = DispatchQueue(label: "com.SideStore.AltStore.datastoreQueue")
+    private static let datastoreQueue = DispatchQueue(label: "sidestore-database-queue")
     
     public static func exportCoreDataStore() async throws -> URL {
 
@@ -30,7 +31,7 @@ class CoreDataHelper{
         
         // Load the model from the bundle
         guard let modelURL = bundle.url(forResource: STORE_XCMODELD_NAME, withExtension: "momd"),
-              let model = NSManagedObjectModel(contentsOf: modelURL) else {
+              let _ = NSManagedObjectModel(contentsOf: modelURL) else {
             
             let errorDescription = "Failed to load model \(STORE_XCMODELD_NAME) from AltStoreCore bundle"
             throw getCoreDataError(code: 2, localizedDescription: errorDescription)

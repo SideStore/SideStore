@@ -604,7 +604,7 @@ extension AppViewController
     {
         guard self.app.installedApp == nil else { return }
         
-        Task<Void, Never>(priority: .userInitiated) {
+        Task(priority: .userInitiated) {
             let group = await AppManager.shared.installAsync(self.app, presentingViewController: self) { (result) in
                 do
                 {

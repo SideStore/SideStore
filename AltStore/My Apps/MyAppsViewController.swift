@@ -1165,6 +1165,34 @@ private extension MyAppsViewController
         }
     }
     
+    func resign(_ installedApp: InstalledApp)
+    {
+        guard isMinimuxerReady else { return }
+
+        let previousProgress = AppManager.shared.refreshProgress(for: installedApp)
+        guard previousProgress == nil else {
+            previousProgress?.cancel()
+            return
+        }
+        
+        AppManager.shared.resign(installedApp, presentingViewController: self) { (result) in
+            DispatchQueue.main.async {
+                self.collectionView.reloadSections([Section.activeApps.rawValue, Section.inactiveApps.rawValue])
+            }
+            
+            switch result
+            {
+            case .failure(let error):
+                print("Failed to resign app:", error)
+                DispatchQueue.main.async {
+                    ToastView(error: error, opensLog: true).show(in: self)
+                }
+            case .success(let app):
+                print("Successfully resigned app:", app.name)
+            }
+        }
+    }
+    
     func activate(_ installedApp: InstalledApp)
     {
         guard isMinimuxerReady else { return }
@@ -1522,7 +1550,7 @@ private extension MyAppsViewController
         guard !self.isCheckingForUpdates else { return }
         self.isCheckingForUpdates = true
         
-        Task<Void, Never> {
+        Task {
             do
             {
                 // async-let so the for-loop below runs first, ensuring we catch didFetchSourceNotification.
@@ -1786,6 +1814,10 @@ extension MyAppsViewController
             self.refresh(installedApp)
         }
         
+        let resignAction = UIAction(title: NSLocalizedString("Resign", comment: ""), image: UIImage(systemName: "signature")) { (action) in
+            self.resign(installedApp)
+        }
+        
         let activateAction = UIAction(title: NSLocalizedString("Activate", comment: ""), image: UIImage(systemName: "checkmark.circle")) { (action) in
             self.activate(installedApp)
         }
@@ -1841,9 +1873,9 @@ extension MyAppsViewController
         if installedApp.bundleIdentifier == StoreApp.altstoreAppID
         {
             #if BETA
-            actions = [refreshAction, changeIconMenu]
+            actions = [refreshAction, resignAction, changeIconMenu]
             #else
-            actions = [refreshAction]
+            actions = [refreshAction, resignAction]
             #endif
         }
         else
@@ -1852,10 +1884,12 @@ extension MyAppsViewController
             {
                 actions.append(openMenu)
                 actions.append(refreshAction)
+                actions.append(resignAction)
             }
             else
             {
                 actions.append(activateAction)
+                actions.append(resignAction)
             }
             
             if installedApp.isActive
@@ -1948,6 +1982,7 @@ extension MyAppsViewController
         let orderedActions = [
             openMenu,
             refreshAction,
+            resignAction,
             activateAction,
             jitAction,
             changeIconMenu,

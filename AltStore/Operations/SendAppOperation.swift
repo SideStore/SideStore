@@ -15,8 +15,6 @@ final class SendAppOperation: ResultOperation<()>
 {
     let context: InstallAppOperationContext
     
-    private let dispatchQueue = DispatchQueue(label: "com.sidestore.SendAppOperation")
-    
     init(context: InstallAppOperationContext)
     {
         self.context = context
@@ -52,49 +50,42 @@ final class SendAppOperation: ResultOperation<()>
             context.shouldTurnOffData = false
         }
 
-        if context.shouldTurnOffData {
-            // Wait for Shortcut to Finish Before Proceeding
-            UIApplication.shared.open(shortcutURLoff, options: [:]) { _ in
-                self.debugLog("Shortcut finished execution. Proceeding with file transfer.")
-
-                DispatchQueue.global().async {
-                    self.processFile(at: fileURL, for: app.bundleIdentifier)
+        Task { [weak self] in
+            guard let self else { return }
+            if self.context.shouldTurnOffData {
+                // Wait for Shortcut to Finish Before Proceeding
+                await withCheckedContinuation { continuation in
+                    UIApplication.shared.open(shortcutURLoff, options: [:]) { _ in
+                        self.debugLog("Shortcut finished execution. Proceeding with file transfer.")
+                        continuation.resume()
+                    }
                 }
             }
-        } else {
-            DispatchQueue.global().async {
-                self.processFile(at: fileURL, for: app.bundleIdentifier)
+            do {
+                try await self.processFile(at: fileURL, for: app.bundleIdentifier)
+                self.finish(.success(()))
+            } catch {
+                self.finish(.failure(error))
             }
         }
     }
 
-    private func processFile(at fileURL: URL, for bundleIdentifier: String) {
+    private func processFile(at fileURL: URL, for bundleIdentifier: String) async throws {
         guard let data = NSData(contentsOf: fileURL) else {
             debugLog("IPA doesn't exist????")
-            return self.finish(.failure(OperationError(.appNotFound(name: bundleIdentifier))))
+            throw OperationError(.appNotFound(name: bundleIdentifier))
         }
-
-        do {
-            let bytes = Data(data)
-            try yeetAppAFC(bundleIdentifier, bytes)
-            self.progress.completedUnitCount += 1
-            self.finish(.success(()))
-        } catch {
-            self.finish(.failure(MinimuxerError.RwAfc))
-            self.progress.completedUnitCount += 1
-            self.finish(.success(()))
-        }
+        let bytes = Data(data)
+        try yeetAppAFC(bundleIdentifier, bytes)
+        self.progress.completedUnitCount += 1
     }
-}
 
-private extension SendAppOperation
-{
-    func debugLog(_ text: String)
+    private func debugLog(_ text: String)
     {
         print(text)
     }
 
-    func verboseLog(_ text: String)
+    private func verboseLog(_ text: String)
     {
         let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: SendAppOperation.self)
         if isLoggingEnabled {

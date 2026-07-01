@@ -606,7 +606,7 @@ private extension AddSourceViewController
         
         func setButtonIcon()
         {
-            Task<Void, Never>(priority: .userInitiated) { [weak cell] in
+            Task(priority: .userInitiated) { [weak cell] in
                 guard let cell else { return }
                 
                 var isSourceAlreadyPersisted = false
@@ -790,7 +790,7 @@ private extension AddSourceViewController
             }
         }
         
-        Task<Void, Never> {
+        Task {
             var isCancelled = false
             // OK: COMMIT the staged changes now
             // Convert the stagedForAdd dictionary into an array of StagedSource

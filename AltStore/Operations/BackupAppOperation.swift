@@ -10,18 +10,15 @@ import Foundation
 import AltStoreCore
 import AltSign
 
-extension BackupAppOperation
-{
-    enum Action: String
-    {
+extension BackupAppOperation {
+    enum Action: String {
         case backup
         case restore
     }
 }
 
 @objc(BackupAppOperation)
-class BackupAppOperation: ResultOperation<Void>
-{
+class BackupAppOperation: ResultOperation<Void> {
     let action: Action
     let context: InstallAppOperationContext
     
@@ -31,28 +28,24 @@ class BackupAppOperation: ResultOperation<Void>
     private weak var applicationWillReturnObserver: NSObjectProtocol?
     private weak var backupResponseObserver: NSObjectProtocol?
     
-    init(action: Action, context: InstallAppOperationContext)
-    {
+    init(action: Action, context: InstallAppOperationContext) {
         self.action = action
         self.context = context
         
         super.init()
     }
     
-    override func main()
-    {
+    override func main() {
         super.main()
         
-        do
-        {
+        do {
             if let error = self.context.error { throw error }
             
             guard let installedApp = self.context.installedApp, let context = installedApp.managedObjectContext else {
                 throw OperationError.invalidParameters("BackupAppOperation.main: self.context.installedApp or installedApp.managedObjectContext is nil")
             }
             context.perform {
-                do
-                {
+                do {
                     let appName = installedApp.name
                     self.appName = appName
                     
@@ -72,62 +65,50 @@ class BackupAppOperation: ResultOperation<Void>
                     
                     guard let openURL = openURLComponents.url else { throw OperationError.openAppFailed(name: appName) }
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 500_000_000)
                         let currentTime = CFAbsoluteTimeGetCurrent()
                         
                         UIApplication.shared.open(openURL, options: [:]) { (success) in
                             let elapsedTime = CFAbsoluteTimeGetCurrent() - currentTime
                             
-                            if success
-                            {
+                            if success {
                                 self.registerObservers()
-                            }
-                            else if elapsedTime < 0.5
-                            {
+                            } else if elapsedTime < 0.5 {
                                 // Failed too quickly for human to respond to alert, possibly still finalizing installation.
                                 // Try again in a couple seconds.
                                 
                                 self.debugLog("Failed to open app too quickly, retrying after a few seconds...")
                                                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                Task { @MainActor in
+                                    try? await Task.sleep(nanoseconds: 2_000_000_000)
                                     UIApplication.shared.open(openURL, options: [:]) { (success) in
-                                        if success
-                                        {
+                                        if success {
                                             self.registerObservers()
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             self.finish(.failure(OperationError.openAppFailed(name: appName)))
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 self.finish(.failure(OperationError.openAppFailed(name: appName)))
                             }
                         }
                     }
-                }
-                catch
-                {
+                } catch {
                     self.finish(.failure(error))
                 }
             }
-        }
-        catch
-        {
+        } catch {
             self.finish(.failure(error))
         }
     }
     
-    override func finish(_ result: Result<Void, Error>)
-    {
+    override func finish(_ result: Result<Void, Error>) {
         let result = result.mapError { (error) -> Error in
             let appName = self.appName ?? self.context.bundleIdentifier
             
-            switch (error, self.action)
-            {
+            switch (error, self.action) {
             case (let error as NSError, _) where (self.context.error as NSError?) == error: fallthrough
             case (OperationError.cancelled, _):
                 return error
@@ -142,20 +123,15 @@ class BackupAppOperation: ResultOperation<Void>
             }
         }
         
-        switch result
-        {
+        switch result {
         case .success: self.progress.completedUnitCount += 1
         case .failure: break
         }
         
         super.finish(result)
     }
-}
-
-private extension BackupAppOperation
-{
-    func registerObservers()
-    {
+    
+    private func registerObservers() {
         self.applicationWillReturnObserver = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] (notification) in
             defer {
                 self?.applicationWillReturnObserver.map { NotificationCenter.default.removeObserver($0) }
@@ -169,7 +145,8 @@ private extension BackupAppOperation
                 // Final delay to ensure we don't prematurely return failure
                 // in case timer expired while we were in background, but
                 // are now returning to app with success response.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
                     guard let self = self, !self.isFinished else { return }
                     self.finish(.failure(OperationError.timedOut))
                 }

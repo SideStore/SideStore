@@ -280,8 +280,11 @@ extension AppManager
         guard !UserDefaults.standard.isAppLimitDisabled, let activeAppsLimit = UserDefaults.standard.activeAppsLimit else { return completion(.success(())) }
         
         DispatchQueue.main.async {
+            // Only apps signed with a free developer certificate count toward the 3-app free account limit.
+            // Apps signed with a paid certificate coexist independently and must not be counted here.
             let activeApps = InstalledApp.fetchActiveApps(in: DatabaseManager.shared.viewContext)
                 .filter { $0.bundleIdentifier != app.bundleIdentifier } // Don't count app towards total if it matches activating app
+                .filter { ($0.team?.type ?? .unknown) == .free }        // Only free-cert-signed apps count against the free limit
                 .sorted { ($0.name, $0.refreshedDate) < ($1.name, $1.refreshedDate) }
             
             var title: String = NSLocalizedString("Cannot Activate More than 3 Apps", comment: "")
@@ -298,7 +301,7 @@ extension AppManager
                     title = NSLocalizedString("Cannot Activate More than 3 Apps and App Extensions", comment: "")
                     
                     let appExtensionText = app.appExtensions.count == 1 ? NSLocalizedString("app extension", comment: "") : NSLocalizedString("app extensions", comment: "")
-                    message = String(format: NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions, and “%@” contains %@ %@. Please choose an app to deactivate.", comment: ""), app.name, NSNumber(value: app.appExtensions.count), appExtensionText)
+                    message = String(format: NSLocalizedString("Non-developer Apple IDs are limited to 3 active apps and app extensions, and \"%@\" contains %@ %@. Please choose an app to deactivate.", comment: ""), app.name, NSNumber(value: app.appExtensions.count), appExtensionText)
                 }
             }
             else
@@ -920,6 +923,34 @@ extension AppManager
         }
     }
     
+    @discardableResult
+    func resign(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+    {
+        let group = RefreshGroup()
+        group.completionHandler = { (results) in
+            do
+            {
+                guard let result = results.values.first else { throw group.context.error ?? OperationError.unknown() }
+                let installedApp = try result.get()
+                completionHandler(.success(installedApp))
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        Task {
+            do {
+                try await self.perform([.resign(installedApp)], presentingViewController: presentingViewController, group: group)
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        return group
+    }
+    
     func backup(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
     {
         let group = RefreshGroup()
@@ -1100,13 +1131,15 @@ private extension AppManager
         case deactivate(InstalledApp)
         case backup(InstalledApp)
         case restore(InstalledApp)
+        case resign(InstalledApp)
         
         var app: AppProtocol {
             switch self
             {
             case .install(let app), .update(let app), .refresh(let app as AppProtocol),
                  .activate(let app as AppProtocol), .deactivate(let app as AppProtocol),
-                 .backup(let app as AppProtocol), .restore(let app as AppProtocol):
+                 .backup(let app as AppProtocol), .restore(let app as AppProtocol),
+                 .resign(let app as AppProtocol):
                 return app
             }
         }
@@ -1136,6 +1169,7 @@ private extension AppManager
             case .deactivate: return .deactivate
             case .backup: return .backup
             case .restore: return .restore
+            case .resign: return .install
             }
         }
     }
@@ -1165,8 +1199,10 @@ private extension AppManager
             authenticationOperation = self.authenticate(presentingViewController: presentingViewController, context: group.context, skipDeviceRegistration: false) { (result) in
                 switch result
                 {
-                case .failure(let error): group.context.error = error
-                case .success: break
+                case .failure(let error):
+                    group.context.error = error
+                case .success:
+                    break
                 }
             }
         }
@@ -1202,6 +1238,12 @@ private extension AppManager
                         self.finish(operation, result: result, group: group, progress: progress)
                     }
                     progress?.addChild(updateProgress, withPendingUnitCount: 80)
+                    
+                case .resign(let app):
+                    let resignProgress = self._install(app, operation: operation, group: group, reviewPermissions: .none) { (result) in
+                        self.finish(operation, result: result, group: group, progress: progress)
+                    }
+                    progress?.addChild(resignProgress, withPendingUnitCount: 80)
                     
                 case .activate(let app) where UserDefaults.standard.isLegacyDeactivationSupported: fallthrough
                 case .refresh(let app):
@@ -1290,7 +1332,11 @@ private extension AppManager
         
         if let installedApp = app as? InstalledApp
         {
-            if let storeApp = installedApp.storeApp, !FileManager.default.fileExists(atPath: installedApp.fileURL.path)
+            if case .resign = appOperation {
+                // For resign, we MUST use the cached app bundle and not download from the store/web
+                downloadingApp = installedApp
+            }
+            else if let storeApp = installedApp.storeApp, !FileManager.default.fileExists(atPath: installedApp.fileURL.path)
             {
                 // Cached app has been deleted, so we need to redownload it.
                 downloadingApp = storeApp
@@ -1605,8 +1651,20 @@ private extension AppManager
            let appSerial = app.certificateSerialNumber,
            activeSerial != appSerial
         {
-            let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
-            context.error = OperationError.refreshAppFailed(message: errMessage)
+            if group.context.presentingViewController == nil
+            {
+                print("AppManager.refresh: Certificate mismatch detected in headless mode for \(app.name). Active: \(activeSerial), App: \(appSerial). Auto-resigning instead of throwing mismatch error.")
+                let resignProgress = self._install(app, operation: .resign(app), group: group, reviewPermissions: .none) { (result) in
+                    completionHandler(result)
+                }
+                return resignProgress
+            }
+            else
+            {
+                print("AppManager.refresh: Certificate mismatch detected for \(app.name). Active Certificate SN: \(activeSerial), Target Certificate SN: \(appSerial).")
+                let errMessage = "The certificate used to sign “\(app.name)” has been revoked or changed. Please reinstall the app to re-sign it with the new active certificate."
+                context.error = OperationError.refreshAppFailed(message: errMessage)
+            }
         }
         
         if context.error == nil
@@ -1658,15 +1716,7 @@ private extension AppManager
                 completionHandler(.failure(OperationError.noVPN))
 
             case .failure(MinimuxerError.ProfileInstall):
-                let error: OperationError
-                switch minimuxerStatus {
-                case .ready:
-                    error = .noConnection
-                case .noConnection:
-                    error = .noConnection
-                case .noVPN:
-                    error = .noVPN
-                }
+                let error = minimuxerStatus.operationError ?? OperationError.unknown()
                 completionHandler(.failure(error))
                 
             case .failure(ALTServerError.unknownRequest), .failure(OperationError.appNotFound(name: app.name)):
@@ -1680,7 +1730,7 @@ private extension AppManager
                         }
                         progress.addChild(installProgress, withPendingUnitCount: 40)
                     case let status:
-                        let error: OperationError = (status == .noVPN) ? .noVPN : .noConnection
+                        let error = status.operationError ?? OperationError.unknown()
                         completionHandler(.failure(error))
                     }
                 }
@@ -2128,6 +2178,7 @@ private extension AppManager
             case .deactivate: localizedTitle = String(format: NSLocalizedString("Failed to Deactivate %@", comment: ""), appName)
             case .backup: localizedTitle = String(format: NSLocalizedString("Failed to Backup %@", comment: ""), appName)
             case .restore: localizedTitle = String(format: NSLocalizedString("Failed to Restore %@ Backup", comment: ""), appName)
+            case .resign: localizedTitle = String(format: NSLocalizedString("Failed to Resign %@", comment: ""), appName)
             }
             let error = nsError.withLocalizedTitle(localizedTitle)
             group.set(.failure(error), forAppWithBundleIdentifier: operation.bundleIdentifier)
@@ -2201,7 +2252,7 @@ private extension AppManager
         switch operation
         {
         case .install, .update: return self.installationProgress[bundleID]
-        case .refresh, .activate, .deactivate, .backup, .restore: return self.refreshProgress[bundleID]
+        case .refresh, .activate, .deactivate, .backup, .restore, .resign: return self.refreshProgress[bundleID]
         }
     }
     
@@ -2216,7 +2267,7 @@ private extension AppManager
         switch operation
         {
         case .install, .update: self.installationProgress[bundleID] = progress
-        case .refresh, .activate, .deactivate, .backup, .restore: self.refreshProgress[bundleID] = progress
+        case .refresh, .activate, .deactivate, .backup, .restore, .resign: self.refreshProgress[bundleID] = progress
         }
     }
 }

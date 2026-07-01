@@ -32,7 +32,7 @@ public class InstalledExtension: BaseEntity, InstalledAppProtocol
         super.init(entity: entity, insertInto: context)
     }
     
-    public init(resignedAppExtension: ALTApplication, originalBundleIdentifier: String, context: NSManagedObjectContext)
+    public init(resignedAppExtension: ALTApplication, originalBundleIdentifier: String, context: NSManagedObjectContext) throws
     {
         super.init(entity: InstalledExtension.entity(), insertInto: context)
         
@@ -41,7 +41,14 @@ public class InstalledExtension: BaseEntity, InstalledAppProtocol
         self.refreshedDate = Date()
         self.installedDate = Date()
         
-        self.expirationDate = self.refreshedDate.addingTimeInterval(60 * 60 * 24 * 7) // Rough estimate until we get real values from provisioning profile.
+        #if targetEnvironment(simulator)
+        self.expirationDate = self.refreshedDate.addingTimeInterval(60 * 60 * 24 * 7)
+        #else
+        guard let expirationDate = resignedAppExtension.provisioningProfile?.expirationDate else {
+            throw ALTError.invalidApp(reason: "The app extension is missing a valid provisioning profile.")
+        }
+        self.expirationDate = expirationDate
+        #endif
         
         self.update(resignedAppExtension: resignedAppExtension)
     }

@@ -51,7 +51,7 @@ struct InstalledAppQuery: EntityQuery
     {
         try await DatabaseManager.shared.start()
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
-        return try await context.performAsync {
+        return await context.performAsync {
             // First try active apps only (isActive == YES), mirroring the widget
             // provider's fetchActiveAppBundleIDs() logic. On iOS 27 the widget
             // extension process may see isActive == NO for all apps due to timing,

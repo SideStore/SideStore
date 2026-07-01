@@ -12,8 +12,7 @@ import AltStoreCore
 import SemanticVersion
 
 @objc(FetchSourceOperation)
-final class FetchSourceOperation: ResultOperation<Source>
-{
+final class FetchSourceOperation: ResultOperation<Source> {
     let sourceURL: URL
     let managedObjectContext: NSManagedObjectContext
     
@@ -30,19 +29,16 @@ final class FetchSourceOperation: ResultOperation<Source>
     }()
     
     // New source
-    convenience init(sourceURL: URL, managedObjectContext: NSManagedObjectContext = DatabaseManager.shared.persistentContainer.newBackgroundContext())
-    {
+    convenience init(sourceURL: URL, managedObjectContext: NSManagedObjectContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()) {
         self.init(sourceURL: sourceURL, source: nil, managedObjectContext: managedObjectContext)
     }
     
     // Existing source
-    convenience init(source: Source, managedObjectContext: NSManagedObjectContext = DatabaseManager.shared.persistentContainer.newBackgroundContext())
-    {
+    convenience init(source: Source, managedObjectContext: NSManagedObjectContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()) {
         self.init(sourceURL: source.sourceURL, source: source, managedObjectContext: managedObjectContext)
     }
     
-    private init(sourceURL: URL, source: Source?, managedObjectContext: NSManagedObjectContext)
-    {
+    private init(sourceURL: URL, source: Source?, managedObjectContext: NSManagedObjectContext) {
         self.sourceURL = sourceURL
         self.managedObjectContext = managedObjectContext
         self.source = source
@@ -54,31 +50,23 @@ final class FetchSourceOperation: ResultOperation<Source>
         self.session = URLSession(configuration: configuration)
     }
     
-    override func cancel() 
-    {
+    override func cancel() {
         super.cancel()
         
         self.dataTask?.cancel()
     }
     
-    override func main()
-    {
+    override func main() {
         super.main()
         
-        if let source = self.source
-        {
+        if let source = self.source {
             // Check if source is blocked before fetching it.
             
-            do
-            {
+            do {
                 try self.managedObjectContext.performAndWait {
-                    // Source must be from self.managedObjectContext
-                    let source = self.managedObjectContext.object(with: source.objectID) as! Source
-                    try self.verifySourceNotBlocked(source, response: nil)
+                    try self.verifyExistingSource(source)
                 }
-            }
-            catch
-            {
+            } catch {
                 self.managedObjectContext.perform {
                     self.finish(.failure(error))
                 }
@@ -96,100 +84,7 @@ final class FetchSourceOperation: ResultOperation<Source>
             let childContext = DatabaseManager.shared.persistentContainer.newBackgroundContext(parent: self.managedObjectContext)
             childContext.mergePolicy = NSOverwriteMergePolicy
             childContext.perform {
-                do
-                {
-                    let (data, response) = try Result((data, response), error).get()
-                    
-                    let decoder = AltStoreCore.JSONDecoder()
-                    decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
-                        let container = try decoder.singleValueContainer()
-                        let text = try container.decode(String.self)
-                        
-                        // Full ISO8601 Format.
-                        self.dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone]
-                        if let date = self.dateFormatter.date(from: text)
-                        {
-                            return date
-                        }
-                        
-                        // Just date portion of ISO8601.
-                        self.dateFormatter.formatOptions = [.withFullDate]
-                        if let date = self.dateFormatter.date(from: text)
-                        {
-                            return date
-                        }
-                        
-                        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Date is in invalid format.")
-                    })
-                    
-                    decoder.managedObjectContext = childContext
-                    decoder.sourceURL = self.sourceURL
-                    
-                    if #available(iOS 15, *)
-                    {
-                        decoder.allowsJSON5 = true
-                    }
-                    
-                    let source: Source
-                    
-                    do
-                    {
-                        source = try decoder.decode(Source.self, from: data)
-                    }
-                    catch let error as DecodingError
-                    {
-                        let nsError = error as NSError
-                        guard var codingPath = nsError.userInfo[ALTNSCodingPathKey] as? [CodingKey] else { throw error }
-                        
-                        if case .keyNotFound(let key, _) = error
-                        {
-                            // Add missing key to error for better debugging.
-                            codingPath.append(key)
-                        }
-                        
-                        let rawComponents = codingPath.map { $0.intValue?.description ?? $0.stringValue }
-                        let pathDescription = rawComponents.joined(separator: " > ")
-                        
-                        var userInfo = nsError.userInfo
-                        
-                        if let debugDescription = nsError.localizedDebugDescription
-                        {
-                            let detailedDescription = debugDescription + "\n\n" + pathDescription
-                            userInfo[NSDebugDescriptionErrorKey] = detailedDescription
-                        }
-                        else
-                        {
-                            userInfo[NSDebugDescriptionErrorKey] = pathDescription
-                        }
-                        
-                        // TODO: @mahee96: Need to account for invalid/missing json fields error
-                        //                 and show meaningful message to user instead of just showing decoder error
-                        throw NSError(domain: nsError.domain, code: nsError.code, userInfo: userInfo)
-                    }
-                    
-                    let identifier = source.identifier
-                    
-                    try self.verify(source, response: response)
-                    
-                    try childContext.save()
-                    
-                    self.managedObjectContext.perform {
-                        if let source = Source.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Source.identifier), identifier), in: self.managedObjectContext)
-                        {
-                            self.finish(.success(source))
-                        }
-                        else
-                        {
-                            self.finish(.failure(OperationError.noSources))
-                        }
-                    }
-                }
-                catch
-                {
-                    self.managedObjectContext.perform {
-                        self.finish(.failure(error))
-                    }
-                }
+                self.performDecodeAndSave(data: data, response: response, error: error, childContext: childContext)
             }
         }
         
@@ -199,35 +94,118 @@ final class FetchSourceOperation: ResultOperation<Source>
         
         self.dataTask = dataTask
     }
-}
-
-private extension FetchSourceOperation
-{
-    func verify(_ source: Source, response: URLResponse) throws
-    {
+    
+    private func verifyExistingSource(_ source: Source) throws {
+        // Source must be from self.managedObjectContext
+        let source = self.managedObjectContext.object(with: source.objectID) as! Source
+        try self.verifySourceNotBlocked(source, response: nil)
+    }
+    
+    private func performDecodeAndSave(data: Data?, response: URLResponse?, error: Error?, childContext: NSManagedObjectContext) {
+        do {
+            let (data, response) = try Result((data, response), error).get()
+            
+            let decoder = AltStoreCore.JSONDecoder()
+            decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+                let container = try decoder.singleValueContainer()
+                let text = try container.decode(String.self)
+                
+                // Full ISO8601 Format.
+                self.dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone]
+                if let date = self.dateFormatter.date(from: text) {
+                    return date
+                }
+                
+                // Just date portion of ISO8601.
+                self.dateFormatter.formatOptions = [.withFullDate]
+                if let date = self.dateFormatter.date(from: text) {
+                    return date
+                }
+                
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Date is in invalid format.")
+            })
+            
+            decoder.managedObjectContext = childContext
+            decoder.sourceURL = self.sourceURL
+            
+            if #available(iOS 15, *) {
+                decoder.allowsJSON5 = true
+            }
+            
+            let source: Source
+            
+            do {
+                source = try decoder.decode(Source.self, from: data)
+            } catch let error as DecodingError {
+                let nsError = error as NSError
+                guard var codingPath = nsError.userInfo[ALTNSCodingPathKey] as? [CodingKey] else { throw error }
+                
+                if case .keyNotFound(let key, _) = error {
+                    // Add missing key to error for better debugging.
+                    codingPath.append(key)
+                }
+                
+                let rawComponents = codingPath.map { $0.intValue?.description ?? $0.stringValue }
+                let pathDescription = rawComponents.joined(separator: " > ")
+                
+                var userInfo = nsError.userInfo
+                
+                if let debugDescription = nsError.localizedDebugDescription {
+                    let detailedDescription = debugDescription + "\n\n" + pathDescription
+                    userInfo[NSDebugDescriptionErrorKey] = detailedDescription
+                } else {
+                    userInfo[NSDebugDescriptionErrorKey] = pathDescription
+                }
+                
+                // TODO: @mahee96: Need to account for invalid/missing json fields error
+                //                 and show meaningful message to user instead of just showing decoder error
+                throw NSError(domain: nsError.domain, code: nsError.code, userInfo: userInfo)
+            }
+            
+            let identifier = source.identifier
+            
+            try self.verify(source, response: response)
+            
+            try childContext.save()
+            
+            self.managedObjectContext.perform {
+                self.finishWithFetchedSource(identifier: identifier)
+            }
+        } catch {
+            self.managedObjectContext.perform {
+                self.finish(.failure(error))
+            }
+        }
+    }
+    
+    private func finishWithFetchedSource(identifier: String) {
+        if let source = Source.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Source.identifier), identifier), in: self.managedObjectContext) {
+            self.finish(.success(source))
+        } else {
+            self.finish(.failure(OperationError.noSources))
+        }
+    }
+    
+    private func verify(_ source: Source, response: URLResponse) throws {
         try self.verifySourceNotBlocked(source, response: response)
         
         var bundleIDs = Set<String>()
-        for app in source.apps
-        {
+        for app in source.apps {
             guard !bundleIDs.contains(app.bundleIdentifier) else { throw SourceError.duplicateBundleID(app.bundleIdentifier, source: source) }
             bundleIDs.insert(app.bundleIdentifier)
 
             var versions = Set<String>()
-            for version in app.versions
-            {
+            for version in app.versions {
                 guard !versions.contains(version.versionID) else { throw SourceError.duplicateVersion(version.localizedVersion, for: app, source: source) }
                 versions.insert(version.versionID)
             }
             
-            for permission in app.permissions where permission.type == .privacy
-            {
+            for permission in app.permissions where permission.type == .privacy {
                 // Privacy permissions MUST have a usage description.
                 guard permission.usageDescription != nil else { throw SourceError.missingPermissionUsageDescription(for: permission.permission, app: app, source: source) }
             }
             
-            for screenshot in app.screenshots(for: .ipad)
-            {
+            for screenshot in app.screenshots(for: .ipad) {
                 // All iPad screenshots MUST have an explicit size.
                 guard screenshot.size != nil else { throw SourceError.missingScreenshotSize(for: screenshot, source: source) }
             }
@@ -241,8 +219,7 @@ private extension FetchSourceOperation
         
         let incomingSourceID = source.identifier
         if let previousSourceID = self.$source.identifier,
-           incomingSourceID != previousSourceID
-        {
+           incomingSourceID != previousSourceID {
 //            if let version = BuildInfo().marketing_version,
 //               SemanticVersion(version)! <= SemanticVersion("0.6.1")!
 //            {
@@ -256,19 +233,16 @@ private extension FetchSourceOperation
         }
     }
     
-    func verifySourceNotBlocked(_ source: Source, response: URLResponse?) throws
-    {
+    private func verifySourceNotBlocked(_ source: Source, response: URLResponse?) throws {
         guard let blockedSources = UserDefaults.shared.blockedSources else { return }
         
-        for blockedSource in blockedSources
-        {
+        for blockedSource in blockedSources {
             guard
                 source.identifier != blockedSource.identifier,
                 source.sourceURL.absoluteString.lowercased() != blockedSource.sourceURL?.absoluteString.lowercased()
             else { throw SourceError.blocked(source, bundleIDs: blockedSource.bundleIDs, existingSource: self.source) }
             
-            if let responseURL = response?.url
-            {
+            if let responseURL = response?.url {
                 // responseURL may differ from source.sourceURL (e.g. due to redirects), so double-check it's also not blocked.
                 guard responseURL.absoluteString.lowercased() != blockedSource.sourceURL?.absoluteString.lowercased() else {
                     throw SourceError.blocked(source, bundleIDs: blockedSource.bundleIDs, existingSource: self.source)

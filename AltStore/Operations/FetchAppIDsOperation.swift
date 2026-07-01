@@ -41,33 +41,46 @@ final class FetchAppIDsOperation: ResultOperation<([AppID], NSManagedObjectConte
         else {
             return self.finish(.failure(OperationError.invalidParameters("FetchAppIDsOperation.main: self.context.team or self.context.session is nil")))
         }
-                
-        ALTAppleAPI.shared.fetchAppIDs(for: team, session: session) { (appIDs, error) in
-            self.managedObjectContext.perform {
-                do
-                {
-                    let fetchedAppIDs = try Result(appIDs, error).get()
-                    
-                    guard let team = Team.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Team.identifier), team.identifier), in: self.managedObjectContext) else { throw OperationError.notAuthenticated }
-                    
-                    let fetchedIdentifiers = fetchedAppIDs.map { $0.identifier }
-                    
-                    let deletedAppIDsRequest = AppID.fetchRequest() as NSFetchRequest<AppID>
-                    deletedAppIDsRequest.predicate = NSPredicate(format: "%K == %@ AND NOT (%K IN %@)",
-                                                                 #keyPath(AppID.team), team,
-                                                                 #keyPath(AppID.identifier), fetchedIdentifiers)
-                    
-                    let deletedAppIDs = try self.managedObjectContext.fetch(deletedAppIDsRequest)
-                    deletedAppIDs.forEach { self.managedObjectContext.delete($0) }
-                    
-                    let appIDs = fetchedAppIDs.map { AppID($0, team: team, context: self.managedObjectContext) }
-                    self.finish(.success((appIDs, self.managedObjectContext)))
-                }
-                catch
-                {
-                    self.finish(.failure(error))
-                }
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let result = try await self.fetchAndSyncAppIDs(team: team, session: session)
+                self.finish(.success(result))
+            } catch {
+                self.finish(.failure(error))
             }
         }
+    }
+    
+    private func fetchAndSyncAppIDs(team: ALTTeam, session: ALTAppleAPISession) async throws -> ([AppID], NSManagedObjectContext) {
+        let fetchedAppIDs: [ALTAppID] = try await withCheckedThrowingContinuation { continuation in
+            ALTAppleAPI.shared.fetchAppIDs(for: team, session: session) { appIDs, error in
+                continuation.resume(with: Result(appIDs, error))
+            }
+        }
+        
+        return try await self.managedObjectContext.perform {
+            try self.syncAppIDs(fetchedAppIDs, team: team)
+        }
+    }
+    
+    private func syncAppIDs(_ fetchedAppIDs: [ALTAppID], team: ALTTeam) throws -> ([AppID], NSManagedObjectContext) {
+        guard let team = Team.first(satisfying: NSPredicate(format: "%K == %@", #keyPath(Team.identifier), team.identifier), in: self.managedObjectContext) else {
+            throw OperationError.notAuthenticated
+        }
+        
+        let fetchedIdentifiers = fetchedAppIDs.map { $0.identifier }
+        
+        let deletedAppIDsRequest = AppID.fetchRequest() as NSFetchRequest<AppID>
+        deletedAppIDsRequest.predicate = NSPredicate(format: "%K == %@ AND NOT (%K IN %@)",
+                                                     #keyPath(AppID.team), team,
+                                                     #keyPath(AppID.identifier), fetchedIdentifiers)
+        
+        let deletedAppIDs = try self.managedObjectContext.fetch(deletedAppIDsRequest)
+        deletedAppIDs.forEach { self.managedObjectContext.delete($0) }
+        
+        let appIDs = fetchedAppIDs.map { AppID($0, team: team, context: self.managedObjectContext) }
+        return (appIDs, self.managedObjectContext)
     }
 }

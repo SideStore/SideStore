@@ -39,59 +39,68 @@ final class RemoveAppBackupOperation: ResultOperation<Void>
         guard let installedApp = self.context.installedApp else {
             return self.finish(.failure(OperationError.invalidParameters("RemoveAppBackupOperation.main: self.context.installedApp is nil")))
         }
-        installedApp.managedObjectContext?.perform {
-            guard let backupDirectoryURL = FileManager.default.backupDirectoryURL(for: installedApp) else { return self.finish(.failure(OperationError.missingAppGroup)) }
-            
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await self.removeBackup(for: installedApp)
+                self.finish(.success(()))
+            } catch {
+                self.finish(.failure(error))
+            }
+        }
+    }
+    
+    private func removeBackup(for installedApp: InstalledApp) async throws {
+        let backupDirectoryURL: URL? = await installedApp.managedObjectContext?.perform {
+            self.backupDirectoryURL(for: installedApp)
+        }
+        guard let backupDirectoryURL else {
+            throw OperationError.missingAppGroup
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             let intent = NSFileAccessIntent.writingIntent(with: backupDirectoryURL, options: [.forDeleting])
-            self.coordinator.coordinate(with: [intent], queue: self.coordinatorQueue) { (error) in
-                do
-                {
-                    if let error = error
-                    {
-                        throw error
-                    }
-                    
-                    try FileManager.default.removeItem(at: intent.url)
-                    
-                    self.finish(.success(()))
-                }
-                catch let error as CocoaError where error.code == CocoaError.Code.fileNoSuchFile
-                {
-                    // TODO: @mahee96: Find out why should in debug builds the app-groups is not expected to match
+            self.coordinator.coordinate(with: [intent], queue: self.coordinatorQueue) { error in
+                continuation.resume(with: Result { try self.removeBackupItem(at: intent.url, backupDirectoryURL: backupDirectoryURL, coordinatorError: error) })
+            }
+        }
+    }
+    
+    private func backupDirectoryURL(for installedApp: InstalledApp) -> URL? {
+        FileManager.default.backupDirectoryURL(for: installedApp)
+    }
+    
+    private func removeBackupItem(at url: URL, backupDirectoryURL: URL, coordinatorError: Error?) throws {
+        if let coordinatorError { throw coordinatorError }
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch let error as CocoaError where error.code == CocoaError.Code.fileNoSuchFile {
+            // TODO: @mahee96: Find out why should in debug builds the app-groups is not expected to match
 //                    #if DEBUG
 //                    
 //                    // When debugging, it's expected that app groups don't match, so ignore.
 //                    self.finish(.success(()))
 //                    
 //                    #else
-                    
-                    self.debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
-                    self.finish(.failure(error))
-                    
+            debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
+            throw error
 //                    #endif
-                }
-                catch
-                {
-                    self.debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
-                    self.finish(.failure(error))
-                }
-            }
+        } catch {
+            debugLog("Failed to remove app backup directory \(backupDirectoryURL.lastPathComponent). \(error.localizedDescription)")
+            throw error
         }
     }
-}
 
-private extension RemoveAppBackupOperation
-{
-    func debugLog(_ text: String)
-    {
+    private func debugLog(_ text: String) {
         print(text)
     }
 
-    func verboseLog(_ text: String)
-    {
+    private func verboseLog(_ text: String) {
         let isLoggingEnabled = OperationsLoggingControl.getFromDatabase(for: RemoveAppBackupOperation.self)
         if isLoggingEnabled {
             print(text)
         }
     }
 }
+

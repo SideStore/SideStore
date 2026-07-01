@@ -78,8 +78,8 @@ extension SettingsViewController
         case resetPairingFile       // row 3 - Reset Pairing File
         case anisetteServers        // row 4 - Anisette Servers
         case vpnConfiguration       // row 5 - VPN Configuration
-        case certificateManagement  // row 6 - Certificate Management
-        case cacheManagement        // row 7 - Cache Management
+        case cacheManagement        // row 6 - Cache Management
+        case certificateManagement  // row 7 - Certificate Management
         case exportResignedApp      // row 8 - Export Resigned Apps (moved here from diagnostics)
         case enableEMPForWiregaurd  // row 9 - Enable EMP for wireguard
         case customizeAppId         // row 10 - Enable AppId Customization
@@ -1449,10 +1449,11 @@ extension SettingsViewController
                     guard let url else {
                         return
                     }
-                    importVc.delegate = ImportExport.documentPickerHandler
-                    self.present(importVc, animated: true)
                     _ = url.startAccessingSecurityScopedResource()
                     defer { url.stopAccessingSecurityScopedResource() }
+
+                    importVc.delegate = ImportExport.documentPickerHandler
+                    self.present(importVc, animated: true)
                 }
                 Task {
                     let certUrl = await withUnsafeContinuation { c in
