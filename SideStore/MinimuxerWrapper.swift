@@ -120,6 +120,12 @@ func minimuxerStart(_ pairingFile: String, mountPath: String) async throws {
     #endif
 }
 
+func revalidateMinimuxerConnectivityAfterForeground() async {
+    #if !targetEnvironment(simulator)
+    await Minimuxer.shared.revalidateConnectivitySessionAfterForeground()
+    #endif
+}
+
 
 func reinitializePairingData(pairingFile: String) async throws {
     defer { debugLog("[SideStore] reinitializePairingData(pairingFile) completed") }
