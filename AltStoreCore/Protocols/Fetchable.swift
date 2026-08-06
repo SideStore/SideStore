@@ -34,7 +34,7 @@ public extension Fetchable
     {
         do
         {
-            let managedObjects = try context.fetch(fetchRequest)
+            let managedObjects = try context.fetchSafely(fetchRequest)
             return managedObjects
         }
         catch
