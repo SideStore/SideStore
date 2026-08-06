@@ -31,6 +31,11 @@ struct ActiveAppsWidget: Widget
         static let MAX_ROWS_PER_PAGE: UInt = 3
     }
     
+    // Must be a STABLE identifier. WidgetKit uses `kind` to match this
+    // widget's configuration to the instance the user placed on their home
+    // screen; per-instance state (pagination, etc.) is already tracked
+    // separately via WidgetUpdateIntent.ID / PageInfoManager, so `kind`
+    // does not need to vary between instances.
     private let widgetKind: String = "ActiveApps"
     
     public var body: some WidgetConfiguration {
@@ -114,6 +119,9 @@ private struct ActiveAppsWidgetView: View
                 LazyVStack(spacing: 12) {
                     ForEach(Array(entry.apps.enumerated()), id: \.offset) { index, app in
                     
+                        // Fall back through: app's icon -> bundled SideStore icon -> empty
+                        // image, rather than force-unwrapping, since a missing/degenerate
+                        // icon must not be able to crash the whole extension process.
                         let icon: UIImage = app.icon ?? UIImage(named: "SideStore") ?? UIImage()
                         
                         // 1024x1024 images are not supported by previews but supported by device
@@ -126,6 +134,8 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
+                        // UIGraphicsImageRenderer (used inside resizing(to:)) traps on a
+                        // zero/degenerate size instead of returning nil, so guard explicitly.
                         let resizedIcon = (resizedSize.width > 0 && resizedSize.height > 0 ? icon.resizing(to: resizedSize) : nil) ?? icon
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
@@ -214,10 +224,26 @@ private struct ActiveAppsWidgetView: View
     }
     
     private var placeholder: some View {
-        Text("App Not Found")
-            .font(.system(.body, design: .rounded))
-            .fontWeight(.semibold)
-            .foregroundColor(Color.white.opacity(0.4))
+        VStack(spacing: 2) {
+            Text("App Not Found")
+                .font(.system(.body, design: .rounded))
+                .fontWeight(.semibold)
+                .foregroundColor(Color.white.opacity(0.4))
+
+            // TEMPORARY diagnostic: surfaces the actual underlying failure
+            // directly on the widget, since we have no other way to see it
+            // on this device right now.
+            if let debugMessage = entry.debugMessage
+            {
+                Text(debugMessage)
+                    .font(.system(size: 8, design: .monospaced))
+                    .foregroundColor(Color.white.opacity(0.6))
+                    .lineLimit(6)
+                    .minimumScaleFactor(0.4)
+                    .padding(.top, 2)
+                    .padding(.horizontal, 8)
+            }
+        }
     }
 }
 
