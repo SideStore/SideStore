@@ -153,11 +153,6 @@ private struct AppDetailWidgetView: View
 
     func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
     {
-        // Fall back through: caller's icon -> bundled SideStore icon -> a
-        // plain empty image. Never force-unwrap here — a missing/degenerate
-        // icon (e.g. zero size) must not be able to crash the widget
-        // extension process, since that's exactly what turns into a blank
-        // grey box on the home screen with no diagnostic info.
         let icon = icon ?? UIImage(named: "SideStore") ?? UIImage()
         let tintColor = tintColor ?? .gray
         
@@ -176,9 +171,6 @@ private struct AppDetailWidgetView: View
             height: icon.size.height * scalingFactor
         )
         
-        // UIGraphicsImageRenderer (used inside resizing(to:)) traps on a
-        // zero/degenerate size instead of returning nil, so guard explicitly
-        // rather than trusting the force-unwrap to just get a nil back.
         let resizedIcon = (resizedSize.width > 0 && resizedSize.height > 0 ? icon.resizing(to: resizedSize) : nil) ?? icon
         
         return ZStack(alignment: .topTrailing) {
