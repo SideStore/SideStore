@@ -106,7 +106,7 @@ extension AppsTimelineProviderBase
             fetchRequest.predicate = NSPredicate(format: "%K IN %@", #keyPath(InstalledApp.bundleIdentifier), bundleIDs)
             fetchRequest.returnsObjectsAsFaults = false
             
-            let installedApps = try context.fetch(fetchRequest)
+            let installedApps = try context.fetchSafely(fetchRequest)
             
             let apps = installedApps.map { AppSnapshot(installedApp: $0) }
             
@@ -182,7 +182,7 @@ extension AppsTimelineProviderBase
                 fetchRequest.resultType = .dictionaryResultType
                 fetchRequest.propertiesToFetch = [#keyPath(InstalledApp.bundleIdentifier)]
                 
-                let bundleIDs = try context.fetch(fetchRequest).compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
+                let bundleIDs = try context.fetchSafely(fetchRequest).compactMap { $0[#keyPath(InstalledApp.bundleIdentifier)] as? String }
                 return bundleIDs
             }
             
