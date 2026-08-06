@@ -200,7 +200,7 @@ public extension DatabaseManager
                 {
                 case .failure(let error): finish(error)
                 case .success:
-                    self.persistentContainer.loadPersistentStores { (description, error) in
+                    self.loadPersistentStoresWithRetry { (error) in
                         guard error == nil else { return finish(error!) }
                         
                         self.prepareDatabase() { (result) in
@@ -212,6 +212,34 @@ public extension DatabaseManager
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    /// The store is a Core Data SQLite database shared between the main app
+    /// and its extensions (widget, etc.) via an App Group. Since each process
+    /// opens its own independent connection to the same file, a `-loadPersistentStores`
+    /// call can occasionally race against another process actively writing to
+    /// that file and fail transiently with an "couldn't be opened" /
+    /// NSSQLiteErrorDomain error, even though the file itself is fine. Retry a
+    /// few times with a short backoff before treating it as a real failure.
+    private func loadPersistentStoresWithRetry(attempt: Int = 1, completionHandler: @escaping (Error?) -> Void)
+    {
+        self.persistentContainer.loadPersistentStores { (description, error) in
+            guard let error else { return completionHandler(nil) }
+            
+            let maxAttempts = 4
+            guard attempt < maxAttempts else
+            {
+                debugLog("[DatabaseManager] Failed to load persistent store after \(attempt) attempts: \(error)")
+                return completionHandler(error)
+            }
+            
+            let delay = 0.25 * pow(2, Double(attempt - 1)) // 0.25s, 0.5s, 1s...
+            debugLog("[DatabaseManager] Failed to load persistent store (attempt \(attempt)/\(maxAttempts)), retrying in \(delay)s: \(error)")
+            
+            self.dispatchQueue.asyncAfter(deadline: .now() + delay) {
+                self.loadPersistentStoresWithRetry(attempt: attempt + 1, completionHandler: completionHandler)
             }
         }
     }
