@@ -120,8 +120,23 @@ extension AppsTimelineProviderBase
     
     func makeEntries(for snapshots: [AppSnapshot], in context: T? = nil) -> [AppsEntry<T>]
     {
+        // A Timeline must always have at least one entry — an empty entries
+        // array is silently discarded by WidgetKit and renders as a blank
+        // box on the home screen (this is why the widget can look fine in
+        // the "Add Widget" gallery, which uses snapshot(), but goes blank
+        // once actually placed, which uses timeline()). So even when there
+        // are no apps to show, we still return one entry with an empty
+        // `apps` array, letting the view's own "no apps" state render.
+        guard !snapshots.isEmpty else
+        {
+            return [AppsEntry(date: Date(), apps: [], context: context)]
+        }
+
         let sortedAppsByExpirationDate = snapshots.sorted { $0.expirationDate < $1.expirationDate }
-        guard let firstExpiringApp = sortedAppsByExpirationDate.first, let lastExpiringApp = sortedAppsByExpirationDate.last else { return [] }
+        guard let firstExpiringApp = sortedAppsByExpirationDate.first, let lastExpiringApp = sortedAppsByExpirationDate.last else
+        {
+            return [AppsEntry(date: Date(), apps: [], context: context)]
+        }
         
         let currentDate = Calendar.current.startOfDay(for: Date())
         let numberOfDays = lastExpiringApp.expirationDate.numberOfCalendarDays(since: currentDate)
