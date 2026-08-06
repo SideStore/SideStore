@@ -20,6 +20,10 @@ struct AppsEntry<T>: TimelineEntry
     
     var context: T?
     
+    /// Temporary diagnostic field: when set, the widget's "no apps" view
+    /// will display this instead of the normal empty state, so failures can
+    /// be seen directly on-device without needing Console/Analytics access.
+    var debugMessage: String? = nil
 }
 
 class AppsTimelineProviderBase<T>
@@ -48,7 +52,7 @@ class AppsTimelineProviderBase<T>
         {
             debugLog("Failed to prepare widget snapshot: \(error)")
             
-            let entry = AppsEntry(date: Date(), apps: [], context: context)
+            let entry = AppsEntry(date: Date(), apps: [], context: context, debugMessage: "snapshot: \(error)")
             return entry
         }
     }
@@ -78,7 +82,7 @@ class AppsTimelineProviderBase<T>
         {
             debugLog("Failed to prepare widget timeline: \(error)")
             
-            let entry = AppsEntry(date: Date(), apps: [], context: context)
+            let entry = AppsEntry(date: Date(), apps: [], context: context, debugMessage: "timeline: \(error)")
             let timeline = Timeline(entries: [entry], policy: .atEnd)
             return timeline
         }
@@ -129,7 +133,7 @@ extension AppsTimelineProviderBase
         // `apps` array, letting the view's own "no apps" state render.
         guard !snapshots.isEmpty else
         {
-            return [AppsEntry(date: Date(), apps: [], context: context)]
+            return [AppsEntry(date: Date(), apps: [], context: context, debugMessage: "no apps matched (0 InstalledApp rows returned for the requested bundle IDs)")]
         }
 
         let sortedAppsByExpirationDate = snapshots.sorted { $0.expirationDate < $1.expirationDate }
