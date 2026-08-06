@@ -31,13 +31,12 @@ struct ActiveAppsWidget: Widget
         static let MAX_ROWS_PER_PAGE: UInt = 3
     }
     
-    private static var id: Int = 1
-    private let widgetKind: String
-    
-    init(){
-        widgetKind = "ActiveApps - \(Self.id)"
-        Self.id += 1
-    }
+    // Must be a STABLE identifier. WidgetKit uses `kind` to match this
+    // widget's configuration to the instance the user placed on their home
+    // screen; per-instance state (pagination, etc.) is already tracked
+    // separately via WidgetUpdateIntent.ID / PageInfoManager, so `kind`
+    // does not need to vary between instances.
+    private let widgetKind: String = "ActiveApps"
     
     public var body: some WidgetConfiguration {
         
@@ -120,7 +119,10 @@ private struct ActiveAppsWidgetView: View
                 LazyVStack(spacing: 12) {
                     ForEach(Array(entry.apps.enumerated()), id: \.offset) { index, app in
                     
-                        let icon: UIImage = app.icon ?? UIImage(named: "SideStore")!
+                        // Fall back through: app's icon -> bundled SideStore icon -> empty
+                        // image, rather than force-unwrapping, since a missing/degenerate
+                        // icon must not be able to crash the whole extension process.
+                        let icon: UIImage = app.icon ?? UIImage(named: "SideStore") ?? UIImage()
                         
                         // 1024x1024 images are not supported by previews but supported by device
                         // so we scale the image to 97% so as to reduce its actual size but not too much
@@ -132,7 +134,9 @@ private struct ActiveAppsWidgetView: View
                             height: icon.size.height * scalingFactor
                         )
                         
-                        let resizedIcon = icon.resizing(to: resizedSize)!
+                        // UIGraphicsImageRenderer (used inside resizing(to:)) traps on a
+                        // zero/degenerate size instead of returning nil, so guard explicitly.
+                        let resizedIcon = (resizedSize.width > 0 && resizedSize.height > 0 ? icon.resizing(to: resizedSize) : nil) ?? icon
                         let cornerRadius = rowHeight / 5.0
                         let daysRemaining = app.expirationDate.numberOfCalendarDays(since: entry.date)
 
