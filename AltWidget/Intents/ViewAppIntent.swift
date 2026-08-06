@@ -42,7 +42,7 @@ struct InstalledAppQuery: EntityQuery
                 identifiers
             )
             fetchRequest.returnsObjectsAsFaults = false
-            let apps = try context.fetch(fetchRequest)
+            let apps = try context.fetchSafely(fetchRequest)
             return apps.map { InstalledAppEntity(id: $0.bundleIdentifier, name: $0.name) }
         }
     }
