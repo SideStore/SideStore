@@ -26,7 +26,7 @@ struct AppDetailWidget: Widget
                 intent: SelectAppIntent.self,
                 provider: SelectAppTimelineProvider()
             ) { entry in
-                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder)
+                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder, debugMessage: entry.debugMessage)
             }
             .supportedFamilies([.systemSmall])
             .configurationDisplayName("App Status")
@@ -41,7 +41,7 @@ struct AppDetailWidget: Widget
                 intent: ViewAppIntent.self,
                 provider: AppsTimelineProvider()
             ) { entry in
-                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder)
+                AppDetailWidgetView(apps: entry.apps, date: entry.date, isPlaceholder: entry.isPlaceholder, debugMessage: entry.debugMessage)
             }
             .supportedFamilies([.systemSmall])
             .configurationDisplayName("App Status")
@@ -55,6 +55,7 @@ private struct AppDetailWidgetView: View
     let apps: [AppSnapshot]
     let date: Date
     let isPlaceholder: Bool
+    var debugMessage: String? = nil
     
     var body: some View {
         Group {
@@ -138,6 +139,20 @@ private struct AppDetailWidgetView: View
                             .font(.system(.body, design: .rounded))
                             .fontWeight(.semibold)
                             .foregroundColor(Color.white.opacity(0.4))
+
+                        // TEMPORARY diagnostic: surfaces the actual underlying
+                        // failure directly on the widget, since we have no
+                        // other way to see it on this device right now.
+                        if let debugMessage
+                        {
+                            Text(debugMessage)
+                                .font(.system(size: 8, design: .monospaced))
+                                .foregroundColor(Color.white.opacity(0.6))
+                                .lineLimit(6)
+                                .minimumScaleFactor(0.4)
+                                .padding(.top, 2)
+                                .padding(.horizontal, 4)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -153,6 +168,11 @@ private struct AppDetailWidgetView: View
 
     func backgroundView(icon: UIImage? = nil, tintColor: UIColor? = nil) -> some View
     {
+        // Fall back through: caller's icon -> bundled SideStore icon -> a
+        // plain empty image. Never force-unwrap here — a missing/degenerate
+        // icon (e.g. zero size) must not be able to crash the widget
+        // extension process, since that's exactly what turns into a blank
+        // grey box on the home screen with no diagnostic info.
         let icon = icon ?? UIImage(named: "SideStore") ?? UIImage()
         let tintColor = tintColor ?? .gray
         
@@ -171,6 +191,9 @@ private struct AppDetailWidgetView: View
             height: icon.size.height * scalingFactor
         )
         
+        // UIGraphicsImageRenderer (used inside resizing(to:)) traps on a
+        // zero/degenerate size instead of returning nil, so guard explicitly
+        // rather than trusting the force-unwrap to just get a nil back.
         let resizedIcon = (resizedSize.width > 0 && resizedSize.height > 0 ? icon.resizing(to: resizedSize) : nil) ?? icon
         
         return ZStack(alignment: .topTrailing) {
