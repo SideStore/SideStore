@@ -21,16 +21,16 @@ public extension NSManagedObjectContext
     func saveSafely() throws
     {
         var thrownError: Error?
-        var caughtExceptionError: NSError?
 
-        let completedWithoutException = RSTExceptionCatcher.catchException({
-            do { try self.save() }
-            catch { thrownError = error }
-        }, error: &caughtExceptionError)
-
-        if !completedWithoutException
+        do
         {
-            let error = caughtExceptionError ?? NSError(domain: "RSTExceptionCatcherErrorDomain", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown Core Data exception."])
+            try RSTExceptionCatcher.catchException {
+                do { try self.save() }
+                catch { thrownError = error }
+            }
+        }
+        catch
+        {
             debugLog("[NSManagedObjectContext+SafeCoreData] Caught NSException while saving context (likely persistent store corruption): \(error)")
             throw error
         }
@@ -44,16 +44,16 @@ public extension NSManagedObjectContext
     {
         var results: [T] = []
         var thrownError: Error?
-        var caughtExceptionError: NSError?
 
-        let completedWithoutException = RSTExceptionCatcher.catchException({
-            do { results = try self.fetch(request) }
-            catch { thrownError = error }
-        }, error: &caughtExceptionError)
-
-        if !completedWithoutException
+        do
         {
-            let error = caughtExceptionError ?? NSError(domain: "RSTExceptionCatcherErrorDomain", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown Core Data exception."])
+            try RSTExceptionCatcher.catchException {
+                do { results = try self.fetch(request) }
+                catch { thrownError = error }
+            }
+        }
+        catch
+        {
             debugLog("[NSManagedObjectContext+SafeCoreData] Caught NSException while fetching (likely persistent store corruption): \(error)")
             throw error
         }
