@@ -126,9 +126,10 @@ final class ResignAppOperation: BasePipelineOperation<InstallAppOperationContext
         
         if let directory = appBundle.builtInPlugInsURL, let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants]) {
             for case let fileURL as URL in enumerator {
-                // for both sim and device, in debug mode builds, remove the tests bundles (if any)
+                // Only strip SideStore's own debug test products. Imported XCTest runners need their .xctest bundle at runtime.
                 #if DEBUG
-                guard !fileURL.lastPathComponent.lowercased().contains(".xctest") else {
+                let isOwnTestArtifact = targetAppBundle.isAltStoreApp && fileURL.pathExtension.lowercased() == "xctest"
+                if isOwnTestArtifact {
                     // Remove embedded XCTest (+ dSYM) bundle from copied app bundle.
                     try FileManager.default.removeItem(at: fileURL)
                     continue
