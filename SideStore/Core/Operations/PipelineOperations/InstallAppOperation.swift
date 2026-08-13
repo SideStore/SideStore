@@ -266,41 +266,30 @@ final class InstallAppOperation: BasePipelineOperation<InstallAppOperationContex
     {
         var installedExtensions = Set<InstalledExtension>()
         
-        if let bundle = Bundle(url: resignedAppBundle.fileURL),
-            let directory = bundle.builtInPlugInsURL,
-            let enumerator = FileManager.default.enumerator(
-                at: directory,
-                includingPropertiesForKeys: nil,
-                options: [.skipsSubdirectoryDescendants])
-        {
-            for case let fileURL as URL in enumerator {
-                guard let appExtensionBundle = Bundle(url: fileURL) else { continue }
-                guard let appExtension = ALTApplication(fileURL: appExtensionBundle.bundleURL) else { continue }
-                
-                let parentBundleID = context.bundleIdentifier
-                let resignedParentBundleID = resignedAppBundle.bundleIdentifier
-                
-                let resignedBundleID = appExtension.bundleIdentifier
-                let appExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: parentBundleID)
-                
-                self.debugLog("""
-                [InstallAppOperation] Extension Bundle Mapping:
-                  • parentBundleID         : \(parentBundleID)
-                  • resignedParentBundleID : \(resignedParentBundleID)
-                  • appExBundleID          : \(appExBundleID)
-                  • resignedAppExBundleID  : \(resignedBundleID)
-                """)
-                
-                let installedExtension = try installedApp.appExtensions
-                                                .first(where: { $0.bundleIdentifier == appExBundleID })
-                                            ?? InstalledExtension(
-                                                resignedAppExtensionBundle: appExtension,
-                                                originalBundleIdentifier: appExBundleID,
-                                                context: backgroundContext
-                                            )
-                installedExtension.update(resignedAppExtensionBundle: appExtension)
-                installedExtensions.insert(installedExtension)
-            }
+        for appExtension in resignedAppBundle.appExtensions {
+            let parentBundleID = context.bundleIdentifier
+            let resignedParentBundleID = resignedAppBundle.bundleIdentifier
+
+            let resignedBundleID = appExtension.bundleIdentifier
+            let appExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: parentBundleID)
+
+            self.debugLog("""
+            [InstallAppOperation] Extension Bundle Mapping:
+              • parentBundleID         : \(parentBundleID)
+              • resignedParentBundleID : \(resignedParentBundleID)
+              • appExBundleID          : \(appExBundleID)
+              • resignedAppExBundleID  : \(resignedBundleID)
+            """)
+
+            let installedExtension = try installedApp.appExtensions
+                                            .first(where: { $0.bundleIdentifier == appExBundleID })
+                                        ?? InstalledExtension(
+                                            resignedAppExtensionBundle: appExtension,
+                                            originalBundleIdentifier: appExBundleID,
+                                            context: backgroundContext
+                                        )
+            installedExtension.update(resignedAppExtensionBundle: appExtension)
+            installedExtensions.insert(installedExtension)
         }
 
         return installedExtensions
