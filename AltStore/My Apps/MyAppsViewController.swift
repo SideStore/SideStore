@@ -31,6 +31,7 @@ extension MyAppsViewController
     }
 }
 
+@objc(MyAppsViewController)
 class MyAppsViewController: UICollectionViewController, PeekPopPreviewing
 {
     private let coordinator = NSFileCoordinator()

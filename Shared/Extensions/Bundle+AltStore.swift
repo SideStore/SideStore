@@ -8,11 +8,17 @@
 
 import Foundation
 
+private extension Bundle {
+    @objc dynamic static let activeBundle: Bundle = Bundle.main
+    @objc dynamic static let storeAppBundleIdentifier = "com.SideStore.SideStore"
+    @objc dynamic static let appbundleIdentifier = "com.SideStore.SideStore"
+}
+
 public extension Bundle
 {
     struct Info
     {
-        public static let activeBundle: Bundle = Bundle.main
+        public static let activeBundle: Bundle = Bundle.activeBundle
         public static let activeBundleURL: URL = activeBundle.bundleURL
         public static let activeBundleVersion: String = {
             let info = activeBundle.infoDictionary
@@ -21,8 +27,8 @@ public extension Bundle
             return NSLocalizedString(String(format: "Version %@%@", version, build), comment: "SideStore Version")
         }()
         public static let activeBundleIdentifier: String = activeBundle.bundleIdentifier!
-        public static let storeAppBundleIdentifier =  "com.SideStore.SideStore"
-        public static let appbundleIdentifier = "com.SideStore.SideStore"
+        public static let storeAppBundleIdentifier = Bundle.storeAppBundleIdentifier
+        public static let appbundleIdentifier = Bundle.appbundleIdentifier
  
         public static let deviceID = "ALTDeviceID"
         public static let serverID = "ALTServerID"
@@ -73,7 +79,7 @@ public extension Bundle
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []
     }
     
-    var altstoreAppGroup: String? {        
+    @objc dynamic var altstoreAppGroup: String? {
         let appGroup = self.appGroups.first { $0.contains(Bundle.baseAltStoreAppGroupID) }
         return appGroup
     }

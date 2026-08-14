@@ -28,9 +28,9 @@ public extension Source
     #else
     
     #if ALPHA
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
+    @objc dynamic static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
     #else
-    static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
+    @objc dynamic static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
     #endif
     
     #endif
