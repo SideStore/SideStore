@@ -9,6 +9,7 @@ IGNORED_AUTHORS = []
 
 TAG_MARKER = "###"
 HEADER_MARKER = "####"
+MAX_RELEASE_NOTE_COMMITS = 100
 
 
 # ----------------------------------------------------------
@@ -49,7 +50,10 @@ def repo_url():
 
 
 def commit_messages(start, end="HEAD"):
-    out = run(f"git log {start}..{end} --pretty=format:%s")
+    out = run(
+        f"git log --max-count={MAX_RELEASE_NOTE_COMMITS} "
+        f"{start}..{end} --pretty=format:%s"
+    )
     return out.splitlines() if out else []
 
 
