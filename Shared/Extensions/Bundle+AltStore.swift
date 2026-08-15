@@ -74,7 +74,8 @@ public extension Bundle
 
 public extension Bundle
 {
-    static let baseAltStoreAppGroupID = "group." + Bundle.Info.appbundleIdentifier
+    // @livecontainer
+    @objc dynamic static let baseAltStoreAppGroupID = "group." + Bundle.Info.appbundleIdentifier
 
     var appGroups: [String] {
         return self.infoDictionary?[Bundle.Info.appGroups] as? [String] ?? []
