@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 public final class MaintenanceManager {
     public static let shared = MaintenanceManager()
 
