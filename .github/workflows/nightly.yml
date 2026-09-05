@@ -130,6 +130,21 @@ jobs:
           mkdir -p build/logs
           python3 scripts/ci/workflow.py boot-sim-async "iPhone 17 Pro"
 
+      - name: Pre-populate Binary Artifacts
+        run: |
+          ARTIFACTS_DIR="$HOME/Library/Caches/org.swift.swiftpm/artifacts"
+          mkdir -p "$ARTIFACTS_DIR"
+
+          OPENSSL_FILE="$ARTIFACTS_DIR/https___github_com_krzyzanowskim_OpenSSL_releases_download_3_6_2000_OpenSSL_xcframework_zip"
+          if [ ! -f "$OPENSSL_FILE" ]; then
+            curl -fsSL "https://github.com/krzyzanowskim/OpenSSL/releases/download/3.6.2000/OpenSSL.xcframework.zip" -o "$OPENSSL_FILE"
+          fi
+
+          UNICORN_FILE="$ARTIFACTS_DIR/https___github_com_mahee96_unicorn_releases_download_2_1_4_multiarch_Unicorn_xcframework_zip"
+          if [ ! -f "$UNICORN_FILE" ]; then
+            curl -fsSL "https://github.com/mahee96/unicorn/releases/download/2.1.4-multiarch/Unicorn.xcframework.zip" -o "$UNICORN_FILE"
+          fi
+
       - name: Build
         if: steps.build_gate.outputs.should_skip != 'true'
         id: build
