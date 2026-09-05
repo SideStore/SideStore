@@ -9,6 +9,7 @@
 import Foundation
 import SideSign
 
+
 public enum AppConstants {
     // features required for functioning
     public static let mandatoryFeatures: Set<ALTFeature> = [
