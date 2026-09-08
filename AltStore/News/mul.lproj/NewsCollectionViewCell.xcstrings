@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "AkN-BE-I1a.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Delta\"; ObjectID = \"AkN-BE-I1a\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Delta"
+          }
+        }
+      }
+    },
+    "SHB-kk-YhL.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"SHB-kk-YhL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Label"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

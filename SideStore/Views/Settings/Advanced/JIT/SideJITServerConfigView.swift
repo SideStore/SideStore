@@ -298,11 +298,11 @@ struct SideJITServerConfigView: View {
                     
                     Spacer()
                     
-                    Text("\(log.statusCode)")
+                    Text(String(format: NSLocalizedString("%d", comment: ""), log.statusCode))
                         .font(.system(.caption, design: .monospaced).bold())
                         .foregroundColor(log.isSuccess ? .green : .red)
                     
-                    Text("\(log.latencyMs)ms")
+                    Text(String(format: NSLocalizedString("%dms", comment: ""), log.latencyMs))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }

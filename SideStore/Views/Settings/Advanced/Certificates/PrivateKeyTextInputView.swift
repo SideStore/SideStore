@@ -151,7 +151,7 @@ struct PrivateKeyTextInputView: View {
                     onCancel()
                 }
             } message: {
-                Text("Key was added to certificate \(cert.name) (SN: \(cert.serialNumber)).")
+                Text(String(format: NSLocalizedString("Key was added to certificate %@ (SN: %@).", comment: ""), cert.name, cert.serialNumber))
             }
         }
     }

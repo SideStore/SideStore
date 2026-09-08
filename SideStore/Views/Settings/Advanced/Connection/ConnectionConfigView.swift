@@ -121,7 +121,7 @@ struct ConnectionConfigView: View {
                     } footer: {
                         HStack(alignment: .top, spacing: 0) {
                             Text("Note: ")
-                            Text("'Device IP' and 'RemotePair Port' are optional and if specified should match exactly as in the target VPN's config or Leave empty to prefer auto-discovery/default port \(String(MinimuxerConstants.remotePairingPort)).")
+                            Text(String(format: NSLocalizedString("'Device IP' and 'RemotePair Port' are optional and if specified should match exactly as in the target VPN's config or Leave empty to prefer auto-discovery/default port %@.", comment: ""), String(MinimuxerConstants.remotePairingPort)))
                         }
                     }
                 } else {
@@ -150,7 +150,7 @@ struct ConnectionConfigView: View {
                     } footer: {
                         HStack(alignment: .top, spacing: 0) {
                             Text("Note: ")
-                            Text("'Device IP / Endpoint' is mandatory. 'RemotePair Port' is optional (prefers auto-discovery or default \(String(MinimuxerConstants.remotePairingPort)).")
+                            Text(String(format: NSLocalizedString("'Device IP / Endpoint' is mandatory. 'RemotePair Port' is optional (prefers auto-discovery or default %@.", comment: ""), String(MinimuxerConstants.remotePairingPort)))
                         }
                     }
                 }

@@ -370,7 +370,7 @@ struct IPAContentsView: View {
                 VStack(spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.5)
-                    Text("Extracting \(ipaURL.lastPathComponent)\u{2026}")
+                    Text(String(format: NSLocalizedString("Extracting %@\u{2026}", comment: ""), ipaURL.lastPathComponent))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -492,10 +492,10 @@ struct FullAppBundleView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(profile.name)
                                 .font(.subheadline)
-                            Text("UUID: \(profile.uuid.uuidString)")
+                            Text(String(format: NSLocalizedString("UUID: %@", comment: ""), profile.uuid.uuidString))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text("Expires: \(formatDate(profile.expirationDate))")
+                            Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(profile.expirationDate)))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -507,7 +507,7 @@ struct FullAppBundleView: View {
             if let plist = infoPlist {
                 Section(header: Text("Info.plist")) {
                     NavigationLink(destination: InfoPlistContainerView(plist: plist)) {
-                        Text("View Info.plist (\(plist.count) keys)")
+                        Text(String(format: NSLocalizedString("View Info.plist (%d keys)", comment: ""), plist.count))
                             .font(.subheadline)
                     }
                 }
@@ -515,7 +515,7 @@ struct FullAppBundleView: View {
 
             // App Extensions
             if !appExtensions.isEmpty {
-                Section(header: Text("App Extensions (\(appExtensions.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("App Extensions (%d)", comment: ""), appExtensions.count))) {
                     ForEach(appExtensions, id: \.path) { extURL in
                         let extPlist = NSDictionary(contentsOf: extURL.appendingPathComponent("Info.plist")) as? [String: Any]
                         let extName = extPlist?["CFBundleDisplayName"] as? String
@@ -741,7 +741,7 @@ struct ProvisioningProfileResourceViewer: View {
                         .foregroundColor(.orange)
                     Text("Invalid Provisioning Profile")
                         .font(.headline)
-                    Text("Could not decode provisioning profile from \(url.lastPathComponent).")
+                    Text(String(format: NSLocalizedString("Could not decode provisioning profile from %@.", comment: ""), url.lastPathComponent))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)

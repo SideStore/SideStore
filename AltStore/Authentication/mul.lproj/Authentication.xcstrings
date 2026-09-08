@@ -1,0 +1,366 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0LW-eE-qHa.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"2\"; ObjectID = \"0LW-eE-qHa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2"
+          }
+        }
+      }
+    },
+    "2N5-zd-fUj.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Sign in\"; ObjectID = \"2N5-zd-fUj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sign in"
+          }
+        }
+      }
+    },
+    "4rk-ge-FSj.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Enable LocalDevVPN and use Sidestore on the go.\"; ObjectID = \"4rk-ge-FSj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable LocalDevVPN and use Sidestore on the go."
+          }
+        }
+      }
+    },
+    "5nk-NR-jtV.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Resign SideStore\"; ObjectID = \"5nk-NR-jtV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resign SideStore"
+          }
+        }
+      }
+    },
+    "6HP-Xh-sAH.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Leave SideStore running in the background on your idevice.\"; ObjectID = \"6HP-Xh-sAH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Leave SideStore running in the background on your idevice."
+          }
+        }
+      }
+    },
+    "6ip-34-gmM.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Team 1\"; ObjectID = \"6ip-34-gmM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Team 1"
+          }
+        }
+      }
+    },
+    "59N-O1-6bM.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"APPLE ID\"; ObjectID = \"59N-O1-6bM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "APPLE ID"
+          }
+        }
+      }
+    },
+    "Ava-XY-7vs.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"PASSWORD\"; ObjectID = \"Ava-XY-7vs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PASSWORD"
+          }
+        }
+      }
+    },
+    "bCq-Jq-gf1.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"How it works\"; ObjectID = \"bCq-Jq-gf1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How it works"
+          }
+        }
+      }
+    },
+    "DBu-vt-hlo.placeholder" : {
+      "comment" : "Class = \"UITextField\"; placeholder = \"name@email.com\"; ObjectID = \"DBu-vt-hlo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "name@email.com"
+          }
+        }
+      }
+    },
+    "EI2-V3-zQZ.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Welcome to SideStore.\"; ObjectID = \"EI2-V3-zQZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Welcome to SideStore."
+          }
+        }
+      }
+    },
+    "esj-pD-D4A.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Connect to Wi-Fi and VPN\"; ObjectID = \"esj-pD-D4A\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect to Wi-Fi and VPN"
+          }
+        }
+      }
+    },
+    "HU5-Hv-E3d.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Apps are refreshed in the background while you are on SideStore VPN!\"; ObjectID = \"HU5-Hv-E3d\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apps are refreshed in the background while you are on SideStore VPN!"
+          }
+        }
+      }
+    },
+    "i2U-NL-plG.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"4\"; ObjectID = \"i2U-NL-plG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "4"
+          }
+        }
+      }
+    },
+    "i9V-3h-B8f.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"1\"; ObjectID = \"i9V-3h-B8f\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1"
+          }
+        }
+      }
+    },
+    "JeJ-bk-UCA.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Download Apps\"; ObjectID = \"JeJ-bk-UCA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Download Apps"
+          }
+        }
+      }
+    },
+    "knk-Wf-PKf.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Description\"; ObjectID = \"knk-Wf-PKf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "M7T-9j-uyt.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Browse and download apps directly from SideStore.\"; ObjectID = \"M7T-9j-uyt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Browse and download apps directly from SideStore."
+          }
+        }
+      }
+    },
+    "nDc-Zs-wnK.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"Close\"; ObjectID = \"nDc-Zs-wnK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "nvb-Aq-sYa.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Apps Refresh Automatically\"; ObjectID = \"nvb-Aq-sYa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apps Refresh Automatically"
+          }
+        }
+      }
+    },
+    "nVr-El-Csi.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"3\"; ObjectID = \"nVr-El-Csi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3"
+          }
+        }
+      }
+    },
+    "on2-62-waY.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Your Apple ID is used to configure apps so they can be installed on this device. Your credentials will be stored securely in this device's Keychain and sent only to Apple for authentication.\"; ObjectID = \"on2-62-waY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your Apple ID is used to configure apps so they can be installed on this device. Your credentials will be stored securely in this device's Keychain and sent only to Apple for authentication."
+          }
+        }
+      }
+    },
+    "p9U-0q-Kn8.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Why do we need this?\"; ObjectID = \"p9U-0q-Kn8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Why do we need this?"
+          }
+        }
+      }
+    },
+    "qua-VA-asJ.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Resign Later\"; ObjectID = \"qua-VA-asJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resign Later"
+          }
+        }
+      }
+    },
+    "qxJ-Go-OPq.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Select a Team\"; ObjectID = \"qxJ-Go-OPq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select a Team"
+          }
+        }
+      }
+    },
+    "qZ9-AR-2zK.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Got it\"; ObjectID = \"qZ9-AR-2zK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Got it"
+          }
+        }
+      }
+    },
+    "R77-TQ-lVT.placeholder" : {
+      "comment" : "Class = \"UITextField\"; placeholder = \"••••••••\"; ObjectID = \"R77-TQ-lVT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "••••••••"
+          }
+        }
+      }
+    },
+    "SNU-tv-8Au.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Sign in with your Apple ID to get started.\"; ObjectID = \"SNU-tv-8Au\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sign in with your Apple ID to get started."
+          }
+        }
+      }
+    },
+    "xcg-hT-tDe.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Resign Now\"; ObjectID = \"xcg-hT-tDe\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resign Now"
+          }
+        }
+      }
+    },
+    "XKD-XH-eB0.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Launch SideStore\"; ObjectID = \"XKD-XH-eB0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Launch SideStore"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

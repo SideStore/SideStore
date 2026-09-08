@@ -1,0 +1,66 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "DTd-Yu-HXr.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"SideTeam\"; ObjectID = \"DTd-Yu-HXr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SideTeam"
+          }
+        }
+      }
+    },
+    "FeG-e5-LJl.text" : {
+      "comment" : "Class = \"UITextView\"; text = \"Thank you for using SideStore!\\n        \\nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\\n    \\nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\\n        \\n-SideTeam\"; ObjectID = \"FeG-e5-LJl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Thank you for using SideStore!\n        \nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\n    \nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\n        \n-SideTeam"
+          }
+        }
+      }
+    },
+    "hov-Ce-LaM.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Follow us on Twitter!\"; ObjectID = \"hov-Ce-LaM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Follow us on Twitter!"
+          }
+        }
+      }
+    },
+    "VdY-7Q-amF.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Follow us on Instagram!\"; ObjectID = \"VdY-7Q-amF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Follow us on Instagram!"
+          }
+        }
+      }
+    },
+    "yEi-L6-kQ8.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Become a patron!\"; ObjectID = \"yEi-L6-kQ8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Become a patron!"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

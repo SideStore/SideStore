@@ -1,0 +1,750 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0uP-Cd-tNX.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"sideteam@sidestore.io\"; ObjectID = \"0uP-Cd-tNX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "sideteam@sidestore.io"
+          }
+        }
+      }
+    },
+    "1B5-BJ-Rkb.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Enable Beta Updates\"; ObjectID = \"1B5-BJ-Rkb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable Beta Updates"
+          }
+        }
+      }
+    },
+    "1cD-4y-vTJ.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"console\"; ObjectID = \"1cD-4y-vTJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "console"
+          }
+        }
+      }
+    },
+    "1df-ri-hKN.text" : {
+      "comment" : "Class = \"UITextView\"; text = \"Error Description\"; ObjectID = \"1df-ri-hKN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Description"
+          }
+        }
+      }
+    },
+    "2CC-iw-3bd.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"How it works\"; ObjectID = \"2CC-iw-3bd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How it works"
+          }
+        }
+      }
+    },
+    "3Il-5a-5Zp.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Support the team\"; ObjectID = \"3Il-5a-5Zp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Support the team"
+          }
+        }
+      }
+    },
+    "4MX-Qv-H8V.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Date\"; ObjectID = \"4MX-Qv-H8V\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "5u7-mb-jJj.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Version 0.6.0\"; ObjectID = \"5u7-mb-jJj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version 0.6.0"
+          }
+        }
+      }
+    },
+    "7L1-AA-2yo.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Could not connect to SideStore.\"; ObjectID = \"7L1-AA-2yo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Could not connect to SideStore."
+          }
+        }
+      }
+    },
+    "7lu-Yk-87t.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Sign in with Apple ID\"; ObjectID = \"7lu-Yk-87t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sign in with Apple ID"
+          }
+        }
+      }
+    },
+    "46q-DB-5nc.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"SideJITServer\"; ObjectID = \"46q-DB-5nc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SideJITServer"
+          }
+        }
+      }
+    },
+    "434-MW-Den.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Developers\"; ObjectID = \"434-MW-Den\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Developers"
+          }
+        }
+      }
+    },
+    "a1p-3W-bSi.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Error Log\"; ObjectID = \"a1p-3W-bSi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Log"
+          }
+        }
+      }
+    },
+    "B8Q-e7-beR.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \"  \"; ObjectID = \"B8Q-e7-beR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "  "
+          }
+        }
+      }
+    },
+    "ba2-EY-tf5.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \" \"; ObjectID = \"ba2-EY-tf5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : " "
+          }
+        }
+      }
+    },
+    "ba2-EY-tf5.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Button\"; ObjectID = \"ba2-EY-tf5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Button"
+          }
+        }
+      }
+    },
+    "bkp-Rst-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Backup & Restore\"; ObjectID = \"bkp-Rst-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Backup & Restore"
+          }
+        }
+      }
+    },
+    "BnQ-Eh-1gC.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"trash\"; ObjectID = \"BnQ-Eh-1gC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "trash"
+          }
+        }
+      }
+    },
+    "c6K-fI-CVr.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Allow Siri To Refresh Apps…\"; ObjectID = \"c6K-fI-CVr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Allow Siri To Refresh Apps…"
+          }
+        }
+      }
+    },
+    "CnN-M1-AYK.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Side Team\"; ObjectID = \"CnN-M1-AYK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Side Team"
+          }
+        }
+      }
+    },
+    "crt-Mg-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Certificate Management\"; ObjectID = \"crt-Mg-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Certificate Management"
+          }
+        }
+      }
+    },
+    "D6b-cd-pVK.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Licenses\"; ObjectID = \"D6b-cd-pVK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        }
+      }
+    },
+    "Ddg-UQ-KJ8.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Settings\"; ObjectID = \"Ddg-UQ-KJ8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "dev-Svc-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Developer Portal Services\"; ObjectID = \"dev-Svc-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Developer Portal Services"
+          }
+        }
+      }
+    },
+    "EbG-HB-IOn.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Background Refresh\"; ObjectID = \"EbG-HB-IOn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Background Refresh"
+          }
+        }
+      }
+    },
+    "eds-Dj-36y.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Anisette Servers\"; ObjectID = \"eds-Dj-36y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Anisette Servers"
+          }
+        }
+      }
+    },
+    "exp-feat-label.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Experimental Features\"; ObjectID = \"exp-feat-label\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Experimental Features"
+          }
+        }
+      }
+    },
+    "fGU-Fp-XgM.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Asset Designer\"; ObjectID = \"fGU-Fp-XgM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Asset Designer"
+          }
+        }
+      }
+    },
+    "Fq5-2u-Lge.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Prompt AppExtns Customization\"; ObjectID = \"Fq5-2u-Lge\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Prompt AppExtns Customization"
+          }
+        }
+      }
+    },
+    "hId-3P-41T.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Chris (LitRitt)\"; ObjectID = \"hId-3P-41T\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chris (LitRitt)"
+          }
+        }
+      }
+    },
+    "hlt-Ch-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Health Check\"; ObjectID = \"hlt-Ch-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Health Check"
+          }
+        }
+      }
+    },
+    "hRA-OK-Vjw.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Developers\"; ObjectID = \"hRA-OK-Vjw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Developers"
+          }
+        }
+      }
+    },
+    "iie-Nj-lki.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Connection Config\"; ObjectID = \"iie-Nj-lki\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connection Config"
+          }
+        }
+      }
+    },
+    "j4e-Mz-DlL.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Clear Data Cache…\"; ObjectID = \"j4e-Mz-DlL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Clear Data Cache…"
+          }
+        }
+      }
+    },
+    "JAA-iZ-VGb.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"SideStore Team\"; ObjectID = \"JAA-iZ-VGb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SideStore Team"
+          }
+        }
+      }
+    },
+    "JcT-wX-zay.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Software Licenses\"; ObjectID = \"JcT-wX-zay\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Software Licenses"
+          }
+        }
+      }
+    },
+    "jFh-36-AP2.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Developer Options\"; ObjectID = \"jFh-36-AP2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Developer Options"
+          }
+        }
+      }
+    },
+    "kYQ-zz-vjQ.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \"stable\"; ObjectID = \"kYQ-zz-vjQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "stable"
+          }
+        }
+      }
+    },
+    "LP8-gK-WC2.title" : {
+      "comment" : "Class = \"UITabBarItem\"; title = \"Settings\"; ObjectID = \"LP8-gK-WC2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Na7-uj-XYZ.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Success\"; ObjectID = \"Na7-uj-XYZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Success"
+          }
+        }
+      }
+    },
+    "nSh-L8-ca0.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Beta Updates Track\"; ObjectID = \"nSh-L8-ca0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Beta Updates Track"
+          }
+        }
+      }
+    },
+    "oQQ-pR-oKc.text" : {
+      "comment" : "Class = \"UITextView\"; text = \"Jay Freeman (ldid) \\nCopyright (C) 2007-2012 Jay Freeman (saurik)\\n\\nlibimobiledevice\\n© 2007-2015 by the contributors of libimobiledevice - All rights reserved.\\n\\nGilles Vollant (minizip)\\nCopyright (C) 1998-2005 Gilles Vollant\\n\\nKishikawa Katsumi (KeychainAccess)\\nCopyright (c) 2014 kishikawa katsumi\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nAlexander Grebenyuk (Nuke)\\nCopyright (c) 2015-2019 Alexander Grebenyuk\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nCraig Hockenberry (MarkdownAttributedString)\\nCopyright (c) 2020 The Iconfactory, Inc. https://iconfactory.com\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nThe OpenSSL Project (OpenSSL)\\nCopyright (c) 1998-2019 The OpenSSL Project.  All rights reserved.\\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\\n1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\\n2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\\n3. All advertising materials mentioning features or use of this software must display the following acknowledgment: \\\"This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)\\\"\\n4. The names \\\"OpenSSL Toolkit\\\" and \\\"OpenSSL Project\\\" must not be used to endorse or promote products derived from this software without prior written permission. For written permission, please contact openssl-core@openssl.org.\\n5. Products derived from this software may not be called \\\"OpenSSL\\\" nor may \\\"OpenSSL\\\" appear in their names without prior written permission of the OpenSSL Project.\\n6. Redistributions of any form whatsoever must retain the following acknowledgment:\\n\\\"This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/)\\\"\\nTHIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\\nThis product includes cryptographic software written by Eric Young (eay@cryptsoft.com). This product includes software written by Tim Hudson (tjh@cryptsoft.com).\\n\\nEric Young (SSLeay)\\n/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)\\nAll rights reserved.\\nThis package is an SSL implementation written by Eric Young (eay@cryptsoft.com).\\nThe implementation was written so as to conform with Netscapes SSL. This library is free for commercial and non-commercial use as long as the following conditions are aheared to.  The following conditions apply to all code found in this distribution, be it the RC4, RSA, lhash, DES, etc., code; not just the SSL code.  The SSL documentation included with this distribution is covered by the same copyright terms except that the holder is Tim Hudson (tjh@cryptsoft.com).\\nCopyright remains Eric Young's, and as such any Copyright notices in the code are not to be removed. If this package is used in a product, Eric Young should be given attribution as the author of the parts of the library used. This can be in the form of a textual message at program startup or in documentation (online or textual) provided with the package.\\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\\n1. Redistributions of source code must retain the copyright notice, this list of conditions and the following disclaimer.\\n2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the\\ndocumentation and/or other materials provided with the distribution.\\n3. All advertising materials mentioning features or use of this software must display the following acknowledgement:\\n\\\"This product includes cryptographic software written by Eric Young (eay@cryptsoft.com)\\\"\\nThe word 'cryptographic' can be left out if the rouines from the library being used are not cryptographic related :-).\\n4. If you include any Windows specific code (or a derivative thereof) from the apps directory (application code) you must include an acknowledgement:\\n\\\"This product includes software written by Tim Hudson (tjh@cryptsoft.com)\\\" THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\\nThe licence and distribution terms for any publically available version or derivative of this code cannot be changed.  i.e. this code cannot simply be copied and put under another distribution licence [including the GNU Public Licence.]\\n\\nToni Ronkko (dirent)\\nCopyright (c) 1998-2019 Toni Ronkko\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nMicrosoft Corporation (C++ REST SDK)\\nCopyright (c) Microsoft Corporation\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nKutuzov Viktor (mman-win32)\\nCopyright (c) Kutuzov Viktor\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \\\"AS IS\\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\\n\\nICONS\\n\\nSettings by i cons from the Noun Project\"; ObjectID = \"oQQ-pR-oKc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Jay Freeman (ldid) \nCopyright (C) 2007-2012 Jay Freeman (saurik)\n\nlibimobiledevice\n© 2007-2015 by the contributors of libimobiledevice - All rights reserved.\n\nGilles Vollant (minizip)\nCopyright (C) 1998-2005 Gilles Vollant\n\nKishikawa Katsumi (KeychainAccess)\nCopyright (c) 2014 kishikawa katsumi\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nAlexander Grebenyuk (Nuke)\nCopyright (c) 2015-2019 Alexander Grebenyuk\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nCraig Hockenberry (MarkdownAttributedString)\nCopyright (c) 2020 The Iconfactory, Inc. https://iconfactory.com\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nThe OpenSSL Project (OpenSSL)\nCopyright (c) 1998-2019 The OpenSSL Project.  All rights reserved.\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n3. All advertising materials mentioning features or use of this software must display the following acknowledgment: \"This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)\"\n4. The names \"OpenSSL Toolkit\" and \"OpenSSL Project\" must not be used to endorse or promote products derived from this software without prior written permission. For written permission, please contact openssl-core@openssl.org.\n5. Products derived from this software may not be called \"OpenSSL\" nor may \"OpenSSL\" appear in their names without prior written permission of the OpenSSL Project.\n6. Redistributions of any form whatsoever must retain the following acknowledgment:\n\"This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/)\"\nTHIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\nThis product includes cryptographic software written by Eric Young (eay@cryptsoft.com). This product includes software written by Tim Hudson (tjh@cryptsoft.com).\n\nEric Young (SSLeay)\n/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)\nAll rights reserved.\nThis package is an SSL implementation written by Eric Young (eay@cryptsoft.com).\nThe implementation was written so as to conform with Netscapes SSL. This library is free for commercial and non-commercial use as long as the following conditions are aheared to.  The following conditions apply to all code found in this distribution, be it the RC4, RSA, lhash, DES, etc., code; not just the SSL code.  The SSL documentation included with this distribution is covered by the same copyright terms except that the holder is Tim Hudson (tjh@cryptsoft.com).\nCopyright remains Eric Young's, and as such any Copyright notices in the code are not to be removed. If this package is used in a product, Eric Young should be given attribution as the author of the parts of the library used. This can be in the form of a textual message at program startup or in documentation (online or textual) provided with the package.\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n1. Redistributions of source code must retain the copyright notice, this list of conditions and the following disclaimer.\n2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the\ndocumentation and/or other materials provided with the distribution.\n3. All advertising materials mentioning features or use of this software must display the following acknowledgement:\n\"This product includes cryptographic software written by Eric Young (eay@cryptsoft.com)\"\nThe word 'cryptographic' can be left out if the rouines from the library being used are not cryptographic related :-).\n4. If you include any Windows specific code (or a derivative thereof) from the apps directory (application code) you must include an acknowledgement:\n\"This product includes software written by Tim Hudson (tjh@cryptsoft.com)\" THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\nThe licence and distribution terms for any publically available version or derivative of this code cannot be changed.  i.e. this code cannot simply be copied and put under another distribution licence [including the GNU Public Licence.]\n\nToni Ronkko (dirent)\nCopyright (c) 1998-2019 Toni Ronkko\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nMicrosoft Corporation (C++ REST SDK)\nCopyright (c) Microsoft Corporation\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nKutuzov Viktor (mman-win32)\nCopyright (c) Kutuzov Viktor\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nICONS\n\nSettings by i cons from the Noun Project"
+          }
+        }
+      }
+    },
+    "oqY-wY-1Vf.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"UI Designer\"; ObjectID = \"oqY-wY-1Vf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UI Designer"
+          }
+        }
+      }
+    },
+    "PCh-Up-aJJ.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Disable Idle Timeout\"; ObjectID = \"PCh-Up-aJJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Disable Idle Timeout"
+          }
+        }
+      }
+    },
+    "pMI-Aj-nQF.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Send Feedback\"; ObjectID = \"pMI-Aj-nQF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Send Feedback"
+          }
+        }
+      }
+    },
+    "R5a-wv-xHd.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Error Code\"; ObjectID = \"R5a-wv-xHd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Code"
+          }
+        }
+      }
+    },
+    "rAc-lQ-B1k.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Email\"; ObjectID = \"rAc-lQ-B1k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Email"
+          }
+        }
+      }
+    },
+    "Sge-cM-Fw9.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Type\"; ObjectID = \"Sge-cM-Fw9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "SGf-pP-RL0.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Date\"; ObjectID = \"SGf-pP-RL0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "sni-07-q0M.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"View Refresh Attempts\"; ObjectID = \"sni-07-q0M\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "View Refresh Attempts"
+          }
+        }
+      }
+    },
+    "stg-Ex-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Storage Explorer\"; ObjectID = \"stg-Ex-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Storage Explorer"
+          }
+        }
+      }
+    },
+    "SWb-Of-t97.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Success\"; ObjectID = \"SWb-Of-t97\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Success"
+          }
+        }
+      }
+    },
+    "usr-Cst-lbl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"User Customizations\"; ObjectID = \"usr-Cst-lbl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "User Customizations"
+          }
+        }
+      }
+    },
+    "uUV-1f-xEq.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Support us\"; ObjectID = \"uUV-1f-xEq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Support us"
+          }
+        }
+      }
+    },
+    "V4e-K5-U8O.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Refresh Attempts\"; ObjectID = \"V4e-K5-U8O\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Refresh Attempts"
+          }
+        }
+      }
+    },
+    "vH6-7i-tCE.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"View Error Log\"; ObjectID = \"vH6-7i-tCE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "View Error Log"
+          }
+        }
+      }
+    },
+    "W95-fD-NAd.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Disable App Limit\"; ObjectID = \"W95-fD-NAd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Disable App Limit"
+          }
+        }
+      }
+    },
+    "XFa-MY-7cV.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Follow SideStore for updates\"; ObjectID = \"XFa-MY-7cV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Follow SideStore for updates"
+          }
+        }
+      }
+    },
+    "xvY-lN-Toz.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Name\"; ObjectID = \"xvY-lN-Toz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "Y4l-PD-ev9.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Change App Icon\"; ObjectID = \"Y4l-PD-ev9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change App Icon"
+          }
+        }
+      }
+    },
+    "ylE-VL-7Fq.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Fabian (thdev)\"; ObjectID = \"ylE-VL-7Fq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fabian (thdev)"
+          }
+        }
+      }
+    },
+    "ysS-9s-dXm.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Reset Pairing File\"; ObjectID = \"ysS-9s-dXm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reset Pairing File"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

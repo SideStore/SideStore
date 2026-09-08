@@ -1,0 +1,3694 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "#%d" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ is now available for download." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ is now available for download."
+          }
+        }
+      }
+    },
+    "%@ %@ update. Released on %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ update. Released on %3$@."
+          }
+        }
+      }
+    },
+    "%@ (%@ line %d)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$@ line %3$d)"
+          }
+        }
+      }
+    },
+    "%@ (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "%@ - %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ - %2$@"
+          }
+        }
+      }
+    },
+    "%@ App IDs" : {
+
+    },
+    "%@ App IDs Remaining" : {
+
+    },
+    "%@ DAYS" : {
+
+    },
+    "%@ Log Empty" : {
+
+    },
+    "%@ News" : {
+
+    },
+    "%@ Unsupported Updates Available" : {
+
+    },
+    "%@ beta" : {
+
+    },
+    "%@ by %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ by %2$@"
+          }
+        }
+      }
+    },
+    "%@ could not be found." : {
+
+    },
+    "%@ does not have any app versions." : {
+
+    },
+    "%@ does not support iOS %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ does not support iOS %2$@."
+          }
+        }
+      }
+    },
+    "%@ error %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ error %2$@."
+          }
+        }
+      }
+    },
+    "%@ failed with code %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ failed with code %2$@."
+          }
+        }
+      }
+    },
+    "%@ failed." : {
+
+    },
+    "%@ is currently locked." : {
+
+    },
+    "%@ is not currently running on %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ is not currently running on %2$@."
+          }
+        }
+      }
+    },
+    "%@ received an invalid request from SideStore." : {
+
+    },
+    "%@ requires %@ App IDs, but %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ requires %2$@ App IDs, but %3$@."
+          }
+        }
+      }
+    },
+    "%@ requires %@ or later." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ requires %2$@ or later."
+          }
+        }
+      }
+    },
+    "%@ requires additional permissions not specified by the source." : {
+
+    },
+    "%@ requires iOS %@ or earlier." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ requires iOS %2$@ or earlier."
+          }
+        }
+      }
+    },
+    "%@ requires iOS %@ or later." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ requires iOS %2$@ or later."
+          }
+        }
+      }
+    },
+    "%@ requires more permissions than the version that is already installed" : {
+
+    },
+    "%@ returned unexpected output." : {
+
+    },
+    "%@ timed out." : {
+
+    },
+    "%@ unexpectedly quit." : {
+
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%d" : {
+
+    },
+    "%d active on portal" : {
+
+    },
+    "%d configured" : {
+
+    },
+    "%d devices" : {
+
+    },
+    "%d features" : {
+
+    },
+    "%d items" : {
+
+    },
+    "%d registered" : {
+
+    },
+    "%d/%d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$d/%2$d"
+          }
+        }
+      }
+    },
+    "%dms" : {
+
+    },
+    "'Device IP / Endpoint' is mandatory. 'RemotePair Port' is optional (prefers auto-discovery or default %@." : {
+
+    },
+    "'Device IP' and 'RemotePair Port' are optional and if specified should match exactly as in the target VPN's config or Leave empty to prefer auto-discovery/default port %@." : {
+
+    },
+    "(%@)" : {
+
+    },
+    "**Settings -> apps -> SideStore -> LocalNetworkAccess = toggle on**" : {
+
+    },
+    "1 App ID" : {
+
+    },
+    "1 App ID Remaining" : {
+
+    },
+    "6-digit PIN" : {
+
+    },
+    "7 DAYS" : {
+
+    },
+    "A connection to AltServer could not be established." : {
+
+    },
+    "A permission for %@ is missing a usage description." : {
+
+    },
+    "A provisioning profile for the app could not be found." : {
+
+    },
+    "A source cannot change its identifier once added. This source can no longer be updated." : {
+
+    },
+    "A source with the identifier '%@' already exists" : {
+
+    },
+    "ACCOUNT" : {
+
+    },
+    "ACCOUNT MANAGEMENT" : {
+
+    },
+    "ACCOUNT, CERTIFICATE, & PAIRING DATA" : {
+
+    },
+    "ACTIVATE" : {
+
+    },
+    "ADD" : {
+
+    },
+    "ADVANCED SETTINGS" : {
+
+    },
+    "ANISETTE" : {
+
+    },
+    "APP VERIFICATION" : {
+
+    },
+    "APPEARANCE & THEMES" : {
+
+    },
+    "About" : {
+
+    },
+    "Account Repair Required" : {
+
+    },
+    "Action Required" : {
+
+    },
+    "Actions" : {
+
+    },
+    "Activate" : {
+
+    },
+    "Activate %@" : {
+
+    },
+    "Activate %@ Failed" : {
+
+    },
+    "Active" : {
+
+    },
+    "Active Local Certificate" : {
+
+    },
+    "Active Network Interfaces" : {
+
+    },
+    "Active Protocol" : {
+
+    },
+    "Active Signing Certificate" : {
+
+    },
+    "Active Theme Accent" : {
+
+    },
+    "Add More Sources!" : {
+
+    },
+    "Add PEM Key" : {
+
+    },
+    "Add Private Key" : {
+
+    },
+    "Add Source" : {
+
+    },
+    "Add pKey (.der)" : {
+
+    },
+    "Add pKey (.pem)" : {
+
+    },
+    "Additional Permissions" : {
+
+    },
+    "Address unavailable" : {
+
+    },
+    "Advanced / Custom Keys" : {
+
+    },
+    "All Certificates" : {
+
+    },
+    "All apps have been refreshed." : {
+
+    },
+    "Almost there…" : {
+
+    },
+    "AltServer could not be found." : {
+
+    },
+    "AltServer could not connect to Mail plug-in." : {
+
+    },
+    "AltServer could not establish a connection to SideStore." : {
+
+    },
+    "An account configuration file was found. Enter password to import." : {
+
+    },
+    "An error occured while removing the app." : {
+
+    },
+    "An error occurred while clearing the cache: %@" : {
+
+    },
+    "An error occurred while installing the app." : {
+
+    },
+    "An error occurred while provisioning: %@. Please try again. If the issue persists, report it on GitHub Issues!" : {
+
+    },
+    "An error occurred while using SideJIT: %@" : {
+
+    },
+    "An iPad screenshot for %@ does not specify its size" : {
+
+    },
+    "An item named “%@” already exists in this folder. Enter a new name to copy:" : {
+
+    },
+    "An unknown error occured." : {
+
+    },
+    "An unknown error occurred." : {
+
+    },
+    "Anisette Client Configuration" : {
+
+    },
+    "Anisette Servers" : {
+
+    },
+    "Any apps you've installed from this source will remain, but they'll no longer receive any app updates." : {
+
+    },
+    "App Contains Extensions" : {
+
+    },
+    "App Details" : {
+
+    },
+    "App Extensions" : {
+
+    },
+    "App Extensions (%d)" : {
+
+    },
+    "App Group Details" : {
+
+    },
+    "App Group Discrepancy" : {
+
+    },
+    "App Groups" : {
+
+    },
+    "App Groups (%d)" : {
+
+    },
+    "App Groups enable data sharing across multiple apps and extensions within the same developer team. Tap a group to edit its name or delete it." : {
+
+    },
+    "App ID Information" : {
+
+    },
+    "App ID Metadata" : {
+
+    },
+    "App IDs" : {
+
+    },
+    "App IDs Deleted" : {
+
+    },
+    "App Refresh Tip" : {
+
+    },
+    "App Storage Containers" : {
+
+    },
+    "App Storage Used:" : {
+
+    },
+    "AppID Customization" : {
+
+    },
+    "Append Team ID" : {
+
+    },
+    "Apple Devices" : {
+
+    },
+    "Apple Devices (Recommended)" : {
+
+    },
+    "Apple ID Password" : {
+
+    },
+    "Apple TV" : {
+
+    },
+    "Apple Watch" : {
+
+    },
+    "Approve" : {
+
+    },
+    "Are you sure to reset the pairing file?" : {
+
+    },
+    "Are you sure you want to clear SideStore's cache?\n\nCache Size: %@" : {
+
+    },
+    "Are you sure you want to clear adi.pb from the Keychain? You will need to log back in to Apple ID in SideStore." : {
+
+    },
+    "Are you sure you want to clear all existing refresh attempt entries?" : {
+
+    },
+    "Are you sure you want to clear the error log?" : {
+
+    },
+    "Are you sure you want to deactivate the active signing certificate locally?" : {
+
+    },
+    "Are you sure you want to delete '%@' (%@) from Apple Developer Portal?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Are you sure you want to delete '%1$@' (%2$@) from Apple Developer Portal?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete '%@' (%@) from the Apple Developer Portal?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Are you sure you want to delete '%1$@' (%2$@) from the Apple Developer Portal?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete '%@' (%@)? This will also remove any associated provisioning profiles." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Are you sure you want to delete '%1$@' (%2$@)? This will also remove any associated provisioning profiles."
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete '%@' from the Apple Developer Portal?" : {
+
+    },
+    "Are you sure you want to delete the backup for this app? This action cannot be undone." : {
+
+    },
+    "Are you sure you want to delete this certificate locally? This will remove it from the cached local store." : {
+
+    },
+    "Are you sure you want to disable '%@' on the Apple Developer Portal? Disabled devices will not be included in newly generated provisioning profiles." : {
+
+    },
+    "Are you sure you want to permanently delete these %d items?" : {
+
+    },
+    "Are you sure you want to proceed to delete %d appIds?" : {
+
+    },
+    "Are you sure you want to remove the imported catalog '%@' and return to the default server URL?" : {
+
+    },
+    "Are you sure you want to remove the source “%@”?" : {
+
+    },
+    "Are you sure you want to restore this backup?" : {
+
+    },
+    "Are you sure you want to revoke this certificate? This will permanently delete the certificate on Apple's servers." : {
+
+    },
+    "Are you sure you want to sign out? You will no longer be able to install or refresh apps once you sign out." : {
+
+    },
+    "Associated App Groups" : {
+
+    },
+    "At least one app" : {
+
+    },
+    "Authenticated" : {
+
+    },
+    "Auto Discovered from network" : {
+
+    },
+    "Available Servers" : {
+
+    },
+    "Available Servers (OFFLINE)" : {
+
+    },
+    "Available Space:" : {
+
+    },
+    "Available Space: %@" : {
+
+    },
+    "BETA TESTING" : {
+
+    },
+    "BONJOUR" : {
+
+    },
+    "Back Up %@" : {
+
+    },
+    "Background Modes" : {
+
+    },
+    "Backup" : {
+
+    },
+    "Backup %@ Failed" : {
+
+    },
+    "Backup & Restore" : {
+
+    },
+    "Binary Summary" : {
+
+    },
+    "Browse" : {
+
+    },
+    "Browse Bundle Contents" : {
+
+    },
+    "Bundle ID Mismatch" : {
+
+    },
+    "Bundle ID must match reverse-DNS format (e.g. com.example.myapp)." : {
+
+    },
+    "Bundle Identifier" : {
+
+    },
+    "Bundle Metadata" : {
+
+    },
+    "Bypasses fetching client info from servers" : {
+
+    },
+    "COLOR SELECTION & WHEEL" : {
+
+    },
+    "CONFIGURED ENDPOINT" : {
+
+    },
+    "CREDITS" : {
+
+    },
+    "Cache Management" : {
+
+    },
+    "Cached unzipped app bundles stored in SideStore's private container. These are used during automatic background refreshes and resigns." : {
+
+    },
+    "Calculating…" : {
+
+    },
+    "Call Again" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Cancel All" : {
+
+    },
+    "Cannot Activate More than 3 Apps" : {
+
+    },
+    "Cannot Activate More than 3 Apps and App Extensions" : {
+
+    },
+    "Cannot Send Mail" : {
+
+    },
+    "Cannot register more than 10 App IDs within a 7 day period." : {
+
+    },
+    "Capabilities & Features (%d)" : {
+
+    },
+    "CarPlay" : {
+
+    },
+    "Catalog File" : {
+
+    },
+    "Categories" : {
+
+    },
+    "Certificate" : {
+
+    },
+    "Certificate Details" : {
+
+    },
+    "Certificate PEM Data" : {
+
+    },
+    "Certificate Password" : {
+
+    },
+    "Certificates" : {
+
+    },
+    "Change App Icon" : {
+
+    },
+    "Change Certificate" : {
+
+    },
+    "Change Icon" : {
+
+    },
+    "Changes saved" : {
+
+    },
+    "Changing Anisette config will invalidate your current provisioned Anisette data and you will be signed out.\n\nThis action will require a restart, do you want to proceed?" : {
+
+    },
+    "Changing the EMProxy setting requires restarting SideStore. If canceled, changes will not be saved." : {
+
+    },
+    "Changing the Minimuxer backend requires restarting SideStore. If canceled, changes will not be saved." : {
+
+    },
+    "Check Version Info (/ver/)" : {
+
+    },
+    "Choose App Extensions" : {
+
+    },
+    "Choose Different Number" : {
+
+    },
+    "Choose a phone number to receive your verification code:" : {
+
+    },
+    "Classic" : {
+
+    },
+    "Clear" : {
+
+    },
+    "Clear All" : {
+
+    },
+    "Clear Cache" : {
+
+    },
+    "Clear Error Log" : {
+
+    },
+    "Clear Imported File?" : {
+
+    },
+    "Clear Key" : {
+
+    },
+    "Clear Keychain Items" : {
+
+    },
+    "Clear Private Key" : {
+
+    },
+    "Clear Refresh Attempts" : {
+
+    },
+    "Clear pKey" : {
+
+    },
+    "Client Config" : {
+
+    },
+    "Client Info" : {
+
+    },
+    "Client Info (X-Mme-Client-Info)" : {
+
+    },
+    "Close" : {
+
+    },
+    "Code Signature Seal" : {
+
+    },
+    "Configuration JSON (Editable)" : {
+
+    },
+    "Configured Target" : {
+
+    },
+    "Configures the local UDP loopback host and port bound by EMProxy." : {
+
+    },
+    "Confirm" : {
+
+    },
+    "Confirm applying this certificate:" : {
+
+    },
+    "Connect to Target Device" : {
+
+    },
+    "Connect to a Wi-Fi network, Bridge or a Wired network connection!" : {
+
+    },
+    "Connecting to Developer Portal..." : {
+
+    },
+    "Connection" : {
+
+    },
+    "Connection Config" : {
+
+    },
+    "Connection Configuration" : {
+
+    },
+    "Connection Details" : {
+
+    },
+    "Connection Mode" : {
+
+    },
+    "Connection Status" : {
+
+    },
+    "Connection error code: %@" : {
+
+    },
+    "Console Log" : {
+
+    },
+    "Continue" : {
+
+    },
+    "Continue Without Revoking" : {
+
+    },
+    "Copied Visible Logs to Clipboard" : {
+
+    },
+    "Copied to Clipboard" : {
+
+    },
+    "Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app." : {
+
+    },
+    "Copy" : {
+
+    },
+    "Copy %@" : {
+
+    },
+    "Copy %@ Record" : {
+
+    },
+    "Copy Address" : {
+
+    },
+    "Copy Details as JSON" : {
+
+    },
+    "Copy Error Code" : {
+
+    },
+    "Copy Error Message" : {
+
+    },
+    "Copy Host:Port Endpoint" : {
+
+    },
+    "Copy Identifier" : {
+
+    },
+    "Copy Interface" : {
+
+    },
+    "Copy Key" : {
+
+    },
+    "Copy Response" : {
+
+    },
+    "Copy S/N" : {
+
+    },
+    "Copy SSH Command" : {
+
+    },
+    "Copy UDID" : {
+
+    },
+    "Copy Value" : {
+
+    },
+    "Copy as New Name" : {
+
+    },
+    "Copy pKey (.pem)" : {
+
+    },
+    "Copy pubK (.pem)" : {
+
+    },
+    "Core Requirements" : {
+
+    },
+    "Correct & Proceed" : {
+
+    },
+    "Could not back up “%@”." : {
+
+    },
+    "Could not connect to SideStore." : {
+
+    },
+    "Could not decode provisioning profile from %@." : {
+
+    },
+    "Could not find profile" : {
+
+    },
+    "Could not load image" : {
+
+    },
+    "Could not parse %@ as a valid Mach-O binary." : {
+
+    },
+    "Could not refresh %@ sources." : {
+
+    },
+    "Could not refresh source “%@”." : {
+
+    },
+    "Could not refresh store." : {
+
+    },
+    "Could not restore “%@”." : {
+
+    },
+    "Create" : {
+
+    },
+    "Create App Group" : {
+
+    },
+    "Create Backup" : {
+
+    },
+    "Create Certificate" : {
+
+    },
+    "Cryptographic Keys" : {
+
+    },
+    "Currently using imported file '%@'. Press and hold row to export." : {
+
+    },
+    "Custom Parameters" : {
+
+    },
+    "Custom URL Schemes" : {
+
+    },
+    "Custom third-party certificate (different team)" : {
+
+    },
+    "Customization" : {
+
+    },
+    "Customize the AppID if required and press 'Confirm' to proceed." : {
+
+    },
+    "DATABASE OPTIONS" : {
+
+    },
+    "DEVICE (TCP) PROBE TIMEOUT" : {
+
+    },
+    "DIAGNOSTICS" : {
+
+    },
+    "DISCOVERED NEARBY" : {
+
+    },
+    "DISPLAY" : {
+
+    },
+    "DNS-SD Records" : {
+
+    },
+    "Deactivate" : {
+
+    },
+    "Deactivate %@ Failed" : {
+
+    },
+    "Deactivate Certificate" : {
+
+    },
+    "Deactivate Locally" : {
+
+    },
+    "Debug" : {
+
+    },
+    "Debug Description" : {
+
+    },
+    "Decrypt" : {
+
+    },
+    "Decrypt Backup" : {
+
+    },
+    "Default" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete %d Selected Items?" : {
+
+    },
+    "Delete & Exit" : {
+
+    },
+    "Delete All" : {
+
+    },
+    "Delete All (%d)" : {
+
+    },
+    "Delete All Profiles on Portal" : {
+
+    },
+    "Delete App" : {
+
+    },
+    "Delete App Group?" : {
+
+    },
+    "Delete App ID?" : {
+
+    },
+    "Delete App IDs" : {
+
+    },
+    "Delete Backup" : {
+
+    },
+    "Delete Backup for “%@”?" : {
+
+    },
+    "Delete Cache" : {
+
+    },
+    "Delete Cached App?" : {
+
+    },
+    "Delete Certificate" : {
+
+    },
+    "Delete Database" : {
+
+    },
+    "Delete Device" : {
+
+    },
+    "Delete Device?" : {
+
+    },
+    "Delete Failed" : {
+
+    },
+    "Delete Profile from Portal" : {
+
+    },
+    "Delete Provisioning Profile?" : {
+
+    },
+    "Delete and Reset" : {
+
+    },
+    "Delete sideloaded apps to free up App ID slots." : {
+
+    },
+    "Delete “%@”?" : {
+
+    },
+    "Deleted %d of %d App IDs.\n\nError:\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Deleted %1$d of %2$d App IDs.\n\nError:\n%3$@"
+          }
+        }
+      }
+    },
+    "Deleted %d of %d App IDs.\n\nFailed to delete %@ (%@):\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Deleted %1$d of %2$d App IDs.\n\nFailed to delete %3$@ (%4$@):\n%5$@"
+          }
+        }
+      }
+    },
+    "Deleting App IDs (%d/%d)..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Deleting App IDs (%1$d/%2$d)..."
+          }
+        }
+      }
+    },
+    "Deleting App IDs (0/%d)..." : {
+
+    },
+    "Deleting profiles on the developer portal allows Apple to issue fresh profiles with updated certificates and unflagged UUIDs." : {
+
+    },
+    "Deleting the database will remove all app entries and sources from SideStore." : {
+
+    },
+    "Description" : {
+
+    },
+    "Developer" : {
+
+    },
+    "Developer Account" : {
+
+    },
+    "Developer Certificates (%d)" : {
+
+    },
+    "Developer Options" : {
+
+    },
+    "Developer Portal" : {
+
+    },
+    "Developer Portal Error" : {
+
+    },
+    "Developer Portal Info" : {
+
+    },
+    "Developer Portal Services" : {
+
+    },
+    "Device Details" : {
+
+    },
+    "Device ID Override (Optional)" : {
+
+    },
+    "Device IDs" : {
+
+    },
+    "Device Identifier (UDID)" : {
+
+    },
+    "Device Info" : {
+
+    },
+    "Device Information" : {
+
+    },
+    "Device Name" : {
+
+    },
+    "Device Type" : {
+
+    },
+    "Device UDID" : {
+
+    },
+    "Device is not reachable at the specified IP or Endpoint." : {
+
+    },
+    "Devices" : {
+
+    },
+    "Devices registered on your developer team can run development-signed apps. Tap any device to edit its name, disable, or delete it." : {
+
+    },
+    "Diagnostics & Tools" : {
+
+    },
+    "Disable" : {
+
+    },
+    "Disable Device" : {
+
+    },
+    "Disable Device?" : {
+
+    },
+    "Disabled" : {
+
+    },
+    "Discovered Interfaces (%d)" : {
+
+    },
+    "Discovery" : {
+
+    },
+    "Display Mode" : {
+
+    },
+    "Displays raw headers cached from successful anisette server handshakes. Use this to copy exact parameters sent by client/server." : {
+
+    },
+    "Do you want to clear all keychain items related to this SideStore instance?" : {
+
+    },
+    "Do you want to export your certificate to an external app? That app will be able to sign apps using your certificate." : {
+
+    },
+    "Done" : {
+
+    },
+    "Download %@" : {
+
+    },
+    "Download %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Download %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Download Profile" : {
+
+    },
+    "Download Provisioning Profile" : {
+
+    },
+    "Downloading %@…" : {
+
+    },
+    "Drag to reorder server priority. Swipe left on a server to hide or unhide it." : {
+
+    },
+    "EMPROXY & WIREGUARD" : {
+
+    },
+    "EXPIRED" : {
+
+    },
+    "Each app and app extension installed with SideStore must register an App ID with Apple.\n\nApp IDs for paid developer accounts never expire, and there is no limit to how many you can create." : {
+
+    },
+    "Each app and app extension installed with SideStore must register an App ID with Apple. Apple limits non-developer Apple IDs to 10 App IDs at a time.\n\n**App IDs can't be deleted**, but they do expire after one week. SideStore will automatically renew App IDs for all active apps once they've expired." : {
+
+    },
+    "Edit" : {
+
+    },
+    "Edit Device" : {
+
+    },
+    "Edit Identifier Configuration" : {
+
+    },
+    "Edit Name" : {
+
+    },
+    "Embedded Entitlements" : {
+
+    },
+    "Empty Directory" : {
+
+    },
+    "Enable Auto Rotation" : {
+
+    },
+    "Enable Background Refresh to automatically refresh apps in the background when connected to Wi-Fi. \n\nEnable Disable Idle Timeout to allow SideStore to keep your device awake during a refresh or install of any apps." : {
+
+    },
+    "Enable JIT" : {
+
+    },
+    "Enable JIT for %@ Failed" : {
+
+    },
+    "Enable SideJITServer" : {
+
+    },
+    "Ensure **Local Network Access** is provided otherwise this function may not work as intended since it is based on L N A..." : {
+
+    },
+    "Ensure both devices are on the same Wi-Fi network." : {
+
+    },
+    "Enter Pairing PIN" : {
+
+    },
+    "Enter a name for the new certificate. This will create a new certificate on Apple's servers and store the private key locally." : {
+
+    },
+    "Enter a new name for this item:" : {
+
+    },
+    "Enter a source's URL below, or add one of the recommended sources." : {
+
+    },
+    "Enter the 6-digit code displayed on your Apple TV / device screen." : {
+
+    },
+    "Enter the password to decrypt the imported certificate file.\n\nFile: %@" : {
+
+    },
+    "Enter the password used to encrypt this backup file." : {
+
+    },
+    "Entertainment" : {
+
+    },
+    "Entitlement" : {
+
+    },
+    "Entitlements" : {
+
+    },
+    "Entitlements (%d)" : {
+
+    },
+    "Entitlements are additional permissions that grant access to certain system services, including potentially sensitive information." : {
+
+    },
+    "Error" : {
+
+    },
+    "Error Description" : {
+
+    },
+    "Error Details" : {
+
+    },
+    "Error code: %@" : {
+
+    },
+    "Errors that occur when sideloading or refreshing apps will appear here." : {
+
+    },
+    "Executable" : {
+
+    },
+    "Experimental Features" : {
+
+    },
+    "Expired" : {
+
+    },
+    "Expires in" : {
+
+    },
+    "Expires: %@" : {
+
+    },
+    "Explore Structure (%d keys)" : {
+
+    },
+    "Export" : {
+
+    },
+    "Export (.der)" : {
+
+    },
+    "Export (.pem)" : {
+
+    },
+    "Export Account" : {
+
+    },
+    "Export Account JSON" : {
+
+    },
+    "Export Backup" : {
+
+    },
+    "Export Certificate" : {
+
+    },
+    "Export Certificate Password" : {
+
+    },
+    "Export Config JSON" : {
+
+    },
+    "Export Current" : {
+
+    },
+    "Export Database" : {
+
+    },
+    "Export Full (.p12)" : {
+
+    },
+    "Export Original" : {
+
+    },
+    "Export Public (.der)" : {
+
+    },
+    "Export Public (.pem)" : {
+
+    },
+    "Export Sources" : {
+
+    },
+    "Export WireGuard Config" : {
+
+    },
+    "Export/Share" : {
+
+    },
+    "Exported Resigned Apps" : {
+
+    },
+    "Exports SideStore.conf to import into WireGuard VPN app" : {
+
+    },
+    "Extension Metadata" : {
+
+    },
+    "Extracting %@…" : {
+
+    },
+    "Extraction Failed" : {
+
+    },
+    "FEATURE FLAGS" : {
+
+    },
+    "Failed to Activate %@" : {
+
+    },
+    "Failed to Backup %@" : {
+
+    },
+    "Failed to Clear Error Log" : {
+
+    },
+    "Failed to Deactivate %@" : {
+
+    },
+    "Failed to Enable JIT for %@" : {
+
+    },
+    "Failed to Install %@" : {
+
+    },
+    "Failed to Refresh %@" : {
+
+    },
+    "Failed to Refresh Apps" : {
+
+    },
+    "Failed to Remove %@" : {
+
+    },
+    "Failed to Resign %@" : {
+
+    },
+    "Failed to Resign SideStore" : {
+
+    },
+    "Failed to Restore %@ Backup" : {
+
+    },
+    "Failed to Rotate Log" : {
+
+    },
+    "Failed to Sign In" : {
+
+    },
+    "Failed to Update %@" : {
+
+    },
+    "Failed to encode pairingFile!" : {
+
+    },
+    "Failed to export account data!" : {
+
+    },
+    "Failed to export account!" : {
+
+    },
+    "Failed to find Pairing File!" : {
+
+    },
+    "Failed to find certificate or password" : {
+
+    },
+    "Failed to import account JSON!" : {
+
+    },
+    "Failed to import account configuration!" : {
+
+    },
+    "Failed to initialize callback URL!" : {
+
+    },
+    "Failed to refresh %@ Sources" : {
+
+    },
+    "Failed to refresh %@ apps." : {
+
+    },
+    "Failed to refresh 1 app." : {
+
+    },
+    "Failed to refresh Source '%@'" : {
+
+    },
+    "Failed to refresh Store" : {
+
+    },
+    "Failed to start EMProxy!" : {
+
+    },
+    "Failed to stop EMProxy!" : {
+
+    },
+    "Failure" : {
+
+    },
+    "Failure Reason" : {
+
+    },
+    "Fault" : {
+
+    },
+    "Featured" : {
+
+    },
+    "Featured Apps" : {
+
+    },
+    "Fetch Current Device UDID" : {
+
+    },
+    "Fetch Fresh from Active Server" : {
+
+    },
+    "Fetching Anisette Servers..." : {
+
+    },
+    "Fetching certificates..." : {
+
+    },
+    "File Already Exists" : {
+
+    },
+    "File Password" : {
+
+    },
+    "Files (%d)" : {
+
+    },
+    "Fill Current Device Name" : {
+
+    },
+    "Filter & Sort" : {
+
+    },
+    "First Letter" : {
+
+    },
+    "Folders (%d)" : {
+
+    },
+    "Folders First" : {
+
+    },
+    "For your protection, please remove the source and uninstall" : {
+
+    },
+    "Free" : {
+
+    },
+    "Free Developer Account" : {
+
+    },
+    "Free developer accounts are limited to 1 active signing certificate. Since the private key for the active certificate was not found on this device, SideStore will create a new certificate. This will automatically revoke the active certificate, which may disable installations on other devices or made by Xcode." : {
+
+    },
+    "Free up disk space by removing non-essential data, such as temporary files and backups for uninstalled apps." : {
+
+    },
+    "Full Spectrum Color Wheel" : {
+
+    },
+    "GENERAL" : {
+
+    },
+    "Games" : {
+
+    },
+    "General Info" : {
+
+    },
+    "General Metadata" : {
+
+    },
+    "Group By" : {
+
+    },
+    "Group Certificates" : {
+
+    },
+    "Group ID: %@" : {
+
+    },
+    "Group Identifier" : {
+
+    },
+    "Group identifier must start with 'group.' prefix (e.g. group.com.example.shared)." : {
+
+    },
+    "Health Check" : {
+
+    },
+    "Help" : {
+
+    },
+    "Hidden" : {
+
+    },
+    "How would you like to receive your verification code?" : {
+
+    },
+    "ID: " : {
+
+    },
+    "ID: %@" : {
+
+    },
+    "IPv4 First" : {
+
+    },
+    "IPv4:" : {
+
+    },
+    "IPv4: %@" : {
+
+    },
+    "IPv6 First" : {
+
+    },
+    "IPv6:" : {
+
+    },
+    "IPv6: %@" : {
+
+    },
+    "Identifier" : {
+
+    },
+    "If deleted, SideStore will require the original IPA file during reinstall, backup, resign, or refresh procedures. Are you sure you want to delete the cached app bundle for “%@” ?" : {
+
+    },
+    "If you're using the MacDirtyCow exploit to remove the 3-app limit, you can install up to 10 apps and app extensions instead." : {
+
+    },
+    "Iface:" : {
+
+    },
+    "Import" : {
+
+    },
+    "Import Account" : {
+
+    },
+    "Import Account JSON" : {
+
+    },
+    "Import Backup" : {
+
+    },
+    "Import Certificate Password" : {
+
+    },
+    "Import Certificates" : {
+
+    },
+    "Import Config JSON" : {
+
+    },
+    "Import Failures" : {
+
+    },
+    "Import Log..." : {
+
+    },
+    "Import Server Catalog?" : {
+
+    },
+    "Import Sources" : {
+
+    },
+    "Import Summary" : {
+
+    },
+    "Import a valid mobiledevicepairing file." : {
+
+    },
+    "Import from File" : {
+
+    },
+    "Imported Log\n(%@)" : {
+
+    },
+    "Imported Log (%@)" : {
+
+    },
+    "Inactive" : {
+
+    },
+    "Include Account Password" : {
+
+    },
+    "Info" : {
+
+    },
+    "Info.plist" : {
+
+    },
+    "Install" : {
+
+    },
+    "Install %@" : {
+
+    },
+    "Install %@ Failed" : {
+
+    },
+    "Install App" : {
+
+    },
+    "Installed" : {
+
+    },
+    "Interactive" : {
+
+    },
+    "Internal App Cache" : {
+
+    },
+    "Invalid Configuration" : {
+
+    },
+    "Invalid Mach-O Binary" : {
+
+    },
+    "Invalid Operation Context." : {
+
+    },
+    "Invalid Operation Context: \n%@" : {
+
+    },
+    "Invalid Pairing File" : {
+
+    },
+    "Invalid Provisioning Profile" : {
+
+    },
+    "Invalid parameters." : {
+
+    },
+    "Invalid parameters: \n%@" : {
+
+    },
+    "JIT Requirements" : {
+
+    },
+    "Keep Anisette data" : {
+
+    },
+    "Keep App Extensions (Register App ID for Each Extension)" : {
+
+    },
+    "Keep App Extensions (Use Main Profile)" : {
+
+    },
+    "Keep Local Certificate" : {
+
+    },
+    "Keep Original" : {
+
+    },
+    "Keep signing certificate" : {
+
+    },
+    "Key Added" : {
+
+    },
+    "Key was added to certificate %@ (SN: %@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Key was added to certificate %1$@ (SN: %2$@)."
+          }
+        }
+      }
+    },
+    "Keychain authentication failed." : {
+
+    },
+    "Keychain item already exists." : {
+
+    },
+    "Keychain item not found." : {
+
+    },
+    "Keychain security error." : {
+
+    },
+    "Keys: " : {
+
+    },
+    "LIVE INTERFACE PREVIEW" : {
+
+    },
+    "LOCAL NETWORK INTERFACES" : {
+
+    },
+    "LOGGING & DIAGNOSTICS" : {
+
+    },
+    "Last Server Response JSON" : {
+
+    },
+    "Last Updated" : {
+
+    },
+    "Last Updated: %@" : {
+
+    },
+    "Latest Server Response" : {
+
+    },
+    "Leave empty to automatically discover SideJITServer on your local network via Bonjour." : {
+
+    },
+    "Less" : {
+
+    },
+    "Lifestyle" : {
+
+    },
+    "Linked Libraries (%d)" : {
+
+    },
+    "Load Fetched Data into Overrides" : {
+
+    },
+    "Loading Cache..." : {
+
+    },
+    "Loading apps…" : {
+
+    },
+    "Loading directory contents..." : {
+
+    },
+    "Loading..." : {
+
+    },
+    "Local User ID Override (Optional)" : {
+
+    },
+    "Locale Override (Optional)" : {
+
+    },
+    "Logs Menu" : {
+
+    },
+    "Lost connection to SideStore." : {
+
+    },
+    "MINIMUXER BACKEND" : {
+
+    },
+    "Mac" : {
+
+    },
+    "Machine Name" : {
+
+    },
+    "Mail has been automatically opened, try again in a moment. Otherwise, make sure plug-in is enabled in Mail's preferences." : {
+
+    },
+    "Make sure LocalDevVPN is connected and running!" : {
+
+    },
+    "Make sure the app is running in the foreground on %@ then try again." : {
+
+    },
+    "Make sure to only add sources that you trust." : {
+
+    },
+    "Make sure you have trusted this device with your computer and Wi-Fi sync is enabled." : {
+
+    },
+    "Make sure you're connected to a local network." : {
+
+    },
+    "Make sure you're on the same Wi-Fi network as a computer running AltServer, or try connecting this device to your computer via USB." : {
+
+    },
+    "Minimuxer has not been started yet.\n\nPlease complete pairing or start minimuxer before performing operations." : {
+
+    },
+    "Modern" : {
+
+    },
+    "More" : {
+
+    },
+    "My Apps" : {
+
+    },
+    "Name" : {
+
+    },
+    "Name (A to Z)" : {
+
+    },
+    "Name (Z to A)" : {
+
+    },
+    "Name (e.g. My App)" : {
+
+    },
+    "Name (e.g. Shared Storage)" : {
+
+    },
+    "Name: " : {
+
+    },
+    "Nested Extensions (%d)" : {
+
+    },
+    "Network Connection Error:\n%@\n\nPlease connect to Wi-Fi before attempting further operations." : {
+
+    },
+    "Network Discovery" : {
+
+    },
+    "Never" : {
+
+    },
+    "New & Updated" : {
+
+    },
+    "New Certificate" : {
+
+    },
+    "New Update Available" : {
+
+    },
+    "No $(BASE64_CERT) placeholder found" : {
+
+    },
+    "No App Groups available on this team. Create an App Group first." : {
+
+    },
+    "No App IDs available. Register an App ID first." : {
+
+    },
+    "No Apps" : {
+
+    },
+    "No Bonjour services are currently advertised in this domain." : {
+
+    },
+    "No Domains Found" : {
+
+    },
+    "No Errors" : {
+
+    },
+    "No Instances Found" : {
+
+    },
+    "No Refresh Attempts" : {
+
+    },
+    "No Services Found" : {
+
+    },
+    "No Signing Certificates" : {
+
+    },
+    "No Updates Available" : {
+
+    },
+    "No active interfaces scanned." : {
+
+    },
+    "No active local interfaces detected." : {
+
+    },
+    "No cached internal apps." : {
+
+    },
+    "No devices are currently advertising this service." : {
+
+    },
+    "No exported resigned apps." : {
+
+    },
+    "No files or subfolders found in this directory." : {
+
+    },
+    "No local certificates found." : {
+
+    },
+    "No pairing targets found via Bonjour." : {
+
+    },
+    "No rules matching '%@'" : {
+
+    },
+    "No special features enabled for this App ID." : {
+
+    },
+    "No valid signing certificates with private keys were found locally. Please import or create a certificate in Settings -> Certificates first." : {
+
+    },
+    "Non-developer Apple IDs are limited to 3 active apps and app extensions, and \"%@\" contains %@ %@. Please choose an app to deactivate." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Non-developer Apple IDs are limited to 3 active apps and app extensions, and \"%1$@\" contains %2$@ %3$@. Please choose an app to deactivate."
+          }
+        }
+      }
+    },
+    "Non-developer Apple IDs are limited to 3 active apps and app extensions." : {
+
+    },
+    "Non-developer Apple IDs are limited to 3 active apps and app extensions. Please choose an app to deactivate." : {
+
+    },
+    "Non-developer Apple IDs are limited to 3 active apps. Please choose an app to deactivate." : {
+
+    },
+    "Non-developer Apple IDs are limited to 3 apps and app extensions. Inactive apps don't count towards your total, but cannot be opened until activated." : {
+
+    },
+    "Non-developer Apple IDs are limited to 3 apps. Inactive apps are backed up and uninstalled so they don't count towards your total, but will be reinstalled with all their data when activated again." : {
+
+    },
+    "Non-developer Apple IDs are limited to creating 10 App IDs per week." : {
+
+    },
+    "None" : {
+
+    },
+    "Note: " : {
+
+    },
+    "Notice" : {
+
+    },
+    "OK" : {
+
+    },
+    "Omit" : {
+
+    },
+    "One or more apps in source “%@” are missing a marketplaceID. This most likely means they are not notarized, which is not supported by this version of SideStore." : {
+
+    },
+    "Open" : {
+
+    },
+    "Open %@" : {
+
+    },
+    "Open Apple Account" : {
+
+    },
+    "Open Developer Account" : {
+
+    },
+    "Open in Safari (%@://)" : {
+
+    },
+    "Open this URL on your iPhone, iPad, or Mac on the same Wi-Fi network to download '%@':\n\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open this URL on your iPhone, iPad, or Mac on the same Wi-Fi network to download '%1$@':\n\n%2$@"
+          }
+        }
+      }
+    },
+    "Open this URL on your iPhone, iPad, or Mac on the same Wi-Fi network to upload:\n\n%@" : {
+
+    },
+    "Operation Failed" : {
+
+    },
+    "Operational Mode" : {
+
+    },
+    "Operations Logging" : {
+
+    },
+    "Operations Logging Control" : {
+
+    },
+    "Opt in for beta testing to receive regular updates and early previews of upcoming releases.\n\nPlease note that these builds are experimental and may be unstable or break unexpectedly." : {
+
+    },
+    "Optional" : {
+
+    },
+    "Options" : {
+
+    },
+    "Organization" : {
+
+    },
+    "Other" : {
+
+    },
+    "Other Entitlements" : {
+
+    },
+    "Other Options…" : {
+
+    },
+    "Override Status" : {
+
+    },
+    "PAIRING CODE" : {
+
+    },
+    "PIPELINE STEPS" : {
+
+    },
+    "PRECISE COLOR METRICS" : {
+
+    },
+    "PRESET THEMES" : {
+
+    },
+    "Pair" : {
+
+    },
+    "Pairing File" : {
+
+    },
+    "Pairing File Required" : {
+
+    },
+    "Pairing File Reset" : {
+
+    },
+    "Pairing Required" : {
+
+    },
+    "Pairing Required:\nWithout a valid pairing file, SideStore operations cannot connect to your device. Please pair your device or import a valid pairing file." : {
+
+    },
+    "Parse Error" : {
+
+    },
+    "Parsing Mach-O…" : {
+
+    },
+    "Password" : {
+
+    },
+    "Paste your PEM-formatted private key below, or import it from a text file." : {
+
+    },
+    "Performing Diagnostic Check..." : {
+
+    },
+    "Permission" : {
+
+    },
+    "Personalize your SideStore experience by choosing an alternate app icon." : {
+
+    },
+    "Phone Call" : {
+
+    },
+    "Phone Call (Recommended)" : {
+
+    },
+    "Photo & Video" : {
+
+    },
+    "Photos" : {
+
+    },
+    "Please deactivate a sideloaded app in order to install another one.\n\nIf you're running iOS 13.5 or later, make sure “Offload Unused Apps” is disabled in Settings > iTunes & App Stores, then install or delete all offloaded apps." : {
+
+    },
+    "Please deactivate a sideloaded app with SideStore in order to install another app.\n\nIf you're running iOS 13.5 or later, make sure 'Offload Unused Apps' is disabled in Settings > iTunes & App Stores, then install or delete all offloaded apps to prevent them from erroneously counting towards this limit." : {
+
+    },
+    "Please enter Apple ID password for %@ to complete sign-in." : {
+
+    },
+    "Please enter a password for the certificate." : {
+
+    },
+    "Please enter the 6-digit verification code sent via SMS to %@." : {
+
+    },
+    "Please enter the 6-digit verification code sent via SMS to your phone." : {
+
+    },
+    "Please enter the 6-digit verification code sent via phone call to %@." : {
+
+    },
+    "Please enter the 6-digit verification code sent via phone call." : {
+
+    },
+    "Please enter the 6-digit verification code that was sent to your Apple devices." : {
+
+    },
+    "Please enter your Apple ID password to complete sign-in." : {
+
+    },
+    "Please make sure your spelling is correct, or try searching for another app." : {
+
+    },
+    "Please remove the existing source in order to add this one." : {
+
+    },
+    "Please restart SideStore" : {
+
+    },
+    "Please try again later." : {
+
+    },
+    "Please unlock the device with your passcode and try again." : {
+
+    },
+    "Pledge" : {
+
+    },
+    "Port: %@" : {
+
+    },
+    "Privacy Permission" : {
+
+    },
+    "Privacy Permissions (%d)" : {
+
+    },
+    "Private Key Data" : {
+
+    },
+    "Proceed" : {
+
+    },
+    "Profile Details" : {
+
+    },
+    "Profile Metadata" : {
+
+    },
+    "Profiles" : {
+
+    },
+    "Provisioned Devices (%d)" : {
+
+    },
+    "Provisioning Profile" : {
+
+    },
+    "Provisioning Profiles" : {
+
+    },
+    "Provisioning Profiles (%d)" : {
+
+    },
+    "Purge All Profiles?" : {
+
+    },
+    "Queries Schemes" : {
+
+    },
+    "Quick Actions" : {
+
+    },
+    "REFRESHING APPS" : {
+
+    },
+    "REMOVE" : {
+
+    },
+    "REVOKED" : {
+
+    },
+    "Raw Configuration JSON" : {
+
+    },
+    "Raw Dump" : {
+
+    },
+    "Raw Inspection" : {
+
+    },
+    "Raw JSON" : {
+
+    },
+    "Reaching catalog source '%@'..." : {
+
+    },
+    "Reading CodeResources…" : {
+
+    },
+    "Reason:" : {
+
+    },
+    "Recommended Sources" : {
+
+    },
+    "Recovery Suggestion" : {
+
+    },
+    "Refresh" : {
+
+    },
+    "Refresh %@" : {
+
+    },
+    "Refresh %@ Failed" : {
+
+    },
+    "Refresh All" : {
+
+    },
+    "Refresh Device Cache (/re/)" : {
+
+    },
+    "Refreshed Apps" : {
+
+    },
+    "Refreshing" : {
+
+    },
+    "Register" : {
+
+    },
+    "Register App ID" : {
+
+    },
+    "Register Device" : {
+
+    },
+    "Registered App IDs (%d)" : {
+
+    },
+    "Registered Devices" : {
+
+    },
+    "Registered Devices (%d)" : {
+
+    },
+    "Reloaded All Widgets" : {
+
+    },
+    "Reloaded Top Shelf" : {
+
+    },
+    "Remote Endpoint" : {
+
+    },
+    "Remove" : {
+
+    },
+    "Remove %@ Failed" : {
+
+    },
+    "Remove App Extensions" : {
+
+    },
+    "Remove App Group" : {
+
+    },
+    "Remove Icon" : {
+
+    },
+    "Remove Imported" : {
+
+    },
+    "Remove Source" : {
+
+    },
+    "Remove “%@” from SideStore?" : {
+
+    },
+    "Rename" : {
+
+    },
+    "Rename “%@”" : {
+
+    },
+    "Requester: " : {
+
+    },
+    "Required for JIT on iOS 17+" : {
+
+    },
+    "Resend SMS" : {
+
+    },
+    "Reset" : {
+
+    },
+    "Reset Catalog" : {
+
+    },
+    "Reset Certificate" : {
+
+    },
+    "Reset Source to Default" : {
+
+    },
+    "Reset adi.pb" : {
+
+    },
+    "Reset to Defaults" : {
+
+    },
+    "Reset to Defaults?" : {
+
+    },
+    "Reset to SideStore Classic" : {
+
+    },
+    "Resetting local Anisette data forces a fresh provisioning flow if authentication is failing." : {
+
+    },
+    "Resign" : {
+
+    },
+    "Resign %@ Failed" : {
+
+    },
+    "Resign Later" : {
+
+    },
+    "Resign Now" : {
+
+    },
+    "Resigned: %@" : {
+
+    },
+    "Resolution Failed" : {
+
+    },
+    "Resolution Mode" : {
+
+    },
+    "Resolved Address" : {
+
+    },
+    "Resolving IP address…" : {
+
+    },
+    "Resolving service…" : {
+
+    },
+    "Resources" : {
+
+    },
+    "Restart Now" : {
+
+    },
+    "Restart Required" : {
+
+    },
+    "Restore %@ Failed" : {
+
+    },
+    "Restore Backup" : {
+      "comment" : "Restores the last or current backup of this app"
+    },
+    "Restore Previous Backup" : {
+      "comment" : "Restores the backup saved before the current backup was created."
+    },
+    "Retry" : {
+
+    },
+    "Retry Connection" : {
+
+    },
+    "Retrying..." : {
+
+    },
+    "Review Permissions" : {
+
+    },
+    "Revoke" : {
+
+    },
+    "Revoke Certificate" : {
+
+    },
+    "Revoke Certificates" : {
+
+    },
+    "Revoke and Resign Now" : {
+
+    },
+    "Rotated %@ Log" : {
+
+    },
+    "SHA-1 Fingerprint" : {
+
+    },
+    "SHA-1: %@" : {
+
+    },
+    "SHA-256 Fingerprint" : {
+
+    },
+    "SHA-256: %@" : {
+
+    },
+    "SIGN OUT" : {
+
+    },
+    "SN: " : {
+
+    },
+    "SOURCES DATA" : {
+
+    },
+    "STANDALONE FEATURES" : {
+
+    },
+    "STANDALONE STEPS" : {
+
+    },
+    "SUPPORT US" : {
+
+    },
+    "Same Certificate" : {
+
+    },
+    "Save" : {
+
+    },
+    "Save Group Associations" : {
+
+    },
+    "Save Overrides" : {
+
+    },
+    "Save Raw JSON" : {
+
+    },
+    "Scroll to Bottom" : {
+
+    },
+    "Seal" : {
+
+    },
+    "Sealed Files (%d)" : {
+
+    },
+    "Search" : {
+
+    },
+    "Search App Groups" : {
+
+    },
+    "Search App IDs" : {
+
+    },
+    "Search Devices" : {
+
+    },
+    "Search FAQ" : {
+
+    },
+    "Search Profiles" : {
+
+    },
+    "Search files" : {
+
+    },
+    "Search files & folders" : {
+
+    },
+    "Search keys" : {
+
+    },
+    "Search sealed files or rules" : {
+
+    },
+    "Searching for domains…" : {
+
+    },
+    "Searching for instances…" : {
+
+    },
+    "Searching for service types…" : {
+
+    },
+    "Searching local network for devices…" : {
+
+    },
+    "Searching…" : {
+
+    },
+    "See All" : {
+
+    },
+    "Segments (%d)" : {
+
+    },
+    "Select" : {
+
+    },
+    "Select App ID to Generate Profile" : {
+
+    },
+    "Select File" : {
+
+    },
+    "Select Phone Number" : {
+
+    },
+    "Select iOS Development certificate(s) to revoke:" : {
+
+    },
+    "Select the App Groups to associate with this App ID, then tap Save." : {
+
+    },
+    "Select the pairing file or select \"Help\" for help." : {
+
+    },
+    "Serial: " : {
+
+    },
+    "Serial: %@" : {
+
+    },
+    "Server Address" : {
+
+    },
+    "Server Catalog Source" : {
+
+    },
+    "Server List URL" : {
+
+    },
+    "Server Returned Headers (Read-Only)" : {
+
+    },
+    "Service Details" : {
+
+    },
+    "Set & Resign" : {
+
+    },
+    "Set Certificate" : {
+
+    },
+    "Set Certificate Confirmation" : {
+
+    },
+    "Set a password to encrypt the exported .p12 certificate file." : {
+
+    },
+    "Share" : {
+
+    },
+    "Show Failed" : {
+
+    },
+    "SideJITServer" : {
+
+    },
+    "SideJITServer attaches Apple's debugserver service on macOS to running apps on iOS 17+ over local Wi-Fi or USB." : {
+
+    },
+    "SideJITServer is unable to connect to your iDevice. Please make sure you have paired your iDevice by running 'SideJITServer -y', or try refreshing SideJITServer from Settings." : {
+
+    },
+    "SideStore" : {
+
+    },
+    "SideStore Expired" : {
+
+    },
+    "SideStore Expiring Extremely Soon" : {
+
+    },
+    "SideStore Expiring Soon" : {
+
+    },
+    "SideStore News" : {
+
+    },
+    "SideStore Ready" : {
+
+    },
+    "SideStore can only install marketplace apps that have been notarized by Apple." : {
+
+    },
+    "SideStore cannot manage the existing certificate without owning its private key. The apps signed with the existing certificate will expire soon unless they are resigned and renewed explicitly by SideStore." : {
+
+    },
+    "SideStore could not determine this device's UDID. Please replace your pairing using iloader." : {
+
+    },
+    "SideStore could not establish a secure connection to %@." : {
+
+    },
+    "SideStore could not find this device." : {
+
+    },
+    "SideStore could not write data to this device." : {
+
+    },
+    "SideStore does not have detailed information for these entitlements." : {
+
+    },
+    "SideStore does not support this request." : {
+
+    },
+    "SideStore has expired. Please refresh or reinstall the app." : {
+
+    },
+    "SideStore is unable to reach the device endpoint.\n\nPlease check your Connection Configuration in Settings to ensure the IP and endpoint are correct." : {
+
+    },
+    "SideStore is unable to reach the device endpoint:\n%@\n\nPlease check your Connection Configuration in Settings." : {
+
+    },
+    "SideStore needs to deactivate another app before installing %@." : {
+
+    },
+    "SideStore received an invalid request." : {
+
+    },
+    "SideStore received an invalid response from %@." : {
+
+    },
+    "SideStore received an unknown response from SideStore." : {
+
+    },
+    "SideStore sent an invalid response." : {
+
+    },
+    "SideStore was denied permission to launch %@." : {
+
+    },
+    "SideStore was installed by a different signing tool (like Xcode or AltStore)." : {
+
+    },
+    "SideStore will expire in 24 hours. Open the app and refresh it to prevent it from expiring." : {
+
+    },
+    "SideStore will expire in 6 hours! Refresh now to prevent expiration." : {
+
+    },
+    "SideStore's connection to %@ timed out." : {
+
+    },
+    "SideStore's database could not be saved." : {
+
+    },
+    "SideStore's shared app group could not be accessed." : {
+
+    },
+    "SideStore.conf missing!" : {
+
+    },
+    "Sideloaded" : {
+
+    },
+    "Sign In" : {
+
+    },
+    "Sign Out" : {
+
+    },
+    "Sign in with your Apple ID to download apps from SideStore." : {
+
+    },
+    "Signature & Public Key Details" : {
+
+    },
+    "Signatures & Certificates (%d)" : {
+
+    },
+    "Signing Rules (%d)" : {
+
+    },
+    "Signing certificate mismatch detected." : {
+
+    },
+    "Skip" : {
+
+    },
+    "Skip & Continue" : {
+
+    },
+    "Social" : {
+
+    },
+    "Some sources were unable to load" : {
+
+    },
+    "Sort By" : {
+
+    },
+    "Sort Certificates" : {
+
+    },
+    "Sort by…" : {
+
+    },
+    "Sort: %@" : {
+
+    },
+    "Source File" : {
+
+    },
+    "Source Line" : {
+
+    },
+    "Sources determine what apps are available in SideStore. The more sources you add, the better your SideStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!" : {
+
+    },
+    "Start Backup?" : {
+
+    },
+    "Start EMProxy" : {
+
+    },
+    "Start Pairing Server" : {
+
+    },
+    "Started EMProxy" : {
+
+    },
+    "Starting…" : {
+
+    },
+    "Status" : {
+
+    },
+    "Status: " : {
+
+    },
+    "Stop EMProxy" : {
+
+    },
+    "Stop Pairing Server" : {
+
+    },
+    "Stopped EMProxy" : {
+
+    },
+    "Storage Explorer" : {
+
+    },
+    "Storage Explorer Error" : {
+
+    },
+    "Success" : {
+
+    },
+    "Successfully imported '%@'!" : {
+
+    },
+    "Suffix (R) indicates the certificate is registered remotely on Apple's developer portal." : {
+
+    },
+    "Support the SideStore Team by following our socials or becoming a patron!" : {
+
+    },
+    "System Generated" : {
+
+    },
+    "TECHY THINGS" : {
+
+    },
+    "TXT Record (%d)" : {
+
+    },
+    "Tap a permission to learn more." : {
+
+    },
+    "Tap to view progress." : {
+
+    },
+    "Tap to view source errors." : {
+
+    },
+    "Team ID: %@" : {
+
+    },
+    "Test Connection (Ping)" : {
+
+    },
+    "Text Message (SMS)" : {
+
+    },
+    "Text Message (SMS) (Recommended)" : {
+
+    },
+    "The %@ '%@' for %@ is missing a usage description." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The %1$@ '%2$@' for %3$@ is missing a usage description."
+          }
+        }
+      }
+    },
+    "The Developer disk located at %@ is incompatible with %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Developer disk located at %1$@ is incompatible with %2$@."
+          }
+        }
+      }
+    },
+    "The SHA-256 hash of %@ does not match the hash specified by the source." : {
+
+    },
+    "The active developer team has changed." : {
+
+    },
+    "The app" : {
+
+    },
+    "The app bundle could not be found." : {
+
+    },
+    "The app group '%@' does not match the app's bundle ID casing. Would you like to correct it to '%@'?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The app group '%1$@' does not match the app's bundle ID casing. Would you like to correct it to '%2$@'?"
+          }
+        }
+      }
+    },
+    "The app is in an invalid format." : {
+
+    },
+    "The app you are installing has a bundle ID (%@) that does not match the active app (%@). Would you like to proceed?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The app you are installing has a bundle ID (%1$@) that does not match the active app (%2$@). Would you like to proceed?"
+          }
+        }
+      }
+    },
+    "The app's Info.plist could not be found." : {
+
+    },
+    "The bundle ID does not match the one specified by the source." : {
+
+    },
+    "The bundle ID “%@” does not match the one specified by the source (“%@”)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The bundle ID “%1$@” does not match the one specified by the source (“%2$@”)."
+          }
+        }
+      }
+    },
+    "The cached permissions for %@ do not match the source." : {
+
+    },
+    "The cached versions for %@ do not match the source." : {
+
+    },
+    "The current pairing file is invalid or missing.\n\nPlease make sure to input a valid pairing file! If the issue persists, replace your pairing with iloader." : {
+
+    },
+    "The current pairing file is invalid or missing. Reason: %@\n\nPlease make sure to input a valid pairing file! If the issue persists, replace your pairing with iloader." : {
+
+    },
+    "The default SideStore source cannot be removed." : {
+
+    },
+    "The dependency '%@' could not be downloaded." : {
+
+    },
+    "The device" : {
+
+    },
+    "The disk is incompatible with %@." : {
+
+    },
+    "The downloaded version of %@ does not match the build number specified by the source.\nExpected version: %@\nFound version: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The downloaded version of %1$@ does not match the build number specified by the source.\nExpected version: %2$@\nFound version: %3$@"
+          }
+        }
+      }
+    },
+    "The downloaded version of %@ does not match the version specified by the source.\nExpected version: %@\nFound version: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The downloaded version of %1$@ does not match the version specified by the source.\nExpected version: %2$@\nFound version: %3$@"
+          }
+        }
+      }
+    },
+    "The file size of %@ (%@) does not match the size specified by the source (%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The file size of %1$@ (%2$@) does not match the size specified by the source (%3$@)."
+          }
+        }
+      }
+    },
+    "The following apps have been flagged:" : {
+
+    },
+    "The identifier of the source “%@” has changed." : {
+
+    },
+    "The latest version of %@ could not be downloaded." : {
+
+    },
+    "The logged-in Apple ID account has changed." : {
+
+    },
+    "The more you open SideStore, the more chances it's given to refresh apps in the background." : {
+
+    },
+    "The more you use SideStore, the more often iOS will allow it to refresh apps in the background." : {
+
+    },
+    "The operation is forbidden." : {
+
+    },
+    "The operation returned an unknown result." : {
+
+    },
+    "The operation timed out." : {
+
+    },
+    "The private key for the active signing certificate is missing from this device's keychain." : {
+
+    },
+    "The process" : {
+
+    },
+    "The process '%@'" : {
+
+    },
+    "The provided anisette data is invalid." : {
+
+    },
+    "The provisioning profile for SideStore is missing or invalid." : {
+
+    },
+    "The requested app" : {
+
+    },
+    "The selected certificate is already being used for this app. Please use the Resign option instead." : {
+
+    },
+    "The selected pairing file is invalid or not usable. Please select a valid pairing file." : {
+
+    },
+    "The signing certificate could not be extracted from SideStore's binary." : {
+
+    },
+    "The signing certificate used to install SideStore has expired." : {
+
+    },
+    "The signing certificate used to install SideStore was revoked on the Apple Developer portal." : {
+
+    },
+    "The signing certificate used to install “%@” differs from your active signing certificate. Please re-sign or reinstall the app." : {
+
+    },
+    "The signing certificate used to install “%@” has expired. Please re-sign or reinstall the app." : {
+
+    },
+    "The signing certificate used to install “%@” was revoked on the Apple Developer portal. Please re-sign or reinstall the app." : {
+
+    },
+    "The source “%@” contains %@ for %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The source “%1$@” contains %2$@ for %3$@."
+          }
+        }
+      }
+    },
+    "The source “%@” contains multiple apps with %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The source “%1$@” contains multiple apps with %2$@."
+          }
+        }
+      }
+    },
+    "The source “%@” contains notarized apps, which are not supported by this version of SideStore." : {
+
+    },
+    "The source “%@” has been blocked by SideStore for security reasons." : {
+
+    },
+    "The source “%@” is not added to SideStore." : {
+
+    },
+    "The source “%@” is not supported by this version of SideStore." : {
+
+    },
+    "Theme Manager" : {
+
+    },
+    "There are no SideStore sources." : {
+
+    },
+    "There are no active sideloaded apps to refresh." : {
+
+    },
+    "There was an error connecting to the device." : {
+
+    },
+    "There was an issue communicating with the usbmuxd daemon." : {
+
+    },
+    "These are permissions required by “%@” that SideStore does not recognize. Make sure you understand them before continuing." : {
+
+    },
+    "These permissions must be declared by the source in order for SideStore to install this app:" : {
+
+    },
+    "These updates don't support iOS %@. Please update your device to the latest iOS version to install them." : {
+
+    },
+    "This device is running iOS %@, but %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This device is running iOS %1$@, but %2$@"
+          }
+        }
+      }
+    },
+    "This item will be permanently removed." : {
+
+    },
+    "This reinstallation registers the new signature with the OS and will terminate SideStore. You can reopen SideStore immediately once reinstallation is completed." : {
+
+    },
+    "This version of “%@” requires additional permissions." : {
+
+    },
+    "This will also erase any backup data for this app." : {
+
+    },
+    "This will clear the locally stored private key of this certificate.\n\nName: %@\nS/N: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This will clear the locally stored private key of this certificate.\n\nName: %1$@\nS/N: %2$@"
+          }
+        }
+      }
+    },
+    "This will permanently delete all %d provisioning profile(s) for team '%@' on Apple's developer portal. SideStore will automatically generate fresh profiles on next app install or refresh." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This will permanently delete all %1$d provisioning profile(s) for team '%2$@' on Apple's developer portal. SideStore will automatically generate fresh profiles on next app install or refresh."
+          }
+        }
+      }
+    },
+    "This will remove all temporary files as well as backups for uninstalled apps." : {
+
+    },
+    "This will remove “%@” from SideStore and erase any backup data for this app." : {
+
+    },
+    "This will replace all data you currently have in %@." : {
+
+    },
+    "This will replace any previous backups. Please leave SideStore open until the backup is complete." : {
+
+    },
+    "This will replace your current server catalog with the servers from '%@'. Do you want to proceed?" : {
+
+    },
+    "This will restore the client headers to the default recommended macOS values." : {
+
+    },
+    "Time Zone Override (Optional)" : {
+
+    },
+    "Timeout (ms)" : {
+
+    },
+    "Title" : {
+
+    },
+    "To ensure you can continue using SideStore, \nthe app must be reinstalled now using the new certificate. Otherwise, you will be unable to refresh or open SideStore once the old certificate expires." : {
+
+    },
+    "Today" : {
+
+    },
+    "Toggle Hide Sensitive Information" : {
+
+    },
+    "Total Space:" : {
+
+    },
+    "Troubleshooting" : {
+
+    },
+    "Try Again" : {
+
+    },
+    "Type: " : {
+
+    },
+    "UDID is a 25-character or 40-character unique device identifier." : {
+
+    },
+    "URL of the JSON file containing registered Anisette servers. Press and hold row to export." : {
+
+    },
+    "UUID: %@" : {
+
+    },
+    "UUID: %@..." : {
+
+    },
+    "Unable to Add Source" : {
+
+    },
+    "Unable to Change App Icon" : {
+
+    },
+    "Unable to Check for Updates" : {
+
+    },
+    "Unable to Clear Cache" : {
+
+    },
+    "Unable to Fetch Apps" : {
+
+    },
+    "Unable to Fetch News" : {
+
+    },
+    "Unable to Launch SideStore" : {
+
+    },
+    "Unable to Load Recommended Sources" : {
+
+    },
+    "Unable to Refresh Store" : {
+
+    },
+    "Unable to Refresh “%@” Source" : {
+
+    },
+    "Unable to Remove Source" : {
+
+    },
+    "Unable to connect to SideJITServer. Please check that you are on the same Wi-Fi of and your Firewall has been set correctly on your server." : {
+
+    },
+    "Undefined" : {
+
+    },
+    "Underlying Error" : {
+
+    },
+    "Underlying Errors" : {
+
+    },
+    "Uninstall from device" : {
+
+    },
+    "Unknown" : {
+
+    },
+    "Unknown App" : {
+
+    },
+    "Unknown Source" : {
+
+    },
+    "Unknown deletion error" : {
+
+    },
+    "Unsupported Update Available" : {
+
+    },
+    "Unsupported Updates Available" : {
+
+    },
+    "Unsupported iOS Version" : {
+
+    },
+    "Update" : {
+
+    },
+    "Update %@" : {
+
+    },
+    "Update %@ Failed" : {
+
+    },
+    "Updating sources…" : {
+
+    },
+    "Use Default (%d ms)" : {
+
+    },
+    "Use Local VPN" : {
+
+    },
+    "Use Offline Config File" : {
+
+    },
+    "User Agent" : {
+
+    },
+    "User Configuration" : {
+
+    },
+    "User Customizations" : {
+
+    },
+    "Utilities" : {
+
+    },
+    "VPN Connection Error:\n%@\n\nPlease make sure LocalDevVPN is connected and running properly." : {
+
+    },
+    "Validity Period" : {
+
+    },
+    "Validity Progress" : {
+
+    },
+    "Validity: " : {
+
+    },
+    "Verification Failed" : {
+
+    },
+    "Verification Method" : {
+
+    },
+    "Version %@" : {
+
+    },
+    "Version %@%@" : {
+      "comment" : "SideStore Version",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@%2$@"
+          }
+        }
+      }
+    },
+    "View All" : {
+
+    },
+    "View All Apps" : {
+
+    },
+    "View Error" : {
+
+    },
+    "View Full Mach-O Dump" : {
+
+    },
+    "View Info.plist (%d keys)" : {
+
+    },
+    "View Mode" : {
+
+    },
+    "View More Details" : {
+
+    },
+    "View Provisioned Devices" : {
+
+    },
+    "View Raw XML" : {
+
+    },
+    "View Recommended Sources" : {
+
+    },
+    "View, edit, or offline the header properties sent to Apple during provisioning, and control if SideStore automatically rotates/retries servers upon failure." : {
+
+    },
+    "Vision Pro" : {
+
+    },
+    "Visualization Mode" : {
+
+    },
+    "WIREGUARD CONFIGURATION" : {
+
+    },
+    "Warning" : {
+
+    },
+    "Warning: Repeatedly skipping this without completing required verification or terms may lead to your account being restricted by Apple over time." : {
+
+    },
+    "Weight: %@" : {
+
+    },
+    "What are inactive apps?" : {
+
+    },
+    "When SideStore triggers JIT, SideJITServer sends the debug attach signal and enables Just-In-Time execution instantly." : {
+
+    },
+    "When enabled, SideStore uses the locally saved JSON configuration parameters for all authentication headers without making client_info requests to servers." : {
+
+    },
+    "Widget Log" : {
+
+    },
+    "WireGuard Server Parameters" : {
+
+    },
+    "Wireless Pairing" : {
+
+    },
+    "Without a valid pairing file, operations that require a pairing file (such as installing, refreshing, or resigning apps) will not function." : {
+
+    },
+    "Would you like to add the source “%@”?" : {
+
+    },
+    "Would you like to download the last version compatible with this device instead?" : {
+
+    },
+    "Would you like to install \"%@\"?" : {
+
+    },
+    "Would you like to remove this app's extensions so they don't count towards your limit? There are %d Extensions" : {
+
+    },
+    "Wrap File Names" : {
+
+    },
+    "X.509 Fields" : {
+
+    },
+    "XML" : {
+
+    },
+    "Yesterday" : {
+
+    },
+    "You are not signed in." : {
+
+    },
+    "You can register another App ID in %@." : {
+
+    },
+    "You can reset the pairing file when you cannot sideload apps or enable JIT. You need to restart SideStore." : {
+
+    },
+    "You cannot activate more than 3 apps with a non-developer Apple ID." : {
+
+    },
+    "You cannot use special characters such as @, &, *, ', \", -, ." : {
+
+    },
+    "You do not appear to be connected to VPN.\n\nPlease make sure LocalDevVPN is connected and running! If the issue persists, replace your pairing with iloader or try restarting the device." : {
+
+    },
+    "You do not appear to be connected to Wi-Fi!\n\nPlease connect to a Wi-Fi before attempting futher operations" : {
+
+    },
+    "You must add this source before installing apps from it.\n\n“%@” will begin downloading once it has been added." : {
+
+    },
+    "You must also delete it from the home screen to fully uninstall the app." : {
+
+    },
+    "Your active custom/third-party signing certificate (Team: %@) has expired.\n\nIf you did not intend to use a custom certificate, please reset it in Settings -> Advanced -> Certificates." : {
+
+    },
+    "Your active custom/third-party signing certificate (Team: %@) was revoked on the Developer Portal.\n\nIf you did not intend to use a custom certificate, please reset it in Settings -> Advanced -> Certificates." : {
+
+    },
+    "Your device must be running iOS 15.0 or later to install SideStore." : {
+
+    },
+    "Your pledge is no longer active. Please renew it to continue using %@ normally." : {
+
+    },
+    "^[%arg app](inflect: true)" : {
+
+    },
+    "all apps downloaded from it." : {
+
+    },
+    "an app in source “%@”" : {
+
+    },
+    "app extension" : {
+
+    },
+    "app extensions" : {
+
+    },
+    "duplicate versions" : {
+
+    },
+    "e.g. UTC, GMT" : {
+
+    },
+    "e.g. en_US" : {
+
+    },
+    "https://..." : {
+
+    },
+    "iOS %@ or earlier" : {
+
+    },
+    "iOS %@ or later" : {
+
+    },
+    "iPad" : {
+
+    },
+    "iPhone" : {
+
+    },
+    "ms" : {
+
+    },
+    "none are available" : {
+
+    },
+    "offset: %@  size: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "offset: %1$@  size: %2$@"
+          }
+        }
+      }
+    },
+    "one or more apps" : {
+
+    },
+    "only %@ are available" : {
+
+    },
+    "only 1 is available" : {
+
+    },
+    "public + private" : {
+
+    },
+    "the app" : {
+
+    },
+    "the bundle identifier %@" : {
+
+    },
+    "the device" : {
+
+    },
+    "the downloaded app" : {
+
+    },
+    "the following apps:" : {
+
+    },
+    "the same bundle identifier" : {
+
+    },
+    "this device's OS version" : {
+
+    },
+    "v0.6.0 • Installed" : {
+
+    },
+    "your device" : {
+
+    },
+    "“%@” Blocked" : {
+
+    },
+    "“%@” could not be added to SideStore." : {
+
+    },
+    "“%@” will be automatically given these permissions once installed." : {
+
+    },
+    "•" : {
+
+    },
+    "••••••••••••••••••••••••••••" : {
+
+    }
+  },
+  "version" : "1.1"
+}

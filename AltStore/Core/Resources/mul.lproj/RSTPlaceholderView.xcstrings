@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "dyq-zR-r9I.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"If you expected this to display something, there might have been an issue. Please try again.\"; ObjectID = \"dyq-zR-r9I\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "If you expected this to display something, there might have been an issue. Please try again."
+          }
+        }
+      }
+    },
+    "mcl-R8-rKy.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"No Games\"; ObjectID = \"mcl-R8-rKy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No Games"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

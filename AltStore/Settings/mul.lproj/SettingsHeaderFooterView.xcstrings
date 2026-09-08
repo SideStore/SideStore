@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "eet-Hi-RU4.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"eet-Hi-RU4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Label"
+          }
+        }
+      }
+    },
+    "meg-d6-dbz.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"SIGN OUT\"; ObjectID = \"meg-d6-dbz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SIGN OUT"
+          }
+        }
+      }
+    },
+    "rLj-Ff-ZTt.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"ACCOUNT\"; ObjectID = \"rLj-Ff-ZTt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ACCOUNT"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

@@ -52,7 +52,7 @@ struct AppInfoView: View {
                                 .foregroundColor(.secondary)
                             
                             if installedApp.resignedBundleIdentifier != installedApp.bundleIdentifier {
-                                Text("Resigned: \(installedApp.resignedBundleIdentifier)")
+                                Text(String(format: NSLocalizedString("Resigned: %@", comment: ""), installedApp.resignedBundleIdentifier))
                                     .font(.caption)
                                     .foregroundColor(.orange)
                             }
@@ -103,7 +103,7 @@ struct AppInfoView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(profile.name)
                                     .font(.subheadline)
-                                Text("UUID: \(profile.uuid.uuidString)")
+                                Text(String(format: NSLocalizedString("UUID: %@", comment: ""), profile.uuid.uuidString))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -115,11 +115,11 @@ struct AppInfoView: View {
                 if let plist = infoPlist {
                     Section(header: Text("Info.plist")) {
                         NavigationLink(destination: InfoPlistContainerView(plist: plist)) {
-                            Text("View Info.plist (\(plist.count) keys)")
+                            Text(String(format: NSLocalizedString("View Info.plist (%d keys)", comment: ""), plist.count))
                         }
                     }
                 }
-                
+
                 // App Extensions Section
                 if !installedApp.appExtensions.isEmpty {
                     Section(header: Text("App Extensions")) {
@@ -193,13 +193,13 @@ struct ProvisioningProfileDetailView: View {
             }
             
             if !profile.certificates.isEmpty {
-                Section(header: Text("Developer Certificates (\(profile.certificates.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Developer Certificates (%d)", comment: ""), profile.certificates.count))) {
                     ForEach(profile.certificates, id: \.serialNumber) { cert in
                         NavigationLink(destination: CertificateDetailView(certificate: cert, viewModel: certificatesViewModel)) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(cert.name)
                                     .font(.subheadline)
-                                Text("Serial: \(cert.serialNumber)")
+                                Text(String(format: NSLocalizedString("Serial: %@", comment: ""), cert.serialNumber))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -207,16 +207,16 @@ struct ProvisioningProfileDetailView: View {
                     }
                 }
             }
-            
+
             if !profile.deviceIDs.isEmpty {
-                Section(header: Text("Provisioned Devices (\(profile.deviceIDs.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Provisioned Devices (%d)", comment: ""), profile.deviceIDs.count))) {
                     NavigationLink(destination: DeviceIDsView(devices: profile.deviceIDs)) {
                         Text("View Provisioned Devices")
                     }
                 }
             }
-            
-            Section(header: Text("Entitlements (\(profile.entitlements.count))")) {
+
+            Section(header: Text(String(format: NSLocalizedString("Entitlements (%d)", comment: ""), profile.entitlements.count))) {
                 let sortedEntitlements = profile.entitlements.sorted { $0.key < $1.key }
                 ForEach(sortedEntitlements, id: \.key) { entitlement, value in
                     EntitlementRow(key: entitlement, value: value)
@@ -505,10 +505,10 @@ struct ExtensionInfoView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(profile.name)
                                 .font(.subheadline)
-                            Text("UUID: \(profile.uuid.uuidString)")
+                            Text(String(format: NSLocalizedString("UUID: %@", comment: ""), profile.uuid.uuidString))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text("Expires: \(formatDate(profile.expirationDate))")
+                            Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(profile.expirationDate)))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -520,7 +520,7 @@ struct ExtensionInfoView: View {
             if let plist = infoPlist {
                 Section(header: Text("Info.plist")) {
                     NavigationLink(destination: InfoPlistContainerView(plist: plist)) {
-                        Text("View Info.plist (\(plist.count) keys)")
+                        Text(String(format: NSLocalizedString("View Info.plist (%d keys)", comment: ""), plist.count))
                             .font(.subheadline)
                     }
                 }
@@ -528,7 +528,7 @@ struct ExtensionInfoView: View {
 
             // Nested Sub-Extensions (recursive)
             if !subExtensions.isEmpty {
-                Section(header: Text("Nested Extensions (\(subExtensions.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Nested Extensions (%d)", comment: ""), subExtensions.count))) {
                     ForEach(subExtensions, id: \.path) { subURL in
                         let subPlist = NSDictionary(contentsOf: subURL.appendingPathComponent("Info.plist")) as? [String: Any]
                         let subName = subPlist?["CFBundleDisplayName"] as? String
@@ -640,10 +640,10 @@ struct BundleInspectorView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(profile.name)
                                 .font(.subheadline)
-                            Text("UUID: \(profile.uuid.uuidString)")
+                            Text(String(format: NSLocalizedString("UUID: %@", comment: ""), profile.uuid.uuidString))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text("Expires: \(formatDate(profile.expirationDate))")
+                            Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(profile.expirationDate)))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -654,14 +654,14 @@ struct BundleInspectorView: View {
             if let plist = infoPlist {
                 Section(header: Text("Info.plist")) {
                     NavigationLink(destination: InfoPlistContainerView(plist: plist)) {
-                        Text("View Info.plist (\(plist.count) keys)")
+                        Text(String(format: NSLocalizedString("View Info.plist (%d keys)", comment: ""), plist.count))
                             .font(.subheadline)
                     }
                 }
             }
 
             if !subExtensions.isEmpty {
-                Section(header: Text("Nested Extensions (\(subExtensions.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Nested Extensions (%d)", comment: ""), subExtensions.count))) {
                     ForEach(subExtensions, id: \.path) { subURL in
                         let subPlist = NSDictionary(contentsOf: subURL.appendingPathComponent("Info.plist")) as? [String: Any]
                         let subName = subPlist?["CFBundleDisplayName"] as? String

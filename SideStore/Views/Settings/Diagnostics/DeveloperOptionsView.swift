@@ -423,7 +423,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Use Default (\(MinimuxerConstants.defaultTCPProbeTimeoutMs) ms)")
+                                Text(String(format: NSLocalizedString("Use Default (%d ms)", comment: ""), MinimuxerConstants.defaultTCPProbeTimeoutMs))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -552,7 +552,7 @@ struct DeveloperOptionsView: View {
             do {
                 try ImportExport.importAccountJSON(from: url)
                 let email = AuthManager.shared.currentAppleID ?? ""
-                let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(email)'!", comment: ""), detailText: "SideStore should be fully operational!")
+                let toastView = ToastView(text: String(format: NSLocalizedString("Successfully imported '%@'!", comment: ""), email), detailText: "SideStore should be fully operational!")
                 toastView.show(in: top)
             } catch {
                 let toastView = ToastView(text: NSLocalizedString("Failed to import account JSON!", comment: ""), detailText: error.localizedDescription)
@@ -571,7 +571,7 @@ struct DeveloperOptionsView: View {
             do {
                 try ImportExport.importAccountJSON(from: url)
                 let email = AuthManager.shared.currentAppleID ?? ""
-                let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(email)'!", comment: ""), detailText: "SideStore should be fully operational!")
+                let toastView = ToastView(text: String(format: NSLocalizedString("Successfully imported '%@'!", comment: ""), email), detailText: "SideStore should be fully operational!")
                 toastView.show(in: top)
             } catch {
                 let toastView = ToastView(text: NSLocalizedString("Failed to import account JSON!", comment: ""), detailText: error.localizedDescription)
@@ -726,10 +726,10 @@ struct DeveloperOptionsView: View {
         #endif
         do {
             if let rotatedURL = try WidgetLogManager.rotateLog() {
-                let toastView = ToastView(text: NSLocalizedString("Rotated \(logName) Log", comment: ""), detailText: "Saved to WidgetLogs/\(rotatedURL.lastPathComponent)")
+                let toastView = ToastView(text: String(format: NSLocalizedString("Rotated %@ Log", comment: ""), logName), detailText: "Saved to WidgetLogs/\(rotatedURL.lastPathComponent)")
                 toastView.show(in: top)
             } else {
-                let toastView = ToastView(text: NSLocalizedString("\(logName) Log Empty", comment: ""), detailText: "Nothing to rotate.")
+                let toastView = ToastView(text: String(format: NSLocalizedString("%@ Log Empty", comment: ""), logName), detailText: "Nothing to rotate.")
                 toastView.show(in: top)
             }
         } catch {

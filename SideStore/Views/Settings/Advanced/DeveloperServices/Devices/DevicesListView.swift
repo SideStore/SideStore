@@ -52,7 +52,7 @@ struct DevicesListView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Registered Devices (\(viewModel.devices.count))"), footer: Text("Devices registered on your developer team can run development-signed apps. Tap any device to edit its name, disable, or delete it.")) {
+            Section(header: Text(String(format: NSLocalizedString("Registered Devices (%d)", comment: ""), viewModel.devices.count)), footer: Text("Devices registered on your developer team can run development-signed apps. Tap any device to edit its name, disable, or delete it.")) {
                 if filteredDevices.isEmpty {
                     if viewModel.isLoading {
                         HStack {
@@ -358,7 +358,7 @@ struct DevicesListView: View {
                 .alert(isPresented: $showSheetDisableAlert) {
                     Alert(
                         title: Text("Disable Device?"),
-                        message: Text("Are you sure you want to disable '\(device.name)' on the Apple Developer Portal? Disabled devices will not be included in newly generated provisioning profiles."),
+                        message: Text(String(format: NSLocalizedString("Are you sure you want to disable '%@' on the Apple Developer Portal? Disabled devices will not be included in newly generated provisioning profiles.", comment: ""), device.name)),
                         primaryButton: .default(Text("Disable")) {
                             Task {
                                 let success = await viewModel.disableDevice(device, presentingViewController: presentingViewController)
@@ -373,7 +373,7 @@ struct DevicesListView: View {
                 .alert(isPresented: $showSheetDeleteAlert) {
                     Alert(
                         title: Text("Delete Device?"),
-                        message: Text("Are you sure you want to delete '\(device.name)' (\(device.identifier)) from the Apple Developer Portal?"),
+                        message: Text(String(format: NSLocalizedString("Are you sure you want to delete '%@' (%@) from the Apple Developer Portal?", comment: ""), device.name, device.identifier)),
                         primaryButton: .destructive(Text("Delete")) {
                             Task {
                                 let success = await viewModel.deleteDevice(device, presentingViewController: presentingViewController)
@@ -392,7 +392,7 @@ struct DevicesListView: View {
             case .disable(let device):
                 return Alert(
                     title: Text("Disable Device?"),
-                    message: Text("Are you sure you want to disable '\(device.name)' on the Apple Developer Portal? Disabled devices will not be included in newly generated provisioning profiles."),
+                    message: Text(String(format: NSLocalizedString("Are you sure you want to disable '%@' on the Apple Developer Portal? Disabled devices will not be included in newly generated provisioning profiles.", comment: ""), device.name)),
                     primaryButton: .default(Text("Disable")) {
                         Task {
                             _ = await viewModel.disableDevice(device, presentingViewController: presentingViewController)
@@ -403,7 +403,7 @@ struct DevicesListView: View {
             case .delete(let device):
                 return Alert(
                     title: Text("Delete Device?"),
-                    message: Text("Are you sure you want to delete '\(device.name)' (\(device.identifier)) from the Apple Developer Portal?"),
+                    message: Text(String(format: NSLocalizedString("Are you sure you want to delete '%@' (%@) from the Apple Developer Portal?", comment: ""), device.name, device.identifier)),
                     primaryButton: .destructive(Text("Delete")) {
                         Task {
                             _ = await viewModel.deleteDevice(device, presentingViewController: presentingViewController)

@@ -194,8 +194,8 @@ extension ReviewPermissionsViewController
                 
                 switch self.permissionsMode
                 {
-                case .all: configuration.secondaryText = String(localized: "“\(self.app.name)” will be automatically given these permissions once installed.")
-                case .added: configuration.secondaryText = String(localized: "This version of “\(self.app.name)” requires additional permissions.")
+                case .all: configuration.secondaryText = String(format: NSLocalizedString("“%@” will be automatically given these permissions once installed.", comment: ""), self.app.name)
+                case .added: configuration.secondaryText = String(format: NSLocalizedString("This version of “%@” requires additional permissions.", comment: ""), self.app.name)
                 case .none: break
                 }
                 

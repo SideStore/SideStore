@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5Rz-4h-jJ8">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5Rz-4h-jJ8">
     <device id="retina6_3" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -1157,39 +1158,39 @@
                                         </userDefinedRuntimeAttributes>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="bkp-Rst-Mgt" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
-                                         <rect key="frame" x="0.0" y="1665.6666622161865" width="402" height="51"/>
-                                         <autoresizingMask key="autoresizingMask"/>
-                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bkp-Rst-Mgt" id="bkp-Rst-ctv">
-                                             <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
-                                             <autoresizingMask key="autoresizingMask"/>
-                                             <subviews>
-                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Backup &amp; Restore" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bkp-Rst-lbl" userLabel="Backup &amp; Restore">
-                                                     <rect key="frame" x="30" y="15.333333333333334" width="145" height="20.333333333333329"/>
-                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                     <nil key="highlightedColor"/>
-                                                 </label>
-                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bkp-Rst-img">
-                                                     <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
-                                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
-                                                 </imageView>
-                                             </subviews>
-                                             <constraints>
-                                                 <constraint firstItem="bkp-Rst-lbl" firstAttribute="centerY" secondItem="bkp-Rst-ctv" secondAttribute="centerY" id="bkp-Rst-c01"/>
-                                                 <constraint firstItem="bkp-Rst-lbl" firstAttribute="leading" secondItem="bkp-Rst-ctv" secondAttribute="leadingMargin" id="bkp-Rst-c02"/>
-                                                 <constraint firstItem="bkp-Rst-img" firstAttribute="centerY" secondItem="bkp-Rst-ctv" secondAttribute="centerY" id="bkp-Rst-c03"/>
-                                                 <constraint firstAttribute="trailingMargin" secondItem="bkp-Rst-img" secondAttribute="trailing" id="bkp-Rst-c04"/>
-                                             </constraints>
-                                         </tableViewCellContentView>
-                                         <color key="backgroundColor" white="1" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                         <edgeInsets key="layoutMargins" top="8" left="30" bottom="8" right="30"/>
-                                         <userDefinedRuntimeAttributes>
-                                             <userDefinedRuntimeAttribute type="number" keyPath="style">
-                                                 <integer key="value" value="2"/>
-                                             </userDefinedRuntimeAttribute>
-                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
-                                         </userDefinedRuntimeAttributes>
-                                     </tableViewCell>
+                                        <rect key="frame" x="0.0" y="1665.6666622161865" width="402" height="51"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bkp-Rst-Mgt" id="bkp-Rst-ctv">
+                                            <rect key="frame" x="0.0" y="0.0" width="402" height="51"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Backup &amp; Restore" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bkp-Rst-lbl" userLabel="Backup &amp; Restore">
+                                                    <rect key="frame" x="30" y="15.333333333333334" width="145" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bkp-Rst-img">
+                                                    <rect key="frame" x="356.33333333333331" y="14.333333333333334" width="15.666666666666686" height="22.333333333333329"/>
+                                                    <imageReference key="image" image="chevron.right" catalog="system" symbolScale="large"/>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="bkp-Rst-lbl" firstAttribute="centerY" secondItem="bkp-Rst-ctv" secondAttribute="centerY" id="bkp-Rst-c01"/>
+                                                <constraint firstItem="bkp-Rst-lbl" firstAttribute="leading" secondItem="bkp-Rst-ctv" secondAttribute="leadingMargin" id="bkp-Rst-c02"/>
+                                                <constraint firstItem="bkp-Rst-img" firstAttribute="centerY" secondItem="bkp-Rst-ctv" secondAttribute="centerY" id="bkp-Rst-c03"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="bkp-Rst-img" secondAttribute="trailing" id="bkp-Rst-c04"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="1" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <edgeInsets key="layoutMargins" top="8" left="30" bottom="8" right="30"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="style">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="usr-Cst-Mgt" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1716.6666622161865" width="402" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -1223,7 +1224,7 @@
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSelectable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
-                                    </tableViewCell>ell>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="q7f-PG-mTr" customClass="InsetGroupTableViewCell" customModule="SideStore" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1869.6666622161865" width="402" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -1267,7 +1268,7 @@
                                         <rect key="frame" x="0.0" y="2145.3333282470703" width="402" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="daQ-mk-yqC" id="ZkW-ZR-twy">
-                                            <rect key="frame" x="0.0" y="0.0" width="371.6666666666667" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="371.66666666666669" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Developer Options" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jFh-36-AP2">
@@ -1278,8 +1279,8 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="jFh-36-AP2" firstAttribute="leading" secondItem="ZkW-ZR-twy" secondAttribute="leadingMargin" id="98e-6Q-2Wd"/>
                                                 <constraint firstItem="jFh-36-AP2" firstAttribute="centerY" secondItem="ZkW-ZR-twy" secondAttribute="centerY" id="2u3-2Y-3VF"/>
+                                                <constraint firstItem="jFh-36-AP2" firstAttribute="leading" secondItem="ZkW-ZR-twy" secondAttribute="leadingMargin" id="98e-6Q-2Wd"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1295,7 +1296,7 @@
                                         <rect key="frame" x="0.0" y="2196.3333282470703" width="402" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="exp-feat-cell" id="exp-feat-content">
-                                            <rect key="frame" x="0.0" y="0.0" width="371.6666666666667" height="51"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="371.66666666666669" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Experimental Features" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exp-feat-label">
@@ -1332,23 +1333,16 @@
                         <outlet property="accountEmailLabel" destination="0uP-Cd-tNX" id="14b-aL-yE3"/>
                         <outlet property="accountNameLabel" destination="CnN-M1-AYK" id="Ldc-Py-Bix"/>
                         <outlet property="accountTypeLabel" destination="434-MW-Den" id="mNB-QE-4Jg"/>
-                        <outlet property="altSignVerboseLoggingSwitch" destination="ns7-8G-sT9" id="a2K-b8-xWs"/>
                         <outlet property="backgroundRefreshSwitch" destination="DPu-zD-Als" id="eiG-Hv-Vko"/>
                         <outlet property="betaTrackLabel" destination="1B5-BJ-Rkb" id="wcZ-in-EOa"/>
                         <outlet property="betaTrackPopupButton" destination="kYQ-zz-vjQ" id="QXm-ud-70m"/>
                         <outlet property="betaUpdatesSwitch" destination="Blb-Dp-9QF" id="C4e-rj-ocb"/>
-
                         <outlet property="disableAppLimitSwitch" destination="1aa-og-ZXD" id="oVL-Md-yZ8"/>
-                        <outlet property="disableResponseCachingSwitch" destination="AAh-cu-qw8" id="aVT-Md-yZ8"/>
                         <outlet property="githubButton" destination="oqj-4S-I9l" id="sxB-LE-gA2"/>
                         <outlet property="mastodonButton" destination="B8Q-e7-beR" id="Kbe-Og-rsg"/>
-                        <outlet property="minimuxerVerboseLoggingSwitch" destination="os8-7F-rSm" id="gxg-Gx-xwO"/>
-                        <outlet property="rotateLogsOnStartupSwitch" destination="rot-lg-switch" id="rot-lg-outlet-conn"/>
                         <outlet property="noIdleTimeoutSwitch" destination="iQA-wm-5ag" id="jHC-js-q0Y"/>
-                        <outlet property="recreateDatabaseSwitch" destination="uGv-Lb-Ita" id="BMU-cK-0ee"/>
                         <outlet property="threadsButton" destination="AWk-yE-9LI" id="SOc-ei-4gK"/>
                         <outlet property="twitterButton" destination="uYZ-Vu-RzK" id="anA-jh-w4z"/>
-                        <outlet property="verboseOperationsLoggingSwitch" destination="Q5X-Mo-KpE" id="aVL-Md-tZ8"/>
                         <outlet property="versionLabel" destination="5u7-mb-jJj" id="zvU-TQ-lO6"/>
                     </connections>
                 </tableViewController>
@@ -1765,7 +1759,7 @@ Settings by i cons from the Noun Project</string>
             <objects>
                 <viewController id="xB2-Se-VVg" customClass="ErrorDetailsViewController" customModule="SideStore" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eBQ-se-VIy">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ctd-NB-4ov">
@@ -1827,8 +1821,8 @@ Settings by i cons from the Noun Project</string>
         <image name="Settings" width="20" height="20"/>
         <image name="Threads" width="130" height="130"/>
         <image name="Twitter" width="130" height="130"/>
+        <image name="apple.terminal" catalog="system" width="128" height="93"/>
         <image name="chevron.right" catalog="system" width="97" height="128"/>
-        <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="trash" catalog="system" width="117" height="128"/>
         <namedColor name="SettingsBackground">
             <color red="0.45098039215686275" green="0.015686274509803921" blue="0.68627450980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

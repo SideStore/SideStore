@@ -99,7 +99,7 @@ struct CacheManagementView: View {
             let appName = viewModel.itemToDelete?.name ?? "this app"
             return Alert(
                 title: Text("Delete Cached App?"),
-                message: Text("If deleted, SideStore will require the original IPA file during reinstall, backup, resign, or refresh procedures. Are you sure you want to delete the cached app bundle for “\(appName)” ?"),
+                message: Text(String(format: NSLocalizedString("If deleted, SideStore will require the original IPA file during reinstall, backup, resign, or refresh procedures. Are you sure you want to delete the cached app bundle for “%@” ?", comment: ""), appName)),
                 primaryButton: .destructive(Text("Delete")) {
                     if let item = viewModel.itemToDelete {
                         viewModel.deleteItem(item)

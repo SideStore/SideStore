@@ -34,7 +34,7 @@ struct AppIDsListView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Registered App IDs (\(viewModel.appIDs.count))")) {
+            Section(header: Text(String(format: NSLocalizedString("Registered App IDs (%d)", comment: ""), viewModel.appIDs.count))) {
                 if filteredAppIDs.isEmpty {
                     if viewModel.isLoading {
                         HStack {
@@ -57,7 +57,7 @@ struct AppIDsListView: View {
                                         .font(.headline)
                                     Spacer()
                                     if !appID.features.isEmpty {
-                                        Text("\(appID.features.count) features")
+                                        Text(String(format: NSLocalizedString("%d features", comment: ""), appID.features.count))
                                             .font(.caption2)
                                             .padding(.horizontal, 6)
                                             .padding(.vertical, 2)
@@ -70,12 +70,12 @@ struct AppIDsListView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 HStack {
-                                    Text("ID: \(appID.identifier)")
+                                    Text(String(format: NSLocalizedString("ID: %@", comment: ""), appID.identifier))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     Spacer()
                                     if let expiration = appID.expirationDate {
-                                        Text("Expires: \(formatDate(expiration))")
+                                        Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(expiration)))
                                             .font(.caption)
                                             .foregroundColor(expiration < Date() ? .red : .secondary)
                                     }
@@ -153,7 +153,7 @@ struct AppIDsListView: View {
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
                 title: Text("Delete App ID?"),
-                message: Text("Are you sure you want to delete '\(appIDToDelete?.name ?? "this App ID")' (\(appIDToDelete?.bundleIdentifier ?? ""))? This will also remove any associated provisioning profiles."),
+                message: Text(String(format: NSLocalizedString("Are you sure you want to delete '%@' (%@)? This will also remove any associated provisioning profiles.", comment: ""), appIDToDelete?.name ?? "this App ID", appIDToDelete?.bundleIdentifier ?? "")),
                 primaryButton: .destructive(Text("Delete")) {
                     if let target = appIDToDelete {
                         Task {

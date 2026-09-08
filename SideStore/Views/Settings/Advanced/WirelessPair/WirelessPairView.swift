@@ -292,7 +292,7 @@ struct ConnectionDetailsCard: View {
                             UIPasteboard.general.string = value
                             #endif
                         } label: {
-                            Label("Copy \(label)", systemImage: "doc.on.doc")
+                            Label(String(format: NSLocalizedString("Copy %@", comment: ""), label), systemImage: "doc.on.doc")
                         }
                     }
                 }

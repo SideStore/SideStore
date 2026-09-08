@@ -143,7 +143,7 @@ private struct ComplicationView: View
                 case .text:
                     VStack(spacing: -1) {
                         let fontSize = daysRemaining > 99 ? 18.0 : 20.0
-                        Text("\(daysRemaining)")
+                        Text(String(format: NSLocalizedString("%d", comment: ""), daysRemaining))
                             .font(.system(size: fontSize, weight: .bold, design: .rounded))
                         
                         Text(daysRemaining == 1 ? "DAY" : "DAYS")
@@ -167,7 +167,7 @@ private struct ComplicationView: View
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
                                 .kerning(-2) :
                                 
-                            Text("\(daysRemaining)")
+                            Text(String(format: NSLocalizedString("%d", comment: ""), daysRemaining))
                                 .font(.system(size: 20, weight: .bold, design: .rounded))
                          )
                         .foregroundColor(Color.black)

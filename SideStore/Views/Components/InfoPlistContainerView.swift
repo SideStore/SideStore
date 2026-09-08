@@ -200,7 +200,7 @@ struct PlistNodeRow: View {
         }
         #else
         if let children = node.children {
-            Section(header: Text("\(node.key) (\(node.typeInfo))")) {
+            Section(header: Text(String(format: NSLocalizedString("%@ (%@)", comment: ""), node.key, node.typeInfo))) {
                 ForEach(children) { child in
                     PlistNodeRow(node: child)
                 }
@@ -574,7 +574,7 @@ struct InfoPlistSemanticView: View {
             
             // Privacy Permissions Card
             if !privacyPermissions.isEmpty {
-                Section(header: Text("Privacy Permissions (\(privacyPermissions.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Privacy Permissions (%d)", comment: ""), privacyPermissions.count))) {
                     ForEach(privacyPermissions.keys.sorted(), id: \.self) { key in
                         LocalCopyableDescriptionRow(key: key, value: privacyPermissions[key] ?? "")
                     }

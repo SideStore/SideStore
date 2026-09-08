@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "mFe-zJ-eva.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"App Name\"; ObjectID = \"mFe-zJ-eva\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "App Name"
+          }
+        }
+      }
+    },
+    "oN5-vu-Dnw.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Developer\"; ObjectID = \"oN5-vu-Dnw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Developer"
+          }
+        }
+      }
+    },
+    "tVx-3G-dcu.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"FREE\"; ObjectID = \"tVx-3G-dcu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "FREE"
+          }
+        }
+      }
+    },
+    "Yd9-jw-faD.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"Yd9-jw-faD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Label"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

@@ -156,7 +156,7 @@ struct BackupAndRestoreView: View {
             SwiftUI.Button("Cancel", role: .cancel) {}
         } message: {
             if let email = importedAccount?.email {
-                Text("Please enter Apple ID password for \(email) to complete sign-in.")
+                Text(String(format: NSLocalizedString("Please enter Apple ID password for %@ to complete sign-in.", comment: ""), email))
             } else {
                 Text("Please enter your Apple ID password to complete sign-in.")
             }

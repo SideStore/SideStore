@@ -106,7 +106,7 @@ final class PipelineHandler: PipelineExecutionHandler,
                 firstSentence = NSLocalizedString("Non-developer Apple IDs are limited to creating 10 App IDs per week.", comment: "")
             }
             
-            let message = firstSentence + " " + NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit? There are \(appBundle.appExtensions.count) Extensions", comment: "")
+            let message = firstSentence + " " + String(format: NSLocalizedString("Would you like to remove this app's extensions so they don't count towards your limit? There are %d Extensions", comment: ""), appBundle.appExtensions.count)
             
             let alertController = UIAlertController(title: NSLocalizedString("App Contains Extensions", comment: ""), message: message, preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: UIAlertAction.cancel.title, style: UIAlertAction.cancel.style, handler: { _ in

@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "iMf-wr-wRV.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Refresh All\"; ObjectID = \"iMf-wr-wRV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Refresh All"
+          }
+        }
+      }
+    },
+    "zhW-Re-WNf.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Installed\"; ObjectID = \"zhW-Re-WNf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Installed"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

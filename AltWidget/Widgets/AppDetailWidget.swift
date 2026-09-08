@@ -90,7 +90,7 @@ private struct AppDetailWidgetView: View
                                     {
                                     case ..<0: return Text("Expired")
                                     case 1: return Text("1 day")
-                                    default: return Text("\(daysRemaining) days")
+                                    default: return Text(String(format: NSLocalizedString("%d days", comment: ""), daysRemaining))
                                     }
                                 }()
                                 

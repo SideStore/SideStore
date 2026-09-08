@@ -151,7 +151,7 @@ struct CertificatesView: View {
             SwiftUI.Button("Import") { viewModel.submitImportPassword() }
             SwiftUI.Button("Cancel", role: .cancel) { viewModel.cancelImport() }
         } message: {
-            Text("Enter the password to decrypt the imported certificate file.\n\nFile: \(viewModel.currentImportFilename)")
+            Text(String(format: NSLocalizedString("Enter the password to decrypt the imported certificate file.\n\nFile: %@", comment: ""), viewModel.currentImportFilename))
         }
         .alert("Success", isPresented: $viewModel.showAlert) {
             SwiftUI.Button("OK", role: .cancel) { viewModel.alertMessage = nil }
@@ -215,7 +215,7 @@ struct CertificatesView: View {
             SwiftUI.Button("Cancel", role: .cancel) { certificateToClearKeyFor = nil }
         } message: {
             if let cert = certificateToClearKeyFor {
-                Text("This will clear the locally stored private key of this certificate.\n\nName: \(cert.name)\nS/N: \(cert.serialNumber)")
+                Text(String(format: NSLocalizedString("This will clear the locally stored private key of this certificate.\n\nName: %@\nS/N: %@", comment: ""), cert.name, cert.serialNumber))
             }
         }
         #if !os(tvOS)

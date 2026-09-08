@@ -37,7 +37,7 @@ struct UnsupportedWidgetView: View {
                 .font(.system(.subheadline, design: .rounded))
                 .fontWeight(.semibold)
                 .foregroundColor(.white)
-            Text("Requires \(requiredVersion) or later")
+            Text(String(format: NSLocalizedString("Requires %@ or later", comment: ""), requiredVersion))
                 .font(.system(.caption2, design: .rounded))
                 .foregroundColor(Color.white.opacity(0.6))
                 .multilineTextAlignment(.center)

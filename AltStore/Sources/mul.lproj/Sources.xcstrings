@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "FGB-cd-Vkd.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"All News\"; ObjectID = \"FGB-cd-Vkd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "All News"
+          }
+        }
+      }
+    },
+    "Noh-fc-wch.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Sources\"; ObjectID = \"Noh-fc-wch\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sources"
+          }
+        }
+      }
+    },
+    "rUb-ON-AON.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"All Apps\"; ObjectID = \"rUb-ON-AON\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "All Apps"
+          }
+        }
+      }
+    },
+    "v46-dC-g7e.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"Add Source\"; ObjectID = \"v46-dC-g7e\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add Source"
+          }
+        }
+      }
+    },
+    "Wm7-1O-FkD.title" : {
+      "comment" : "Class = \"UICollectionViewController\"; title = \"Sources\"; ObjectID = \"Wm7-1O-FkD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sources"
+          }
+        }
+      }
+    },
+    "xPv-dc-X4v.title" : {
+      "comment" : "Class = \"UITabBarItem\"; title = \"Sources\"; ObjectID = \"xPv-dc-X4v\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sources"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

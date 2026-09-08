@@ -53,7 +53,7 @@ struct Countdown: View
     }
     
     var body: some View {
-        Text("\(numberOfDays)")
+        Text(String(format: NSLocalizedString("%d", comment: ""), numberOfDays))
             .font((font ?? .title).monospacedDigit())
             .bold()
             .opacity(endDate != nil ? 1 : 0)

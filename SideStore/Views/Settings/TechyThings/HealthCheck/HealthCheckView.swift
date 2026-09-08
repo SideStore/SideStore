@@ -285,7 +285,7 @@ struct InterfaceRow: View {
                     .foregroundColor(hasIPv4 ? .primary : .secondary)
                 
                 if hasIPv4 {
-                    Text("(\(ipv4Mask))")
+                    Text(String(format: NSLocalizedString("(%@)", comment: ""), ipv4Mask))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }

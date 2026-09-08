@@ -77,7 +77,7 @@ struct SignableCertificateRowView: View {
                     
                     (
                         Text("Validity: ").font(.system(size: 10))
-                        + Text("\(brief.validFrom) - \(brief.validUntil)").font(.system(size: 10))
+                        + Text(String(format: NSLocalizedString("%@ - %@", comment: ""), brief.validFrom, brief.validUntil)).font(.system(size: 10))
                     )
                     .foregroundColor(Color(uiColor: .lightGray))
                 }

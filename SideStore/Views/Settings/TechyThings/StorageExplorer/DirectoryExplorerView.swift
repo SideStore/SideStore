@@ -142,7 +142,7 @@ public struct DirectoryExplorerView: View {
         switch alertType {
         case .confirmSingleDelete(let item):
             return Alert(
-                title: Text("Delete “\(item.name)”?"),
+                title: Text(String(format: NSLocalizedString("Delete “%@”?", comment: ""), item.name)),
                 message: Text("This item will be permanently removed."),
                 primaryButton: .destructive(Text("Delete")) {
                     vm.delete(item: item)
@@ -152,8 +152,8 @@ public struct DirectoryExplorerView: View {
         case .confirmBulkDelete:
             let count = vm.selectedURLs.count
             return Alert(
-                title: Text("Delete \(count) Selected Items?"),
-                message: Text("Are you sure you want to permanently delete these \(count) items?"),
+                title: Text(String(format: NSLocalizedString("Delete %d Selected Items?", comment: ""), count)),
+                message: Text(String(format: NSLocalizedString("Are you sure you want to permanently delete these %d items?", comment: ""), count)),
                 primaryButton: .destructive(Text("Delete All")) {
                     vm.bulkDeleteSelected()
                 },
@@ -161,7 +161,7 @@ public struct DirectoryExplorerView: View {
             )
         case .rename(let item):
             return Alert(
-                title: Text("Rename “\(item.name)”"),
+                title: Text(String(format: NSLocalizedString("Rename “%@”", comment: ""), item.name)),
                 message: Text("Enter a new name for this item:"),
                 primaryButton: .default(Text("Rename")) {
                     vm.rename(item: item, to: vm.renameInput)
@@ -182,7 +182,7 @@ public struct DirectoryExplorerView: View {
         case .pasteConflict(let conflict):
             return Alert(
                 title: Text("File Already Exists"),
-                message: Text("An item named “\(conflict.existingName)” already exists in this folder. Enter a new name to copy:"),
+                message: Text(String(format: NSLocalizedString("An item named “%@” already exists in this folder. Enter a new name to copy:", comment: ""), conflict.existingName)),
                 primaryButton: .default(Text("Copy as New Name")) {
                     vm.resolveConflictWithNewName()
                 },
@@ -218,25 +218,25 @@ private struct DirectoryItemListSectionView: View {
         
         Group {
             if !folders.isEmpty && !files.isEmpty {
-                Section("Folders (\(folders.count))") {
+                Section(String(format: NSLocalizedString("Folders (%d)", comment: ""), folders.count)) {
                     ForEach(folders) { item in
                         renderRow(item: item)
                     }
                 }
-                
-                Section("Files (\(files.count))") {
+
+                Section(String(format: NSLocalizedString("Files (%d)", comment: ""), files.count)) {
                     ForEach(files) { item in
                         renderRow(item: item)
                     }
                 }
             } else if !folders.isEmpty {
-                Section("Folders (\(folders.count))") {
+                Section(String(format: NSLocalizedString("Folders (%d)", comment: ""), folders.count)) {
                     ForEach(folders) { item in
                         renderRow(item: item)
                     }
                 }
             } else {
-                Section("Files (\(files.count))") {
+                Section(String(format: NSLocalizedString("Files (%d)", comment: ""), files.count)) {
                     ForEach(files) { item in
                         renderRow(item: item)
                     }
@@ -427,7 +427,7 @@ private struct BottomInformationBarView: View {
                 Text(folderSummaryString)
                     .font(.caption)
                     .foregroundColor(.primary)
-                Text("Available Space: \(freeDiskSpaceString)")
+                Text(String(format: NSLocalizedString("Available Space: %@", comment: ""), freeDiskSpaceString))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -505,7 +505,7 @@ private struct TrailingToolbarMenuView: View {
                         }
                     } label: {
                         if sortOption == option {
-                            Label("\(option.rawValue) (\(sortAscending ? "Ascending" : "Descending"))", systemImage: sortAscending ? "arrow.up" : "arrow.down")
+                            Label(String(format: NSLocalizedString("%@ (%@)", comment: ""), option.rawValue, sortAscending ? "Ascending" : "Descending"), systemImage: sortAscending ? "arrow.up" : "arrow.down")
                         } else {
                             Text(option.rawValue)
                         }
@@ -541,7 +541,7 @@ private struct TrailingToolbarMenuView: View {
                 if !viewModel.isSelectionMode { viewModel.selectedURLs.removeAll() }
             }
             ForEach(StorageSortOption.allCases) { option in
-                SwiftUI.Button("Sort: \(option.rawValue)") {
+                SwiftUI.Button(String(format: NSLocalizedString("Sort: %@", comment: ""), option.rawValue)) {
                     if viewModel.sortOption == option {
                         viewModel.sortAscending.toggle()
                     } else {
@@ -666,7 +666,7 @@ private struct ItemRow: View {
                 
                 HStack(spacing: 6) {
                     if item.isDirectory {
-                        Text("\(item.itemCount) items")
+                        Text(String(format: NSLocalizedString("%d items", comment: ""), item.itemCount))
                         Text("•")
                         Text(item.formattedSize)
                     } else {

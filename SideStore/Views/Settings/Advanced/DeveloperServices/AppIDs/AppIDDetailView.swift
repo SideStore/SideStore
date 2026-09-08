@@ -39,7 +39,7 @@ struct AppIDDetailView: View {
                 }
             }
 
-            Section(header: Text("Capabilities & Features (\(currentAppID.features.count))")) {
+            Section(header: Text(String(format: NSLocalizedString("Capabilities & Features (%d)", comment: ""), currentAppID.features.count))) {
                 if currentAppID.features.isEmpty {
                     Text("No special features enabled for this App ID.")
                         .font(.subheadline)

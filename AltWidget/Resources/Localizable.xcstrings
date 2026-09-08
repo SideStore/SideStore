@@ -1,0 +1,287 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ error %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ error %2$@."
+          }
+        }
+      }
+    },
+    "%@ failed with code %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ failed with code %2$@."
+          }
+        }
+      }
+    },
+    "%@ failed." : {
+
+    },
+    "%@ is currently locked." : {
+
+    },
+    "%@ is not currently running on %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ is not currently running on %2$@."
+          }
+        }
+      }
+    },
+    "%@ received an invalid request from SideStore." : {
+
+    },
+    "%@ requires %@ or later." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ requires %2$@ or later."
+          }
+        }
+      }
+    },
+    "%@ returned unexpected output." : {
+
+    },
+    "%@ timed out." : {
+
+    },
+    "%@ unexpectedly quit." : {
+
+    },
+    "%d" : {
+
+    },
+    "%d days" : {
+
+    },
+    "-" : {
+
+    },
+    "1 day" : {
+
+    },
+    "7+" : {
+
+    },
+    "AltServer could not connect to Mail plug-in." : {
+
+    },
+    "AltServer could not establish a connection to SideStore." : {
+
+    },
+    "An error occured while removing the app." : {
+
+    },
+    "An error occurred while installing the app." : {
+
+    },
+    "An unknown error occured." : {
+
+    },
+    "Connection error code: %@" : {
+
+    },
+    "Could not connect to SideStore." : {
+
+    },
+    "Could not find profile" : {
+
+    },
+    "DAYS" : {
+
+    },
+    "Debug Description" : {
+
+    },
+    "Error Description" : {
+
+    },
+    "Error code: %@" : {
+
+    },
+    "Expired" : {
+
+    },
+    "Expires in\n" : {
+
+    },
+    "Expires in %d " : {
+
+    },
+    "Failure" : {
+
+    },
+    "Failure Reason" : {
+
+    },
+    "Launch app to update widget" : {
+
+    },
+    "Lost connection to SideStore." : {
+
+    },
+    "Mail has been automatically opened, try again in a moment. Otherwise, make sure plug-in is enabled in Mail's preferences." : {
+
+    },
+    "Make sure the app is running in the foreground on %@ then try again." : {
+
+    },
+    "Make sure you have trusted this device with your computer and Wi-Fi sync is enabled." : {
+
+    },
+    "Open SideStore" : {
+
+    },
+    "Please deactivate a sideloaded app in order to install another one.\n\nIf you're running iOS 13.5 or later, make sure “Offload Unused Apps” is disabled in Settings > iTunes & App Stores, then install or delete all offloaded apps." : {
+
+    },
+    "Please deactivate a sideloaded app with SideStore in order to install another app.\n\nIf you're running iOS 13.5 or later, make sure 'Offload Unused Apps' is disabled in Settings > iTunes & App Stores, then install or delete all offloaded apps to prevent them from erroneously counting towards this limit." : {
+
+    },
+    "Please unlock the device with your passcode and try again." : {
+
+    },
+    "Recovery Suggestion" : {
+
+    },
+    "Requires %@ or later" : {
+
+    },
+    "SideStore could not establish a secure connection to %@." : {
+
+    },
+    "SideStore could not find this device." : {
+
+    },
+    "SideStore could not write data to this device." : {
+
+    },
+    "SideStore does not support this request." : {
+
+    },
+    "SideStore received an invalid request." : {
+
+    },
+    "SideStore received an invalid response from %@." : {
+
+    },
+    "SideStore received an unknown response from SideStore." : {
+
+    },
+    "SideStore sent an invalid response." : {
+
+    },
+    "SideStore's connection to %@ timed out." : {
+
+    },
+    "Source File" : {
+
+    },
+    "Source Line" : {
+
+    },
+    "The Developer disk located at %@ is incompatible with %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Developer disk located at %1$@ is incompatible with %2$@."
+          }
+        }
+      }
+    },
+    "The app is in an invalid format." : {
+
+    },
+    "The device" : {
+
+    },
+    "The disk is incompatible with %@." : {
+
+    },
+    "The process" : {
+
+    },
+    "The process '%@'" : {
+
+    },
+    "The provided anisette data is invalid." : {
+
+    },
+    "The requested app" : {
+
+    },
+    "There was an error connecting to the device." : {
+
+    },
+    "There was an issue communicating with the usbmuxd daemon." : {
+
+    },
+    "Title" : {
+
+    },
+    "Underlying Error" : {
+
+    },
+    "Underlying Errors" : {
+
+    },
+    "Unsupported iOS" : {
+
+    },
+    "Version %@%@" : {
+      "comment" : "SideStore Version",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@%2$@"
+          }
+        }
+      }
+    },
+    "You cannot activate more than 3 apps with a non-developer Apple ID." : {
+
+    },
+    "Your device must be running iOS 15.0 or later to install SideStore." : {
+
+    },
+    "day" : {
+
+    },
+    "days" : {
+
+    },
+    "the device" : {
+
+    },
+    "this device's OS version" : {
+
+    },
+    "your device" : {
+
+    }
+  },
+  "version" : "1.1"
+}

@@ -155,14 +155,14 @@ struct WirelessPairTargetDialog: View {
                 
                 VStack(alignment: .leading, spacing: 3) {
                     if let v4 = v4, !v4.isEmpty {
-                        Text("IPv4: \(v4)")
+                        Text(String(format: NSLocalizedString("IPv4: %@", comment: ""), v4))
                             .font(.caption.monospaced())
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
                     
                     if let v6 = v6, !v6.isEmpty {
-                        Text("IPv6: \(v6)")
+                        Text(String(format: NSLocalizedString("IPv6: %@", comment: ""), v6))
                             .font(.caption.monospaced())
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -269,7 +269,7 @@ struct WirelessPairTargetDialog: View {
                 VStack(alignment: .leading, spacing: 3) {
                     if let v4 = target.ipv4, !v4.isEmpty {
                         let formattedV4 = portString.isEmpty ? v4 : "\(v4):\(portString)"
-                        Text("IPv4: \(formattedV4)")
+                        Text(String(format: NSLocalizedString("IPv4: %@", comment: ""), formattedV4))
                             .font(.caption.monospaced())
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -277,7 +277,7 @@ struct WirelessPairTargetDialog: View {
                     
                     if let v6 = target.ipv6, !v6.isEmpty {
                         let formattedV6 = portString.isEmpty ? v6 : "[\(v6)]:\(portString)"
-                        Text("IPv6: \(formattedV6)")
+                        Text(String(format: NSLocalizedString("IPv6: %@", comment: ""), formattedV6))
                             .font(.caption.monospaced())
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -286,7 +286,7 @@ struct WirelessPairTargetDialog: View {
                     
                     if (target.ipv4 == nil || target.ipv4?.isEmpty == true) && (target.ipv6 == nil || target.ipv6?.isEmpty == true) {
                         if !portString.isEmpty {
-                            Text("Port: \(portString)")
+                            Text(String(format: NSLocalizedString("Port: %@", comment: ""), portString))
                                 .font(.caption.monospaced())
                                 .foregroundColor(.secondary)
                         } else if viewModel.isScanning {
@@ -352,7 +352,7 @@ struct WirelessPairTargetDialog: View {
                 let isV6 = fallback.ip.contains(":")
                 let label = isV6 ? "IPv6" : "IPv4"
                 let formattedIp = isV6 ? "[\(fallback.ip)]:\(portString)" : "\(fallback.ip):\(portString)"
-                Text("\(label): \(formattedIp)")
+                Text(String(format: NSLocalizedString("%@: %@", comment: ""), label, formattedIp))
                     .font(.caption.monospaced())
                     .foregroundColor(.secondary)
                     .lineLimit(1)

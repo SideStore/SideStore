@@ -911,7 +911,7 @@ struct ServiceDetailView: View {
             
             // Interfaces
             if !service.interfaces.isEmpty {
-                Section(header: Text("Discovered Interfaces (\(service.interfaces.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("Discovered Interfaces (%d)", comment: ""), service.interfaces.count))) {
                     ForEach(service.interfaces, id: \.index) { iface in
                         HStack {
                             Image(systemName: iconForInterfaceType(iface.type))
@@ -959,7 +959,7 @@ struct ServiceDetailView: View {
             
             // TXT Records
             if !resolved.txtRecords.isEmpty {
-                Section(header: Text("TXT Record (\(resolved.txtRecords.count))")) {
+                Section(header: Text(String(format: NSLocalizedString("TXT Record (%d)", comment: ""), resolved.txtRecords.count))) {
                     ForEach(resolved.txtRecords, id: \.key) { record in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(record.key)
@@ -1014,7 +1014,7 @@ struct ServiceDetailView: View {
                         SwiftUI.Button {
                             copyWithFeedback(rec.content)
                         } label: {
-                            Label("Copy \(rec.recordType) Record", systemImage: "doc.on.doc")
+                            Label(String(format: NSLocalizedString("Copy %@ Record", comment: ""), rec.recordType), systemImage: "doc.on.doc")
                         }
                     }
                 }
@@ -1030,7 +1030,7 @@ struct ServiceDetailView: View {
                     let scheme = resolved.type.contains("_https") || resolved.port == 443 ? "https" : "http"
                     if let url = URL(string: "\(scheme)://\(resolved.hostname):\(resolved.port)") {
                         Link(destination: url) {
-                            Label("Open in Safari (\(scheme)://)", systemImage: "safari")
+                            Label(String(format: NSLocalizedString("Open in Safari (%@://)", comment: ""), scheme), systemImage: "safari")
                         }
                     }
                 }
@@ -1147,7 +1147,7 @@ private struct DetailRow: View {
             SwiftUI.Button {
                 onCopy?(value)
             } label: {
-                Label("Copy \(label)", systemImage: "doc.on.doc")
+                Label(String(format: NSLocalizedString("Copy %@", comment: ""), label), systemImage: "doc.on.doc")
             }
         }
     }

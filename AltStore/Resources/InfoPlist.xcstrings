@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSLocalNetworkUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore can use local network access to discover Bonjour (mDNS) services on your network. This is not required for core functionality."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
