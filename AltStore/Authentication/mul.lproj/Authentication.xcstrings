@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "2"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
         }
       }
     },
@@ -21,6 +27,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Sign in"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인"
           }
         }
       }
@@ -34,6 +46,12 @@
             "state" : "new",
             "value" : "Enable LocalDevVPN and use Sidestore on the go."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LocalDevVPN을 활성화하고 어디서든 SideStore를 사용하세요."
+          }
         }
       }
     },
@@ -45,6 +63,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Resign SideStore"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore 재서명"
           }
         }
       }
@@ -58,6 +82,12 @@
             "state" : "new",
             "value" : "Leave SideStore running in the background on your idevice."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기에서 SideStore를 백그라운드로 계속 실행해 두세요."
+          }
         }
       }
     },
@@ -68,6 +98,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Team 1"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Team 1"
           }
         }
@@ -82,6 +118,12 @@
             "state" : "new",
             "value" : "APPLE ID"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "APPLE 계정"
+          }
         }
       }
     },
@@ -93,6 +135,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "PASSWORD"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비밀번호"
           }
         }
       }
@@ -106,6 +154,12 @@
             "state" : "new",
             "value" : "How it works"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작동 방식"
+          }
         }
       }
     },
@@ -116,6 +170,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "name@email.com"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "name@email.com"
           }
         }
@@ -130,6 +190,12 @@
             "state" : "new",
             "value" : "Welcome to SideStore."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore에 오신 것을 환영합니다."
+          }
         }
       }
     },
@@ -141,6 +207,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Connect to Wi-Fi and VPN"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi-Fi 및 VPN에 연결"
           }
         }
       }
@@ -154,6 +226,12 @@
             "state" : "new",
             "value" : "Apps are refreshed in the background while you are on SideStore VPN!"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore VPN에 연결되어 있으면 앱이 백그라운드에서 자동으로 갱신됩니다!"
+          }
         }
       }
     },
@@ -164,6 +242,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "4"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "4"
           }
         }
@@ -178,6 +262,12 @@
             "state" : "new",
             "value" : "1"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1"
+          }
         }
       }
     },
@@ -189,6 +279,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Download Apps"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 다운로드"
           }
         }
       }
@@ -202,6 +298,12 @@
             "state" : "new",
             "value" : "Description"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설명"
+          }
         }
       }
     },
@@ -213,6 +315,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Browse and download apps directly from SideStore."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore에서 바로 앱을 둘러보고 다운로드하세요."
           }
         }
       }
@@ -226,6 +334,12 @@
             "state" : "new",
             "value" : "Close"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
+          }
         }
       }
     },
@@ -238,6 +352,12 @@
             "state" : "new",
             "value" : "Apps Refresh Automatically"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 자동으로 갱신됩니다"
+          }
         }
       }
     },
@@ -248,6 +368,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "3"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "3"
           }
         }
@@ -262,6 +388,12 @@
             "state" : "new",
             "value" : "Your Apple ID is used to configure apps so they can be installed on this device. Your credentials will be stored securely in this device's Keychain and sent only to Apple for authentication."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 계정는 이 기기에 앱을 설치할 수 있도록 구성하는 데 사용됩니다. 로그인 정보는 이 기기의 키체인에 안전하게 저장되며, 인증을 위해 Apple에만 전송됩니다."
+          }
         }
       }
     },
@@ -273,6 +405,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Why do we need this?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왜 이 정보가 필요한가요?"
           }
         }
       }
@@ -286,6 +424,12 @@
             "state" : "new",
             "value" : "Resign Later"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에 재서명"
+          }
         }
       }
     },
@@ -297,6 +441,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Select a Team"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "팀 선택"
           }
         }
       }
@@ -310,6 +460,12 @@
             "state" : "new",
             "value" : "Got it"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
+          }
         }
       }
     },
@@ -320,6 +476,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "••••••••"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "••••••••"
           }
         }
@@ -334,6 +496,12 @@
             "state" : "new",
             "value" : "Sign in with your Apple ID to get started."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하려면 Apple 계정으로 로그인하세요."
+          }
         }
       }
     },
@@ -346,6 +514,12 @@
             "state" : "new",
             "value" : "Resign Now"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 재서명"
+          }
         }
       }
     },
@@ -357,6 +531,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Launch SideStore"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore 실행"
           }
         }
       }

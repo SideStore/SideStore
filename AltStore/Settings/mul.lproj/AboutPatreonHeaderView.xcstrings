@@ -1,66 +1,96 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "DTd-Yu-HXr.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"SideTeam\"; ObjectID = \"DTd-Yu-HXr\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "SideTeam"
+  "sourceLanguage": "en",
+  "strings": {
+    "DTd-Yu-HXr.text": {
+      "comment": "Class = \"UILabel\"; text = \"SideTeam\"; ObjectID = \"DTd-Yu-HXr\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "SideTeam"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideTeam"
           }
         }
       }
     },
-    "FeG-e5-LJl.text" : {
-      "comment" : "Class = \"UITextView\"; text = \"Thank you for using SideStore!\\n        \\nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\\n    \\nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\\n        \\n-SideTeam\"; ObjectID = \"FeG-e5-LJl\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Thank you for using SideStore!\n        \nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\n    \nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\n        \n-SideTeam"
+    "FeG-e5-LJl.text": {
+      "comment": "Class = \"UITextView\"; text = \"Thank you for using SideStore!\\n        \\nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\\n    \\nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\\n        \\n-SideTeam\"; ObjectID = \"FeG-e5-LJl\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Thank you for using SideStore!\n        \nSubscribing to the patreon supports us and makes sure we can continue developing SideStore for you.\n    \nFollowing us on social media allows us to give quick updates and spread the word about sideloading!\n        \n-SideTeam"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideStore를 사용해 주셔서 감사합니다!\n        \nPatreon을 구독하시면 저희를 후원하고 SideStore를 계속 개발할 수 있도록 도와주시는 것입니다.\n    \n소셜 미디어에서 저희를 팔로우하시면 빠른 업데이트 소식과 사이드로딩 관련 소식을 받아보실 수 있습니다!\n        \n-SideTeam"
           }
         }
       }
     },
-    "hov-Ce-LaM.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"Follow us on Twitter!\"; ObjectID = \"hov-Ce-LaM\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Follow us on Twitter!"
+    "VdY-7Q-amF.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"Follow us on Instagram!\"; ObjectID = \"VdY-7Q-amF\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Follow us on Instagram!"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instagram에서 팔로우하세요!"
           }
         }
       }
     },
-    "VdY-7Q-amF.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"Follow us on Instagram!\"; ObjectID = \"VdY-7Q-amF\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Follow us on Instagram!"
+    "hov-Ce-LaM.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"Follow us on Twitter!\"; ObjectID = \"hov-Ce-LaM\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Follow us on Twitter!"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twitter에서 팔로우하세요!"
           }
         }
       }
     },
-    "yEi-L6-kQ8.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"Become a patron!\"; ObjectID = \"yEi-L6-kQ8\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Become a patron!"
+    "yEi-L6-kQ8.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"Become a patron!\"; ObjectID = \"yEi-L6-kQ8\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Become a patron!"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Patreon 후원자가 되어보세요!"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }

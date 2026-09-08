@@ -1,54 +1,78 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "mFe-zJ-eva.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"App Name\"; ObjectID = \"mFe-zJ-eva\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "App Name"
+  "sourceLanguage": "en",
+  "strings": {
+    "Yd9-jw-faD.text": {
+      "comment": "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"Yd9-jw-faD\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Label"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Label"
           }
         }
       }
     },
-    "oN5-vu-Dnw.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Developer\"; ObjectID = \"oN5-vu-Dnw\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Developer"
+    "mFe-zJ-eva.text": {
+      "comment": "Class = \"UILabel\"; text = \"App Name\"; ObjectID = \"mFe-zJ-eva\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "App Name"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Name"
           }
         }
       }
     },
-    "tVx-3G-dcu.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"FREE\"; ObjectID = \"tVx-3G-dcu\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "FREE"
+    "oN5-vu-Dnw.text": {
+      "comment": "Class = \"UILabel\"; text = \"Developer\"; ObjectID = \"oN5-vu-Dnw\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Developer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Developer"
           }
         }
       }
     },
-    "Yd9-jw-faD.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"Yd9-jw-faD\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Label"
+    "tVx-3G-dcu.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"FREE\"; ObjectID = \"tVx-3G-dcu\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "FREE"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무료"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }

@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "App IDs"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App IDs"
+          }
         }
       }
     },
@@ -22,6 +28,12 @@
             "state" : "new",
             "value" : "My Apps"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 앱"
+          }
         }
       }
     },
@@ -32,6 +44,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Version 4.4.2"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Version 4.4.2"
           }
         }
@@ -46,6 +64,12 @@
             "state" : "new",
             "value" : "App IDs Description"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App IDs Description"
+          }
         }
       }
     },
@@ -56,6 +80,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Classic games in your pocket"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Classic games in your pocket"
           }
         }
@@ -70,6 +100,12 @@
             "state" : "new",
             "value" : "50.4 MB"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50.4 MB"
+          }
         }
       }
     },
@@ -82,6 +118,12 @@
             "state" : "new",
             "value" : "Permissions"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "권한"
+          }
         }
       }
     },
@@ -92,6 +134,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Delta"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Delta"
           }
         }
@@ -106,6 +154,12 @@
             "state" : "new",
             "value" : "News"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뉴스"
+          }
         }
       }
     },
@@ -117,6 +171,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "FREE"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무료"
           }
         }
       }
@@ -130,6 +190,12 @@
             "state" : "new",
             "value" : "5/10 App IDs"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5/10 앱 IDs"
+          }
         }
       }
     },
@@ -141,6 +207,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "View App IDs"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 ID 보기"
           }
         }
       }
@@ -154,6 +226,12 @@
             "state" : "new",
             "value" : "What's New"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 기능"
+          }
         }
       }
     },
@@ -165,6 +243,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
           }
         }
       }
@@ -178,6 +262,12 @@
             "state" : "new",
             "value" : "Browse"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탐색"
+          }
         }
       }
     },
@@ -188,6 +278,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Hello Me"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Hello Me"
           }
         }
@@ -202,6 +298,12 @@
             "state" : "new",
             "value" : "Item"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Item"
+          }
         }
       }
     },
@@ -212,6 +314,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "App"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "App"
           }
         }
@@ -226,6 +334,12 @@
             "state" : "new",
             "value" : "Browse"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탐색"
+          }
         }
       }
     },
@@ -236,6 +350,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "2w ago"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "2w ago"
           }
         }
@@ -250,6 +370,12 @@
             "state" : "new",
             "value" : "..."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "..."
+          }
         }
       }
     },
@@ -260,6 +386,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Button"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Button"
           }
         }
@@ -274,6 +406,12 @@
             "state" : "new",
             "value" : "App IDs"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App IDs"
+          }
         }
       }
     },
@@ -285,6 +423,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "No Updates Available"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트 없음"
           }
         }
       }
@@ -298,6 +442,12 @@
             "state" : "new",
             "value" : "My Apps"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 앱"
+          }
         }
       }
     },
@@ -308,6 +458,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "10 App IDs"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "10 App IDs"
           }
         }
@@ -321,6 +477,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "News"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뉴스"
           }
         }
       }

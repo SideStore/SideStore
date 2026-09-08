@@ -1,42 +1,60 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "eet-Hi-RU4.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"eet-Hi-RU4\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Label"
+  "sourceLanguage": "en",
+  "strings": {
+    "eet-Hi-RU4.text": {
+      "comment": "Class = \"UILabel\"; text = \"Label\"; ObjectID = \"eet-Hi-RU4\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Label"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Label"
           }
         }
       }
     },
-    "meg-d6-dbz.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"SIGN OUT\"; ObjectID = \"meg-d6-dbz\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "SIGN OUT"
+    "meg-d6-dbz.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"SIGN OUT\"; ObjectID = \"meg-d6-dbz\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "SIGN OUT"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그아웃"
           }
         }
       }
     },
-    "rLj-Ff-ZTt.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"ACCOUNT\"; ObjectID = \"rLj-Ff-ZTt\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "ACCOUNT"
+    "rLj-Ff-ZTt.text": {
+      "comment": "Class = \"UILabel\"; text = \"ACCOUNT\"; ObjectID = \"rLj-Ff-ZTt\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "ACCOUNT"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }

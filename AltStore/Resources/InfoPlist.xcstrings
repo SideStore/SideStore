@@ -9,6 +9,12 @@
             "state" : "translated",
             "value" : "SideStore can use local network access to discover Bonjour (mDNS) services on your network. This is not required for core functionality."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SideStore는 네트워크에서 Bonjour(mDNS) 서비스를 검색하기 위해 로컬 네트워크 접근을 사용할 수 있습니다. 핵심 기능에는 필요하지 않습니다."
+          }
         }
       }
     }

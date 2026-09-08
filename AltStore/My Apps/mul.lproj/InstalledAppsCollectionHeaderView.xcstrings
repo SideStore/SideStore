@@ -1,30 +1,42 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "iMf-wr-wRV.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"Refresh All\"; ObjectID = \"iMf-wr-wRV\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Refresh All"
+  "sourceLanguage": "en",
+  "strings": {
+    "iMf-wr-wRV.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"Refresh All\"; ObjectID = \"iMf-wr-wRV\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Refresh All"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전체 갱신"
           }
         }
       }
     },
-    "zhW-Re-WNf.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Installed\"; ObjectID = \"zhW-Re-WNf\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Installed"
+    "zhW-Re-WNf.text": {
+      "comment": "Class = \"UILabel\"; text = \"Installed\"; ObjectID = \"zhW-Re-WNf\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Installed"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치됨"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }

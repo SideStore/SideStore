@@ -1,18 +1,24 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "rNs-2O-k3V.text" : {
-      "comment" : "Class = \"UITextView\"; text = \"Version Notes\"; ObjectID = \"rNs-2O-k3V\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Version Notes"
+  "sourceLanguage": "en",
+  "strings": {
+    "rNs-2O-k3V.text": {
+      "comment": "Class = \"UITextView\"; text = \"Version Notes\"; ObjectID = \"rNs-2O-k3V\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Version Notes"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버전 정보"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }

@@ -1,78 +1,114 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "1lg-Ki-MOK.configuration.title" : {
-      "comment" : "Class = \"UIButton\"; configuration.title = \" \"; ObjectID = \"1lg-Ki-MOK\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " "
+  "sourceLanguage": "en",
+  "strings": {
+    "1lg-Ki-MOK.configuration.title": {
+      "comment": "Class = \"UIButton\"; configuration.title = \" \"; ObjectID = \"1lg-Ki-MOK\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": " "
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " "
           }
         }
       }
     },
-    "1lg-Ki-MOK.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \" \"; ObjectID = \"1lg-Ki-MOK\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " "
+    "1lg-Ki-MOK.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \" \"; ObjectID = \"1lg-Ki-MOK\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": " "
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " "
           }
         }
       }
     },
-    "cDF-t8-8Ri.configuration.title" : {
-      "comment" : "Class = \"UIButton\"; configuration.title = \"https://rileytestut.com\"; ObjectID = \"cDF-t8-8Ri\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "https://rileytestut.com"
+    "FsG-Wm-6xP.text": {
+      "comment": "Class = \"UILabel\"; text = \"Source Name\"; ObjectID = \"FsG-Wm-6xP\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Source Name"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source Name"
           }
         }
       }
     },
-    "cDF-t8-8Ri.normalTitle" : {
-      "comment" : "Class = \"UIButton\"; normalTitle = \"https://rileytestut.com\"; ObjectID = \"cDF-t8-8Ri\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "https://rileytestut.com"
+    "IUL-qI-QAg.text": {
+      "comment": "Class = \"UILabel\"; text = \"Subtitle\"; ObjectID = \"IUL-qI-QAg\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Subtitle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subtitle"
           }
         }
       }
     },
-    "FsG-Wm-6xP.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Source Name\"; ObjectID = \"FsG-Wm-6xP\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Source Name"
+    "cDF-t8-8Ri.configuration.title": {
+      "comment": "Class = \"UIButton\"; configuration.title = \"https://rileytestut.com\"; ObjectID = \"cDF-t8-8Ri\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "https://rileytestut.com"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://rileytestut.com"
           }
         }
       }
     },
-    "IUL-qI-QAg.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Subtitle\"; ObjectID = \"IUL-qI-QAg\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Subtitle"
+    "cDF-t8-8Ri.normalTitle": {
+      "comment": "Class = \"UIButton\"; normalTitle = \"https://rileytestut.com\"; ObjectID = \"cDF-t8-8Ri\";",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "https://rileytestut.com"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://rileytestut.com"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }
