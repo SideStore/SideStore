@@ -14,20 +14,22 @@ struct ProfilesListView: View {
     weak var presentingViewController: UIViewController?
 
     @State private var searchText = ""
-    @State private var showDownloadSheet = false
+    @State private var showCreateTypePrompt = false
+    @State private var showXcodeDownloadSheet = false
+    @State private var showManualCreateSheet = false
     @State private var selectedAppIDForDownload: ALTAppID? = nil
 
-    @State private var profileToDelete: ALTProvisioningProfile? = nil
+    @State private var profileToDelete: ALTListedProvisioningProfile? = nil
     @State private var showDeleteConfirmation = false
     @State private var showPurgeAllConfirmation = false
 
-    private var filteredProfiles: [ALTProvisioningProfile] {
+    private var filteredProfiles: [ALTListedProvisioningProfile] {
         if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return viewModel.profiles
         }
         return viewModel.profiles.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
-            $0.bundleIdentifier.localizedCaseInsensitiveContains(searchText) ||
+            ($0.bundleIdentifier?.localizedCaseInsensitiveContains(searchText) == true) ||
             $0.uuid.uuidString.localizedCaseInsensitiveContains(searchText)
         }
     }
@@ -53,7 +55,17 @@ struct ProfilesListView: View {
                         NavigationLink(destination: ProfilePortalDetailView(profile: profile, viewModel: viewModel, presentingViewController: presentingViewController)) {
                             ProfileRow(profile: profile, formatDate: formatDate)
                         }
+                        #if !os(tvOS)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            SwiftUI.Button(role: .destructive) {
+                                profileToDelete = profile
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        #endif
+                        .contextMenu {
                             SwiftUI.Button(role: .destructive) {
                                 profileToDelete = profile
                                 showDeleteConfirmation = true
@@ -91,19 +103,34 @@ struct ProfilesListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 SwiftUI.Button {
-                    showDownloadSheet = true
+                    if viewModel.isPaidAccount {
+                        showCreateTypePrompt = true
+                    } else {
+                        showXcodeDownloadSheet = true
+                    }
                 } label: {
-                    Image(systemName: "arrow.down.doc")
+                    Image(systemName: "plus")
                 }
             }
         }
         .refreshable {
             await viewModel.fetchProfiles(presentingViewController: presentingViewController, isPullToRefresh: true)
         }
-        .sheet(isPresented: $showDownloadSheet) {
+        .confirmationDialog("Create Provisioning Profile", isPresented: $showCreateTypePrompt, titleVisibility: .visible) {
+            SwiftUI.Button("Xcode Managed (Automatic)") {
+                showXcodeDownloadSheet = true
+            }
+            SwiftUI.Button("Manual Profile (Custom)") {
+                showManualCreateSheet = true
+            }
+            SwiftUI.Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Choose whether to let Apple generate an Xcode-managed team profile or configure a custom manual profile.")
+        }
+        .sheet(isPresented: $showXcodeDownloadSheet) {
             NavigationView {
                 List {
-                    Section(header: Text("Select App ID to Generate Profile")) {
+                    Section(header: Text("Select App ID to Generate Team Profile"), footer: Text("Apple will generate an Xcode-managed team profile with all active certificates and devices.")) {
                         if viewModel.appIDs.isEmpty {
                             Text("No App IDs available. Register an App ID first.")
                                 .foregroundColor(.secondary)
@@ -112,7 +139,7 @@ struct ProfilesListView: View {
                             ForEach(viewModel.appIDs, id: \.identifier) { appID in
                                 SwiftUI.Button {
                                     Task {
-                                        showDownloadSheet = false
+                                        showXcodeDownloadSheet = false
                                         _ = await viewModel.downloadProfile(for: appID, presentingViewController: presentingViewController)
                                     }
                                 } label: {
@@ -135,11 +162,14 @@ struct ProfilesListView: View {
                 #else
                 .listStyle(GroupedListStyle())
                 #endif
-                .navigationTitle("Download Profile")
+                .navigationTitle("Xcode Team Profile")
                 .navigationBarItems(trailing: SwiftUI.Button("Cancel") {
-                    showDownloadSheet = false
+                    showXcodeDownloadSheet = false
                 })
             }
+        }
+        .sheet(isPresented: $showManualCreateSheet) {
+            CreateManualProfileView(viewModel: viewModel, presentingViewController: presentingViewController)
         }
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
@@ -177,11 +207,11 @@ struct ProfilesListView: View {
 }
 
 private struct ProfileRow: View {
-    let profile: ALTProvisioningProfile
+    let profile: ALTListedProvisioningProfile
     let formatDate: (Date) -> String
 
     private var isExpired: Bool {
-        profile.expirationDate < Date()
+        profile.dateExpire < Date()
     }
 
     var body: some View {
@@ -193,25 +223,40 @@ private struct ProfileRow: View {
                 if isExpired {
                     Text("Expired")
                         .font(.caption2)
+                        .fontWeight(.medium)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(Color.red.opacity(0.15))
                         .foregroundColor(.red)
                         .cornerRadius(6)
                 }
-            }
-            Text(profile.bundleIdentifier)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            HStack {
-                Text(String(format: NSLocalizedString("UUID: %@...", comment: ""), String(profile.uuid.uuidString.prefix(8))))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
-                Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(profile.expirationDate)))
+                Text(String(format: NSLocalizedString("Expires: %@", comment: ""), formatDate(profile.dateExpire)))
                     .font(.caption)
                     .foregroundColor(isExpired ? .red : .secondary)
             }
+
+            HStack {
+                if let bundleID = profile.bundleIdentifier {
+                    Text(bundleID)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                if let isTeam = profile.isTeamProfile {
+                    Text(isTeam ? "Xcode Managed" : "Manual")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(isTeam ? Color.blue.opacity(0.12) : Color.purple.opacity(0.12))
+                        .foregroundColor(isTeam ? .blue : .purple)
+                        .cornerRadius(6)
+                }
+            }
+
+            Text(profile.uuid.uuidString)
+                .font(.system(.caption2, design: .monospaced))
+                .foregroundColor(.secondary.opacity(0.8))
         }
         .padding(.vertical, 2)
     }

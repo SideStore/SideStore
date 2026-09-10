@@ -14,7 +14,6 @@ private extension Color {
 }
 
 struct ExperimentalFeaturesView: View {
-    @State private var freeAcctAppIdDeletion: Bool = UserDefaults.standard.freeAcctAppIdDeletion
     @State private var isCellularRefreshEnabled: Bool = UserDefaults.standard.isCellularRefreshEnabled
 
     var body: some View {
@@ -59,6 +58,22 @@ struct ExperimentalFeaturesView: View {
                             .padding(.horizontal, 16)
                             .frame(height: 50)
                         }
+
+                        divider
+
+                        NavigationLink(destination: BonjourDiscoveryView()) {
+                            HStack {
+                                Text("Network Discovery")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
                     }
                     .background(Color.settingsRowBackground)
                     .cornerRadius(14)
@@ -72,16 +87,6 @@ struct ExperimentalFeaturesView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Free Account AppID Deletion", isOn: Binding(
-                            get: { freeAcctAppIdDeletion },
-                            set: { newValue in
-                                freeAcctAppIdDeletion = newValue
-                                UserDefaults.standard.freeAcctAppIdDeletion = newValue
-                            }
-                        ))
-                        
-                        divider
-                        
                         toggleRow(title: "Cellular Refresh", isOn: Binding(
                             get: { isCellularRefreshEnabled },
                             set: { newValue in

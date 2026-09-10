@@ -241,7 +241,7 @@ public extension InstalledApp
         self.expirationDate = provisioningProfile.expirationDate
     }
     
-    func loadIcon(completion: @escaping (Result<UIImage?, Error>) -> Void)
+    func loadIcon() async throws -> UIImage?
     {
         if self.bundleIdentifier == StoreApp.altstoreAppID,
            let iconName = UIApplication.alt_shared?.value(forKey: "alternateIconName") as? String
@@ -249,33 +249,24 @@ public extension InstalledApp
             // Use alternate app icon for AltStore, if one was chosen.
             let imageName = iconName.replacingOccurrences(of: "Icon", with: "")
             let image = UIImage(named: imageName) ?? UIImage(named: iconName)
-            
-            completion(.success(image))
-            return
+            return image
         }
         
         let hasAlternateIcon = self.hasAlternateIcon
         let alternateIconURL = self.alternateIconURL
         let fileURL = self.fileURL
         
-        DispatchQueue.global().async {
-            do
+        return try await Task.detached(priority: .userInitiated) {
+            if hasAlternateIcon,
+               case let data = try Data(contentsOf: alternateIconURL),
+               let icon = UIImage(data: data)
             {
-                if hasAlternateIcon,
-                   case let data = try Data(contentsOf: alternateIconURL),
-                   let icon = UIImage(data: data)
-                {
-                    return completion(.success(icon))
-                }
-                
-                let appBundle = ALTApplication(fileURL: fileURL)
-                completion(.success(appBundle?.icon))
+                return icon
             }
-            catch
-            {
-                completion(.failure(error))
-            }
-        }
+            
+            let appBundle = ALTApplication(fileURL: fileURL)
+            return appBundle?.icon
+        }.value
     }
 
     func matches(_ appVersion: AppVersion) -> Bool 

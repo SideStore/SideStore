@@ -80,6 +80,7 @@ struct AppGroupsListView: View {
                             }
                             .padding(.vertical, 2)
                         }
+                        #if !os(tvOS)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             SwiftUI.Button(role: .destructive) {
                                 groupToDelete = group
@@ -96,7 +97,7 @@ struct AppGroupsListView: View {
                             }
                             .tint(.blue)
                         }
-                        #if !os(tvOS)
+                        #endif
                         .contextMenu {
                             SwiftUI.Button {
                                 editGroupName = group.name
@@ -104,11 +105,13 @@ struct AppGroupsListView: View {
                             } label: {
                                 Label("Edit Name", systemImage: "pencil")
                             }
+                            #if !os(tvOS)
                             SwiftUI.Button {
                                 UIPasteboard.general.string = group.groupIdentifier
                             } label: {
                                 Label("Copy Identifier", systemImage: "doc.on.doc")
                             }
+                            #endif
                             SwiftUI.Button(role: .destructive) {
                                 groupToDelete = group
                                 showDeleteConfirmation = true
@@ -116,7 +119,6 @@ struct AppGroupsListView: View {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
-                        #endif
                     }
                 }
             }

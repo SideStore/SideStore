@@ -30,6 +30,7 @@ final class CacheAppOperation: BasePipelineOperation<InstallAppOperationContext,
         let targetFileURL = InstalledApp.fileURL(for: appBundle)
         
         self.setProgress(70)
+        debugLog("[CacheAppOperation] Copying app bundle from \(appBundle.fileURL.path) to \(targetFileURL.path)")
         try FileManager.default.copyItem(at: appBundle.fileURL, to: targetFileURL, shouldReplace: true)
         
         self.setProgress(100)

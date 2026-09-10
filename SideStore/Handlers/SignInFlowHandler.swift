@@ -187,7 +187,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
                 continuation.resume(returning: true)
             })
 
-            alert.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { _ in
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
                 continuation.resume(returning: false)
             })
 
@@ -230,7 +230,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
                 continuation.resume(returning: .proceed)
             })
 
-            alert.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { _ in
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
                 continuation.resume(returning: .cancel)
             })
 
@@ -326,7 +326,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
                 }
             }
             
-            alertController.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { _ in
+            alertController.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
                 if let observer = observer {
                     NotificationCenter.default.removeObserver(observer)
                 }
@@ -394,7 +394,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
         }
         alert.addAction(voiceAction)
 
-        alert.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
             continuation.resume(returning: .cancel)
         })
 
@@ -436,7 +436,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
             alert.addAction(action)
         }
 
-        alert.addAction(UIAlertAction(title: RSTSystemLocalizedString("Cancel"), style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
             continuation.resume(returning: .cancel)
         })
 

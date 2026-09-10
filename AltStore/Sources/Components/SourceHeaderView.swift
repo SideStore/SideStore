@@ -10,7 +10,7 @@
 
 import Nuke
 
-class SourceHeaderView: RSTNibView
+class SourceHeaderView: NibView
 {
     @IBOutlet private(set) var titleLabel: UILabel!
     @IBOutlet private(set) var subtitleLabel: UILabel!
@@ -133,6 +133,13 @@ extension SourceHeaderView
             self.websiteImageView.isHidden = true
         }
         
-        Nuke.loadImage(with: source.effectiveIconURL, into: self.iconImageView)
+        self.iconImageView.image = nil
+        if let iconURL = source.effectiveIconURL
+        {
+            Task { [weak self] in
+                guard let self else { return }
+                self.iconImageView.image = try? await ImagePipeline.shared.image(for: iconURL)
+            }
+        }
     }
 }

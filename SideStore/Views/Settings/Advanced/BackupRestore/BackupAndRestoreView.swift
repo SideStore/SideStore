@@ -69,6 +69,7 @@ struct BackupAndRestoreView: View {
                     .cornerRadius(14)
                 }
                 
+                #if DEBUG
                 // Section 2: Sources Data
                 VStack(alignment: .leading, spacing: 8) {
                     Text("SOURCES DATA")
@@ -114,6 +115,7 @@ struct BackupAndRestoreView: View {
                     .background(Color.settingsRowBackground)
                     .cornerRadius(14)
                 }
+                #endif
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)

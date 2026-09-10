@@ -86,6 +86,24 @@ struct DeveloperServicesView: View {
                         .padding(.vertical, 4)
                     }
 
+                    NavigationLink(destination: CertificatesPortalListView(viewModel: viewModel, presentingViewController: presentingViewController)) {
+                        HStack(spacing: 14) {
+                            Image(systemName: "rosette")
+                                .font(.system(size: 20))
+                                .foregroundColor(.red)
+                                .frame(width: 28)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Certificates")
+                                    .font(.body)
+                                Text("\(viewModel.certificates.count) registered on portal")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+
                     NavigationLink(destination: AppGroupsListView(viewModel: viewModel, presentingViewController: presentingViewController)) {
                         HStack(spacing: 14) {
                             Image(systemName: "person.2")
@@ -134,7 +152,11 @@ struct DeveloperServicesView: View {
                     .edgesIgnoringSafeArea(.all)
                 ProgressView("Connecting to Developer Portal...")
                     .padding()
+                    #if !os(tvOS)
                     .background(Color(UIColor.secondarySystemGroupedBackground))
+                    #else
+                    .background(Color(uiColor: .settingsBackground))
+                    #endif
                     .cornerRadius(12)
                     .shadow(radius: 6)
             }
@@ -185,7 +207,11 @@ struct DeveloperServicesToastView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(Color(UIColor.label).opacity(0.85))
+                    #if !os(tvOS)
                     .foregroundColor(Color(UIColor.systemBackground))
+                    #else
+                    .foregroundColor(Color(uiColor: .settingsBackground))
+                    #endif
                     .cornerRadius(20)
                     .shadow(radius: 5)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))

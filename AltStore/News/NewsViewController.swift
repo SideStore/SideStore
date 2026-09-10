@@ -45,7 +45,7 @@ class NewsViewController: UICollectionViewController
     var source: Source?
     
     private lazy var dataSource = self.makeDataSource()
-    private lazy var placeholderView = RSTPlaceholderView(frame: .zero)
+    private lazy var placeholderView = PlaceholderView(frame: .zero)
     private var retryButton: UIButton!
     
     private var prototypeCell: NewsCollectionViewCell!
@@ -98,7 +98,7 @@ class NewsViewController: UICollectionViewController
         self.collectionView.prefetchDataSource = self.dataSource
         self.dataSource.contentView = self.collectionView
         
-        self.collectionView.register(NewsCollectionViewCell.nib, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(NewsCollectionViewCell.nib, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         self.collectionView.register(AppBannerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "AppBanner")
         
         #if !os(tvOS)
@@ -162,7 +162,7 @@ private extension NewsViewController
             .store(in: &self.cancellables)
     }
     
-    func makeDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<NewsItem, UIImage>
+    func makeDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<NewsItem, UIImage>
     {
         let fetchRequest = NewsItem.sortedFetchRequest(for: self.source)
         let context = self.source?.managedObjectContext ?? DatabaseManager.shared.viewContext
@@ -170,7 +170,7 @@ private extension NewsViewController
         // Use fetchedResultsController to split NewsItems up into sections.
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: #keyPath(NewsItem.objectID), cacheName: nil)
         
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<NewsItem, UIImage>(fetchedResultsController: fetchedResultsController)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<NewsItem, UIImage>(fetchedResultsController: fetchedResultsController)
         dataSource.proxy = self
         dataSource.cellConfigurationHandler = { [weak self] (cell, newsItem, indexPath) in
             guard let self else { return }
@@ -208,19 +208,9 @@ private extension NewsViewController
                 cell.accessibilityTraits.remove(.button)
             }
         }
-        dataSource.prefetchHandler = { (newsItem, indexPath, completionHandler) in
+        dataSource.prefetchHandler = { (newsItem, indexPath) in
             guard let imageURL = newsItem.imageURL else { return nil }
-            
-            Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: imageURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completionHandler(response.image, nil)
-                    case .failure(let error): completionHandler(nil, error)
-                    }
-                }
-            }
-            return nil
+            return try await ImagePipeline.shared.image(for: imageURL)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! NewsCollectionViewCell
@@ -343,24 +333,22 @@ private extension NewsViewController
             return
         }
         
-        Task(priority: .userInitiated) { @MainActor in
-            if let installedApp = storeApp.installedApp, installedApp.hasUpdate
-            {
-                let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
-                progressUpdateHandler(progress)
-            }
-            else
-            {
-                let group = await AppManager.shared.installAsync(
-                    storeApp,
-                    presentingViewController: self,
-                    completionHandler: finish(_:)
-                )
-                progressUpdateHandler(group.progress)
-            }
+        if let installedApp = storeApp.installedApp, installedApp.hasUpdate
+        {
+            let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+            progressUpdateHandler(progress)
+        }
+        else
+        {
+            let group = AppManager.shared.install(
+                .app(storeApp),
+                presentingViewController: self,
+                completionHandler: finish(_:)
+            )
+            progressUpdateHandler(group.progress)
         }
         
-        nonisolated func finish(_ result: Result<InstalledApp, Error>) -> Void
+        func finish(_ result: Result<InstalledApp, Error>) -> Void
         {
             DispatchQueue.main.async {
                 switch result
@@ -429,8 +417,13 @@ extension NewsViewController
         footerView.bannerView.button.addTarget(self, action: #selector(NewsViewController.performAppAction(_:)), for: .primaryActionTriggered)
         footerView.tapGestureRecognizer.addTarget(self, action: #selector(NewsViewController.handleTapGesture(_:)))
         
-        Nuke.loadImage(with: storeApp.iconURL, into: footerView.bannerView.iconImageView) { result in
-            footerView.bannerView.iconImageView.isIndicatingActivity = false
+        footerView.bannerView.iconImageView.isIndicatingActivity = true
+        Task { [weak footerView] in
+            defer { footerView?.bannerView.iconImageView.isIndicatingActivity = false }
+            if let image = try? await ImagePipeline.shared.image(for: storeApp.iconURL)
+            {
+                footerView?.bannerView.iconImageView.image = image
+            }
         }
         
         return footerView

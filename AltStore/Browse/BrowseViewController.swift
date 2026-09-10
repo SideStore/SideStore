@@ -30,7 +30,7 @@ class BrowseViewController: UICollectionViewController
     }
     
     private lazy var dataSource = self.makeDataSource()
-    private lazy var placeholderView = RSTPlaceholderView(frame: .zero)
+    private lazy var placeholderView = PlaceholderView(frame: .zero)
     
     private let prototypeCell = AppCardCollectionViewCell(frame: .zero)
     private var sortButton: UIBarButtonItem?
@@ -79,17 +79,17 @@ class BrowseViewController: UICollectionViewController
         self.collectionView.backgroundColor = .altBackground
         self.collectionView.alwaysBounceVertical = true
         
-        self.dataSource.searchController.searchableKeyPaths = [#keyPath(StoreApp.name),
-                                                               #keyPath(StoreApp.subtitle),
-                                                               #keyPath(StoreApp.developerName),
-                                                               #keyPath(StoreApp.bundleIdentifier)]
+        self.dataSource.searchableKeyPaths = [#keyPath(StoreApp.name),
+                                               #keyPath(StoreApp.subtitle),
+                                               #keyPath(StoreApp.developerName),
+                                               #keyPath(StoreApp.bundleIdentifier)]
         #if !os(tvOS)
         self.navigationItem.searchController = self.dataSource.searchController
         #endif
         
         self.prototypeCell.contentView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.collectionView.register(AppCardCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(AppCardCollectionViewCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -239,12 +239,12 @@ private extension BrowseViewController
         return fetchRequest
     }
     
-    func makeDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<StoreApp, UIImage>
+    func makeDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<StoreApp, UIImage>
     {
         let fetchRequest = self.makeFetchRequest()
         
         let context = self.source?.managedObjectContext ?? DatabaseManager.shared.viewContext
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<StoreApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: context)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<StoreApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: context)
         dataSource.placeholderView = self.placeholderView
         dataSource.cellConfigurationHandler = { [weak self] (cell, app, indexPath) in
             guard let self else { return }
@@ -266,32 +266,13 @@ private extension BrowseViewController
             let tintColor = app.tintColor ?? .altPrimary
             cell.tintColor = tintColor
         }
-        dataSource.prefetchHandler = { (storeApp, indexPath, completionHandler) in
-            let iconURL = storeApp.iconURL
-            let imageTask = ImagePipeline.shared.loadImage(with: iconURL, progress: nil) { result in
-                switch result
-                {
-                case .success(let response):
-                    let image = response.image
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        _ = image.isPredominantlyLight
-                        _ = image.withDropShadow(color: .black, radius: 4, offset: CGSize(width: 0, height: 1.5), opacity: 0.25)
-                        DispatchQueue.main.async {
-                            completionHandler(image, nil)
-                        }
-                    }
-                case .failure(let error): completionHandler(nil, error)
-                }
-            }
-            return Task {
-                await withTaskCancellationHandler {
-                    if Task.isCancelled {
-                        imageTask.cancel()
-                    }
-                } onCancel: {
-                    imageTask.cancel()
-                }
-            }
+        dataSource.prefetchHandler = { (storeApp, indexPath) in
+            let image = try await ImagePipeline.shared.image(for: storeApp.iconURL)
+            return await Task.detached(priority: .userInitiated) {
+                _ = image.isPredominantlyLight
+                _ = image.withDropShadow(color: .black, radius: 4, offset: CGSize(width: 0, height: 1.5), opacity: 0.25)
+                return image
+            }.value
         }
         dataSource.prefetchCompletionHandler = { [weak dataSource] (cell, image, indexPath, error) in
             let cell = cell as! AppCardCollectionViewCell
@@ -394,11 +375,17 @@ private extension BrowseViewController
             
             if let iconURL = source.effectiveIconURL
             {
-                Nuke.loadImage(with: iconURL, into: self.titleSourceIconView) { result in
-                    switch result
+                Task { [weak self] in
+                    do
                     {
-                    case .failure(let error): debugLog("Failed to fetch source icon at \(iconURL). \(error.localizedDescription)")
-                    case .success: self.titleSourceIconView.backgroundColor = .white
+                        let image = try await ImagePipeline.shared.image(for: iconURL)
+                        guard let self else { return }
+                        self.titleSourceIconView.image = image
+                        self.titleSourceIconView.backgroundColor = .white
+                    }
+                    catch
+                    {
+                        debugLog("Failed to fetch source icon at \(iconURL). \(error.localizedDescription)")
                     }
                 }
             }
@@ -576,21 +563,19 @@ private extension BrowseViewController
             return
         }
         
-        Task(priority: .userInitiated) { @MainActor in
-            // if let installedApp = app.installedApp, installedApp.isUpdateAvailable
-            if let installedApp = app.installedApp, installedApp.hasUpdate
-            {
-                let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
-                progressUpdateHandler(progress)
-            }
-            else
-            {
-                let group = await AppManager.shared.installAsync(app, presentingViewController: self, completionHandler: finish(_:))
-                progressUpdateHandler(group.progress)
-            }
+        // if let installedApp = app.installedApp, installedApp.isUpdateAvailable
+        if let installedApp = app.installedApp, installedApp.hasUpdate
+        {
+            let progress = AppManager.shared.update(installedApp, presentingViewController: self, completionHandler: finish(_:))
+            progressUpdateHandler(progress)
+        }
+        else
+        {
+            let group = AppManager.shared.install(.app(app), presentingViewController: self, completionHandler: finish(_:))
+            progressUpdateHandler(group.progress)
         }
         
-        nonisolated func finish(_ result: Result<InstalledApp, Error>)
+        func finish(_ result: Result<InstalledApp, Error>)
         {
             debugLog("BrowseViewController.finish invoked with result: \(result) for \(app.bundleIdentifier)")
             DispatchQueue.main.async {

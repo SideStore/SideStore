@@ -305,16 +305,16 @@ class MyAppsViewController: UICollectionViewController
 
 private extension MyAppsViewController
 {
-    func makeDataSource() -> RSTCompositeCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
+    func makeDataSource() -> CompositeCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
     {
-        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(dataSources: [self.noUpdatesDataSource, self.updatesDataSource, self.activeAppsDataSource, self.inactiveAppsDataSource])
+        let dataSource = CompositeCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(dataSources: [self.noUpdatesDataSource, self.updatesDataSource, self.activeAppsDataSource, self.inactiveAppsDataSource])
         dataSource.proxy = self
         return dataSource
     }
     
-    func makeNoUpdatesDataSource() -> RSTDynamicCollectionViewDataSource<InstalledApp>
+    func makeNoUpdatesDataSource() -> DynamicCollectionViewDataSource<InstalledApp>
     {
-        let dynamicDataSource = RSTDynamicCollectionViewDataSource<InstalledApp>()
+        let dynamicDataSource = DynamicCollectionViewDataSource<InstalledApp>()
         dynamicDataSource.numberOfSectionsHandler = { 1 }
         dynamicDataSource.numberOfItemsHandler = { _ in self.updatesDataSource.itemCount == 0 ? 1 : 0 }
         dynamicDataSource.cellIdentifierHandler = { _ in "NoUpdatesCell" }
@@ -344,14 +344,14 @@ private extension MyAppsViewController
         return dynamicDataSource
     }
     
-    func makeUpdatesDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
+    func makeUpdatesDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
     {
         let fetchRequest = InstalledApp.supportedUpdatesFetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \InstalledApp.storeApp?.latestSupportedVersion?.date, ascending: false),
                                         NSSortDescriptor(keyPath: \InstalledApp.name, ascending: true)]
         fetchRequest.returnsObjectsAsFaults = false
         
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.liveFetchLimit = maximumCollapsedUpdatesCount
         dataSource.cellIdentifierHandler = { _ in "UpdateCell" }
         dataSource.cellConfigurationHandler = { [weak self] (cell, installedApp, indexPath) in
@@ -419,19 +419,9 @@ private extension MyAppsViewController
             cell.setNeedsLayout()
             cell.layoutIfNeeded()
         }
-        dataSource.prefetchHandler = { (installedApp, indexPath, completionHandler) in
+        dataSource.prefetchHandler = { (installedApp, indexPath) in
             guard let iconURL = installedApp.storeApp?.iconURL else { return nil }
-            
-            Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: iconURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completionHandler(response.image, nil)
-                    case .failure(let error): completionHandler(nil, error)
-                    }
-                }
-            }
-            return nil
+            return try await ImagePipeline.shared.image(for: iconURL)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! UpdateCollectionViewCell
@@ -447,7 +437,7 @@ private extension MyAppsViewController
         return dataSource
     }
     
-    func makeActiveAppsDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
+    func makeActiveAppsDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
     {
         let fetchRequest = InstalledApp.activeAppsFetchRequest()
         fetchRequest.relationshipKeyPathsForPrefetching = [#keyPath(InstalledApp.storeApp)]
@@ -456,7 +446,7 @@ private extension MyAppsViewController
                                         NSSortDescriptor(keyPath: \InstalledApp.name, ascending: true)]
         fetchRequest.returnsObjectsAsFaults = false
         
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.cellIdentifierHandler = { _ in "AppCell" }
         dataSource.cellConfigurationHandler = { (cell, installedApp, indexPath) in
             let tintColor = installedApp.storeApp?.tintColor ?? .altPrimary
@@ -526,19 +516,8 @@ private extension MyAppsViewController
                 cell.bannerView.button.progress = nil
             }
         }
-        dataSource.prefetchHandler = { (item, indexPath, completion) in
-            Task.detached(priority: .background) {
-                item.managedObjectContext?.perform {
-                    item.loadIcon { (result) in
-                        switch result
-                        {
-                        case .failure(let error): completion(nil, error)
-                        case .success(let image): completion(image, nil)
-                        }
-                    }
-                }
-            }
-            return nil
+        dataSource.prefetchHandler = { (item, indexPath) in
+            return try await item.loadIcon()
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! InstalledAppCollectionViewCell
@@ -549,7 +528,7 @@ private extension MyAppsViewController
         return dataSource
     }
     
-    func makeInactiveAppsDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
+    func makeInactiveAppsDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
         fetchRequest.relationshipKeyPathsForPrefetching = [#keyPath(InstalledApp.storeApp)]
@@ -559,7 +538,7 @@ private extension MyAppsViewController
                                         NSSortDescriptor(keyPath: \InstalledApp.name, ascending: true)]
         fetchRequest.returnsObjectsAsFaults = false
         
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.cellIdentifierHandler = { _ in "AppCell" }
         dataSource.cellConfigurationHandler = { (cell, installedApp, indexPath) in
             let tintColor = installedApp.storeApp?.tintColor ?? .altPrimary
@@ -616,19 +595,8 @@ private extension MyAppsViewController
                 cell.bannerView.button.progress = nil
             }
         }
-        dataSource.prefetchHandler = { (item, indexPath, completion) in
-            Task.detached(priority: .background) {
-                item.managedObjectContext?.perform {
-                    item.loadIcon { (result) in
-                        switch result
-                        {
-                        case .failure(let error): completion(nil, error)
-                        case .success(let image): completion(image, nil)
-                        }
-                    }
-                }
-            }
-            return nil
+        dataSource.prefetchHandler = { (item, indexPath) in
+            return try await item.loadIcon()
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! InstalledAppCollectionViewCell
@@ -650,7 +618,7 @@ private extension MyAppsViewController
         }
         catch
         {
-            debugLog("[ALTLog] Failed to fetch updates: \(error)")
+            debugLog("[SideStore] Failed to fetch updates: \(error)")
         }
     }
 }
@@ -979,7 +947,7 @@ private extension MyAppsViewController
         self.pendingImportURL = nil
         self.navigationItem.leftBarButtonItem?.isIndicatingActivity = true
         
-        let group = AppManager.shared.installIPA(at: url, presentingViewController: self) { [weak self] result in
+        let group = AppManager.shared.install(.url(url), presentingViewController: self) { [weak self] result in
             Task { @MainActor in
                 self?.navigationItem.leftBarButtonItem?.isIndicatingActivity = false
                 self?.sideloadingProgressView.observedProgress = nil
@@ -1719,7 +1687,7 @@ private extension MyAppsViewController
                         }
                         catch
                         {
-                            debugLog("[ALTLog] Failed to assign error \(sanitizedError.localizedErrorCode) to source \(sourceID). \(error)")
+                            debugLog("[SideStore] Failed to assign error \(sanitizedError.localizedErrorCode) to source \(sourceID). \(error)")
                         }
                     }
                     
@@ -2591,13 +2559,13 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
                 if previousUpdateCount == 0 && updateCount > 0
                 {
                     // Remove "No Updates Available" cell.
-                    let change = RSTCellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
+                    let change = CellContentChange(type: .delete, currentIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue), destinationIndexPath: nil)
                     self.collectionView.add(change)
                 }
                 else if previousUpdateCount > 0 && updateCount == 0
                 {
                     // Insert "No Updates Available" cell.
-                    let change = RSTCellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
+                    let change = CellContentChange(type: .insert, currentIndexPath: nil, destinationIndexPath: IndexPath(item: 0, section: Section.noUpdates.rawValue))
                     self.collectionView.add(change)
                     
                     // Update unsupported updates _before_ calling controllerDidChangeContent()
@@ -2611,7 +2579,7 @@ extension MyAppsViewController: NSFetchedResultsControllerDelegate
         dataSource.controllerDidChangeContent(controller)
     }
     
-    private func dataSource(for controller: NSFetchedResultsController<NSFetchRequestResult>) -> RSTFetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>?
+    private func dataSource(for controller: NSFetchedResultsController<NSFetchRequestResult>) -> FetchedResultsCollectionViewPrefetchingDataSource<InstalledApp, UIImage>?
     {
         switch controller
         {

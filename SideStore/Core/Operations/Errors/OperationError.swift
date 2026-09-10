@@ -16,7 +16,7 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
     case notAuthenticated
     case appNotFound(name: String? = nil)
     case unknownUDID
-    case invalidApp
+    case invalidApp(reason: String? = nil)
     case invalidParameters(String? = nil)
     case invalidOperationContext(String? = nil)
     case maximumAppIDLimitReached(appName: String, requiredAppIDs: Int, availableAppIDs: Int, expirationDate: Date)
@@ -58,6 +58,7 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
     case missingProvisioningProfile
 
     public static var cancelled: CancellationError { CancellationError() }
+    public static var invalidApp: OperationError { .invalidApp() }
 
     public static func sourceNotAdded(_ source: Source, file: String = #fileID, line: UInt = #line) -> OperationError {
         .sourceNotAdded(name: source.name)
@@ -76,7 +77,10 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
             return NSLocalizedString("You are not signed in.", comment: "")
         case .unknownUDID:
             return NSLocalizedString("SideStore could not determine this device's UDID. Please replace your pairing using iloader.", comment: "")
-        case .invalidApp:
+        case .invalidApp(let reason):
+            if let reason, !reason.isEmpty {
+                return String(format: NSLocalizedString("The app is in an invalid format: %@", comment: ""), reason)
+            }
             return NSLocalizedString("The app is in an invalid format.", comment: "")
         case .invalidParameters(let msg):
             if let msg {

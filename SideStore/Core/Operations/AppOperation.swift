@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-enum AppOperation
+enum AppOperation: CustomStringConvertible
 {
     case install(AppProtocol, customBundleIdentifier: String? = nil)
     case update(AppProtocol, customBundleIdentifier: String? = nil)
@@ -23,6 +23,37 @@ enum AppOperation
     case resign(InstalledApp, alternateIconMode: AlternateIconMode = .preserve)
     case removeApp(InstalledApp)
     case removeDeactivatedApp(InstalledApp)
+    
+    var rawValue: String {
+        switch self
+        {
+        case .install:              return "install"
+        case .update:               return "update"
+        case .refresh:              return "refresh"
+        case .activate:             return "activate"
+        case .deactivate:           return "deactivate"
+        case .deleteApp:            return "deleteApp"
+        case .backup:               return "backup"
+        case .restore:              return "restore"
+        case .resign:               return "resign"
+        case .removeApp:            return "removeApp"
+        case .removeDeactivatedApp: return "removeDeactivatedApp"
+        }
+    }
+    
+    var description: String {
+        return self.rawValue
+    }
+    
+    func logSummary(status: String, elapsed: Double, error: Error? = nil) {
+        logOperationSummary(
+            operation: self.rawValue,
+            target: self.bundleIdentifier,
+            status: status,
+            elapsed: elapsed,
+            error: error
+        )
+    }
     
     var app: AppProtocol {
         switch self

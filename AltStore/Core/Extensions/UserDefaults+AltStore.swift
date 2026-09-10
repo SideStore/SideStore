@@ -149,6 +149,10 @@ public extension UserDefaults
         get { self.bool(forKey: "autoFixAppGroupIDs") }
         set { self.set(newValue, forKey: "autoFixAppGroupIDs") }
     }
+    @objc var preferResignedIPA: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     @objc var isExportResignedAppEnabled: Bool {
         get { self.bool(forKey: #function) }
         set { self.set(newValue, forKey: #function) }
@@ -386,6 +390,7 @@ public extension UserDefaults
             
             #keyPath(UserDefaults.responseCachingDisabled): false,
             #keyPath(UserDefaults.customizeAppId): false,
+            #keyPath(UserDefaults.preferResignedIPA): true,
             #keyPath(UserDefaults.isExportResignedAppEnabled): false,
             #keyPath(UserDefaults.isVerboseOperationsLoggingEnabled): false,
             #keyPath(UserDefaults.isSideStoreVerboseLoggingEnabled): false,

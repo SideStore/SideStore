@@ -56,7 +56,7 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
     {
         do
         {
-            try await Self.startDatabaseIfNeeded()
+            try await DatabaseManager.shared.start()
 
             let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
             defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
@@ -67,8 +67,11 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
             try self.ipaFile.data.write(to: ipaURL)
 
             let intentProgress = self.progress
-            _ = try await AppManager.shared.installIPA(at: ipaURL) { progress in
-                intentProgress.addChild(progress, withPendingUnitCount: 1)
+            _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<InstalledApp, Error>) in
+                let group = AppManager.shared.install(.url(ipaURL)) { result in
+                    continuation.resume(with: result)
+                }
+                intentProgress.addChild(group.progress, withPendingUnitCount: 1)
             }
 
             return .result()
@@ -81,28 +84,6 @@ struct InstallIPAIntent: AppIntent, ProgressReportingIntent
     }
 }
 
-@available(iOS 17.0, tvOS 17.0, *)
-fileprivate extension InstallIPAIntent
-{
-    static func startDatabaseIfNeeded() async throws
-    {
-        if !DatabaseManager.shared.isStarted
-        {
-            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                DatabaseManager.shared.start { error in
-                    if let error
-                    {
-                        continuation.resume(throwing: error)
-                    }
-                    else
-                    {
-                        continuation.resume()
-                    }
-                }
-            }
-        }
-    }
-}
 
 @available(iOS 17.0, tvOS 17.0, *)
 extension RefreshAllAppsIntent
@@ -208,7 +189,7 @@ private extension RefreshAllAppsIntent
 {
     func refreshAllApps() async throws
     {
-        try await InstallIPAIntent.startDatabaseIfNeeded()
+        try await DatabaseManager.shared.start()
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         let installedApps = await context.perform { InstalledApp.fetchAppsForRefreshingAll(in: context) }

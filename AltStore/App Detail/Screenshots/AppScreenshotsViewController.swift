@@ -44,7 +44,7 @@ class AppScreenshotsViewController: UICollectionViewController
         let collectionViewLayout = self.makeLayout()
         self.collectionView.collectionViewLayout = collectionViewLayout
         
-        self.collectionView.register(AppScreenshotCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(AppScreenshotCollectionViewCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -93,11 +93,11 @@ private extension AppScreenshotsViewController
         return layout
     }
     
-    func makeDataSource() -> RSTArrayCollectionViewPrefetchingDataSource<AppScreenshot, UIImage>
+    func makeDataSource() -> ArrayCollectionViewPrefetchingDataSource<AppScreenshot, UIImage>
     {
         let screenshots = self.app.preferredScreenshots()
         
-        let dataSource = RSTArrayCollectionViewPrefetchingDataSource<AppScreenshot, UIImage>(items: screenshots)
+        let dataSource = ArrayCollectionViewPrefetchingDataSource<AppScreenshot, UIImage>(items: screenshots)
         dataSource.cellConfigurationHandler = { [weak self] (cell, screenshot, indexPath) in
             let cell = cell as! AppScreenshotCollectionViewCell
             cell.imageView.image = nil
@@ -114,15 +114,21 @@ private extension AppScreenshotsViewController
                     url: imageURL,
                     processors: [ImageProcessors.Resize(size: CGSize(width: 250, height: 500))]
                 )
-                ImagePipeline.shared.loadImage(with: request, progress: nil) { [weak cell] result in
-                    cell?.imageView.isIndicatingActivity = false
-                    switch result
+                cell.imageView.isIndicatingActivity = true
+                Task { [weak cell] in
+                    do
                     {
-                    case .success(let response):
-                        cell?.setImage(response.image)
-                    case .failure:
-                        cell?.setImage(nil)
-                        cell?.reloadImageView.isHidden = false
+                        let image = try await ImagePipeline.shared.image(for: request)
+                        guard let cell else { return }
+                        cell.imageView.isIndicatingActivity = false
+                        cell.setImage(image)
+                    }
+                    catch
+                    {
+                        guard let cell else { return }
+                        cell.imageView.isIndicatingActivity = false
+                        cell.setImage(nil)
+                        cell.reloadImageView.isHidden = false
                     }
                 }
             }
@@ -146,28 +152,12 @@ private extension AppScreenshotsViewController
             
             cell.aspectRatio = aspectRatio
         }
-        dataSource.prefetchHandler = { (screenshot, indexPath, completionHandler) in
-            let imageURL = screenshot.imageURL
+        dataSource.prefetchHandler = { (screenshot, indexPath) in
             let request = ImageRequest(
-                url: imageURL,
+                url: screenshot.imageURL,
                 processors: [ImageProcessors.Resize(size: CGSize(width: 250, height: 500))]
             )
-            let imageTask = ImagePipeline.shared.loadImage(with: request, progress: nil) { result in
-                switch result
-                {
-                case .success(let response): completionHandler(response.image, nil)
-                case .failure(let error): completionHandler(nil, error)
-                }
-            }
-            return Task {
-                await withTaskCancellationHandler {
-                    if Task.isCancelled {
-                        imageTask.cancel()
-                    }
-                } onCancel: {
-                    imageTask.cancel()
-                }
-            }
+            return try await ImagePipeline.shared.image(for: request)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! AppScreenshotCollectionViewCell

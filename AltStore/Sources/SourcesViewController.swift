@@ -35,7 +35,7 @@ final class SourcesViewController: UICollectionViewController
     
     private weak var _installingApp: StoreApp?
     
-    private var placeholderView: RSTPlaceholderView!
+    private var placeholderView: PlaceholderView!
     private var placeholderViewButton: UIButton!
     private var placeholderViewCenterYConstraint: NSLayoutConstraint!
     
@@ -58,7 +58,7 @@ final class SourcesViewController: UICollectionViewController
         
         self.navigationController?.view.tintColor = .altPrimary
         
-        self.collectionView.register(AppBannerCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(AppBannerCollectionViewCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         
         self.collectionView.dataSource = self.dataSource
         self.collectionView.prefetchDataSource = self.dataSource
@@ -69,7 +69,7 @@ final class SourcesViewController: UICollectionViewController
         backgroundView.backgroundColor = .altBackground
         self.collectionView.backgroundView = backgroundView
         
-        self.placeholderView = RSTPlaceholderView(frame: .zero)
+        self.placeholderView = PlaceholderView(frame: .zero)
         self.placeholderView.translatesAutoresizingMaskIntoConstraints = false
         self.placeholderView.textLabel.text = NSLocalizedString("Add More Sources!", comment: "")
         self.placeholderView.detailTextLabel.text = NSLocalizedString("Sources determine what apps are available in SideStore. The more sources you add, the better your SideStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!", comment: "")
@@ -189,7 +189,7 @@ private extension SourcesViewController
         return layout
     }
     
-    func makeDataSource() -> RSTFetchedResultsCollectionViewPrefetchingDataSource<Source, UIImage>
+    func makeDataSource() -> FetchedResultsCollectionViewPrefetchingDataSource<Source, UIImage>
     {
         // TODO: @mahee96: Need implementation to keep SideStore-Official source always on top
         let fetchRequest = Source.fetchRequest() as NSFetchRequest<Source>
@@ -204,7 +204,7 @@ private extension SourcesViewController
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
         
-        let dataSource = RSTFetchedResultsCollectionViewPrefetchingDataSource<Source, UIImage>(fetchedResultsController: fetchedResultsController)
+        let dataSource = FetchedResultsCollectionViewPrefetchingDataSource<Source, UIImage>(fetchedResultsController: fetchedResultsController)
         dataSource.proxy = self
         dataSource.cellConfigurationHandler = { [weak self] (cell, source, indexPath) in
             guard let self else { return }
@@ -298,18 +298,9 @@ private extension SourcesViewController
             // Make sure refresh button is correct size.
             cell.layoutIfNeeded()
         }
-        dataSource.prefetchHandler = { (source, indexPath, completionHandler) in
+        dataSource.prefetchHandler = { (source, indexPath) in
             guard let imageURL = source.effectiveIconURL else { return nil }
-            Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: imageURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completionHandler(response.image, nil)
-                    case .failure(let error): completionHandler(nil, error)
-                    }
-                }
-            }
-            return nil
+            return try await ImagePipeline.shared.image(for: imageURL)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! AppBannerCollectionViewCell

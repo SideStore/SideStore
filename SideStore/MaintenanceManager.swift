@@ -45,6 +45,7 @@ public final class MaintenanceManager {
             switch pass {
             case 1:
                 Keychain.shared.clearAll()
+                AuthManager.shared.signOut(keepCertificate: false, keepAnisetteData: false)
             case 2:
                 AnisetteDataManager.shared.clearCache()
                 AuthManager.shared.signOut(keepCertificate: true, keepAnisetteData: false)

@@ -13,19 +13,22 @@ public class ViewAppIntentHandler: NSObject, ViewAppIntentHandling
 {
     public func provideAppOptionsCollection(for intent: ViewAppIntent, with completion: @escaping (INObjectCollection<App>?, Error?) -> Void)
     {        
-        DatabaseManager.shared.start { (error) in
-            if let error = error
+        Task<Void, Never>.detached(priority: .userInitiated) {
+            do
+            {
+                try await DatabaseManager.shared.start()
+                let collection = await DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
+                    let apps = InstalledApp.all(in: context).map { (installedApp) in
+                        return App(identifier: installedApp.bundleIdentifier, display: installedApp.name)
+                    }
+                    return INObjectCollection(items: apps)
+                }
+                completion(collection, nil)
+            }
+            catch
             {
                 debugLog("Error starting extension: \(error)")
-            }
-            
-            DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
-                let apps = InstalledApp.all(in: context).map { (installedApp) in
-                    return App(identifier: installedApp.bundleIdentifier, display: installedApp.name)
-                }
-                
-                let collection = INObjectCollection(items: apps)
-                completion(collection, nil)
+                completion(nil, error)
             }
         }
     }

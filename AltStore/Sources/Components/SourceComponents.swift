@@ -97,11 +97,11 @@ class TextViewCollectionViewCell: UICollectionViewCell
 
 class PlaceholderCollectionReusableView: UICollectionReusableView
 {
-    let placeholderView: RSTPlaceholderView
+    let placeholderView: PlaceholderView
     
     override init(frame: CGRect)
     {
-        self.placeholderView = RSTPlaceholderView(frame: .zero)
+        self.placeholderView = PlaceholderView(frame: .zero)
         self.placeholderView.activityIndicatorView.style = .medium
         
         super.init(frame: frame)

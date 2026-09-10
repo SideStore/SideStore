@@ -149,11 +149,13 @@ final class DownloadAppOperation: BasePipelineOperation<InstallAppOperationConte
             self.debugLog("[DownloadAppOperation] Downloaded \(dependencies.count) dependencies for \(appBundle.name): \(dependencies.map(\.lastPathComponent))")
         }
         
-        try FileManager.default.copyItem(at: appBundle.fileURL, to: self.destinationURL, shouldReplace: true)
+        debugLog("[DownloadAppOperation] Moving extracted bundle from \(appBundle.fileURL.path) to destination \(self.destinationURL.path)")
+        try FileManager.default.moveItem(at: appBundle.fileURL, to: self.destinationURL, shouldReplace: true)
+        debugLog("[DownloadAppOperation] Moving bundle to destination succeeded")
         
-        guard let copiedAppBundle = ALTApplication(fileURL: self.destinationURL) else { throw OperationError.invalidApp }
+        guard let movedAppBundle = ALTApplication(fileURL: self.destinationURL) else { throw OperationError.invalidApp }
         self.setProgress(100)
-        return copiedAppBundle
+        return movedAppBundle
     }
     
     func downloadIPA(from sourceURL: URL) async throws -> ALTApplication {
@@ -318,6 +320,7 @@ extension DownloadAppOperation {
 
 private class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate {
     let progress: Progress
+    private var lastLoggedPercent: Int = -1
     
     init(progress: Progress) {
         self.progress = progress
@@ -327,6 +330,11 @@ private class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate {
         if totalBytesExpectedToWrite > 0 {
             let fraction = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
             self.progress.completedUnitCount = Int64(fraction * 75.0)
+            let percent = Int(fraction * 100.0)
+            if percent % 25 == 0 && percent != self.lastLoggedPercent {
+                self.lastLoggedPercent = percent
+                debugLog("[DownloadAppOperation] Download transfer: \(percent)% (\(ByteCountFormatter.string(fromByteCount: totalBytesWritten, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: totalBytesExpectedToWrite, countStyle: .file)))")
+            }
         }
     }
     

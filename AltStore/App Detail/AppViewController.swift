@@ -134,15 +134,29 @@ final class AppViewController: UIViewController
         self._backgroundBlurTintColor = self.backgroundBlurView.contentView.backgroundColor
         
         // Load Images
-        for imageView in [self.bannerView.iconImageView!, self.backgroundAppIconImageView!, self.navigationBarAppIconImageView!]
+        let imageViews = [self.bannerView.iconImageView, self.backgroundAppIconImageView, self.navigationBarAppIconImageView]
+        for imageView in imageViews
         {
-            imageView.isIndicatingActivity = true
-            
-            Nuke.loadImage(with: self.app.iconURL, options: .shared, into: imageView, progress: nil) { [weak imageView] (result) in
-                switch result
+            imageView?.isIndicatingActivity = true
+        }
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do
+            {
+                let image = try await ImagePipeline.shared.image(for: self.app.iconURL)
+                for imageView in [self.bannerView.iconImageView, self.backgroundAppIconImageView, self.navigationBarAppIconImageView]
                 {
-                case .success: imageView?.isIndicatingActivity = false
-                case .failure(let error): debugLog("[ALTLog] Failed to load app icons. \(error)")
+                    imageView?.image = image
+                    imageView?.isIndicatingActivity = false
+                }
+            }
+            catch
+            {
+                debugLog("[SideStore] Failed to load app icons. \(error)")
+                for imageView in [self.bannerView.iconImageView, self.backgroundAppIconImageView, self.navigationBarAppIconImageView]
+                {
+                    imageView?.isIndicatingActivity = false
                 }
             }
         }
@@ -624,39 +638,37 @@ extension AppViewController
     {
         guard self.app.installedApp == nil else { return }
         
-        Task(priority: .userInitiated) {
-            let group = await AppManager.shared.installAsync(self.app, presentingViewController: self) { (result) in
-                debugLog("AppViewController: installAsync completion handler invoked with result: \(result)")
-                do
-                {
-                    _ = try result.get()
-                }
-                catch is CancellationError
-                {
-                    // Ignore
-                }
-                catch
-                {
-                    DispatchQueue.main.async {
-                        let toastView = ToastView(error: error)
-                        toastView.opensErrorLog = true
-                        toastView.show(in: self)
-                    }
-                }
-                
+        let group = AppManager.shared.install(.app(self.app), presentingViewController: self) { (result) in
+            debugLog("AppViewController: install completion handler invoked with result: \(result)")
+            do
+            {
+                _ = try result.get()
+            }
+            catch is CancellationError
+            {
+                // Ignore
+            }
+            catch
+            {
                 DispatchQueue.main.async {
-                    debugLog("AppViewController: clearing progress and updating UI...")
-                    self.bannerView.button.progress = nil
-                    self.navigationBarDownloadButton.progress = nil
-                    self.update()
+                    let toastView = ToastView(error: error)
+                    toastView.opensErrorLog = true
+                    toastView.show(in: self)
                 }
             }
             
-            if !group.progress.isCancelled
-            {
-                self.bannerView.button.progress = group.progress
-                self.navigationBarDownloadButton.progress = group.progress
+            DispatchQueue.main.async {
+                debugLog("AppViewController: clearing progress and updating UI...")
+                self.bannerView.button.progress = nil
+                self.navigationBarDownloadButton.progress = nil
+                self.update()
             }
+        }
+        
+        if !group.progress.isCancelled
+        {
+            self.bannerView.button.progress = group.progress
+            self.navigationBarDownloadButton.progress = group.progress
         }
     }
     

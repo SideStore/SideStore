@@ -269,13 +269,9 @@ struct AppIconView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.secondary.opacity(0.2), lineWidth: 0.5)
         )
-        .onAppear {
-            installedApp.loadIcon { result in
-                if case .success(let img) = result {
-                    DispatchQueue.main.async {
-                        self.image = img
-                    }
-                }
+        .task {
+            if let img = try? await installedApp.loadIcon() {
+                self.image = img
             }
         }
     }

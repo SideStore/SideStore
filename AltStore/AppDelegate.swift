@@ -124,6 +124,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 //        UserDefaults.dumpAllSettingsOnBoot()
         #endif
         
+        // Register default settings before doing anything else.
+        UserDefaults.registerDefaults()
+        syncMinimuxerBackendFromUserDefaults()
+
         SideStoreLogging.setLogging(UserDefaults.standard.isSideStoreVerboseLoggingEnabled)
         AltSign.setLogging(UserDefaults.standard.isAltSignVerboseLoggingEnabled)
         minimuxerSetLogging(UserDefaults.standard.isMinimuxerVerboseLoggingEnabled)
@@ -131,17 +135,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 //        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.MigrationDebug")
 //        UserDefaults.standard.setValue(true, forKey: "com.apple.CoreData.SQLDebug")
-
-        // Register default settings before doing anything else.
-        UserDefaults.registerDefaults()
-        syncMinimuxerBackendFromUserDefaults()
         
-        // Perform one-time maintenance tasks (e.g. Keychain clearance for 0.6.4*) before initializing services
-        MaintenanceManager.shared.performMaintenanceIfNeeded()
 
         // Trigger daily boot sync for Anisette servers if needed
-        Task.detached {
-            await AnisetteServersManager.shared.performDailySyncIfNeeded()
+        if !UserDefaults.standard.useOnDeviceAnisette{
+            Task.detached {
+                await AnisetteServersManager.shared.performDailySyncIfNeeded()
+            }
         }
 
         // Recreate Database if requested
@@ -168,26 +168,30 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.firstLaunch = Date()
         }
         
-        DatabaseManager.shared.start { (error) in
-            if let error = error
+        Task.detached(priority: .userInitiated) {
+            do
             {
-                debugLog("Failed to start DatabaseManager. Error: \(error)")
-            }
-            else
-            {
+                debugLog("Starting DatabaseManager...")
+                try await DatabaseManager.shared.start()
                 debugLog("Started DatabaseManager.")
+                
                 debugLog("Reconciling any staged drafts started...")
-                Self.reconcileSelfReinstallationIfNeeded()
+                await Self.reconcileSelfReinstallationIfNeeded()
                 debugLog("Reconcile any staged drafts completed.")
                 
-                Task {
-                    await WidgetDataManager.publishCurrentInstalledAppsIfNeeded(in: DatabaseManager.shared.viewContext)
-                }
+                await WidgetDataManager.publishCurrentInstalledAppsIfNeeded(in: DatabaseManager.shared.viewContext)
                 
                 if isFirstLaunch
                 {
                     AuthManager.shared.signOut()
                 }
+
+                // Perform one-time maintenance tasks after database is started
+                MaintenanceManager.shared.performMaintenanceIfNeeded()
+            }
+            catch
+            {
+                debugLog("Failed to start DatabaseManager. Error: \(error)")
             }
         }
         
@@ -213,11 +217,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
         let midnightOneMonthAgo = Calendar.current.startOfDay(for: oneMonthAgo)
-        DatabaseManager.shared.purgeLoggedErrors(before: midnightOneMonthAgo) { result in
-            switch result
+        Task.detached(priority: .background) {
+            do
             {
-            case .success: break
-            case .failure(let error): debugLog("[ALTLog] Failed to purge logged errors before \(midnightOneMonthAgo). \(error)")
+                try await DatabaseManager.shared.purgeLoggedErrors(before: midnightOneMonthAgo)
+            }
+            catch
+            {
+                debugLog("[SideStore] Failed to purge logged errors before \(midnightOneMonthAgo). \(error)")
             }
         }
              
@@ -422,29 +429,19 @@ extension AppDelegate
                 return
             }
             
-            if !DatabaseManager.shared.isStarted
-            {
-                DatabaseManager.shared.start() { (error) in
-                    if error != nil
-                    {
-                        backgroundFetchCompletionHandler(.failed)
+            Task.detached(priority: .userInitiated) {
+                do
+                {
+                    try await DatabaseManager.shared.start()
+                    self.performBackgroundFetch { (backgroundFetchResult) in
+                        backgroundFetchCompletionHandler(backgroundFetchResult)
+                    } refreshAppsCompletionHandler: { (refreshAppsResult) in
                         taskCompletionHandler()
                     }
-                    else
-                    {
-                        self.performBackgroundFetch { (backgroundFetchResult) in
-                            backgroundFetchCompletionHandler(backgroundFetchResult)
-                        } refreshAppsCompletionHandler: { (refreshAppsResult) in
-                            taskCompletionHandler()
-                        }
-                    }
                 }
-            }
-            else
-            {
-                self.performBackgroundFetch { (backgroundFetchResult) in
-                    backgroundFetchCompletionHandler(backgroundFetchResult)
-                } refreshAppsCompletionHandler: { (refreshAppsResult) in
+                catch
+                {
+                    backgroundFetchCompletionHandler(.failed)
                     taskCompletionHandler()
                 }
             }

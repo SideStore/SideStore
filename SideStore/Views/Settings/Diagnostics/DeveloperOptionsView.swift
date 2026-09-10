@@ -27,7 +27,7 @@ struct DeveloperOptionsView: View {
     @State private var isVerboseOperationsLoggingEnabled: Bool = UserDefaults.standard.isVerboseOperationsLoggingEnabled
     @State private var isSideStoreVerboseLoggingEnabled: Bool = UserDefaults.standard.isSideStoreVerboseLoggingEnabled
     @State private var isAltWidgetVerboseLoggingEnabled: Bool = WidgetDataManager.shared.isVerboseLoggingEnabled
-    @State private var isAltSignVerboseLoggingEnabled: Bool = UserDefaults.standard.isAltSignVerboseLoggingEnabled
+    @State private var isSideSignVerboseLoggingEnabled: Bool = UserDefaults.standard.isAltSignVerboseLoggingEnabled
     @State private var isMinimuxerVerboseLoggingEnabled: Bool = UserDefaults.standard.isMinimuxerVerboseLoggingEnabled
     @State private var isRotateLogsOnStartupEnabled: Bool = UserDefaults.standard.isRotateLogsOnStartupEnabled
     @State private var recreateDatabaseOnNextStart: Bool = UserDefaults.standard.recreateDatabaseOnNextStart
@@ -102,12 +102,12 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "AltSign Verbose Logging", isOn: Binding(
-                            get: { isAltSignVerboseLoggingEnabled },
+                        toggleRow(title: "SideSign Verbose Logging", isOn: Binding(
+                            get: { isSideSignVerboseLoggingEnabled },
                             set: { newValue in
-                                isAltSignVerboseLoggingEnabled = newValue
+                                isSideSignVerboseLoggingEnabled = newValue
                                 UserDefaults.standard.isAltSignVerboseLoggingEnabled = newValue
-                                AltSign.setLogging(newValue)
+                                SideSignLogging.setLogging(newValue)
                             }
                         ))
                         
@@ -137,32 +137,6 @@ struct DeveloperOptionsView: View {
                         NavigationLink(destination: OperationsLoggingControlView()) {
                             HStack {
                                 Text("Operations Logging Control")
-                                    .font(.system(size: 17, weight: .bold))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Color.white.opacity(0.4))
-                            }
-                            .padding(.horizontal, 16)
-                            .frame(height: 50)
-                        }
-                    }
-                    .background(Color.settingsRowBackground)
-                    .cornerRadius(14)
-                }
-                
-                // Section: Bonjour
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("BONJOUR")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(Color.white.opacity(0.6))
-                        .padding(.horizontal, 16)
-                    
-                    VStack(spacing: 0) {
-                        NavigationLink(destination: BonjourDiscoveryView()) {
-                            HStack {
-                                Text("Network Discovery")
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()

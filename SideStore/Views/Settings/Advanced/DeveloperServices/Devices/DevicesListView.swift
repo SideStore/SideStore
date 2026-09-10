@@ -104,6 +104,7 @@ struct DevicesListView: View {
                             }
                             .padding(.vertical, 2)
                         }
+                        #if !os(tvOS)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             SwiftUI.Button(role: .destructive) {
                                 activeAlert = .delete(device)
@@ -128,7 +129,7 @@ struct DevicesListView: View {
                             }
                             .tint(.blue)
                         }
-                        #if !os(tvOS)
+                        #endif
                         .contextMenu {
                             SwiftUI.Button {
                                 editDeviceName = device.name
@@ -136,11 +137,13 @@ struct DevicesListView: View {
                             } label: {
                                 Label("Edit Name", systemImage: "pencil")
                             }
+                            #if !os(tvOS)
                             SwiftUI.Button {
                                 UIPasteboard.general.string = device.identifier
                             } label: {
                                 Label("Copy UDID", systemImage: "doc.on.doc")
                             }
+                            #endif
                             if device.status != "d" {
                                 SwiftUI.Button {
                                     activeAlert = .disable(device)
@@ -154,7 +157,6 @@ struct DevicesListView: View {
                                 Label("Delete Device", systemImage: "trash")
                             }
                         }
-                        #endif
                     }
                 }
             }

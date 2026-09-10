@@ -48,24 +48,17 @@ final class IntentHandler: NSObject, RefreshAllIntentHandling
             }
         }
         
-        if !DatabaseManager.shared.isStarted
-        {
-            DatabaseManager.shared.start() { (error) in
-                if let error = error
-                {
-                    self.finish(intent, response: RefreshAllIntentResponse.failure(localizedDescription: error.localizedDescription))
-                }
-                else
-                {
-                    self.finish(intent, response: RefreshAllIntentResponse(code: .ready, userActivity: nil))
-                    self.refreshApps(intent: intent)
-                }
+        Task<Void, Never>.detached(priority: .userInitiated) {
+            do
+            {
+                try await DatabaseManager.shared.start()
+                self.finish(intent, response: RefreshAllIntentResponse(code: .ready, userActivity: nil))
+                self.refreshApps(intent: intent)
             }
-        }
-        else
-        {
-            self.finish(intent, response: RefreshAllIntentResponse(code: .ready, userActivity: nil))
-            self.refreshApps(intent: intent)
+            catch
+            {
+                self.finish(intent, response: RefreshAllIntentResponse.failure(localizedDescription: error.localizedDescription))
+            }
         }
     }
     

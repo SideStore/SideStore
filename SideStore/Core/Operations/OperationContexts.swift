@@ -37,6 +37,7 @@ class OperationContext: WeightedOperationContext
 {
     var error: Error?
     var dbBackgroundContext: NSManagedObjectContext
+    var operationStartTime: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
 
     private var stepItems: [OperationStepItem]
     private var currentIndex = 0
@@ -48,6 +49,7 @@ class OperationContext: WeightedOperationContext
         self.stepItems = stepItems
         self.error = error
         self.dbBackgroundContext = dbBackgroundContext
+        self.operationStartTime = CFAbsoluteTimeGetCurrent()
     }
 
     fileprivate init(context: OperationContext)
@@ -58,6 +60,7 @@ class OperationContext: WeightedOperationContext
         self.dbBackgroundContext = context.dbBackgroundContext
         self.remainingReuses = context.remainingReuses
         self.stepProgressSlots = context.stepProgressSlots
+        self.operationStartTime = context.operationStartTime
     }
 
     func weightForFirstOccurrence(of step: some OperationStep) -> Int64? {
@@ -336,5 +339,6 @@ class InstallAppOperationContext: PipelineOperationContext
             error: nil,
             dbBackgroundContext: standaloneContext.dbBackgroundContext
         )
+        self.operationStartTime = standaloneContext.operationStartTime
     }
 }

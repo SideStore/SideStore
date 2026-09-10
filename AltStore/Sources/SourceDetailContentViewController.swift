@@ -164,18 +164,18 @@ private extension SourceDetailContentViewController
         return layout
     }
     
-    func makeDataSource() -> RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
+    func makeDataSource() -> CompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>
     {
-        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [self.newsDataSource, self.appsDataSource, self.aboutDataSource])
+        let dataSource = CompositeCollectionViewPrefetchingDataSource<NSManagedObject, UIImage>(dataSources: [self.newsDataSource, self.appsDataSource, self.aboutDataSource])
         return dataSource
     }
     
-    func makeNewsDataSource() -> RSTFetchedResultsCollectionViewDataSource<NewsItem>
+    func makeNewsDataSource() -> FetchedResultsCollectionViewDataSource<NewsItem>
     {
         let fetchRequest = NewsItem.sortedFetchRequest(for: self.source)
         
         let context = self.source.managedObjectContext ?? DatabaseManager.shared.viewContext
-        let dataSource = RSTFetchedResultsCollectionViewDataSource(fetchRequest: fetchRequest, managedObjectContext: context)
+        let dataSource = FetchedResultsCollectionViewDataSource(fetchRequest: fetchRequest, managedObjectContext: context)
         dataSource.liveFetchLimit = 5
         dataSource.cellIdentifierHandler = { _ in "NewsCell" }
         dataSource.cellConfigurationHandler = { (cell, newsItem, indexPath) in
@@ -208,12 +208,12 @@ private extension SourceDetailContentViewController
         return dataSource
     }
     
-    func makeAppsDataSource() -> RSTArrayCollectionViewPrefetchingDataSource<StoreApp, UIImage>
+    func makeAppsDataSource() -> ArrayCollectionViewPrefetchingDataSource<StoreApp, UIImage>
     {
         let featuredApps = self.source.effectiveFeaturedApps
         let limitedFeaturedApps = Array(featuredApps.prefix(5))
         
-        let dataSource = RSTArrayCollectionViewPrefetchingDataSource<StoreApp, UIImage>(items: limitedFeaturedApps)
+        let dataSource = ArrayCollectionViewPrefetchingDataSource<StoreApp, UIImage>(items: limitedFeaturedApps)
         dataSource.cellIdentifierHandler = { _ in "AppCell" }
         dataSource.predicate = StoreApp.visibleAppsPredicate
         dataSource.cellConfigurationHandler = { [weak self] (cell, storeApp, indexPath) in
@@ -233,17 +233,8 @@ private extension SourceDetailContentViewController
             cell.bannerView.iconImageView.image = nil
             cell.bannerView.iconImageView.isIndicatingActivity = true
         }
-        dataSource.prefetchHandler = { (storeApp, indexPath, completion) in
-            let iconURL = storeApp.iconURL
-            return Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: iconURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completion(response.image, nil)
-                    case .failure(let error): completion(nil, error)
-                    }
-                }
-            }
+        dataSource.prefetchHandler = { (storeApp, indexPath) in
+            return try await ImagePipeline.shared.image(for: storeApp.iconURL)
         }
         dataSource.prefetchCompletionHandler = { [weak dataSource] (cell, image, indexPath, error) in
             let cell = cell as! AppBannerCollectionViewCell
@@ -260,9 +251,9 @@ private extension SourceDetailContentViewController
         return dataSource
     }
     
-    func makeAboutDataSource() -> RSTDynamicCollectionViewDataSource<NSManagedObject>
+    func makeAboutDataSource() -> DynamicCollectionViewDataSource<NSManagedObject>
     {
-        let dataSource = RSTDynamicCollectionViewDataSource<NSManagedObject>()
+        let dataSource = DynamicCollectionViewDataSource<NSManagedObject>()
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.numberOfItemsHandler = { [source] _ in source.localizedDescription == nil ? 0 : 1 }
         dataSource.cellIdentifierHandler = { _ in "AboutCell" }
@@ -410,13 +401,11 @@ private extension SourceDetailContentViewController
                 }
                 else
                 {
-                    Task { @MainActor in
-                        let group = await AppManager.shared.installAsync(storeApp, presentingViewController: self) { result in
-                            continuation.resume(with: result.map { _ in () })
-                        }
-                        
-                        sender.progress = group.progress
+                    let group = AppManager.shared.install(.app(storeApp), presentingViewController: self) { result in
+                        continuation.resume(with: result.map { _ in () })
                     }
+                    
+                    sender.progress = group.progress
                 }
             }
         }

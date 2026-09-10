@@ -364,7 +364,7 @@ private extension FetchProvisioningProfilesOperation{
                     groups.append(group)
                 } else {
                     // Not all characters are allowed in group names, so we replace periods with spaces (like Apple does).
-                    let name = "AltStore " + groupIdentifier.replacingOccurrences(of: ".", with: " ")
+                    let name = "SideStore " + groupIdentifier.replacingOccurrences(of: ".", with: " ")
                     do {
                         let group = try await DeveloperPortalProxy.shared.addAppGroup(name: name, groupIdentifier: adjustedGroupIdentifier, team: team)
                         self.context.sharedContext?.appendAppGroup(group)

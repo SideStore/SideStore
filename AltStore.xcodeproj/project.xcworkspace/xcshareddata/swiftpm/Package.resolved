@@ -7,7 +7,7 @@
       "location" : "https://github.com/mahee96/AnisetteKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "655731b2bdaf6c3d083df254638075ccc7b35454"
+        "revision" : "9d8ad7050e67a76fa40025d46e38ae6aed6a112e"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/mahee96/CodeSignKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "15f95c1f13e3b48727c17b3b4e23e4d06917abb8"
+        "revision" : "33b4f736f018ad4dfcd2e1d83590b9a5d674ab47"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/mahee96/GSACryptoKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "e7dd1055d684a62456de8c382e14743f06e6ecba"
+        "revision" : "eae2590eaf17fe98ce9c76b3ec2bd42b780eb123"
       }
     },
     {
@@ -38,15 +38,6 @@
       }
     },
     {
-      "identity" : "markdownkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bmoliveira/MarkdownKit.git",
-      "state" : {
-        "revision" : "39ea7a3fc7e65bcafe55152592b834859be574a5",
-        "version" : "1.7.3"
-      }
-    },
-    {
       "identity" : "libdeflate",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SideStore/libdeflate",
@@ -56,12 +47,21 @@
       }
     },
     {
+      "identity" : "markdownkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/bmoliveira/MarkdownKit.git",
+      "state" : {
+        "revision" : "39ea7a3fc7e65bcafe55152592b834859be574a5",
+        "version" : "1.7.3"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "2775239e10e23c0b70c5544b98c2af7f65c2bbd9",
-        "version" : "10.0.1"
+        "revision" : "30f7a7e72e0607d304fbf69c799474bd5fb6d1ce",
+        "version" : "13.2.0"
       }
     },
     {
@@ -70,7 +70,7 @@
       "location" : "https://github.com/mahee96/RemotePairingKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7b9d269ec64027d73a50faa917cb18fa218c1fc9"
+        "revision" : "e3f70d16c0c551540a533a39d540e78e5b0a60a8"
       }
     },
     {

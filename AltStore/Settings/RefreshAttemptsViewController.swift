@@ -39,13 +39,13 @@ final class RefreshAttemptsViewController: UITableViewController
 
 private extension RefreshAttemptsViewController
 {
-    func makeDataSource() -> RSTFetchedResultsTableViewDataSource<RefreshAttempt>
+    func makeDataSource() -> FetchedResultsTableViewDataSource<RefreshAttempt>
     {
         let fetchRequest = RefreshAttempt.fetchRequest() as NSFetchRequest<RefreshAttempt>
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \RefreshAttempt.date, ascending: false)]
         fetchRequest.returnsObjectsAsFaults = false
         
-        let dataSource = RSTFetchedResultsTableViewDataSource(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
+        let dataSource = FetchedResultsTableViewDataSource(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.cellConfigurationHandler = { [weak self] (cell, attempt, indexPath) in
             let cell = cell as! RefreshAttemptTableViewCell
             cell.dateLabel.text = self?.dateFormatter.string(from: attempt.date)
@@ -63,7 +63,7 @@ private extension RefreshAttemptsViewController
             }
         }
         
-        let placeholderView = RSTPlaceholderView()
+        let placeholderView = PlaceholderView()
         placeholderView.textLabel.text = NSLocalizedString("No Refresh Attempts", comment: "")
         placeholderView.detailTextLabel.text = NSLocalizedString("The more you use SideStore, the more often iOS will allow it to refresh apps in the background.", comment: "")
         dataSource.placeholderView = placeholderView

@@ -16,7 +16,7 @@ final class ResignAltStoreViewController: UIViewController
     
     var completionHandler: ((Result<Void, Error>) -> Void)?
     
-    @IBOutlet private var placeholderView: RSTPlaceholderView!
+    @IBOutlet private var placeholderView: PlaceholderView!
     @IBOutlet private var reinstallButton: PillButton!
     
     override func viewDidLoad()
@@ -133,7 +133,7 @@ private extension ResignAltStoreViewController
             }
                         
             // Install, _not_ refresh, to ensure we are installing with a non-revoked certificate.
-            let group = AppManager.shared.install(altStore, presentingViewController: self, context: self.context) { (result) in
+            let group = AppManager.shared.install(.app(altStore), presentingViewController: self, context: self.context) { (result) in
                 switch result
                 {
                 case .success: self.completionHandler?(.success(()))

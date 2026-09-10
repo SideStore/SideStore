@@ -83,7 +83,17 @@ struct AppIDsListView: View {
                             }
                             .padding(.vertical, 2)
                         }
+                        #if !os(tvOS)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            SwiftUI.Button(role: .destructive) {
+                                appIDToDelete = appID
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        #endif
+                        .contextMenu {
                             SwiftUI.Button(role: .destructive) {
                                 appIDToDelete = appID
                                 showDeleteConfirmation = true
@@ -152,8 +162,8 @@ struct AppIDsListView: View {
         }
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
-                title: Text("Delete App ID?"),
-                message: Text(String(format: NSLocalizedString("Are you sure you want to delete '%@' (%@)? This will also remove any associated provisioning profiles.", comment: ""), appIDToDelete?.name ?? "this App ID", appIDToDelete?.bundleIdentifier ?? "")),
+                title: Text(viewModel.isPaidAccount ? "Delete App ID?" : "Warning: Delete App ID?"),
+                message: Text(deleteAlertMessage),
                 primaryButton: .destructive(Text("Delete")) {
                     if let target = appIDToDelete {
                         Task {
@@ -165,6 +175,27 @@ struct AppIDsListView: View {
             )
         }
         .developerServicesToast(viewModel: viewModel)
+    }
+
+    private var deleteAlertMessage: String {
+        guard let appID = appIDToDelete else { return "" }
+        let name = appID.name.isEmpty ? "this App ID" : "'\(appID.name)'"
+        let bundleID = appID.bundleIdentifier.isEmpty ? "" : " (\(appID.bundleIdentifier))"
+
+        if viewModel.isPaidAccount {
+            return "Are you sure you want to delete \(name)\(bundleID)? This will also remove any associated provisioning profiles."
+        }
+
+        var expiryNotice = "until it expires automatically after the remaining days of its usual 7-day validity."
+        if let expiration = appID.expirationDate {
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.day], from: Date(), to: expiration)
+            if let days = components.day, days > 0 {
+                expiryNotice = "until it expires automatically in \(days) day\(days == 1 ? "" : "s") (from its usual 7-day validity)."
+            }
+        }
+
+        return "Warning: Deleting \(name)\(bundleID) does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use \(expiryNotice)\n\nAre you sure you want to delete it?"
     }
 
     private func formatDate(_ date: Date) -> String {

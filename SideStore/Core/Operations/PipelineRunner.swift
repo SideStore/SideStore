@@ -141,6 +141,10 @@ final class PipelineRunner: Sendable
         {
             let opError = error.asOperationError
             group.context.error = opError
+            for operation in operations {
+                let elapsed = CFAbsoluteTimeGetCurrent() - group.context.operationStartTime
+                operation.logSummary(status: "FAILED", elapsed: elapsed, error: opError)
+            }
             throw opError
         }
         
@@ -175,6 +179,10 @@ final class PipelineRunner: Sendable
             try await validateOp.execute()
         } catch {
             group.context.error = error
+            for operation in operations {
+                let elapsed = CFAbsoluteTimeGetCurrent() - group.context.operationStartTime
+                operation.logSummary(status: "FAILED", elapsed: elapsed, error: error)
+            }
             throw error
         }
         
@@ -226,6 +234,9 @@ final class PipelineRunner: Sendable
             group.set(.success(result), forAppWithBundleIdentifier: bundleID)
             debugLog("[AppManager] performOperation: Execution SUCCESS for app: \(operation.bundleIdentifier)")
             
+            let elapsed = CFAbsoluteTimeGetCurrent() - group.context.operationStartTime
+            operation.logSummary(status: "SUCCESS", elapsed: elapsed)
+            
             debugLog("[AppManager] performOperation: Reloading widget timelines...")
             await WidgetDataManager.publishCurrentInstalledApps(in: dbContext)
             debugLog("[AppManager] performOperation: Reloading COMPLETE for widget timelines.")
@@ -243,11 +254,14 @@ final class PipelineRunner: Sendable
             await CellularRefreshManager.shared.turnOnDataIfNeeded()
             progress.set(nil, for: operation)
             
+            let elapsed = CFAbsoluteTimeGetCurrent() - group.context.operationStartTime
+            let status = Task.isCancelled ? "CANCELLED" : "FAILED"
             if Task.isCancelled {
                 debugLog("[AppManager] performOperation: Execution CANCELLED for app: \(operation.bundleIdentifier)")
             } else {
                 debugLog("[AppManager] performOperation: Execution FAILED for app: \(operation.bundleIdentifier) with error: \(error.localizedDescription)")
             }
+            operation.logSummary(status: status, elapsed: elapsed, error: error)
             
             let mappedError = logger.getMappedError(for: operation, error: error)
             

@@ -83,7 +83,7 @@ class AddSourceViewController: UICollectionViewController
         let layout = self.makeLayout()
         self.collectionView.collectionViewLayout = layout
         
-        self.collectionView.register(AppBannerCollectionViewCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(AppBannerCollectionViewCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         self.collectionView.register(AddSourceTextFieldCell.self, forCellWithReuseIdentifier: ReuseID.textFieldCell.rawValue)
         
         self.collectionView.register(UICollectionViewListCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UICollectionView.elementKindSectionHeader)
@@ -193,18 +193,18 @@ private extension AddSourceViewController
         return layout
     }
     
-    func makeDataSource() -> RSTCompositeCollectionViewPrefetchingDataSource<Source, UIImage>
+    func makeDataSource() -> CompositeCollectionViewPrefetchingDataSource<Source, UIImage>
     {
-        let dataSource = RSTCompositeCollectionViewPrefetchingDataSource<Source, UIImage>(dataSources: [self.addSourceDataSource, 
+        let dataSource = CompositeCollectionViewPrefetchingDataSource<Source, UIImage>(dataSources: [self.addSourceDataSource, 
                                                                                                         self.sourcePreviewDataSource,
                                                                                                         self.recommendedSourcesDataSource])
         dataSource.proxy = self
         return dataSource
     }
     
-    func makeAddSourceDataSource() -> RSTDynamicCollectionViewPrefetchingDataSource<Source, UIImage>
+    func makeAddSourceDataSource() -> DynamicCollectionViewPrefetchingDataSource<Source, UIImage>
     {
-        let dataSource = RSTDynamicCollectionViewPrefetchingDataSource<Source, UIImage>()
+        let dataSource = DynamicCollectionViewPrefetchingDataSource<Source, UIImage>()
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.numberOfItemsHandler = { _ in 1 }
         dataSource.cellIdentifierHandler = { _ in ReuseID.textFieldCell.rawValue }
@@ -232,28 +232,18 @@ private extension AddSourceViewController
         return dataSource
     }
     
-    func makeSourcePreviewDataSource() -> RSTArrayCollectionViewPrefetchingDataSource<Source, UIImage>
+    func makeSourcePreviewDataSource() -> ArrayCollectionViewPrefetchingDataSource<Source, UIImage>
     {
-        let dataSource = RSTArrayCollectionViewPrefetchingDataSource<Source, UIImage>(items: [])
+        let dataSource = ArrayCollectionViewPrefetchingDataSource<Source, UIImage>(items: [])
         dataSource.cellConfigurationHandler = { [weak self] cell, source, indexPath in
             guard let self else { return }
             
             let cell = cell as! AppBannerCollectionViewCell
             self.configure(cell, with: source)
         }
-        dataSource.prefetchHandler = { (source, indexPath, completionHandler) in
+        dataSource.prefetchHandler = { (source, indexPath) in
             guard let imageURL = source.effectiveIconURL else { return nil }
-            
-            Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: imageURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completionHandler(response.image, nil)
-                    case .failure(let error): completionHandler(nil, error)
-                    }
-                }
-            }
-            return nil
+            return try await ImagePipeline.shared.image(for: imageURL)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! AppBannerCollectionViewCell
@@ -269,28 +259,18 @@ private extension AddSourceViewController
         return dataSource
     }
     
-    func makeRecommendedSourcesDataSource() -> RSTArrayCollectionViewPrefetchingDataSource<Source, UIImage>
+    func makeRecommendedSourcesDataSource() -> ArrayCollectionViewPrefetchingDataSource<Source, UIImage>
     {
-        let dataSource = RSTArrayCollectionViewPrefetchingDataSource<Source, UIImage>(items: [])
+        let dataSource = ArrayCollectionViewPrefetchingDataSource<Source, UIImage>(items: [])
         dataSource.cellConfigurationHandler = { [weak self] cell, source, indexPath in
             guard let self else { return }
             
             let cell = cell as! AppBannerCollectionViewCell
             self.configure(cell, with: source)
         }
-        dataSource.prefetchHandler = { (source, indexPath, completionHandler) in
+        dataSource.prefetchHandler = { (source, indexPath) in
             guard let imageURL = source.effectiveIconURL else { return nil }
-            
-            Task.detached(priority: .background) {
-                ImagePipeline.shared.loadImage(with: imageURL, progress: nil) { result in
-                    switch result
-                    {
-                    case .success(let response): completionHandler(response.image, nil)
-                    case .failure(let error): completionHandler(nil, error)
-                    }
-                }
-            }
-            return nil
+            return try await ImagePipeline.shared.image(for: imageURL)
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! AppBannerCollectionViewCell
@@ -533,13 +513,13 @@ private extension AddSourceViewController
         let currentItemCount = self.sourcePreviewDataSource.items.count
         let newItemCount = sources.count
         
-        var changes: [RSTCellContentChange] = []
+        var changes: [CellContentChange] = []
         
         if currentItemCount == 0 && newItemCount > 0 {
             // Insert all items if we currently have none
             for i in 0..<newItemCount {
                 let indexPath = IndexPath(row: i, section: 0)
-                let change = RSTCellContentChange(type: .insert,
+                let change = CellContentChange(type: .insert,
                                                 currentIndexPath: nil,
                                                 destinationIndexPath: indexPath)
                 changes.append(change)
@@ -548,20 +528,20 @@ private extension AddSourceViewController
             // Delete all items if we're going to have none
             for i in 0..<currentItemCount {
                 let indexPath = IndexPath(row: i, section: 0)
-                let change = RSTCellContentChange(type: .delete,
+                let change = CellContentChange(type: .delete,
                                                 currentIndexPath: indexPath,
                                                 destinationIndexPath: nil)
                 changes.append(change)
             }
         } else if currentItemCount != newItemCount {
             // If counts differ, do a section update
-            let change = RSTCellContentChange(type: .update, sectionIndex: 0)
+            let change = CellContentChange(type: .update, sectionIndex: 0)
             changes = [change]
         } else {
             // Update existing items in place
             for i in 0..<newItemCount {
                 let indexPath = IndexPath(row: i, section: 0)
-                let change = RSTCellContentChange(type: .update,
+                let change = CellContentChange(type: .update,
                                                 currentIndexPath: indexPath,
                                                 destinationIndexPath: indexPath)
                 changes.append(change)
@@ -709,14 +689,14 @@ private extension AddSourceViewController
                     let sources = try result.get()
                     debugLog("[AddSourceViewController] Recommended sources spinner stopped. Loaded \(sources.count) source(s) into list: \(sources.map { $0.name })")
                     
-                    let sectionUpdate = RSTCellContentChange(type: .update, sectionIndex: 0)
+                    let sectionUpdate = CellContentChange(type: .update, sectionIndex: 0)
                     self?.recommendedSourcesDataSource.setItems(sources, with: [sectionUpdate])
                 }
                 catch
                 {
                     debugLog("[AddSourceViewController] Recommended sources spinner stopped (failed: \(error.localizedDescription))")
                     
-                    let sectionUpdate = RSTCellContentChange(type: .update, sectionIndex: 0)
+                    let sectionUpdate = CellContentChange(type: .update, sectionIndex: 0)
                     self?.recommendedSourcesDataSource.setItems([], with: [sectionUpdate])
                 }
             }

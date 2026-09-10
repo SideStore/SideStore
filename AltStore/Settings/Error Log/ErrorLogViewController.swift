@@ -113,7 +113,7 @@ final class ErrorLogViewController: UITableViewController
 
 private extension ErrorLogViewController
 {
-    func makeDataSource() -> RSTFetchedResultsTableViewPrefetchingDataSource<LoggedError, UIImage>
+    func makeDataSource() -> FetchedResultsTableViewPrefetchingDataSource<LoggedError, UIImage>
     {
         let fetchRequest = LoggedError.fetchRequest() as NSFetchRequest<LoggedError>
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \LoggedError.date, ascending: false)]
@@ -121,7 +121,7 @@ private extension ErrorLogViewController
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext, sectionNameKeyPath: #keyPath(LoggedError.localizedDateString), cacheName: nil)
         
-        let dataSource = RSTFetchedResultsTableViewPrefetchingDataSource<LoggedError, UIImage>(fetchedResultsController: fetchedResultsController)
+        let dataSource = FetchedResultsTableViewPrefetchingDataSource<LoggedError, UIImage>(fetchedResultsController: fetchedResultsController)
         dataSource.proxy = self
         dataSource.rowAnimation = .fade
         dataSource.cellConfigurationHandler = { [weak self] (cell, loggedError, indexPath) in
@@ -158,39 +158,18 @@ private extension ErrorLogViewController
             // Group all paragraphs together into single accessibility element (otherwise, each paragraph is independently selectable).
             cell.errorDescriptionTextView.accessibilityLabel = cell.errorDescriptionTextView.text
         }
-        dataSource.prefetchHandler = { (loggedError, indexPath, completion) in
-            let iconURL = loggedError.storeApp?.iconURL
+        dataSource.prefetchHandler = { (loggedError, indexPath) in
+            let (installedApp, iconURL) = await loggedError.managedObjectContext?.perform {
+                (loggedError.installedApp, loggedError.storeApp?.iconURL)
+            } ?? (nil, nil)
             
-            Task.detached(priority: .background) {
-                loggedError.managedObjectContext?.perform {
-                    if let installedApp = loggedError.installedApp
-                    {
-                        installedApp.loadIcon { (result) in
-                            switch result
-                            {
-                            case .failure(let error): completion(nil, error)
-                            case .success(let image): completion(image, nil)
-                            }
-                        }
-                    }
-                    else if let iconURL = iconURL
-                    {
-                        ImagePipeline.shared.loadImage(with: iconURL, progress: nil) { result in
-                            switch result
-                            {
-                            case .success(let response): completion(response.image, nil)
-                            case .failure(let error): completion(nil, error)
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // InstalledApp was probably deleted.
-                        completion(nil, nil)
-                    }
-                }
+            if let installedApp {
+                return try await installedApp.loadIcon()
+            } else if let iconURL {
+                return try await ImagePipeline.shared.image(for: iconURL)
+            } else {
+                return nil
             }
-            return nil
         }
         dataSource.prefetchCompletionHandler = { (cell, image, indexPath, error) in
             let cell = cell as! ErrorLogTableViewCell
@@ -198,7 +177,7 @@ private extension ErrorLogViewController
             cell.appIconImageView.isIndicatingActivity = false
         }
         
-        let placeholderView = RSTPlaceholderView()
+        let placeholderView = PlaceholderView()
         placeholderView.textLabel.text = NSLocalizedString("No Errors", comment: "")
         placeholderView.detailTextLabel.text = NSLocalizedString("Errors that occur when sideloading or refreshing apps will appear here.", comment: "")
         dataSource.placeholderView = placeholderView
@@ -267,26 +246,28 @@ private extension ErrorLogViewController
         alertController.popoverPresentationController?.barButtonItem = sender
         alertController.addAction(.cancel)
         alertController.addAction(UIAlertAction(title: NSLocalizedString("Clear Error Log", comment: ""), style: .destructive) { _ in
-            self.clearLoggedErrors()
+            Task {
+                await self.clearLoggedErrors()
+            }
         })
         self.present(alertController, animated: true)
     }
     
-    func clearLoggedErrors()
+    func clearLoggedErrors() async
     {
-        DatabaseManager.shared.purgeLoggedErrors { result in
-            do
-            {
-                try result.get()
-            }
-            catch
-            {
-                DispatchQueue.main.async {
-                    let alertController = UIAlertController(title: NSLocalizedString("Failed to Clear Error Log", comment: ""), message: error.localizedDescription, preferredStyle: .alert)
-                    alertController.addAction(.ok)
-                    self.present(alertController, animated: true)
-                }
-            }
+        do
+        {
+            try await DatabaseManager.shared.purgeLoggedErrors()
+        }
+        catch
+        {
+            let alertController = UIAlertController(
+                title: NSLocalizedString("Failed to Clear Error Log", comment: ""),
+                message: error.localizedDescription,
+                preferredStyle: .alert
+            )
+            alertController.addAction(.ok)
+            self.present(alertController, animated: true)
         }
     }
     
@@ -372,7 +353,7 @@ extension ErrorLogViewController
                 }
                 catch
                 {
-                    debugLog("[ALTLog] Failed to delete LoggedError \(loggedError.objectID): \(error)")
+                    debugLog("[SideStore] Failed to delete LoggedError \(loggedError.objectID): \(error)")
                     DispatchQueue.main.async {
                         completion(false)
                     }

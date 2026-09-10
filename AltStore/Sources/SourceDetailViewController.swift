@@ -90,8 +90,21 @@ class SourceDetailViewController: HeaderContentViewController<SourceHeaderView, 
         
         self.navigationBarButton.addTarget(self, action: #selector(SourceDetailViewController.addSource), for: .primaryActionTriggered)
         
-        Nuke.loadImage(with: self.source.effectiveIconURL, into: self.navigationBarIconView)
-        Nuke.loadImage(with: self.source.effectiveHeaderImageURL, into: self.backgroundImageView)
+        if let iconURL = self.source.effectiveIconURL
+        {
+            Task { [weak self] in
+                guard let self else { return }
+                self.navigationBarIconView.image = try? await ImagePipeline.shared.image(for: iconURL)
+            }
+        }
+        
+        if let headerURL = self.source.effectiveHeaderImageURL
+        {
+            Task { [weak self] in
+                guard let self else { return }
+                self.backgroundImageView.image = try? await ImagePipeline.shared.image(for: headerURL)
+            }
+        }
         
         self.update()
         self.preparePipeline()

@@ -49,19 +49,11 @@ final class LaunchViewController: UIViewController {
         await MainActor.run{
             retries += 1
         }
-        if !DatabaseManager.shared.isStarted {
-            await withCheckedContinuation { continuation in
-                DatabaseManager.shared.start { error in
-                    if let error {
-                        Task { await self.handleLaunchError(error, retryCallback: self.runLaunchSequence) }
-                    } else {
-                        Task { await self.finishLaunching() }
-                    }
-                    continuation.resume(returning: ())
-                }
-            }
-        } else {
+        do {
+            try await DatabaseManager.shared.start()
             await self.finishLaunching()
+        } catch {
+            await self.handleLaunchError(error, retryCallback: self.runLaunchSequence)
         }
     }
 
@@ -177,7 +169,7 @@ final class LaunchViewController: UIViewController {
     func updateKnownSources() {
         AppManager.shared.updateKnownSources { result in
             switch result {
-            case .failure(let error): debugLog("[ALTLog] Failed to update known sources: \(error)")
+            case .failure(let error): debugLog("[SideStore] Failed to update known sources: \(error)")
             case .success((_, let blockedSources)):
                 DatabaseManager.shared.persistentContainer.performBackgroundTask { context in
                     let blockedSourceIDs = Set(blockedSources.lazy.map { $0.identifier })

@@ -123,9 +123,9 @@ private extension AppContentViewController
         return appScreenshotsViewController
     }
     
-    func makePermissionsDataSource() -> RSTArrayCollectionViewDataSource<AppPermission>
+    func makePermissionsDataSource() -> ArrayCollectionViewDataSource<AppPermission>
     {        
-        let dataSource = RSTArrayCollectionViewDataSource(items: Array(self.app.permissions))
+        let dataSource = ArrayCollectionViewDataSource(items: Array(self.app.permissions))
         dataSource.cellConfigurationHandler = { (cell, permission, indexPath) in
             let cell = cell as! PermissionCollectionViewCell
             // cell.button.setImage(permission.type.icon, for: .normal)

@@ -81,11 +81,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return }
         
         let midnightOneMonthAgo = Calendar.current.startOfDay(for: oneMonthAgo)
-        DatabaseManager.shared.purgeLoggedErrors(before: midnightOneMonthAgo) { result in
-            switch result
+        Task.detached(priority: .background) {
+            do
             {
-            case .success: break
-            case .failure(let error): debugLog("[ALTLog] Failed to purge logged errors before \(midnightOneMonthAgo). \(error)")
+                try await DatabaseManager.shared.purgeLoggedErrors(before: midnightOneMonthAgo)
+            }
+            catch
+            {
+                debugLog("[SideStore] Failed to purge logged errors before \(midnightOneMonthAgo). \(error)")
             }
         }
         
@@ -111,7 +114,7 @@ private extension SceneDelegate
             // Copy the shared .ipa out of its security-scoped location into a
             // temporary directory we own, so it stays readable while signing.
             if !context.url.startAccessingSecurityScopedResource() {
-                debugLog("[ALTLog] Failed to access security-scoped resource for imported IPA")
+                debugLog("[SideStore] Failed to access security-scoped resource for imported IPA")
                 return
             }
             defer { context.url.stopAccessingSecurityScopedResource() }
@@ -120,7 +123,7 @@ private extension SceneDelegate
             do {
                 try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                debugLog("[ALTLog] Failed to create temp directory for imported IPA: \(error)")
+                debugLog("[SideStore] Failed to create temp directory for imported IPA: \(error)")
                 return
             }
 
@@ -129,7 +132,7 @@ private extension SceneDelegate
             do {
                 try FileManager.default.copyItem(at: context.url, to: ipa)
             } catch {
-                debugLog("[ALTLog] Failed to copy imported IPA: \(error)")
+                debugLog("[SideStore] Failed to copy imported IPA: \(error)")
                 return
             }
 

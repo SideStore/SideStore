@@ -201,7 +201,7 @@ final class ResignAppOperation: BasePipelineOperation<InstallAppOperationContext
     
     private func resignAppBundle(at fileURL: URL, team: ALTTeam, certificate: ALTCertificate, profiles: [ALTProvisioningProfile]) async throws -> URL {
         let signer = ALTSigner(team: team, certificate: certificate)
-        try await signer.signApp(at: fileURL, provisioningProfiles: profiles, progress: self.progress)
+        try await signer.signApp(at: fileURL, provisioningProfiles: profiles, progress: nil)
         return fileURL
     }
     

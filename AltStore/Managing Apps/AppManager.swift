@@ -339,80 +339,6 @@ final class AppManager: ObservableObject, @unchecked Sendable
     }
     
     @discardableResult
-    func installAsync<T: AppProtocol>(@AsyncManaged _ app: T, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) async -> RefreshGroup
-    {
-        @AsyncManaged var installingApp: AppProtocol = app
-        var didAddSource = false
-        
-        let context = self.makeAuthenticatedContext(presentingViewController: presentingViewController)
-        
-        do
-        {
-            // Check if we need to add source first before installing app.
-            if let source = await $app.perform({ $0.storeApp?.source }), try await !source.isAdded()
-            {
-                // This app's source is not yet added, so add it first.
-                guard let presentingViewController else { throw OperationError.sourceNotAdded(source) }
-                
-                let (appName, appBundleID, sourceID) = await $app.perform { ($0.name, $0.bundleIdentifier, source.identifier) }
-                
-                do
-                {
-                    let message = String(format: NSLocalizedString("You must add this source before installing apps from it.\n\n“%@” will begin downloading once it has been added.", comment: ""), appName)
-                    try await AppManager.shared.add(source, message: message, presentingViewController: presentingViewController)
-                }
-                catch let error as CancellationError 
-                {
-                    throw error
-                }
-                catch
-                {
-                    // This should be an alert, so show directly rather than re-throwing error.
-                    await presentingViewController.presentAlert(title: NSLocalizedString("Unable to Add Source", comment: ""), message: error.localizedDescription)
-                    
-                    // Don't rethrow error
-                    // throw error
-                    
-                    throw CancellationError()
-                }
-                
-                // Fetch persisted StoreApp to use for remainder of operation.
-                installingApp = try await DatabaseManager.shared.viewContext.performAsync {
-                    let fetchRequest = StoreApp.fetchRequest()
-                    fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %@",
-                                                         #keyPath(StoreApp.bundleIdentifier), appBundleID,
-                                                         #keyPath(StoreApp.sourceIdentifier), sourceID)
-                    
-                    guard let storeApp = try DatabaseManager.shared.viewContext.fetch(fetchRequest).first else { throw OperationError.appNotFound(name: appName) }
-                    return storeApp
-                }
-                
-                didAddSource = true
-            }
-        }
-        catch
-        {
-            completionHandler(.failure(error))
-            
-            let group = RefreshGroup(context: context)
-            group.progress.cancel()
-            return group
-        }
-        
-        let group = await $installingApp.perform { self.install($0, presentingViewController: presentingViewController, context: context, completionHandler: completionHandler) }
-        
-        if didAddSource
-        {
-            // Post notification from main queue _after_ assigning progress for it
-            await MainActor.run { [installingApp] in
-                NotificationCenter.default.post(name: AppManager.willInstallAppFromNewSourceNotification, object: installingApp)
-            }
-        }
-        
-        return group
-    }
-    
-    @discardableResult
     func fetchSource(sourceURL: URL,
                      managedObjectContext: NSManagedObjectContext,
                      completionHandler: @escaping (Result<Source, Error>) -> Void) throws -> FetchSourceOperation
@@ -607,32 +533,15 @@ final class AppManager: ObservableObject, @unchecked Sendable
     }
 
     @discardableResult
-    func install<T: AppProtocol>(_ app: T, presentingViewController: UIViewController?,
-                                 context: StandaloneOperationContext? = nil,
-                                 completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+    func install(_ target: InstallTarget,
+                 presentingViewController: UIViewController? = nil,
+                 context: StandaloneOperationContext? = nil,
+                 completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
     {
-        debugLog("[AppManager] install() called for app: \(app.bundleIdentifier)")
-        if context != nil {
-            debugLog("[AppManager] install invoked using existing context for app: \(app.bundleIdentifier)")
-        }
+        debugLog("[AppManager] install() called for target: \(target)")
         let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
-        let context = self.makeAuthenticatedContext(presentingViewController: presentingViewController, baseContext: context)
-        return self.pipelineRunner.performSingleOperation(
-            .install(app), 
-            handler: pipelineHandler, 
-            context: context, 
-            completionHandler: completionHandler
-        )
-    }
-
-    @discardableResult
-    func installIPA(at ipaURL: URL,
-                    presentingViewController: UIViewController? = nil,
-                    context: StandaloneOperationContext? = nil,
-                    completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
-    {
-        debugLog("[AppManager] installIPA() called for file: \(ipaURL.lastPathComponent)")
-        let group = RefreshGroup(context: self.makeAuthenticatedContext(presentingViewController: presentingViewController, baseContext: context))
+        let baseContext = self.makeAuthenticatedContext(presentingViewController: presentingViewController, baseContext: context)
+        let group = RefreshGroup(context: baseContext)
         group.completionHandler = { results in
             if let result = results.values.first {
                 completionHandler(result)
@@ -643,38 +552,87 @@ final class AppManager: ObservableObject, @unchecked Sendable
 
         group.activeTask = Task.detached {
             do {
-                guard ipaURL.pathExtension.lowercased() == "ipa" else { throw OperationError.invalidApp }
+                let resolvedApp: AppProtocol
 
-                let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
-                let unzippedAppDirectory = temporaryDirectory.appendingPathComponent("App")
-                try FileManager.default.createDirectory(at: unzippedAppDirectory, withIntermediateDirectories: true)
-
-                var localURL = ipaURL
-                if !ipaURL.isFileURL {
-                    localURL = try await withCheckedThrowingContinuation { continuation in
-                        let downloadTask = URLSession.shared.downloadTask(with: ipaURL) { (fileURL, response, error) in
-                            do {
-                                let (fileURL, _) = try Result((fileURL, response), error).get()
-                                let dest = temporaryDirectory.appendingPathComponent("App.ipa")
-                                try FileManager.default.moveItem(at: fileURL, to: dest)
-                                continuation.resume(returning: dest)
-                            } catch {
-                                continuation.resume(throwing: error)
-                            }
+                switch target {
+                case .app(let app):
+                    var targetApp = app
+                    if let storeApp = app.storeApp,
+                       let source = storeApp.source,
+                       try await !source.isAdded()
+                    {
+                        guard let presentingViewController else { throw OperationError.sourceNotAdded(source) }
+                        let message = String(format: NSLocalizedString("You must add this source before installing apps from it.\n\n“%@” will begin downloading once it has been added.", comment: ""), app.name)
+                        try await AppManager.shared.add(source, message: message, presentingViewController: presentingViewController)
+                        
+                        let appBundleID = app.bundleIdentifier
+                        let sourceID = source.identifier
+                        if let fetchedStoreApp = try await DatabaseManager.shared.viewContext.performAsync({
+                            let fetchRequest = StoreApp.fetchRequest()
+                            fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %@",
+                                                                 #keyPath(StoreApp.bundleIdentifier), appBundleID,
+                                                                 #keyPath(StoreApp.sourceIdentifier), sourceID)
+                            return try DatabaseManager.shared.viewContext.fetch(fetchRequest).first
+                        }) {
+                            targetApp = fetchedStoreApp
                         }
-                        downloadTask.resume()
+                        
+                        await MainActor.run {
+                            NotificationCenter.default.post(name: AppManager.willInstallAppFromNewSourceNotification, object: app)
+                        }
                     }
+                    resolvedApp = targetApp
+
+                case .url(let url):
+                    guard let packageType = PackageType(url: url) else {
+                        throw OperationError.invalidApp(reason: "Unsupported package format '.\(url.pathExtension)'. Expected '.ipa' or '.app'.")
+                    }
+
+                    var localURL = url
+                    if !url.isFileURL {
+                        let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+                        try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
+                        localURL = try await withCheckedThrowingContinuation { continuation in
+                            let downloadTask = URLSession.shared.downloadTask(with: url) { (fileURL, response, error) in
+                                do {
+                                    let (fileURL, _) = try Result((fileURL, response), error).get()
+                                    let dest = temporaryDirectory.appendingPathComponent(url.lastPathComponent)
+                                    try FileManager.default.moveItem(at: fileURL, to: dest)
+                                    continuation.resume(returning: dest)
+                                } catch {
+                                    continuation.resume(throwing: error)
+                                }
+                            }
+                            downloadTask.resume()
+                        }
+                    }
+
+                    let (bundleIdentifier, appName) = try Self.readAppMetadata(from: localURL, packageType: packageType)
+                    resolvedApp = AnyApp(name: appName, bundleIdentifier: bundleIdentifier, url: localURL, storeApp: nil)
                 }
 
-                let unzippedApplicationURL = try FileManager.default.unzipAppBundle(at: localURL, toDirectory: unzippedAppDirectory)
-                guard let appBundle = ALTApplication(fileURL: unzippedApplicationURL) else { throw OperationError.invalidApp }
-
-                let subGroup = self.install(appBundle, presentingViewController: presentingViewController, context: group.context) { result in
-                    try? FileManager.default.removeItem(at: temporaryDirectory)
-                    completionHandler(result)
-                }
+                let subGroup = self.pipelineRunner.performSingleOperation(
+                    .install(resolvedApp),
+                    handler: pipelineHandler,
+                    context: baseContext,
+                    completionHandler: completionHandler
+                )
                 group.progress.addChild(subGroup.progress, withPendingUnitCount: 100)
             } catch {
+                let elapsed = CFAbsoluteTimeGetCurrent() - group.context.operationStartTime
+                let status = Task.isCancelled ? "CANCELLED" : "FAILED"
+                let targetId: String
+                switch target {
+                case .url(let url): targetId = url.lastPathComponent
+                case .app(let app): targetId = app.bundleIdentifier
+                }
+                logOperationSummary(
+                    operation: "install",
+                    target: targetId,
+                    status: status,
+                    elapsed: elapsed,
+                    error: error
+                )
                 completionHandler(.failure(error))
             }
         }
@@ -682,13 +640,40 @@ final class AppManager: ObservableObject, @unchecked Sendable
         return group
     }
 
-    func installIPA(at ipaURL: URL, progressHandler: ((Progress) -> Void)? = nil) async throws -> InstalledApp
-    {
-        return try await withCheckedThrowingContinuation { continuation in
-            let group = self.installIPA(at: ipaURL) { result in
-                continuation.resume(with: result)
+    private static func readAppMetadata(from url: URL, packageType: PackageType) throws -> (bundleIdentifier: String, name: String) {
+        switch packageType {
+        case .ipa:
+            let reader = try Archive.Reader.open(at: url)
+            try reader.goToFirstFile()
+            var plistData: Data?
+            repeat {
+                let filename = try reader.currentFilename()
+                let components = filename.components(separatedBy: "/")
+                if components.count == 3 && components[0] == "Payload" && components[1].hasSuffix(".app") && components[2] == "Info.plist" {
+                    plistData = try reader.readCurrentFile()
+                    break
+                }
+            } while reader.goToNextFile()
+
+            guard let data = plistData,
+                  let plist = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+                  let bundleIdentifier = (plist["CFBundleIdentifier"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !bundleIdentifier.isEmpty else {
+                throw OperationError.invalidApp(reason: "Archive missing valid Payload/*.app/Info.plist")
             }
-            progressHandler?(group.progress)
+            let appName = (plist["CFBundleDisplayName"] as? String) ?? (plist["CFBundleName"] as? String) ?? url.deletingPathExtension().lastPathComponent
+            return (bundleIdentifier, appName)
+
+        case .app:
+            let plistURL = url.appendingPathComponent("Info.plist")
+            let data = try Data(contentsOf: plistURL)
+            guard let plist = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+                  let bundleIdentifier = (plist["CFBundleIdentifier"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !bundleIdentifier.isEmpty else {
+                throw OperationError.invalidApp(reason: "Invalid Info.plist in app directory")
+            }
+            let appName = (plist["CFBundleDisplayName"] as? String) ?? (plist["CFBundleName"] as? String) ?? url.lastPathComponent
+            return (bundleIdentifier, appName)
         }
     }
     
@@ -860,6 +845,30 @@ final class AppManager: ObservableObject, @unchecked Sendable
     }
 }
 
+enum PackageType: String, CaseIterable, Sendable {
+    case ipa
+    case app
+
+    init?(url: URL) {
+        self.init(rawValue: url.pathExtension.lowercased())
+    }
+}
+
+extension AppManager {
+    enum InstallTarget: @unchecked Sendable, CustomStringConvertible {
+        case url(URL)
+        case app(AppProtocol)
+
+        var description: String {
+            switch self {
+            case .url(let url): return "url(\(url.lastPathComponent))"
+            case .app(let app): return "app(\(app.bundleIdentifier))"
+            }
+        }
+    }
+}
+typealias InstallTarget = AppManager.InstallTarget
+
 // MARK: - PipelineRunner Protocol Conformances
 extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorLogger {
     
@@ -1023,7 +1032,7 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
             }
             catch let saveError
             {
-                debugLog("[ALTLog] Failed to log error \(sanitizedError.domain) code \(sanitizedError.code) for \(app.bundleIdentifier): \(saveError)")
+                debugLog("[SideStore] Failed to log error \(sanitizedError.domain) code \(sanitizedError.code) for \(app.bundleIdentifier): \(saveError)")
             }
         }
     }

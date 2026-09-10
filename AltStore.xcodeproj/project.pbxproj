@@ -118,9 +118,6 @@
 				Components/tvOS/AppBannerView.xib = (
 					tvos,
 				);
-				Core/Resources/tvOS/RSTPlaceholderView.xib = (
-					tvos,
-				);
 				"My Apps/tvOS/InstalledAppsCollectionHeaderView.xib" = (
 					tvos,
 				);
@@ -938,7 +935,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.1;
+				minimumVersion = 13.2.0;
 			};
 		};
 		A8C37033302DA84D0010213A /* XCRemoteSwiftPackageReference "Starscream" */ = {

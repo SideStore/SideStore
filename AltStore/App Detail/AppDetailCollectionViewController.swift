@@ -106,7 +106,7 @@ class AppDetailCollectionViewController: UICollectionViewController
         self.collectionView.collectionViewLayout = collectionViewLayout
         
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "PrivacyCell")
-        self.collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         
         self.headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] (headerView, elementKind, indexPath) in
             var configuration = UIListContentConfiguration.plainHeader()
@@ -192,15 +192,15 @@ private extension AppDetailCollectionViewController
         return layout
     }
     
-    func makeDataSource() -> RSTCompositeCollectionViewDataSource<AppPermission>
+    func makeDataSource() -> CompositeCollectionViewDataSource<AppPermission>
     {
-        let dataSource = RSTCompositeCollectionViewDataSource<AppPermission>(dataSources: [self.privacyDataSource, self.entitlementsDataSource])
+        let dataSource = CompositeCollectionViewDataSource<AppPermission>(dataSources: [self.privacyDataSource, self.entitlementsDataSource])
         return dataSource
     }
     
-    func makePrivacyDataSource() -> RSTDynamicCollectionViewDataSource<AppPermission>
+    func makePrivacyDataSource() -> DynamicCollectionViewDataSource<AppPermission>
     {
-        let dataSource = RSTDynamicCollectionViewDataSource<AppPermission>()
+        let dataSource = DynamicCollectionViewDataSource<AppPermission>()
         dataSource.cellIdentifierHandler = { _ in "PrivacyCell" }
         dataSource.numberOfSectionsHandler = { 1 }
         dataSource.dynamicCellConfigurationHandler = { [weak self] (cell, indexPath) in
@@ -227,12 +227,12 @@ private extension AppDetailCollectionViewController
         return dataSource
     }
     
-    func makeEntitlementsDataSource() -> RSTCompositeCollectionViewDataSource<AppPermission>
+    func makeEntitlementsDataSource() -> CompositeCollectionViewDataSource<AppPermission>
     {
-        let knownEntitlementsDataSource = RSTArrayCollectionViewDataSource<AppPermission>(items: self.knownEntitlementPermissions)
-        let unknownEntitlementsDataSource = RSTArrayCollectionViewDataSource<AppPermission>(items: self.unknownEntitlementPermissions)
+        let knownEntitlementsDataSource = ArrayCollectionViewDataSource<AppPermission>(items: self.knownEntitlementPermissions)
+        let unknownEntitlementsDataSource = ArrayCollectionViewDataSource<AppPermission>(items: self.unknownEntitlementPermissions)
         
-        let dataSource = RSTCompositeCollectionViewDataSource<AppPermission>(dataSources: [knownEntitlementsDataSource, unknownEntitlementsDataSource])
+        let dataSource = CompositeCollectionViewDataSource<AppPermission>(dataSources: [knownEntitlementsDataSource, unknownEntitlementsDataSource])
         dataSource.cellConfigurationHandler = { [weak self] (cell, appPermission, _) in
             let cell = cell as! UICollectionViewListCell
             let tintColor = self?.app.tintColor ?? .altPrimary

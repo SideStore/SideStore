@@ -99,7 +99,7 @@ class AltAppIconsViewController: UICollectionViewController
         self.collectionView.dataSource = self.dataSource
         self.dataSource.contentView = self.collectionView
         
-        self.collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: RSTCellContentGenericCellIdentifier)
+        self.collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: CellContentGenericCellIdentifier)
         self.collectionView.register(UICollectionViewListCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UICollectionView.elementKindSectionHeader)
                 
         self.headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(elementKind: UICollectionView.elementKindSectionHeader) { (headerView, elementKind, indexPath) in
@@ -135,14 +135,14 @@ private extension AltAppIconsViewController
         return layout
     }
     
-    func makeDataSource() -> RSTCompositeCollectionViewDataSource<AltIcon>
+    func makeDataSource() -> CompositeCollectionViewDataSource<AltIcon>
     {
         let dataSources = Section.allCases.compactMap { self.iconsBySection[$0] }.filter { !$0.isEmpty }.map { icons in
-            let dataSource = RSTArrayCollectionViewDataSource<AltIcon>(items: icons)
+            let dataSource = ArrayCollectionViewDataSource<AltIcon>(items: icons)
             return dataSource
         }
         
-        let dataSource = RSTCompositeCollectionViewDataSource<AltIcon>(dataSources: dataSources)
+        let dataSource = CompositeCollectionViewDataSource<AltIcon>(dataSources: dataSources)
         dataSource.cellConfigurationHandler = { [weak self] cell, icon, indexPath in
             let cell = cell as! UICollectionViewListCell
             

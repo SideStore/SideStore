@@ -25,7 +25,6 @@ final class AppIDsViewController: UICollectionViewController
             self.update()
         }
     }
-    private var isEditingMode = false
     private var doneBarButtonItem: UIBarButtonItem?
     
     private weak var footerView: TextCollectionReusableView?
@@ -65,7 +64,7 @@ final class AppIDsViewController: UICollectionViewController
 
 private extension AppIDsViewController
 {
-    func makeDataSource() -> RSTFetchedResultsCollectionViewDataSource<AppID>
+    func makeDataSource() -> FetchedResultsCollectionViewDataSource<AppID>
     {
         let fetchRequest = AppID.fetchRequest() as NSFetchRequest<AppID>
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AppID.name, ascending: true),
@@ -82,7 +81,7 @@ private extension AppIDsViewController
             fetchRequest.predicate = NSPredicate(value: false)
         }
         
-        let dataSource = RSTFetchedResultsCollectionViewDataSource<AppID>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
+        let dataSource = FetchedResultsCollectionViewDataSource<AppID>(fetchRequest: fetchRequest, managedObjectContext: DatabaseManager.shared.viewContext)
         dataSource.proxy = self
         dataSource.cellConfigurationHandler = { [weak self] (cell, appID, indexPath) in
             guard let self = self else { return }
@@ -148,9 +147,6 @@ private extension AppIDsViewController
             cell.bannerView.accessibilityAttributedLabel = attributedAccessibilityLabel
             
             cell.layoutIfNeeded()
-            
-            let isSelected = self.collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
-            cell.setEditing(self.isEditingMode, isSelected: isSelected)
         }
         
         return dataSource
@@ -199,53 +195,15 @@ private extension AppIDsViewController
             #endif
             self.activityIndicatorBarButtonItem.isIndicatingActivity = false
             
-            let activeTeamType = DatabaseManager.shared.activeTeam()?.type
-            let allowsEditMode = (activeTeamType == .individual || activeTeamType == .organization) ||
-                                 (activeTeamType == .free && UserDefaults.standard.freeAcctAppIdDeletion)
-            
-            if allowsEditMode
-            {
-                if self.isEditingMode
-                {
-                    let selectedCount = self.collectionView.indexPathsForSelectedItems?.count ?? 0
-                    let title = selectedCount > 0 ? NSLocalizedString("Delete", comment: "") : NSLocalizedString("Cancel", comment: "")
-                    let style: UIBarButtonItem.Style = selectedCount > 0 ? .done : .plain
-                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: title, style: style, target: self, action: #selector(self.editButtonTapped))
-                    
-                    if selectedCount > 0
-                    {
-                        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Cancel", comment: ""), style: .plain, target: self, action: #selector(self.cancelButtonTapped))
-                    }
-                    else
-                    {
-                        self.navigationItem.rightBarButtonItem = nil
-                    }
-                }
-                else
-                {
-                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Edit", comment: ""), style: .plain, target: self, action: #selector(self.editButtonTapped))
-                    self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
-                }
-            }
-            else
-            {
-                self.navigationItem.leftBarButtonItem = nil
-                self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
-            }
+            self.navigationItem.leftBarButtonItem = nil
+            self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
             
             #if !os(tvOS)
-            if self.isEditingMode
+            if self.collectionView.refreshControl == nil
             {
-                self.collectionView.refreshControl = nil
-            }
-            else
-            {
-                if self.collectionView.refreshControl == nil
-                {
-                    let refreshControl = UIRefreshControl()
-                    refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
-                    self.collectionView.refreshControl = refreshControl
-                }
+                let refreshControl = UIRefreshControl()
+                refreshControl.addTarget(self, action: #selector(AppIDsViewController.fetchAppIDs), for: .primaryActionTriggered)
+                self.collectionView.refreshControl = refreshControl
             }
             #endif
         }
@@ -346,289 +304,6 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
     }
 }
 
-// MARK: - Editing & Deletion
-private extension AppIDsViewController
-{
-    func enterEditMode()
-    {
-        self.isEditingMode = true
-        self.collectionView.allowsMultipleSelection = true
-        self.navigationController?.isModalInPresentation = true
-        
-        for cell in self.collectionView.visibleCells {
-            if let cell = cell as? AppBannerCollectionViewCell, let indexPath = self.collectionView.indexPath(for: cell) {
-                let isSelected = self.collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
-                cell.setEditing(true, isSelected: isSelected, animated: true)
-            }
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.collectionView.reloadData()
-        }
-        
-        self.update()
-    }
-    
-    func exitEditMode()
-    {
-        self.isEditingMode = false
-        self.collectionView.allowsMultipleSelection = false
-        if let selectedItems = self.collectionView.indexPathsForSelectedItems {
-            for indexPath in selectedItems {
-                self.collectionView.deselectItem(at: indexPath, animated: false)
-            }
-        }
-        self.navigationController?.isModalInPresentation = false
-        
-        for cell in self.collectionView.visibleCells {
-            if let cell = cell as? AppBannerCollectionViewCell {
-                cell.setEditing(false, isSelected: false, animated: true)
-            }
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.collectionView.reloadData()
-        }
-        
-        self.update()
-    }
-    
-    func updateLeftBarButtonItem()
-    {
-        self.updateBarButtonItems()
-    }
-    
-    func updateBarButtonItems()
-    {
-        guard self.isEditingMode else { return }
-        let selectedCount = self.collectionView.indexPathsForSelectedItems?.count ?? 0
-        let title = selectedCount > 0 ? NSLocalizedString("Delete", comment: "") : NSLocalizedString("Cancel", comment: "")
-        let style: UIBarButtonItem.Style = selectedCount > 0 ? .done : .plain
-        self.navigationItem.leftBarButtonItem?.title = title
-        self.navigationItem.leftBarButtonItem?.style = style
-        
-        if selectedCount > 0
-        {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Cancel", comment: ""), style: .plain, target: self, action: #selector(self.cancelButtonTapped))
-        }
-        else
-        {
-            self.navigationItem.rightBarButtonItem = nil
-        }
-    }
-    
-    @objc func cancelButtonTapped()
-    {
-        self.exitEditMode()
-    }
-    
-    @objc func editButtonTapped()
-    {
-        Task { @MainActor in
-            if self.isEditingMode
-            {
-                let selectedCount = self.collectionView.indexPathsForSelectedItems?.count ?? 0
-                if selectedCount > 0
-                {
-                    let alert = UIAlertController(
-                        title: NSLocalizedString("Delete App IDs", comment: ""),
-                        message: String(format: NSLocalizedString("Are you sure you want to proceed to delete %d appIds?", comment: ""), selectedCount),
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel))
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: ""), style: .destructive) { [weak self] _ in
-                        self?.deleteSelectedAppIDs()
-                    })
-                    self.present(alert, animated: true)
-                }
-                else
-                {
-                    self.exitEditMode()
-                }
-            }
-            else
-            {
-                self.enterEditMode()
-            }
-        }
-    }
-    
-    func reselectRemainingAppIDs(bundleIdentifiers: Set<String>)
-    {
-        for section in 0..<self.collectionView.numberOfSections
-        {
-            for item in 0..<self.collectionView.numberOfItems(inSection: section)
-            {
-                let indexPath = IndexPath(item: item, section: section)
-                let appID = self.dataSource.item(at: indexPath)
-                if bundleIdentifiers.contains(appID.bundleIdentifier)
-                {
-                    self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                    if let cell = self.collectionView.cellForItem(at: indexPath) as? AppBannerCollectionViewCell {
-                        cell.setEditing(true, isSelected: true, animated: false)
-                    }
-                }
-            }
-        }
-        self.updateLeftBarButtonItem()
-    }
-    
-    func getSessionAndTeam() async throws -> (ALTTeam, ALTAppleAPISession)
-    {
-        let session = try await AuthManager.shared.getAuthenticatedSession()
-        let team = try await AuthManager.shared.getAuthenticatedTeam()
-        return (team, session)
-    }
-    
-    func deleteSelectedAppIDs()
-    {
-        let selectedIndexPaths = self.collectionView.indexPathsForSelectedItems ?? []
-        let appIDsToDelete = selectedIndexPaths.compactMap { self.dataSource.item(at: $0) }
-        guard !appIDsToDelete.isEmpty else { return }
-        
-        let progressModel = DeleteProgressModel(total: appIDsToDelete.count)
-        let overlayView = DeleteOverlayView(model: progressModel) { [weak self] in
-            self?.dismiss(animated: true) {
-                self?.fetchAppIDs()
-            }
-        }
-        
-        let hostingController = UIHostingController(rootView: overlayView)
-        hostingController.modalPresentationStyle = .overFullScreen
-        hostingController.modalTransitionStyle = .crossDissolve
-        hostingController.view.backgroundColor = .clear
-        
-        self.present(hostingController, animated: true) {
-            Task {
-                var completedCount = 0
-                var failedAppID: AppID?
-                var deletionError: Error?
-                
-                do
-                {
-                    let (team, session) = try await self.getSessionAndTeam()
-                    
-                    for appID in appIDsToDelete
-                    {
-                        let progressText = String(format: NSLocalizedString("Deleting App IDs (%d/%d)...", comment: ""), completedCount + 1, appIDsToDelete.count)
-                        await MainActor.run {
-                            progressModel.status = .deleting(progressText: progressText)
-                        }
-                        
-                        let altAppID = ALTAppID(
-                            identifier: appID.identifier,
-                            name: appID.name,
-                            bundleIdentifier: appID.bundleIdentifier,
-                            expirationDate: appID.expirationDate,
-                            features: appID.features
-                        )
-                        
-                        let success = try await DeveloperPortalProxy.shared.deleteAppID(altAppID, for: team)
-                        
-                        if success
-                        {
-                            await DatabaseManager.shared.persistentContainer.viewContext.perform {
-                                DatabaseManager.shared.persistentContainer.viewContext.delete(appID)
-                                try? DatabaseManager.shared.persistentContainer.viewContext.save()
-                            }
-                            completedCount += 1
-                        }
-                        else
-                        {
-                            failedAppID = appID
-                            deletionError = AppIDDeletionError.unknown
-                            break
-                        }
-                    }
-                }
-                catch
-                {
-                    deletionError = error
-                    if failedAppID == nil && completedCount < appIDsToDelete.count
-                    {
-                        failedAppID = appIDsToDelete[completedCount]
-                    }
-                }
-                
-                let finalFailedAppID = failedAppID
-                let finalError = deletionError
-                
-                await MainActor.run {
-                    if let finalError = finalError
-                    {
-                        debugLog("[AppIDsViewController] Failed to delete App ID: \(finalError.localizedDescription)")
-                        
-                        hostingController.dismiss(animated: true) {
-                            let alertTitle = NSLocalizedString("Delete Failed", comment: "")
-                            var alertMessage = ""
-                            if let failedAppID = finalFailedAppID
-                            {
-                                alertMessage = String(
-                                    format: NSLocalizedString("Deleted %d of %d App IDs.\n\nFailed to delete %@ (%@):\n%@", comment: ""),
-                                    completedCount,
-                                    appIDsToDelete.count,
-                                    failedAppID.name,
-                                    failedAppID.bundleIdentifier,
-                                    finalError.localizedDescription
-                                )
-                            }
-                            else
-                            {
-                                alertMessage = String(
-                                    format: NSLocalizedString("Deleted %d of %d App IDs.\n\nError:\n%@", comment: ""),
-                                    completedCount,
-                                    appIDsToDelete.count,
-                                    finalError.localizedDescription
-                                )
-                            }
-                            
-                            let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
-                                let remainingBundleIdentifiers = Set(appIDsToDelete[completedCount...].map { $0.bundleIdentifier })
-                                self.fetchAppIDsFromServer(completion: {
-                                    DispatchQueue.main.async {
-                                        self.reselectRemainingAppIDs(bundleIdentifiers: remainingBundleIdentifiers)
-                                    }
-                                })
-                            })
-                            self.present(alert, animated: true)
-                        }
-                    }
-                    else
-                    {
-                        progressModel.status = .success
-                    }
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Collection View Delegate overrides
-extension AppIDsViewController
-{
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
-    {
-        if self.isEditingMode
-        {
-            self.updateBarButtonItems()
-            if let cell = collectionView.cellForItem(at: indexPath) as? AppBannerCollectionViewCell {
-                cell.setEditing(true, isSelected: true, animated: true)
-            }
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath)
-    {
-        if self.isEditingMode
-        {
-            self.updateBarButtonItems()
-            if let cell = collectionView.cellForItem(at: indexPath) as? AppBannerCollectionViewCell {
-                cell.setEditing(true, isSelected: false, animated: true)
-            }
-        }
-    }
-}
 
 // MARK: - NSFetchedResultsControllerDelegate (proxy)
 extension AppIDsViewController: NSFetchedResultsControllerDelegate
@@ -659,100 +334,3 @@ extension AppIDsViewController: NSFetchedResultsControllerDelegate
     }
 }
 
-// MARK: - SwiftUI Delete Overlay Views
-enum DeleteStatus
-{
-    case deleting(progressText: String)
-    case success
-}
-
-class DeleteProgressModel: ObservableObject
-{
-    @Published var status: DeleteStatus
-    let total: Int
-    
-    init(total: Int)
-    {
-        self.total = total
-        self.status = .deleting(progressText: String(format: NSLocalizedString("Deleting App IDs (0/%d)...", comment: ""), total))
-    }
-}
-
-struct DeleteOverlayView: View
-{
-    @ObservedObject var model: DeleteProgressModel
-    var onDismiss: () -> Void
-    
-    var body: some View
-    {
-        ZStack
-        {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 24)
-            {
-                switch model.status
-                {
-                case .deleting(let progressText):
-                    VStack(spacing: 20)
-                    {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .scaleEffect(1.5)
-                            .padding(.top, 10)
-                        
-                        Text(progressText)
-                            .font(.system(size: 17, weight: .medium))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                    }
-                    
-                case .success:
-                    VStack(spacing: 20)
-                    {
-                        AnimatedCheckmarkView()
-                            .padding(.top, 10)
-                        
-                        Text("App IDs Deleted")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                        
-                        SwiftUI.Button(action: {
-                            onDismiss()
-                        }) {
-                            Text("OK")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color.white.opacity(0.12))
-                                .clipShape(Capsule())
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-            }
-            .padding(24)
-            .frame(width: 320)
-            .background(.ultraThinMaterial)
-            .environment(\.colorScheme, .dark)
-            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-            .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
-        }
-    }
-}
-
-// MARK: - Error Types
-enum AppIDDeletionError: LocalizedError
-{
-    case unknown
-    
-    var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return NSLocalizedString("Unknown deletion error", comment: "")
-        }
-    }
-}
