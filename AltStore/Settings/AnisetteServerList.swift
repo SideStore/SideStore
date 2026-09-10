@@ -294,7 +294,7 @@ struct AnisetteServersView: View {
                                 .foregroundColor(.orange)
                                 .padding(.top, 4)
 
-                            Text(viewModel.isNoInternet ? "No Internet Connection" : "Could Not Reach Servers")
+                            Text(viewModel.isNoInternet ? NSLocalizedString("No Internet Connection", comment: "") : NSLocalizedString("Could Not Reach Servers", comment: ""))
                                 .font(.headline)
                                 .foregroundColor(.primary)
 

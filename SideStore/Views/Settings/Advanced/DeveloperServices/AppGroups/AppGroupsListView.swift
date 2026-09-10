@@ -48,7 +48,7 @@ struct AppGroupsListView: View {
                         }
                         .padding(.vertical, 8)
                     } else {
-                        Text(searchText.isEmpty ? "No App Groups found on Developer Portal." : "No matching App Groups found.")
+                        Text(searchText.isEmpty ? NSLocalizedString("No App Groups found on Developer Portal.", comment: "") : NSLocalizedString("No matching App Groups found.", comment: ""))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }

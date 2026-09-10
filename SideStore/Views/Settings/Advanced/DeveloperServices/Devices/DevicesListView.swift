@@ -62,7 +62,7 @@ struct DevicesListView: View {
                         }
                         .padding(.vertical, 8)
                     } else {
-                        Text(searchText.isEmpty ? "No devices registered on Developer Portal." : "No matching devices found.")
+                        Text(searchText.isEmpty ? NSLocalizedString("No devices registered on Developer Portal.", comment: "") : NSLocalizedString("No matching devices found.", comment: ""))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }

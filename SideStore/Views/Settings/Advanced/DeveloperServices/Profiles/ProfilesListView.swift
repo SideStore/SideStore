@@ -46,7 +46,7 @@ struct ProfilesListView: View {
                         }
                         .padding(.vertical, 8)
                     } else {
-                        Text(searchText.isEmpty ? "No Provisioning Profiles found on Developer Portal." : "No matching Provisioning Profiles found.")
+                        Text(searchText.isEmpty ? NSLocalizedString("No Provisioning Profiles found on Developer Portal.", comment: "") : NSLocalizedString("No matching Provisioning Profiles found.", comment: ""))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }
@@ -243,7 +243,7 @@ private struct ProfileRow: View {
                 }
                 Spacer()
                 if let isTeam = profile.isTeamProfile {
-                    Text(isTeam ? "Xcode Managed" : "Manual")
+                    Text(isTeam ? NSLocalizedString("Xcode Managed", comment: "") : NSLocalizedString("Manual", comment: ""))
                         .font(.caption2)
                         .fontWeight(.medium)
                         .padding(.horizontal, 6)

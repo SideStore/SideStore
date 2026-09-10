@@ -44,7 +44,7 @@ struct AppIDsListView: View {
                         }
                         .padding(.vertical, 8)
                     } else {
-                        Text(searchText.isEmpty ? "No App IDs registered on Developer Portal." : "No matching App IDs found.")
+                        Text(searchText.isEmpty ? NSLocalizedString("No App IDs registered on Developer Portal.", comment: "") : NSLocalizedString("No matching App IDs found.", comment: ""))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }
@@ -162,7 +162,7 @@ struct AppIDsListView: View {
         }
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
-                title: Text(viewModel.isPaidAccount ? "Delete App ID?" : "Warning: Delete App ID?"),
+                title: Text(viewModel.isPaidAccount ? NSLocalizedString("Delete App ID?", comment: "") : NSLocalizedString("Warning: Delete App ID?", comment: "")),
                 message: Text(deleteAlertMessage),
                 primaryButton: .destructive(Text("Delete")) {
                     if let target = appIDToDelete {

@@ -75,7 +75,7 @@ struct CertificatePortalDetailView: View {
         .alert(isPresented: $showRevokeAlert) {
             Alert(
                 title: Text("Revoke Certificate?"),
-                message: Text("Are you sure you want to revoke '\(certificate.name)' on the Apple Developer Portal? This action cannot be undone."),
+                message: Text(String(format: NSLocalizedString("Are you sure you want to revoke '%@' on the Apple Developer Portal? This action cannot be undone.", comment: ""), certificate.name)),
                 primaryButton: .destructive(Text("Revoke")) {
                     Task {
                         let success = await viewModel.revokeCertificate(certificate, presentingViewController: presentingViewController)

@@ -46,13 +46,13 @@ struct CreateManualProfileView: View {
                     } else {
                         Picker("App ID", selection: $selectedAppIDIdentifier) {
                             ForEach(viewModel.appIDs, id: \.identifier) { appID in
-                                Text("\(appID.name) (\(appID.bundleIdentifier))").tag(appID.identifier)
+                                Text(String(format: NSLocalizedString("%@ (%@)", comment: ""), appID.name, appID.bundleIdentifier)).tag(appID.identifier)
                             }
                         }
                     }
                 }
 
-                Section(header: Text("Certificates (\(selectedCertificateIDs.count)/\(viewModel.certificates.count))"), footer: Text("Select which development certificates are permitted to sign with this profile.")) {
+                Section(header: Text(String(format: NSLocalizedString("Certificates (%d/%d)", comment: ""), selectedCertificateIDs.count, viewModel.certificates.count)), footer: Text("Select which development certificates are permitted to sign with this profile.")) {
                     if viewModel.certificates.isEmpty {
                         Text("No certificates found on this team.")
                             .foregroundColor(.secondary)
@@ -72,7 +72,7 @@ struct CreateManualProfileView: View {
                                         Text(cert.commonName ?? cert.name)
                                             .font(.subheadline)
                                             .foregroundColor(.primary)
-                                        Text("Serial: \(cert.serialNumber)")
+                                        Text(String(format: NSLocalizedString("Serial: %@", comment: ""), cert.serialNumber))
                                             .font(.caption2)
                                             .foregroundColor(.secondary)
                                     }
@@ -89,7 +89,7 @@ struct CreateManualProfileView: View {
                 }
 
                 Section(header: HStack {
-                    Text("Devices (\(selectedDeviceIDs.count)/\(viewModel.devices.count))")
+                    Text(String(format: NSLocalizedString("Devices (%d/%d)", comment: ""), selectedDeviceIDs.count, viewModel.devices.count))
                     Spacer()
                     if !viewModel.devices.isEmpty {
                         SwiftUI.Button(selectedDeviceIDs.count == viewModel.devices.count ? "Deselect All" : "Select All") {

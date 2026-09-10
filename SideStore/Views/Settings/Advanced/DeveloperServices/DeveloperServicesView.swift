@@ -96,7 +96,7 @@ struct DeveloperServicesView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Certificates")
                                     .font(.body)
-                                Text("\(viewModel.certificates.count) registered on portal")
+                                Text(String(format: NSLocalizedString("%d registered on portal", comment: ""), viewModel.certificates.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }

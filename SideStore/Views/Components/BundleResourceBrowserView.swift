@@ -45,7 +45,7 @@ struct BundleResourceBrowserView: View {
     var body: some View {
         List {
             if filteredItems.isEmpty {
-                Text(items.isEmpty ? "Empty directory" : "No results")
+                Text(items.isEmpty ? NSLocalizedString("Empty directory", comment: "") : NSLocalizedString("No results", comment: ""))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             } else {

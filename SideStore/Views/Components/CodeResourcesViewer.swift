@@ -133,7 +133,7 @@ struct CodeResourcesViewer: View {
                 } else {
                     Section(header: Text(String(format: NSLocalizedString("Sealed Files (%d)", comment: ""), filteredEntries.count))) {
                         if filteredEntries.isEmpty {
-                            Text(entries.isEmpty ? "No sealed files found" : "No files matching '\(searchQuery)'")
+                            Text(entries.isEmpty ? NSLocalizedString("No sealed files found", comment: "") : String(format: NSLocalizedString("No files matching '%@'", comment: ""), searchQuery))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         } else {

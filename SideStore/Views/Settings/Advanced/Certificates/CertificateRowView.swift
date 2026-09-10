@@ -60,7 +60,7 @@ struct CertificateRowView: View {
                 
                 (
                     Text("Keys: ").font(.system(size: 10))
-                    + Text(hasPrivateKey ? "public + private" : "public").font(.system(size: 10))
+                    + Text(hasPrivateKey ? NSLocalizedString("public + private", comment: "") : NSLocalizedString("public", comment: "")).font(.system(size: 10))
                 )
                 .foregroundColor(.secondary)
             }

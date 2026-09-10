@@ -184,7 +184,7 @@ struct SideJITServerConfigView: View {
             HStack {
                 Text("Resolution Mode")
                 Spacer()
-                Text(customAddress.isEmpty ? "Auto (Bonjour mDNS)" : "Manual Override")
+                Text(customAddress.isEmpty ? NSLocalizedString("Auto (Bonjour mDNS)", comment: "") : NSLocalizedString("Manual Override", comment: ""))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

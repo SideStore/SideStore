@@ -72,7 +72,7 @@ struct ProfilePortalDetailView: View {
                     Picker("Team App ID", selection: $selectedAppIDId) {
                         Text("Choose App ID").tag("")
                         ForEach(viewModel.appIDs, id: \.identifier) { appID in
-                            Text("\(appID.name) (\(appID.bundleIdentifier))").tag(appID.identifier)
+                            Text(String(format: NSLocalizedString("%@ (%@)", comment: ""), appID.name, appID.bundleIdentifier)).tag(appID.identifier)
                         }
                     }
                 }
@@ -86,7 +86,7 @@ struct ProfilePortalDetailView: View {
                 }
             }
 
-            Section(header: Text("Associated Certificates (\(selectedCertificateIDs.count))"), footer: Text("Select which certificates are authorized to sign with this profile, or add custom certificate IDs.")) {
+            Section(header: Text(String(format: NSLocalizedString("Associated Certificates (%d)", comment: ""), selectedCertificateIDs.count)), footer: Text("Select which certificates are authorized to sign with this profile, or add custom certificate IDs.")) {
                 if viewModel.certificates.isEmpty {
                     Text("No certificates found on this team.")
                         .foregroundColor(.secondary)
@@ -136,7 +136,7 @@ struct ProfilePortalDetailView: View {
             }
 
             Section(header: HStack {
-                Text("Associated Devices (\(selectedDeviceIDs.count))")
+                Text(String(format: NSLocalizedString("Associated Devices (%d)", comment: ""), selectedDeviceIDs.count))
                 Spacer()
                 if !viewModel.devices.isEmpty {
                     SwiftUI.Button(selectedDeviceIDs.count >= viewModel.devices.count ? "Deselect All" : "Select All") {

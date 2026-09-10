@@ -107,7 +107,7 @@ struct HealthCheckView: View {
                 HStack {
                     Text("Connection Mode")
                     Spacer()
-                    Text(viewModel.connectionMode == .localVPN ? "Local VPN" : "Remote Server")
+                    Text(viewModel.connectionMode == .localVPN ? NSLocalizedString("Local VPN", comment: "") : NSLocalizedString("Remote Server", comment: ""))
                         .foregroundColor(.secondary)
                 }
                 
@@ -118,7 +118,7 @@ struct HealthCheckView: View {
                     HStack {
                         Text("Override Status")
                         Spacer()
-                        Text(viewModel.overrideTunnelPeerEffective ? "Active" : "Inactive")
+                        Text(viewModel.overrideTunnelPeerEffective ? NSLocalizedString("Active", comment: "") : NSLocalizedString("Inactive", comment: ""))
                             .foregroundColor(viewModel.overrideTunnelPeerEffective ? .green : .secondary)
                     }
                     HStack {

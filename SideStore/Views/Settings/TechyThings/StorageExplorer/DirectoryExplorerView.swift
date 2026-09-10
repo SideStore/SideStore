@@ -172,8 +172,8 @@ public struct DirectoryExplorerView: View {
             let count = vm.selectedURLs.count
             let input = vm.renameInput
             return Alert(
-                title: Text(count == 1 ? "Rename Item" : "Bulk Rename \(count) Items"),
-                message: Text(count == 1 ? "Enter a new name:" : "Enter a base name (items will be renamed Name_1, Name_2...):"),
+                title: Text(count == 1 ? NSLocalizedString("Rename Item", comment: "") : String(format: NSLocalizedString("Bulk Rename %d Items", comment: ""), count)),
+                message: Text(count == 1 ? NSLocalizedString("Enter a new name:", comment: "") : NSLocalizedString("Enter a base name (items will be renamed Name_1, Name_2...):", comment: "")),
                 primaryButton: .default(Text("Rename")) {
                     vm.bulkRenameSelected(to: input)
                 },
