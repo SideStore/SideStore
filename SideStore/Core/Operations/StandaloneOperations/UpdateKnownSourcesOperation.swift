@@ -10,7 +10,7 @@ import Foundation
 
 private extension URL
 {
-   static let sources = URL(string: "https://sidestore.io/default-sources")!
+   static let sources = AppConstants.Sources.defaultSourcesURL
 }
 
 extension UpdateKnownSourcesOperation

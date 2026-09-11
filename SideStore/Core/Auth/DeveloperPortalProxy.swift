@@ -12,6 +12,18 @@ import SideSign
 public class DeveloperPortalProxy {
     public static let shared: DeveloperPortalProxy = DeveloperPortalProxyWithAuth()
     
+    public static var currentDeviceType: ALTDeviceType {
+        #if os(tvOS)
+        return .tv
+        #elseif os(visionOS)
+        return .vision
+        #elseif os(watchOS)
+        return .watch
+        #else
+        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+    }
+    
     fileprivate init() {}
     
     private func getSession() async throws -> ALTAppleAPISession {
@@ -35,10 +47,10 @@ public class DeveloperPortalProxy {
     }
     
     @discardableResult
-    public func createCertificate(machineName: String, team: ALTTeam? = nil) async throws -> ALTCertificate {
+    public func createCertificate(machineName: String, type: CertificateType = .development, team: ALTTeam? = nil) async throws -> ALTCertificate {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.addCertificate(machineName: machineName, to: team, session: session)
+        return try await ALTAppleAPI.shared.addCertificate(machineName: machineName, type: type, to: team, session: session)
     }
     
     @discardableResult
@@ -55,7 +67,7 @@ public class DeveloperPortalProxy {
     }
     
     @discardableResult
-    public func registerDevice(name: String, identifier: String, type: ALTDeviceType = .iphone, team: ALTTeam? = nil) async throws -> ALTDevice {
+    public func registerDevice(name: String, identifier: String, type: ALTDeviceType = DeveloperPortalProxy.currentDeviceType, team: ALTTeam? = nil) async throws -> ALTDevice {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
         return try await ALTAppleAPI.shared.registerDevice(name: name, identifier: identifier, type: type, team: team, session: session)
@@ -161,20 +173,22 @@ public class DeveloperPortalProxy {
         return try await ALTAppleAPI.shared.deleteAppGroup(group, team: team, session: session)
     }
 
-    public func fetchProvisioningProfiles(team: ALTTeam? = nil) async throws -> [ALTListedProvisioningProfile] {
+    public func listProvisioningProfiles(includeTeamProfiles: Bool = true, team: ALTTeam? = nil) async throws -> [ALTListedProvisioningProfile] {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.fetchProvisioningProfiles(for: team, session: session)
+        return try await ALTAppleAPI.shared.listProvisioningProfiles(includeTeamProfiles: includeTeamProfiles, for: team, session: session)
     }
 
-    public func fetchProvisioningProfiles(for team: ALTTeam) async throws -> [ALTListedProvisioningProfile] {
-        try await self.fetchProvisioningProfiles(team: team)
-    }
-
-    public func downloadProvisioningProfile(for appID: ALTAppID, deviceType: ALTDeviceType = .iphone, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
+    public func downloadProvisioningProfile(for appID: ALTAppID, isTeamProfile: Bool = true, deviceType: ALTDeviceType = DeveloperPortalProxy.currentDeviceType, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.downloadProvisioningProfile(for: appID, deviceType: deviceType, team: team, session: session)
+        return try await ALTAppleAPI.shared.downloadProvisioningProfile(for: appID, isTeamProfile: isTeamProfile, deviceType: deviceType, team: team, session: session)
+    }
+
+    public func downloadProvisioningProfile(for appID: ALTAppID, isTeamProfile: Bool = true, type: ALTProfileType, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
+        let session = try await self.getSession()
+        let team = try await self.getTeam(team)
+        return try await ALTAppleAPI.shared.downloadProvisioningProfile(for: appID, isTeamProfile: isTeamProfile, type: type, team: team, session: session)
     }
 
     public func downloadProvisioningProfile(profileID: String, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
@@ -186,31 +200,42 @@ public class DeveloperPortalProxy {
     public func createProvisioningProfile(name: String, appID: ALTAppID, certificateIDs: [String], deviceIDs: [String], team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.createProvisioningProfile(name: name, appID: appID, certificateIDs: certificateIDs, deviceIDs: deviceIDs, team: team, session: session)
+        #if os(tvOS)
+        let subPlatform: String? = "tvOS"
+        #else
+        let subPlatform: String? = nil
+        #endif
+        return try await ALTAppleAPI.shared.createProvisioningProfile(name: name, appID: appID, certificateIDs: certificateIDs, deviceIDs: deviceIDs, subPlatform: subPlatform, team: team, session: session)
+    }
+
+    public func createProvisioningProfile(name: String, appID: ALTAppID, certificateIDs: [String], deviceIDs: [String] = [], type: ALTProfileType, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
+        let session = try await self.getSession()
+        let team = try await self.getTeam(team)
+        return try await ALTAppleAPI.shared.createProvisioningProfile(name: name, appID: appID, certificateIDs: certificateIDs, deviceIDs: deviceIDs, type: type, team: team, session: session)
     }
 
     public func updateProvisioningProfile(profileID: String, name: String, appIDId: String, certificateIDs: [String], deviceIDs: [String], team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.updateProvisioningProfile(profileID: profileID, name: name, appIDId: appIDId, certificateIDs: certificateIDs, deviceIDs: deviceIDs, team: team, session: session)
+        #if os(tvOS)
+        let subPlatform: String? = "tvOS"
+        #else
+        let subPlatform: String? = nil
+        #endif
+        return try await ALTAppleAPI.shared.updateProvisioningProfile(profileID: profileID, name: name, appIDId: appIDId, certificateIDs: certificateIDs, deviceIDs: deviceIDs, subPlatform: subPlatform, team: team, session: session)
     }
 
-    public func fetchProvisioningProfile(for appID: ALTAppID, deviceType: ALTDeviceType = .iphone, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
-        try await self.downloadProvisioningProfile(for: appID, deviceType: deviceType, team: team)
+    public func updateProvisioningProfile(profileID: String, name: String, appIDId: String, certificateIDs: [String], deviceIDs: [String] = [], type: ALTProfileType, team: ALTTeam? = nil) async throws -> ALTProvisioningProfile {
+        let session = try await self.getSession()
+        let team = try await self.getTeam(team)
+        return try await ALTAppleAPI.shared.updateProvisioningProfile(profileID: profileID, name: name, appIDId: appIDId, certificateIDs: certificateIDs, deviceIDs: deviceIDs, type: type, team: team, session: session)
     }
 
     @discardableResult
-    public func deleteProvisioningProfile(_ profile: ALTListedProvisioningProfile, team: ALTTeam? = nil) async throws -> Bool {
+    public func deleteProvisioningProfile(profileID: String, team: ALTTeam? = nil) async throws -> Bool {
         let session = try await self.getSession()
         let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.deleteProvisioningProfile(profile, team: team, session: session)
-    }
-
-    @discardableResult
-    public func deleteProvisioningProfile(_ profile: ALTProvisioningProfile, team: ALTTeam? = nil) async throws -> Bool {
-        let session = try await self.getSession()
-        let team = try await self.getTeam(team)
-        return try await ALTAppleAPI.shared.deleteProvisioningProfile(profile, team: team, session: session)
+        return try await ALTAppleAPI.shared.deleteProvisioningProfile(profileID: profileID, team: team, session: session)
     }
 }
 

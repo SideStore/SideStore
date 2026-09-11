@@ -765,8 +765,19 @@ struct ServiceDetailView: View {
             }
         }
         .onAppear {
-            debugLog("[ServiceDetailView] onAppear: Resolving '\(service.name)' (\(service.type)) (autoRefresh=\(isAutoRefreshEnabled))")
+            debugLog("[ServiceDetailView] onAppear: Entering details view for '\(service.name)' (\(service.type)) (autoRefresh=\(isAutoRefreshEnabled))")
+            viewModel.logDetails(for: service, trigger: "onAppear (Entering Details View)")
             startAutoRefresh(triggerImmediateScan: true)
+        }
+        .onChange(of: viewModel.resolvedService) { newResolved in
+            if let resolved = newResolved {
+                viewModel.logDetails(for: service, trigger: "Service Resolved", resolved: resolved)
+            }
+        }
+        .onChange(of: viewModel.resolveError) { newError in
+            if let err = newError {
+                debugLog("[ServiceDetailView] Resolution error for '\(service.name)': \(err)")
+            }
         }
         .onDisappear {
             debugLog("[ServiceDetailView] onDisappear: Stopped resolving '\(service.name)'")
@@ -839,13 +850,7 @@ struct ServiceDetailView: View {
     }
     
     private func nameForInterfaceType(_ type: NWInterface.InterfaceType) -> String {
-        switch type {
-        case .wifi: return "Wi-Fi"
-        case .loopback: return "Loopback"
-        case .wiredEthernet: return "Ethernet"
-        case .cellular: return "Cellular"
-        default: return "\(type)"
-        }
+        BonjourDiscoveryViewModel.nameForInterfaceType(type)
     }
     
     private func resolvedContent(_ resolved: ResolvedServiceInfo) -> some View {

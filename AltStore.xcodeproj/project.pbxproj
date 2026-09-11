@@ -154,6 +154,7 @@
 		A8EEC8CD2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Extensions/FileManager+URLs.swift",
 				"Intents/App Intents/RefreshAllAppsWidgetIntent.swift",
 			);
 			target = BF989166250AABF3002ACF50 /* AltWidgetExtension */;

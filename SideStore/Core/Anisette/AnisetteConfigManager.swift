@@ -17,6 +17,8 @@ public struct AnisetteConfig: Codable, Equatable {
     public var customLocale: String?
     public var customTimeZone: String?
     public var customXcodeVersion: String?
+    public var customSerialNumber: String?
+    public var customRoutingInfo: String?
     
     public init(
         clientInfo: String,
@@ -25,7 +27,9 @@ public struct AnisetteConfig: Codable, Equatable {
         customLocalUserID: String? = nil,
         customLocale: String? = nil,
         customTimeZone: String? = nil,
-        customXcodeVersion: String? = nil
+        customXcodeVersion: String? = nil,
+        customSerialNumber: String? = nil,
+        customRoutingInfo: String? = nil
     ) {
         self.clientInfo = clientInfo
         self.userAgent = userAgent
@@ -34,6 +38,8 @@ public struct AnisetteConfig: Codable, Equatable {
         self.customLocale = customLocale
         self.customTimeZone = customTimeZone
         self.customXcodeVersion = customXcodeVersion
+        self.customSerialNumber = customSerialNumber
+        self.customRoutingInfo = customRoutingInfo
     }
 }
 
@@ -65,12 +71,12 @@ public actor AnisetteConfigManager {
         return generated
     }
     
-    private var configFileURL: URL {
+    private nonisolated var configFileURL: URL {
         let libraryDirectory = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
         return libraryDirectory.appendingPathComponent("anisette-config.json")
     }
     
-    private var serverHeadersFileURL: URL {
+    private nonisolated var serverHeadersFileURL: URL {
         let libraryDirectory = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
         return libraryDirectory.appendingPathComponent("anisette-server-headers.json")
     }
@@ -105,15 +111,60 @@ public actor AnisetteConfigManager {
     }
     
     public func loadConfig() -> AnisetteConfig {
-        if let data = try? Data(contentsOf: configFileURL),
-           let config = try? Foundation.JSONDecoder().decode(AnisetteConfig.self, from: data) {
+        let ud = UserDefaults.standard
+        let udClientInfo   = ud.customAnisetteClientInfo
+        let udUserAgent    = ud.customAnisetteUserAgent
+        let udDeviceID     = ud.customAnisetteDeviceID
+        let udLocalUserID  = ud.customAnisetteLocalUserID
+        let udLocale       = ud.customAnisetteLocale
+        let udTimeZone     = ud.customAnisetteTimeZone
+        let udXcodeVersion = ud.customAnisetteXcodeVersion
+        let udSerialNumber = ud.customAnisetteSerialNumber
+        let udRoutingInfo  = ud.customAnisetteRoutingInfo
+
+        let fileConfig: AnisetteConfig? = {
+            guard let data = try? Data(contentsOf: configFileURL),
+                  let config = try? Foundation.JSONDecoder().decode(AnisetteConfig.self, from: data) else {
+                return nil
+            }
             return config
-        }
-        // Fallback to static defaults in FetchAnisetteDataOperation
+        }()
+
+        let resolvedClientInfo   = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
+        let resolvedUserAgent    = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
+        let resolvedDeviceID     = (udDeviceID?.isEmpty == false ? udDeviceID : fileConfig?.customDeviceID)
+        let resolvedLocalUserID  = (udLocalUserID?.isEmpty == false ? udLocalUserID : fileConfig?.customLocalUserID)
+        let resolvedLocale       = (udLocale?.isEmpty == false ? udLocale : fileConfig?.customLocale)
+        let resolvedTimeZone     = (udTimeZone?.isEmpty == false ? udTimeZone : fileConfig?.customTimeZone)
+        let resolvedXcode        = (udXcodeVersion?.isEmpty == false ? udXcodeVersion : fileConfig?.customXcodeVersion)
+        let resolvedSerialNumber = (udSerialNumber?.isEmpty == false ? udSerialNumber : fileConfig?.customSerialNumber)
+        let resolvedRoutingInfo  = (udRoutingInfo?.isEmpty == false ? udRoutingInfo : fileConfig?.customRoutingInfo)
+
         return AnisetteConfig(
-            clientInfo: AppConstants.Anisette.defaultClientInfo,
-            userAgent: AppConstants.Anisette.defaultUserAgent
+            clientInfo: resolvedClientInfo,
+            userAgent: resolvedUserAgent,
+            customDeviceID: resolvedDeviceID,
+            customLocalUserID: resolvedLocalUserID,
+            customLocale: resolvedLocale,
+            customTimeZone: resolvedTimeZone,
+            customXcodeVersion: resolvedXcode,
+            customSerialNumber: resolvedSerialNumber,
+            customRoutingInfo: resolvedRoutingInfo
         )
+    }
+
+    public func makeRequestHeaders() -> AnisetteRequestHeaders {
+        let config = loadConfig()
+        return AnisetteRequestHeaders().with {
+            $0.clientInfo = config.clientInfo.isEmpty ? AppConstants.Anisette.defaultClientInfo : config.clientInfo
+            $0.userAgent  = config.userAgent.isEmpty ? AppConstants.Anisette.defaultUserAgent : config.userAgent
+            if let customLU = config.customLocalUserID, !customLU.isEmpty { $0.localUserID = customLU }
+            if let customDev = config.customDeviceID, !customDev.isEmpty { $0.deviceID = customDev }
+            if let loc = config.customLocale, !loc.isEmpty { $0.locale = loc }
+            if let tz = config.customTimeZone, !tz.isEmpty { $0.timeZone = tz }
+            if let serial = config.customSerialNumber, !serial.isEmpty { $0.serialNumber = serial }
+            if let routing = config.customRoutingInfo, !routing.isEmpty { $0.routingInfo = routing }
+        }
     }
 
     public func resolvedXcodeVersion() async -> String {
@@ -126,6 +177,16 @@ public actor AnisetteConfigManager {
         if let data = try? encoder.encode(config) {
             try? data.write(to: configFileURL, options: .atomic)
         }
+        let ud = UserDefaults.standard
+        ud.customAnisetteClientInfo   = config.clientInfo
+        ud.customAnisetteUserAgent    = config.userAgent
+        ud.customAnisetteDeviceID     = config.customDeviceID
+        ud.customAnisetteLocalUserID  = config.customLocalUserID
+        ud.customAnisetteLocale       = config.customLocale
+        ud.customAnisetteTimeZone     = config.customTimeZone
+        ud.customAnisetteXcodeVersion = config.customXcodeVersion
+        ud.customAnisetteSerialNumber = config.customSerialNumber
+        ud.customAnisetteRoutingInfo  = config.customRoutingInfo
     }
     
     public func importFromFile(url: URL) throws -> AnisetteConfig {
@@ -149,6 +210,10 @@ public actor AnisetteConfigManager {
             let customLocale = (json["customLocale"] as? String) ?? (json["custom_locale"] as? String) ?? (json["locale"] as? String)
             let customTimeZone = (json["customTimeZone"] as? String) ?? (json["custom_time_zone"] as? String) ?? (json["timeZone"] as? String)
             
+            let customSerialNumber = (json["customSerialNumber"] as? String) ?? (json["custom_serial_number"] as? String) ?? (json["serialNumber"] as? String)
+            let customRoutingInfo = (json["customRoutingInfo"] as? String) ?? (json["custom_routing_info"] as? String) ?? (json["routingInfo"] as? String)
+            let customXcodeVersion = (json["customXcodeVersion"] as? String) ?? (json["custom_xcode_version"] as? String) ?? (json["xcodeVersion"] as? String)
+            
             guard let finalClientInfo = clientInfo, !finalClientInfo.isEmpty,
                   let finalUserAgent = userAgent, !finalUserAgent.isEmpty else {
                 throw NSError(domain: "AnisetteConfigManager", code: -2, userInfo: [NSLocalizedDescriptionKey: "Missing or empty required keys (clientInfo, userAgent)."])
@@ -160,7 +225,10 @@ public actor AnisetteConfigManager {
                 customDeviceID: customDeviceID,
                 customLocalUserID: customLocalUserID,
                 customLocale: customLocale,
-                customTimeZone: customTimeZone
+                customTimeZone: customTimeZone,
+                customXcodeVersion: customXcodeVersion,
+                customSerialNumber: customSerialNumber,
+                customRoutingInfo: customRoutingInfo
             )
         }
         
@@ -175,20 +243,32 @@ public actor AnisetteConfigManager {
         return try? encoder.encode(config)
     }
     
-    public func resetToDefaults() -> AnisetteConfig {
+    @discardableResult
+    public nonisolated func resetToDefaults() -> AnisetteConfig {
+        let ud = UserDefaults.standard
+        ud.customAnisetteClientInfo   = nil
+        ud.customAnisetteUserAgent    = nil
+        ud.customAnisetteDeviceID     = nil
+        ud.customAnisetteLocalUserID  = nil
+        ud.customAnisetteLocale       = nil
+        ud.customAnisetteTimeZone     = nil
+        ud.customAnisetteXcodeVersion = nil
+        ud.customAnisetteSerialNumber = nil
+        ud.customAnisetteRoutingInfo  = nil
+        deleteConfigFile()
+
         let config = AnisetteConfig(
             clientInfo: AppConstants.Anisette.defaultClientInfo,
             userAgent: AppConstants.Anisette.defaultUserAgent
         )
-        saveConfig(config)
         return config
     }
     
-    public func deleteConfigFile() {
+    public nonisolated func deleteConfigFile() {
         try? FileManager.default.removeItem(at: configFileURL)
     }
     
-    public func hasConfigFile() -> Bool {
+    public nonisolated func hasConfigFile() -> Bool {
         return FileManager.default.fileExists(atPath: configFileURL.path)
     }
 }

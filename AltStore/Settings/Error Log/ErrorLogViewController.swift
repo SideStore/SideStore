@@ -291,7 +291,7 @@ private extension ErrorLogViewController
     
     func searchFAQ(for loggedError: LoggedError)
     {
-        let staticURL = URL(string: "https://docs.sidestore.io/docs/troubleshooting/error-codes")!
+        let staticURL = AppConstants.URLs.errorCodesDocumentation
         self.openWebURL(staticURL, preferredTintColor: .altPrimary)
     }
 

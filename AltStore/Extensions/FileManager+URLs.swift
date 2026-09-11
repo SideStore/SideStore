@@ -22,7 +22,11 @@ public extension FileManager {
     }
 
     var applicationSupportDirectory: URL {
+        #if os(tvOS)
+        return self.cachesDirectory
+        #else
         return self.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        #endif
     }
 
     var cachesDirectory: URL {

@@ -60,6 +60,11 @@ struct ProfilePortalDetailView: View {
                 if let identifier = profile.identifier {
                     InfoRow(label: "Identifier", value: identifier)
                 }
+                if let profType = profile.profileType {
+                    InfoRow(label: "Type", value: profType.displayName)
+                } else if let rawType = profile.type {
+                    InfoRow(label: "Type", value: rawType)
+                }
                 if let isTeam = profile.isTeamProfile {
                     InfoRow(label: "Managed By", value: isTeam ? "Xcode (Team Profile)" : "Manual (Portal)")
                 }
@@ -209,6 +214,7 @@ struct ProfilePortalDetailView: View {
                                 appIDId: selectedAppIDId.trimmingCharacters(in: .whitespacesAndNewlines),
                                 certificateIDs: Array(selectedCertificateIDs),
                                 deviceIDs: Array(selectedDeviceIDs),
+                                type: profile.profileType,
                                 presentingViewController: presentingViewController
                             )
                             if success {

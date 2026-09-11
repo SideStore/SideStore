@@ -87,6 +87,10 @@ class CertificatesViewModel: ObservableObject {
         guard let team = self.team else { return false }
         return team.type != .free && team.type != .unknown
     }
+
+    var availableCertificateTypes: [CertificateType] {
+        CertificateType.allCases
+    }
     
     var isActiveCertThirdParty: Bool {
         guard let activeCert = activeLocalCert,
@@ -332,7 +336,7 @@ class CertificatesViewModel: ObservableObject {
         self.showImportSummary = true
     }
     
-    func createCertificate(machineName: String, presentingViewController: UIViewController?) {
+    func createCertificate(machineName: String, type: CertificateType = .development, presentingViewController: UIViewController?) {
         self.isLoading = true; self.errorMessage = nil
         Task { @MainActor in
             defer { self.isLoading = false }
@@ -340,9 +344,9 @@ class CertificatesViewModel: ObservableObject {
                 self.session = try await AuthManager.shared.getAuthenticatedSession()
                 self.team    = try? await AuthManager.shared.getAuthenticatedTeam()
                 
-                let newCert = try await DeveloperPortalProxy.shared.createCertificate(machineName: machineName)
+                let newCert = try await DeveloperPortalProxy.shared.createCertificate(machineName: machineName, type: type)
                 self.saveLocalCertificate(newCert)
-                self.alertMessage = "Certificate created successfully."
+                self.alertMessage = "\(type.displayName) created successfully."
                 self.showAlert    = true
                 self.loadCertificates(presentingViewController: presentingViewController)
             } catch {

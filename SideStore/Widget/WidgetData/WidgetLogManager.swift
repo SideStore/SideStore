@@ -14,7 +14,7 @@ public enum WidgetLogManager {
     }
     
     public static var widgetLogsDirectory: URL {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let docs = FileManager.default.documentsDirectory
         let dir = docs.appendingPathComponent("WidgetLogs")
         if !FileManager.default.fileExists(atPath: dir.path) {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

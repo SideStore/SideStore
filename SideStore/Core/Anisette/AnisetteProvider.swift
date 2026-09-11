@@ -33,12 +33,14 @@ enum AnisetteProvider {
         let provider = SideSign.AnisetteDataManager.shared
         let existingBlob = AnisetteConfigManager.shared.anisetteAdiBlob.flatMap { Data(base64Encoded: $0) }
         let identifier = await AnisetteConfigManager.shared.resolveDeviceIdentifier()
+        let headers = await AnisetteConfigManager.shared.makeRequestHeaders()
 
         let (anisetteData, newAdiBlob) = try await provider.fetchAnisetteDataWithFailover(
             servers: UserDefaults.standard.disableAnisetteRotation ? [servers[startIndex]] : servers,
             startIndex: startIndex,
             identifier: identifier,
             existingAdiBlob: existingBlob,
+            headers: headers,
             onError: { error in
                 if let anisetteError = error as? SideSign.AnisetteError,
                    case .outdatedV1Server(let serverURL, _) = anisetteError {

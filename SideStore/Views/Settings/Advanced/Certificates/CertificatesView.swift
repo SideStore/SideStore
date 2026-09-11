@@ -22,7 +22,7 @@ struct CertificatesView: View {
         ["key", "pem", "der"].compactMap { UTType(filenameExtension: $0) }
     }
     
-    @State private var showCreateDialog           = false
+    @State private var showCreateSheet            = false
     @State private var showFileImporter           = false
     @State private var showRevokeConfirmation     = false
     @State private var showDeactivateConfirmation = false
@@ -32,7 +32,6 @@ struct CertificatesView: View {
     @State private var hasInitialLoaded           = false
     @State private var hasCopiedActiveSerial      = false
     
-    @State private var newMachineName        = ""
     @State private var exportPasswordInput   = ""
     @State private var fileImportMode: FileImportMode       = .certificate
     @State private var keyTextImportItem: KeyTextImportItem? = nil
@@ -94,8 +93,7 @@ struct CertificatesView: View {
                     .accessibilityLabel("Toggle Hide Sensitive Information")
                     
                     SwiftUI.Button {
-                        newMachineName = "SideStore - \(UIDevice.current.name)"
-                        showCreateDialog = true
+                        showCreateSheet = true
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -123,14 +121,12 @@ struct CertificatesView: View {
         } message: {
             Text(viewModel.errorMessage ?? "An unknown error occurred.")
         }
-        .alert("New Certificate", isPresented: $showCreateDialog) {
-            TextField("Machine Name", text: $newMachineName)
-            SwiftUI.Button("Create") {
-                viewModel.createCertificate(machineName: newMachineName, presentingViewController: presentingViewController)
-            }
-            SwiftUI.Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Enter a name for the new certificate. This will create a new certificate on Apple's servers and store the private key locally.")
+        .sheet(isPresented: $showCreateSheet) {
+            CreateCertificateSheetView(
+                viewModel: viewModel,
+                presentingViewController: presentingViewController,
+                isPresented: $showCreateSheet
+            )
         }
         .alert("Deactivate Certificate", isPresented: $showDeactivateConfirmation) {
             SwiftUI.Button("Deactivate", role: .destructive) { viewModel.deactivateActiveCertificate() }
@@ -354,6 +350,65 @@ private struct LoadingOverlay: View {
                 .background(Color.white.opacity(0.1))
                 #endif
                 .cornerRadius(10)
+        }
+    }
+}
+
+private struct CreateCertificateSheetView: View {
+    @ObservedObject var viewModel: CertificatesViewModel
+    var presentingViewController: UIViewController?
+    @Binding var isPresented: Bool
+
+    @State private var machineName: String = "SideStore - \(UIDevice.current.name)"
+    @State private var selectedCertificateType: CertificateType = .development
+
+    private var isPaidWarningVisible: Bool {
+        selectedCertificateType.isPaidOnly && !viewModel.isPaidAccount
+    }
+
+    private var canCreate: Bool {
+        !machineName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(
+                    header: Text("Certificate Information"),
+                    footer: Text(isPaidWarningVisible
+                        ? "This certificate type requires a paid Apple Developer account."
+                        : "Select the certificate type and machine name. This registers the certificate on Apple's servers and saves the private key locally.")
+                ) {
+                    Picker("Certificate Type", selection: $selectedCertificateType) {
+                        ForEach(viewModel.availableCertificateTypes, id: \.rawValue) { certType in
+                            Text(certType.displayName).tag(certType)
+                        }
+                    }
+
+                    TextField("Machine Name", text: $machineName)
+                }
+            }
+            .navigationTitle("New Certificate")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    SwiftUI.Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    SwiftUI.Button("Create") {
+                        let name = machineName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !name.isEmpty else { return }
+                        isPresented = false
+                        viewModel.createCertificate(
+                            machineName: name,
+                            type: selectedCertificateType,
+                            presentingViewController: presentingViewController
+                        )
+                    }
+                    .disabled(!canCreate)
+                }
+            }
         }
     }
 }

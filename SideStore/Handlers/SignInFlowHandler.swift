@@ -202,8 +202,8 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
         }
 
         return await withCheckedContinuation { continuation in
-            let appleAccountURL = URL(string: "https://account.apple.com")!
-            let baseMessage = message.isEmpty ? Constants.defaultAccountRepairMessage : message
+            let appleAccountURL = AppConstants.URLs.appleAccount
+            let baseMessage = message.isEmpty ? AppConstants.defaultAccountRepairMessage : message
             let displayMessage = """
                 \(baseMessage)
 

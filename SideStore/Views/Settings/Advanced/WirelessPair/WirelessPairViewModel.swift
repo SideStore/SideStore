@@ -111,7 +111,7 @@ final class WirelessPairViewModel: ObservableObject {
     
     var fallbackConfigEndpoint: (ip: String, port: UInt16) {
         let config = ConnectionConfig.shared
-        let port = remotePairingPortCache != 0 ? remotePairingPortCache : MinimuxerConstants.remotePairingPort
+        let port = remotePairingPortCache != 0 ? remotePairingPortCache : AppConstants.Minimuxer.remotePairingPort
 
         guard config.useLocalVPN else {
             let remote = config.remoteServerIp.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -302,7 +302,7 @@ final class WirelessPairViewModel: ObservableObject {
             switch selectedOption {
             case .discovered(let target):
                 let targetIp = target.ipv4 ?? target.ipv6 ?? target.service.name
-                let targetPort = target.port > 0 ? target.port : MinimuxerConstants.remotePairingPort
+                let targetPort = target.port > 0 ? target.port : AppConstants.Minimuxer.remotePairingPort
                 debugLog("[WirelessPairViewModel] confirmSelection -> Connecting to target '\(target.name)' at \(targetIp):\(targetPort)")
                 triggerPairing(targetIp: targetIp, targetPort: targetPort, targetName: target.name)
             case .configuredFallback:
@@ -584,7 +584,7 @@ final class WirelessPairViewModel: ObservableObject {
     }
     
     private func pairingFilePath(for deviceName: String? = nil) -> String {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let docs = FileManager.default.documentsDirectory
         if let deviceName = deviceName, !deviceName.isEmpty {
             let spaceReplaced = deviceName
                 .replacingOccurrences(of: " ", with: "_")

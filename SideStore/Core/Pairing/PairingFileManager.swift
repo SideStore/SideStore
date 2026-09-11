@@ -88,7 +88,7 @@ extension PairingFileManager: UIDocumentPickerDelegate {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Help", comment: ""), style: .default) { _ in
-            if let url = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file") { UIApplication.shared.open(url) }
+            UIApplication.shared.open(AppConstants.URLs.pairingDocumentation)
             if completion == nil {
                 sleep(2); exit(0)
             } else {
@@ -97,7 +97,7 @@ extension PairingFileManager: UIDocumentPickerDelegate {
         })
         alert.addAction(UIAlertAction(title: NSLocalizedString("Select File", comment: ""), style: .default) { _ in
             var types = UTType.types(tag: "plist", tagClass: .filenameExtension, conformingTo: nil)
-            types.append(contentsOf: UTType.types(tag: "mobiledevicepairing", tagClass: .filenameExtension, conformingTo: .data))
+            types.append(contentsOf: UTType.types(tag: AppConstants.Pairing.fileExtension, tagClass: .filenameExtension, conformingTo: .data))
             types.append(.xml)
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
             picker.delegate = self

@@ -11,6 +11,8 @@ import Foundation
 class SignOutAlertViewController: UIViewController {
     let certCheckboxButton = UIButton(type: .system)
     let anisetteCheckboxButton = UIButton(type: .system)
+    let anisetteHeadersCheckboxButton = UIButton(type: .system)
+    let sideSignHeadersCheckboxButton = UIButton(type: .system)
     
     var isChecked: Bool = true {
         didSet {
@@ -21,6 +23,18 @@ class SignOutAlertViewController: UIViewController {
     var isKeepAnisetteChecked: Bool = true {
         didSet {
             updateButtonImage(anisetteCheckboxButton, isChecked: isKeepAnisetteChecked)
+        }
+    }
+    
+    var isKeepAnisetteHeadersChecked: Bool = true {
+        didSet {
+            updateButtonImage(anisetteHeadersCheckboxButton, isChecked: isKeepAnisetteHeadersChecked)
+        }
+    }
+
+    var isKeepSideSignHeadersChecked: Bool = true {
+        didSet {
+            updateButtonImage(sideSignHeadersCheckboxButton, isChecked: isKeepSideSignHeadersChecked)
         }
     }
     
@@ -36,6 +50,8 @@ class SignOutAlertViewController: UIViewController {
         
         isChecked = UserDefaults.standard.keepSigningCertsAfterLogout
         isKeepAnisetteChecked = UserDefaults.standard.keepAnisetteDataAfterLogout
+        isKeepAnisetteHeadersChecked = UserDefaults.standard.keepAnisetteHeadersAfterLogout
+        isKeepSideSignHeadersChecked = UserDefaults.standard.keepSideSignHeadersAfterLogout
         
         certCheckboxButton.tintColor = .systemBlue
         certCheckboxButton.imageView?.contentMode = .scaleAspectFit
@@ -80,8 +96,52 @@ class SignOutAlertViewController: UIViewController {
         anisetteStack.axis = .horizontal
         anisetteStack.spacing = 8
         anisetteStack.alignment = .center
+
+        anisetteHeadersCheckboxButton.tintColor = .systemBlue
+        anisetteHeadersCheckboxButton.imageView?.contentMode = .scaleAspectFit
+        anisetteHeadersCheckboxButton.setContentHuggingPriority(.required, for: .horizontal)
+        anisetteHeadersCheckboxButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        NSLayoutConstraint.activate([
+            anisetteHeadersCheckboxButton.widthAnchor.constraint(equalToConstant: 24),
+            anisetteHeadersCheckboxButton.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        anisetteHeadersCheckboxButton.addTarget(self, action: #selector(toggleAnisetteHeadersCheckbox), for: .touchUpInside)
         
-        let mainStackView = UIStackView(arrangedSubviews: [certStack, anisetteStack])
+        let anisetteHeadersLabel = UILabel()
+        anisetteHeadersLabel.text = NSLocalizedString("Keep Anisette headers", comment: "")
+        anisetteHeadersLabel.font = .systemFont(ofSize: 14)
+        anisetteHeadersLabel.isUserInteractionEnabled = true
+        let anisetteHeadersTap = UITapGestureRecognizer(target: self, action: #selector(toggleAnisetteHeadersCheckbox))
+        anisetteHeadersLabel.addGestureRecognizer(anisetteHeadersTap)
+        
+        let anisetteHeadersStack = UIStackView(arrangedSubviews: [anisetteHeadersCheckboxButton, anisetteHeadersLabel])
+        anisetteHeadersStack.axis = .horizontal
+        anisetteHeadersStack.spacing = 8
+        anisetteHeadersStack.alignment = .center
+
+        sideSignHeadersCheckboxButton.tintColor = .systemBlue
+        sideSignHeadersCheckboxButton.imageView?.contentMode = .scaleAspectFit
+        sideSignHeadersCheckboxButton.setContentHuggingPriority(.required, for: .horizontal)
+        sideSignHeadersCheckboxButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        NSLayoutConstraint.activate([
+            sideSignHeadersCheckboxButton.widthAnchor.constraint(equalToConstant: 24),
+            sideSignHeadersCheckboxButton.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        sideSignHeadersCheckboxButton.addTarget(self, action: #selector(toggleSideSignHeadersCheckbox), for: .touchUpInside)
+        
+        let sideSignHeadersLabel = UILabel()
+        sideSignHeadersLabel.text = NSLocalizedString("Keep SideSign headers", comment: "")
+        sideSignHeadersLabel.font = .systemFont(ofSize: 14)
+        sideSignHeadersLabel.isUserInteractionEnabled = true
+        let sideSignHeadersTap = UITapGestureRecognizer(target: self, action: #selector(toggleSideSignHeadersCheckbox))
+        sideSignHeadersLabel.addGestureRecognizer(sideSignHeadersTap)
+        
+        let sideSignHeadersStack = UIStackView(arrangedSubviews: [sideSignHeadersCheckboxButton, sideSignHeadersLabel])
+        sideSignHeadersStack.axis = .horizontal
+        sideSignHeadersStack.spacing = 8
+        sideSignHeadersStack.alignment = .center
+        
+        let mainStackView = UIStackView(arrangedSubviews: [certStack, anisetteStack, anisetteHeadersStack, sideSignHeadersStack])
         mainStackView.axis = .vertical
         mainStackView.spacing = 8
         mainStackView.alignment = .leading
@@ -95,7 +155,7 @@ class SignOutAlertViewController: UIViewController {
             mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
-        self.preferredContentSize = CGSize(width: 270, height: 68)
+        self.preferredContentSize = CGSize(width: 270, height: 128)
     }
     
     @objc func toggleCertCheckbox() {
@@ -107,5 +167,14 @@ class SignOutAlertViewController: UIViewController {
         isKeepAnisetteChecked.toggle()
         UserDefaults.standard.keepAnisetteDataAfterLogout = isKeepAnisetteChecked
     }
-}
 
+    @objc func toggleAnisetteHeadersCheckbox() {
+        isKeepAnisetteHeadersChecked.toggle()
+        UserDefaults.standard.keepAnisetteHeadersAfterLogout = isKeepAnisetteHeadersChecked
+    }
+
+    @objc func toggleSideSignHeadersCheckbox() {
+        isKeepSideSignHeadersChecked.toggle()
+        UserDefaults.standard.keepSideSignHeadersAfterLogout = isKeepSideSignHeadersChecked
+    }
+}

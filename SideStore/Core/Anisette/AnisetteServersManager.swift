@@ -23,25 +23,25 @@ public struct AnisetteServerItem: Codable, Identifiable, Hashable {
 
 public actor AnisetteServersManager {
     public static let shared = AnisetteServersManager()
-    public static let defaultSource = "https://servers.sidestore.io/servers.json"
+    public static let defaultSource = AppConstants.Anisette.Servers.defaultSource
 
     private var inMemoryServersCache: [AnisetteServerItem]?
     private var isSyncing: Bool = false
 
     private let userFacingFileURL: URL = {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let docs = FileManager.default.documentsDirectory
         return docs.appendingPathComponent("anisette-servers.json")
     }()
 
     private let privateBackupFileURL: URL = {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let appSupport = FileManager.default.applicationSupportDirectory
         let dir = appSupport.appendingPathComponent("SideStore", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("anisette-servers-backup.json")
     }()
 
     private let rawImportedBackupFileURL: URL = {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let appSupport = FileManager.default.applicationSupportDirectory
         let dir = appSupport.appendingPathComponent("SideStore", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("raw-imported-backup.json")
@@ -314,7 +314,7 @@ public actor AnisetteServersManager {
     }
 
     public func isPublicInternetAvailable() async -> Bool {
-        guard let url = URL(string: "https://www.apple.com/library/test/success.html") else { return true }
+        let url = AppConstants.Anisette.Servers.connectivityCheckURL
         var request = URLRequest(url: url)
         request.timeoutInterval = 3.0
         request.httpMethod = "HEAD"

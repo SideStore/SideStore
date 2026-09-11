@@ -36,7 +36,7 @@ final class ExportResignedIpaOperation: BasePipelineOperation<InstallAppOperatio
             return nil
         }
 
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let documentsURL = FileManager.default.documentsDirectory
         let resignedAppsURL = documentsURL.appendingPathComponent("ResignedApps")
         self.setProgress(30)
         do {

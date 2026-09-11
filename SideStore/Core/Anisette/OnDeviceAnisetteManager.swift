@@ -19,12 +19,10 @@ public actor OnDeviceAnisetteManager {
         let baseDir: URL?
         if let sharedDir = FileManager.default.altstoreSharedDirectory {
             baseDir = sharedDir.appendingPathComponent(AppConstants.Anisette.hiddenBaseDirectoryName, isDirectory: true)
-        } else if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            baseDir = appSupport
+        } else {
+            baseDir = FileManager.default.applicationSupportDirectory
                 .appendingPathComponent(AppConstants.Anisette.appSupportSubdirectory, isDirectory: true)
                 .appendingPathComponent(AppConstants.Anisette.hiddenBaseDirectoryName, isDirectory: true)
-        } else {
-            baseDir = nil
         }
         self.provider = AnisetteDataManager(baseDirectory: baseDir)
     }
@@ -60,18 +58,11 @@ public actor OnDeviceAnisetteManager {
             debugLog("[OnDeviceAnisetteManager] [Fetch] No existing adi.pb in Keychain -> local in-memory provisioning will be performed")
         }
 
-        let config = await AnisetteConfigManager.shared.loadConfig()
-        let headers = AnisetteRequestHeaders().with {
-            $0.clientInfo = config.clientInfo.isEmpty ? AnisetteConstants.defaultClientInfo : config.clientInfo
-            if let customLU = config.customLocalUserID { $0.localUserID = customLU }
-            if let customDev = config.customDeviceID { $0.deviceID = customDev }
-            if let loc = config.customLocale { $0.locale = loc }
-            if let tz = config.customTimeZone { $0.timeZone = tz }
-        }
+        let headers = await AnisetteConfigManager.shared.makeRequestHeaders()
 
         let sourceURLString = UserDefaults.standard.menuAnisetteList.isEmpty ? AnisetteServersManager.defaultSource : UserDefaults.standard.menuAnisetteList
-        let sourceURL = URL(string: sourceURLString) ?? URL(string: AppConstants.Anisette.defaultODAMetadataURL)!
-        let fallbackURL = URL(string: AppConstants.Anisette.defaultODAMetadataURL)
+        let sourceURL = URL(string: sourceURLString) ?? AppConstants.Anisette.defaultODAMetadataURL
+        let fallbackURL = AppConstants.Anisette.defaultODAMetadataURL
 
         let mode = AnisetteMode.remoteODA(sourceURL: sourceURL, fallbackURL: fallbackURL)
 

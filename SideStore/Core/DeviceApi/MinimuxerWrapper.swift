@@ -11,8 +11,8 @@ import Minimuxer
 import Combine
 
 public var selectedGatewayBackendCache: GatewayBackend = .idevice
-public var remotePairingPortCache: UInt16 = MinimuxerConstants.remotePairingPort
-public var deviceProbeTimeoutCache: Int = MinimuxerConstants.defaultTCPProbeTimeoutMs
+public var remotePairingPortCache: UInt16 = AppConstants.Minimuxer.remotePairingPort
+public var deviceProbeTimeoutCache: Int = AppConstants.Minimuxer.defaultTCPProbeTimeoutMs
 
 public func syncMinimuxerBackendFromUserDefaults() {
     let raw = UserDefaults.standard.minimuxerGatewayBackend
@@ -22,14 +22,14 @@ public func syncMinimuxerBackendFromUserDefaults() {
     if overridePort > 0 && overridePort <= 65535 {
         remotePairingPortCache = UInt16(overridePort)
     } else {
-        remotePairingPortCache = MinimuxerConstants.remotePairingPort
+        remotePairingPortCache = AppConstants.Minimuxer.remotePairingPort
     }
 
     let overrideTimeout = UserDefaults.standard.deviceProbeTimeoutOverride
     if overrideTimeout > 0 {
         deviceProbeTimeoutCache = overrideTimeout
     } else {
-        deviceProbeTimeoutCache = MinimuxerConstants.defaultTCPProbeTimeoutMs
+        deviceProbeTimeoutCache = AppConstants.Minimuxer.defaultTCPProbeTimeoutMs
     }
 }
 
@@ -47,7 +47,7 @@ private func resolveDiscoveredRemotePairingPort() async -> UInt16? {
         return UInt16(overridePort)
     }
     if let resolved = await BonjourDiscoveryManager.resolveFirstService(
-        ofType: MinimuxerConstants.remotePairingDaemonServiceType,
+        ofType: AppConstants.Minimuxer.remotePairingDaemonServiceType,
         timeout: AppConstants.Bonjour.defaultDiscoveryTimeout
     ) {
         debugLog("[SideStore] Discovered RemotePairing port via Bonjour: \(resolved.port)")
@@ -357,7 +357,7 @@ public func minimuxerSetDeviceProbeTimeout(_ timeoutMs: Int) {
     defer { debugLog("[SideStore] minimuxerSetDeviceProbeTimeout(\(timeoutMs)) completed") }
     debugLog("[SideStore] minimuxerSetDeviceProbeTimeout(\(timeoutMs)) invoked")
     deviceProbeTimeoutCache = timeoutMs
-    UserDefaults.standard.deviceProbeTimeoutOverride = (timeoutMs == MinimuxerConstants.defaultTCPProbeTimeoutMs) ? 0 : timeoutMs
+    UserDefaults.standard.deviceProbeTimeoutOverride = (timeoutMs == AppConstants.Minimuxer.defaultTCPProbeTimeoutMs) ? 0 : timeoutMs
     #if !targetEnvironment(simulator)
     minimuxer.core.setDeviceProbeTimeout(timeoutMs)
     #endif
@@ -468,8 +468,8 @@ public final class WirelessPairWrapper {
     public func trigger(
         targetIp: String,
         targetPort: UInt16,
-        hostName: String = MinimuxerConstants.defaultHostName,
-        hostModel: String = MinimuxerConstants.defaultHostModel,
+        hostName: String = AppConstants.Minimuxer.defaultHostName,
+        hostModel: String = AppConstants.Minimuxer.defaultHostModel,
         outPath: String,
         completion: @escaping (Result<MinimuxerPairedDevice, Error>) -> Void
     ) {

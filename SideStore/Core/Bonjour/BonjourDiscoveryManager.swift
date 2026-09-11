@@ -9,6 +9,7 @@
 import Foundation
 import Network
 import Combine
+import Minimuxer
 
 struct ServiceTypeInfo: Identifiable, Hashable {
     var id: String { rawType }
@@ -342,16 +343,22 @@ final class BonjourDiscoveryManager: NSObject, ObservableObject, NetServiceDeleg
             guard let self = self else { return }
             debugLog("[BonjourDiscovery] NWConnection path update for '\(service.name)': status=\(path.status), remoteEndpoint=\(String(describing: path.remoteEndpoint))")
             if let remote = path.remoteEndpoint, case .hostPort(let host, let port) = remote {
-                var resolvedHost = "\(host)"
+                let rawHost = "\(host)"
+                var resolvedHost = rawHost
                 if let percentIndex = resolvedHost.firstIndex(of: "%") {
                     resolvedHost = String(resolvedHost[..<percentIndex])
                 }
                 let portVal = port.rawValue
-                let directIPs: [String]
-                if resolvedHost.contains(":") || resolvedHost.filter({ $0 == "." }).count == 3 {
-                    directIPs = [resolvedHost]
-                } else {
-                    directIPs = Self.resolveHostToIPs(resolvedHost)
+                var directIPs: [String] = []
+                if rawHost.contains(":") {
+                    directIPs.append(rawHost)
+                }
+                if !directIPs.contains(resolvedHost) {
+                    if resolvedHost.contains(":") || resolvedHost.filter({ $0 == "." }).count == 3 {
+                        directIPs.append(resolvedHost)
+                    } else {
+                        directIPs.append(contentsOf: Self.resolveHostToIPs(resolvedHost))
+                    }
                 }
                 
                 self.finishResolution(
@@ -484,6 +491,15 @@ final class BonjourDiscoveryManager: NSObject, ObservableObject, NetServiceDeleg
                 }
             }
             
+            // If this is the local device (lo0 present), append local interface IPs (including IPv6 link-local on Wi-Fi)
+            if service.interfaces.contains(where: { $0.type == .loopback }) {
+                for localIp in Self.localInterfaceAddresses(matchingInterfaces: service.interfaces) {
+                    if !allAddresses.contains(localIp) {
+                        allAddresses.append(localIp)
+                    }
+                }
+            }
+            
             await MainActor.run {
                 guard self.isResolving, self.resolvedService == nil else { return }
                 
@@ -584,7 +600,9 @@ final class BonjourDiscoveryManager: NSObject, ObservableObject, NetServiceDeleg
         Task { @MainActor in
             guard let service = self.currentResolvingService else { return }
             let finalRecords = self.activeTxtRecords.isEmpty ? txtRecords : self.activeTxtRecords
-            debugLog("[BonjourDiscovery] Resolved '\(sender.name)' -> \(cleanHost):\(port), addresses: \(resolvedAddresses.count), txt: \(finalRecords.count)")
+            let addrsSummary = resolvedAddresses.joined(separator: ", ")
+            let txtSummary = finalRecords.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
+            debugLog("[BonjourDiscovery] Resolved '\(sender.name)' -> \(cleanHost):\(port) | IPs: [\(addrsSummary)] | TXT: [\(txtSummary)]")
             self.finishResolution(
                 service: service,
                 hostname: cleanHost.isEmpty ? service.name : cleanHost,
@@ -640,9 +658,13 @@ final class BonjourDiscoveryManager: NSObject, ObservableObject, NetServiceDeleg
     
     static func resolveHostToIPs(_ host: String) -> [String] {
         var addresses: [String] = []
-        var results: UnsafeMutablePointer<addrinfo>?
+        var hints = addrinfo()
+        hints.ai_family = AF_UNSPEC
+        hints.ai_socktype = SOCK_STREAM
+        hints.ai_flags = AI_DEFAULT
         
-        let rc = getaddrinfo(host, nil, nil, &results)
+        var results: UnsafeMutablePointer<addrinfo>?
+        let rc = getaddrinfo(host, nil, &hints, &results)
         if rc == 0, let firstAddr = results {
             var ptr: UnsafeMutablePointer<addrinfo>? = firstAddr
             while ptr != nil {
@@ -668,6 +690,26 @@ final class BonjourDiscoveryManager: NSObject, ObservableObject, NetServiceDeleg
                 ptr = ptr?.pointee.ai_next
             }
             freeaddrinfo(results)
+        }
+        return addresses
+    }
+    
+    static func localInterfaceAddresses(matchingInterfaces: [NWInterface]? = nil) -> [String] {
+        let targetNames: Set<String>? = matchingInterfaces.map { Set($0.map { $0.name.lowercased() }) }
+        let interfaces = Minimuxer.shared().network.activeInterfaces
+        
+        var addresses: [String] = []
+        for iface in interfaces {
+            let lowerName = iface.name.lowercased()
+            let shouldInclude = targetNames?.contains(lowerName) ?? (lowerName.hasPrefix("en") || lowerName.hasPrefix("lo"))
+            guard shouldInclude else { continue }
+            
+            if !iface.ip.isEmpty && !addresses.contains(iface.ip) {
+                addresses.append(iface.ip)
+            }
+            if let v6 = iface.ipv6, !v6.isEmpty && !addresses.contains(v6) {
+                addresses.append(v6)
+            }
         }
         return addresses
     }

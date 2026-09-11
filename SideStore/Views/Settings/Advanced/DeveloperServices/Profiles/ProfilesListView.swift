@@ -14,10 +14,7 @@ struct ProfilesListView: View {
     weak var presentingViewController: UIViewController?
 
     @State private var searchText = ""
-    @State private var showCreateTypePrompt = false
-    @State private var showXcodeDownloadSheet = false
-    @State private var showManualCreateSheet = false
-    @State private var selectedAppIDForDownload: ALTAppID? = nil
+    @State private var showCreateProfileSheet = false
 
     @State private var profileToDelete: ALTListedProvisioningProfile? = nil
     @State private var showDeleteConfirmation = false
@@ -103,11 +100,7 @@ struct ProfilesListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 SwiftUI.Button {
-                    if viewModel.isPaidAccount {
-                        showCreateTypePrompt = true
-                    } else {
-                        showXcodeDownloadSheet = true
-                    }
+                    showCreateProfileSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -116,59 +109,7 @@ struct ProfilesListView: View {
         .refreshable {
             await viewModel.fetchProfiles(presentingViewController: presentingViewController, isPullToRefresh: true)
         }
-        .confirmationDialog("Create Provisioning Profile", isPresented: $showCreateTypePrompt, titleVisibility: .visible) {
-            SwiftUI.Button("Xcode Managed (Automatic)") {
-                showXcodeDownloadSheet = true
-            }
-            SwiftUI.Button("Manual Profile (Custom)") {
-                showManualCreateSheet = true
-            }
-            SwiftUI.Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Choose whether to let Apple generate an Xcode-managed team profile or configure a custom manual profile.")
-        }
-        .sheet(isPresented: $showXcodeDownloadSheet) {
-            NavigationView {
-                List {
-                    Section(header: Text("Select App ID to Generate Team Profile"), footer: Text("Apple will generate an Xcode-managed team profile with all active certificates and devices.")) {
-                        if viewModel.appIDs.isEmpty {
-                            Text("No App IDs available. Register an App ID first.")
-                                .foregroundColor(.secondary)
-                                .font(.subheadline)
-                        } else {
-                            ForEach(viewModel.appIDs, id: \.identifier) { appID in
-                                SwiftUI.Button {
-                                    Task {
-                                        showXcodeDownloadSheet = false
-                                        _ = await viewModel.downloadProfile(for: appID, presentingViewController: presentingViewController)
-                                    }
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(appID.name.isEmpty ? "App ID" : appID.name)
-                                            .font(.headline)
-                                            .foregroundColor(.primary)
-                                        Text(appID.bundleIdentifier)
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .padding(.vertical, 2)
-                                }
-                            }
-                        }
-                    }
-                }
-                #if !os(tvOS)
-                .listStyle(InsetGroupedListStyle())
-                #else
-                .listStyle(GroupedListStyle())
-                #endif
-                .navigationTitle("Xcode Team Profile")
-                .navigationBarItems(trailing: SwiftUI.Button("Cancel") {
-                    showXcodeDownloadSheet = false
-                })
-            }
-        }
-        .sheet(isPresented: $showManualCreateSheet) {
+        .sheet(isPresented: $showCreateProfileSheet) {
             CreateManualProfileView(viewModel: viewModel, presentingViewController: presentingViewController)
         }
         .alert(isPresented: $showDeleteConfirmation) {
@@ -242,6 +183,16 @@ private struct ProfileRow: View {
                         .foregroundColor(.secondary)
                 }
                 Spacer()
+                if let type = profile.profileType {
+                    Text(type.rawValue.uppercased())
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.12))
+                        .foregroundColor(.secondary)
+                        .cornerRadius(6)
+                }
                 if let isTeam = profile.isTeamProfile {
                     Text(isTeam ? NSLocalizedString("Xcode Managed", comment: "") : NSLocalizedString("Manual", comment: ""))
                         .font(.caption2)

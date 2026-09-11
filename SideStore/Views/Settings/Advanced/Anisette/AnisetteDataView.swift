@@ -8,6 +8,11 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+private extension Color {
+    static let settingsRowBackground = Color.white.opacity(0.15)
+    static let settingsDivider = Color.white.opacity(0.15)
+}
+
 @MainActor
 class AnisetteDataViewModel: ObservableObject {
     @Published var clientInfo: String = ""
@@ -16,6 +21,9 @@ class AnisetteDataViewModel: ObservableObject {
     @Published var customLocalUserID: String = ""
     @Published var customLocale: String = ""
     @Published var customTimeZone: String = ""
+    @Published var customSerialNumber: String = ""
+    @Published var customRoutingInfo: String = ""
+    @Published var customXcodeVersion: String = ""
     
     @Published var isOfflineMode: Bool = false
     @Published var isLoading: Bool = false
@@ -39,6 +47,9 @@ class AnisetteDataViewModel: ObservableObject {
         customLocalUserID = config.customLocalUserID ?? ""
         customLocale = config.customLocale ?? ""
         customTimeZone = config.customTimeZone ?? ""
+        customSerialNumber = config.customSerialNumber ?? ""
+        customRoutingInfo = config.customRoutingInfo ?? ""
+        customXcodeVersion = config.customXcodeVersion ?? ""
         
         updateRawEditableJSON()
         
@@ -58,6 +69,9 @@ class AnisetteDataViewModel: ObservableObject {
         if !customLocalUserID.isEmpty { dict["customLocalUserID"] = customLocalUserID }
         if !customLocale.isEmpty { dict["customLocale"] = customLocale }
         if !customTimeZone.isEmpty { dict["customTimeZone"] = customTimeZone }
+        if !customSerialNumber.isEmpty { dict["customSerialNumber"] = customSerialNumber }
+        if !customRoutingInfo.isEmpty { dict["customRoutingInfo"] = customRoutingInfo }
+        if !customXcodeVersion.isEmpty { dict["customXcodeVersion"] = customXcodeVersion }
         
         if let data = try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]),
            let str = String(data: data, encoding: .utf8) {
@@ -73,7 +87,10 @@ class AnisetteDataViewModel: ObservableObject {
             customDeviceID: customDeviceID.isEmpty ? nil : customDeviceID,
             customLocalUserID: customLocalUserID.isEmpty ? nil : customLocalUserID,
             customLocale: customLocale.isEmpty ? nil : customLocale,
-            customTimeZone: customTimeZone.isEmpty ? nil : customTimeZone
+            customTimeZone: customTimeZone.isEmpty ? nil : customTimeZone,
+            customXcodeVersion: customXcodeVersion.isEmpty ? nil : customXcodeVersion,
+            customSerialNumber: customSerialNumber.isEmpty ? nil : customSerialNumber,
+            customRoutingInfo: customRoutingInfo.isEmpty ? nil : customRoutingInfo
         )
         await AnisetteConfigManager.shared.saveConfig(config)
         updateRawEditableJSON()
@@ -95,6 +112,9 @@ class AnisetteDataViewModel: ObservableObject {
             customLocalUserID = config.customLocalUserID ?? ""
             customLocale = config.customLocale ?? ""
             customTimeZone = config.customTimeZone ?? ""
+            customSerialNumber = config.customSerialNumber ?? ""
+            customRoutingInfo = config.customRoutingInfo ?? ""
+            customXcodeVersion = config.customXcodeVersion ?? ""
             
             await AnisetteConfigManager.shared.saveConfig(config)
             showToast(text: "JSON configuration saved successfully!")
@@ -111,6 +131,9 @@ class AnisetteDataViewModel: ObservableObject {
         customLocalUserID = ""
         customLocale = ""
         customTimeZone = ""
+        customSerialNumber = ""
+        customRoutingInfo = ""
+        customXcodeVersion = ""
         updateRawEditableJSON()
         await save()
         showToast(text: "Reset to default configuration.")
@@ -135,6 +158,9 @@ class AnisetteDataViewModel: ObservableObject {
             customLocalUserID = config.customLocalUserID ?? ""
             customLocale = config.customLocale ?? ""
             customTimeZone = config.customTimeZone ?? ""
+            customSerialNumber = config.customSerialNumber ?? ""
+            customRoutingInfo = config.customRoutingInfo ?? ""
+            customXcodeVersion = config.customXcodeVersion ?? ""
             updateRawEditableJSON()
             showToast(text: "Imported successfully", detailText: url.lastPathComponent)
         } catch {
@@ -173,10 +199,8 @@ class AnisetteDataViewModel: ObservableObject {
                 throw NSError(domain: "AnisetteDataViewModel", code: -2, userInfo: [NSLocalizedDescriptionKey: "Server response is not a valid JSON."])
             }
             
-            // Save the server returned headers
             await AnisetteConfigManager.shared.saveServerHeaders(json)
             
-            // Refresh the server headers display
             let serverHeaders = await AnisetteConfigManager.shared.loadServerHeaders()
             if let data = try? JSONSerialization.data(withJSONObject: serverHeaders, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]),
                let str = String(data: data, encoding: .utf8) {
@@ -196,7 +220,6 @@ class AnisetteDataViewModel: ObservableObject {
             return
         }
         
-        // Casing helper to lookup keys flexibly in both camelCase and snake_case
         func getValue(forKeys keys: [String]) -> String? {
             for key in keys {
                 if let val = serverHeaders[key] {
@@ -224,8 +247,16 @@ class AnisetteDataViewModel: ObservableObject {
         if let val = getValue(forKeys: ["custom_time_zone", "customTimeZone", "X-Apple-I-TimeZone", "timeZone"]) {
             customTimeZone = val
         }
+        if let val = getValue(forKeys: ["custom_serial_number", "customSerialNumber", "X-Apple-I-SRL-NO", "serialNumber"]) {
+            customSerialNumber = val
+        }
+        if let val = getValue(forKeys: ["custom_routing_info", "customRoutingInfo", "X-Apple-I-MD-RINFO", "routingInfo"]) {
+            customRoutingInfo = val
+        }
+        if let val = getValue(forKeys: ["custom_xcode_version", "customXcodeVersion", "X-Xcode-Version", "xcodeVersion"]) {
+            customXcodeVersion = val
+        }
         
-        // Save and update
         await save()
         showToast(text: "Loaded fetched data into overrides!")
     }
@@ -250,340 +281,415 @@ struct AnisetteDataView: View {
     @StateObject private var viewModel = AnisetteDataViewModel()
     @State private var showingResetAlert = false
     @State private var showingFileImporter = false
-    @State private var showingShareSheet = false
-    @State private var exportFileURL: URL? = nil
+    @State private var showingServerHeaders = false
     @State private var isCopiedServer = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            Picker("View Mode", selection: $viewModel.viewMode) {
-                Text("Interactive").tag(0)
-                Text("Raw JSON").tag(1)
-            }
-            .pickerStyle(.segmented)
-            .padding()
-            .background(Color.anisetteGroupedBackground)
-            
-            List {
-                // Section 1: Operational Mode
-                Section {
-                    Toggle(isOn: $viewModel.isOfflineMode) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Use Offline Config File")
-                                .font(.body)
-                            Text("Bypasses fetching client info from servers")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Picker("View Mode", selection: $viewModel.viewMode) {
+                    Text("Interactive").tag(0)
+                    Text("Raw JSON").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+                
+                if viewModel.viewMode == 0 {
+                    // SECTION 1: PRIMARY CLIENT HEADERS
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("PRIMARY CLIENT HEADERS")
+                        
+                        VStack(spacing: 0) {
+                            headerFieldRow(
+                                title: "Client Info",
+                                headerKey: "X-Mme-Client-Info",
+                                text: $viewModel.clientInfo,
+                                placeholder: AppConstants.Anisette.defaultClientInfo,
+                                isMultiline: true
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "User Agent",
+                                headerKey: "User-Agent",
+                                text: $viewModel.userAgent,
+                                placeholder: AppConstants.Anisette.defaultUserAgent,
+                                isMultiline: true
+                            )
                         }
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
                     }
-                    .onChange(of: viewModel.isOfflineMode) { _ in
+                    
+                    // SECTION 2: DEVICE & IDENTITY
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("DEVICE & IDENTITY")
+                        
+                        VStack(spacing: 0) {
+                            headerFieldRow(
+                                title: "Device Identifier",
+                                headerKey: "X-Mme-Device-Id",
+                                text: $viewModel.customDeviceID,
+                                placeholder: "System Generated Device UUID"
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "Local User ID",
+                                headerKey: "X-Apple-I-MD-LU",
+                                text: $viewModel.customLocalUserID,
+                                placeholder: "0"
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "Serial Number",
+                                headerKey: "X-Apple-I-SRL-NO",
+                                text: $viewModel.customSerialNumber,
+                                placeholder: AppConstants.Anisette.defaultDeviceSerialNumber
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "Routing Info",
+                                headerKey: "X-Apple-I-MD-RINFO",
+                                text: $viewModel.customRoutingInfo,
+                                placeholder: "17106176"
+                            )
+                        }
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
+                    }
+                    
+                    // SECTION 3: ENVIRONMENT & LOCALIZATION
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("ENVIRONMENT & LOCALIZATION")
+                        
+                        VStack(spacing: 0) {
+                            headerFieldRow(
+                                title: "Locale",
+                                headerKey: "X-Apple-Locale",
+                                text: $viewModel.customLocale,
+                                placeholder: "en_US"
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "Time Zone",
+                                headerKey: "X-Apple-I-TimeZone",
+                                text: $viewModel.customTimeZone,
+                                placeholder: "e.g. UTC, EDT",
+                                autocapitalization: .allCharacters
+                            )
+                            
+                            divider
+                            
+                            headerFieldRow(
+                                title: "Xcode Version",
+                                headerKey: "X-Xcode-Version",
+                                text: $viewModel.customXcodeVersion,
+                                placeholder: "26.0 (26A242)"
+                            )
+                        }
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
+                    }
+                    
+                    // SECTION 4: DYNAMIC TOKENS (INFORMATIONAL)
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("DYNAMIC CRYPTOGRAPHIC TOKENS")
+                        
+                        VStack(spacing: 0) {
+                            infoTokenRow(
+                                title: "One-Time Password (OTP)",
+                                headerKey: "X-Apple-I-MD",
+                                subtitle: "Signed HMAC token dynamically calculated by ADI engine per request"
+                            )
+                            
+                            divider
+                            
+                            infoTokenRow(
+                                title: "Machine ID",
+                                headerKey: "X-Apple-I-MD-M",
+                                subtitle: "Hardware identifier computed from adi.pb and device identity"
+                            )
+                            
+                            divider
+                            
+                            infoTokenRow(
+                                title: "Client Time",
+                                headerKey: "X-Apple-I-Client-Time",
+                                subtitle: "ISO8601 UTC timestamp locked to OTP generation time"
+                            )
+                        }
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
+                    }
+                    
+                    // SAVE OVERRIDES BUTTON
+                    SwiftUI.Button {
                         Task {
                             await viewModel.save()
                         }
-                    }
-                } header: {
-                    Text("Operational Mode")
-                } footer: {
-                    Text("When enabled, SideStore uses the locally saved JSON configuration parameters for all authentication headers without making client_info requests to servers.")
-                }
-                
-                if viewModel.viewMode == 0 {
-                    // SECTION 2: INTERACTIVE CUSTOMIZATION
-                    Section {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Client Info (X-Mme-Client-Info)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            #if !os(tvOS)
-                            TextEditor(text: $viewModel.clientInfo)
-                                .font(.system(.caption, design: .monospaced))
-                                .frame(minHeight: 80)
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #else
-                            TextField("Client Info", text: $viewModel.clientInfo)
-                                .font(.system(.caption, design: .monospaced))
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #endif
-                        }
-                        .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("User Agent")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            #if !os(tvOS)
-                            TextEditor(text: $viewModel.userAgent)
-                                .font(.system(.caption, design: .monospaced))
-                                .frame(minHeight: 80)
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #else
-                            TextField("User Agent", text: $viewModel.userAgent)
-                                .font(.system(.caption, design: .monospaced))
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #endif
-                        }
-                        .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Device ID Override (Optional)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            TextField("System Generated", text: $viewModel.customDeviceID)
-                                .font(.system(.caption, design: .monospaced))
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .padding(8)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                        }
-                        .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Local User ID Override (Optional)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            TextField("System Generated", text: $viewModel.customLocalUserID)
-                                .font(.system(.caption, design: .monospaced))
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .padding(8)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                        }
-                        .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Locale Override (Optional)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            TextField("e.g. en_US", text: $viewModel.customLocale)
-                                .font(.system(.caption, design: .monospaced))
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .padding(8)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                        }
-                        .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Time Zone Override (Optional)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            TextField("e.g. UTC, GMT", text: $viewModel.customTimeZone)
-                                .font(.system(.caption, design: .monospaced))
-                                .autocapitalization(.allCharacters)
-                                .disableAutocorrection(true)
-                                .padding(8)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                        }
-                        .padding(.vertical, 4)
-                        
-                        SwiftUI.Button {
-                            Task {
-                                await viewModel.save()
-                            }
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Save Overrides")
-                                    .font(.headline)
-                                Spacer()
-                            }
-                        }
-                        .disabled(viewModel.clientInfo.isEmpty || viewModel.userAgent.isEmpty)
-                    } header: {
-                        Text("Custom Parameters")
-                    }
-                } else {
-                    // SECTION 3: RAW JSON VIEW
-                    Section {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Configuration JSON (Editable)")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
-                            #if !os(tvOS)
-                            TextEditor(text: $viewModel.rawEditableJSON)
-                                .font(.system(.caption, design: .monospaced))
-                                .frame(minHeight: 300)
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #else
-                            TextField("Raw JSON", text: $viewModel.rawEditableJSON)
-                                .font(.system(.caption, design: .monospaced))
-                                .padding(4)
-                                .background(Color.anisetteSecondaryGroupedBackground)
-                                .cornerRadius(6)
-                            #endif
-                        }
-                        .padding(.vertical, 4)
-                        
-                        SwiftUI.Button {
-                            Task {
-                                await viewModel.saveRawJSON()
-                            }
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Save Raw JSON")
-                                    .font(.headline)
-                                Spacer()
-                            }
-                        }
-                        .disabled(viewModel.rawEditableJSON.isEmpty)
-                    } header: {
-                        Text("Raw Configuration JSON")
-                    }
-                }
-                
-                // SECTION 4: SERVER RETURNED HEADERS (READ-ONLY)
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    } label: {
                         HStack {
-                            Text("Last Server Response JSON")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            
                             Spacer()
+                            Label("Save Overrides", systemImage: "checkmark.circle.fill")
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }
+                        .frame(height: 50)
+                        .background(Color.accentColor)
+                        .cornerRadius(14)
+                    }
+                    .disabled(viewModel.clientInfo.isEmpty || viewModel.userAgent.isEmpty)
+                } else {
+                    // RAW JSON VIEW
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("RAW CONFIGURATION JSON")
+                        
+                        VStack(spacing: 12) {
+                            TextEditor(text: $viewModel.rawEditableJSON)
+                                .font(.system(size: 12, design: .monospaced))
+                                .foregroundColor(.white)
+                                .frame(minHeight: 320)
+                                .padding(8)
+                                .background(Color.white.opacity(0.06))
+                                .cornerRadius(10)
                             
                             SwiftUI.Button {
-                                #if !os(tvOS)
-                                UIPasteboard.general.string = viewModel.serverReturnedHeadersJSON
-                                #endif
-                                withAnimation {
-                                    isCopiedServer = true
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    withAnimation {
-                                        isCopiedServer = false
-                                    }
+                                Task {
+                                    await viewModel.saveRawJSON()
                                 }
                             } label: {
-                                Image(systemName: isCopiedServer ? "checkmark" : "doc.on.doc")
-                                    .font(.footnote)
-                                    .foregroundColor(isCopiedServer ? .green : .accentColor)
+                                HStack {
+                                    Spacer()
+                                    Label("Save Raw JSON", systemImage: "square.and.arrow.down.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                }
+                                .frame(height: 48)
+                                .background(Color.accentColor)
+                                .cornerRadius(12)
                             }
+                            .disabled(viewModel.rawEditableJSON.isEmpty)
                         }
-                        
-                        ScrollView(.horizontal, showsIndicators: true) {
-                            Text(viewModel.serverReturnedHeadersJSON)
-                                .font(.system(size: 11, design: .monospaced))
-                                .padding(8)
-                                .background(Color.anisetteSecondaryBackground)
-                                .cornerRadius(6)
-                        }
+                        .padding(16)
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
                     }
-                    .padding(.vertical, 4)
-                    
-                    SwiftUI.Button {
-                        Task {
-                            await viewModel.loadServerHeadersIntoOverrides()
-                        }
-                    } label: {
-                        Label("Load Fetched Data into Overrides", systemImage: "square.and.arrow.down.on.square")
-                    }
-                    .disabled(viewModel.serverReturnedHeadersJSON == "{}" || viewModel.serverReturnedHeadersJSON.isEmpty)
-                } header: {
-                    Text("Server Returned Headers (Read-Only)")
-                } footer: {
-                    Text("Displays raw headers cached from successful anisette server handshakes. Use this to copy exact parameters sent by client/server.")
                 }
                 
-                // SECTION 5: ACTIONS
-                Section {
-                    SwiftUI.Button {
-                        Task {
-                            await viewModel.fetchFreshFromServer()
-                        }
-                    } label: {
-                        Label("Fetch Fresh from Active Server", systemImage: "arrow.clockwise")
-                    }
-                    
-                    SwiftUI.Button {
-                        #if !os(tvOS)
-                        showingFileImporter = true
-                        #else
-                        if let topVC = UIApplication.shared.topViewController() {
-                            TVWebFileTransferManager.shared.startImport(
-                                acceptedExtensions: ["json"],
-                                title: "Import Anisette Client Config JSON",
-                                presentingVC: topVC
-                            ) { fileURL in
-                                guard let fileURL = fileURL else { return }
-                                Task {
-                                    await viewModel.importJSON(url: fileURL)
+                // SECTION: REMOTE SERVER SYNC (ONLY IN REMOTE MODE)
+                if !UserDefaults.standard.useOnDeviceAnisette {
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("REMOTE SERVER SYNC")
+                        
+                        VStack(spacing: 0) {
+                            DisclosureGroup(isExpanded: $showingServerHeaders) {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack {
+                                        Text(String(format: NSLocalizedString("Server: %@", comment: ""), URL(string: UserDefaults.standard.menuAnisetteURL)?.host ?? NSLocalizedString("Active Server", comment: "")))
+                                            .font(.caption)
+                                            .foregroundColor(Color.white.opacity(0.6))
+                                        Spacer()
+                                        SwiftUI.Button {
+                                            #if !os(tvOS)
+                                            UIPasteboard.general.string = viewModel.serverReturnedHeadersJSON
+                                            #endif
+                                            withAnimation { isCopiedServer = true }
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                                withAnimation { isCopiedServer = false }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: isCopiedServer ? "checkmark" : "doc.on.doc")
+                                                Text(isCopiedServer ? NSLocalizedString("Copied", comment: "") : NSLocalizedString("Copy", comment: ""))
+                                            }
+                                            .font(.footnote.weight(.semibold))
+                                            .foregroundColor(isCopiedServer ? .green : .accentColor)
+                                        }
+                                    }
+                                    
+                                    ScrollView(.horizontal, showsIndicators: true) {
+                                        Text(viewModel.serverReturnedHeadersJSON)
+                                            .font(.system(size: 11, design: .monospaced))
+                                            .foregroundColor(.white)
+                                            .padding(10)
+                                            .background(Color.black.opacity(0.3))
+                                            .cornerRadius(8)
+                                    }
+                                    
+                                    SwiftUI.Button {
+                                        Task {
+                                            await viewModel.loadServerHeadersIntoOverrides()
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Spacer()
+                                            Label("Save as Overrides", systemImage: "square.and.arrow.down.on.square")
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                        }
+                                        .frame(height: 44)
+                                        .background(Color.white.opacity(0.12))
+                                        .cornerRadius(10)
+                                    }
+                                    .disabled(viewModel.serverReturnedHeadersJSON == "{}" || viewModel.serverReturnedHeadersJSON.isEmpty)
+                                }
+                                .padding(.top, 8)
+                            } label: {
+                                HStack {
+                                    Label("Remote Server Sync", systemImage: "network")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    SwiftUI.Button {
+                                        Task {
+                                            await viewModel.fetchFreshFromServer()
+                                            withAnimation { showingServerHeaders = true }
+                                        }
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "arrow.clockwise")
+                                            Text("Fetch")
+                                        }
+                                        .font(.footnote.weight(.semibold))
+                                        .foregroundColor(.accentColor)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(Color.white.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+                                    .buttonStyle(.borderless)
                                 }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
                         }
-                        #endif
-                    } label: {
-                        Label("Import Config JSON", systemImage: "square.and.arrow.down")
+                        .background(Color.settingsRowBackground)
+                        .cornerRadius(14)
                     }
+                }
+                
+                // SECTION: ACTIONS
+                VStack(alignment: .leading, spacing: 8) {
+                    sectionHeader("ACTIONS")
                     
-                    SwiftUI.Button {
-                        Task {
-                            if let url = await viewModel.exportJSON() {
-                                #if !os(tvOS)
-                                exportFileURL = url
-                                showingShareSheet = true
-                                #else
-                                if let topVC = UIApplication.shared.topViewController() {
-                                    TVWebFileTransferManager.shared.startExport(
-                                        fileURL: url,
-                                        title: "Export Anisette Client Config JSON",
-                                        presentingVC: topVC
-                                    )
+                    VStack(spacing: 0) {
+                        SwiftUI.Button {
+                            #if !os(tvOS)
+                            showingFileImporter = true
+                            #else
+                            if let topVC = UIApplication.shared.topViewController() {
+                                TVWebFileTransferManager.shared.startImport(
+                                    acceptedExtensions: ["json"],
+                                    title: "Import Anisette Client Config JSON",
+                                    presentingVC: topVC
+                                ) { fileURL in
+                                    guard let fileURL = fileURL else { return }
+                                    Task {
+                                        await viewModel.importJSON(url: fileURL)
+                                    }
                                 }
-                                #endif
                             }
+                            #endif
+                        } label: {
+                            HStack {
+                                Label("Import Config JSON", systemImage: "square.and.arrow.down")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
                         }
-                    } label: {
-                        Label("Export Config JSON", systemImage: "square.and.arrow.up")
-                    }
-                    
-                    SwiftUI.Button(role: .destructive) {
-                        showingResetAlert = true
-                    } label: {
-                        Label("Reset to Defaults", systemImage: "arrow.circlepath")
-                            .foregroundColor(.red)
-                    }
-                    .alert("Reset to Defaults?", isPresented: $showingResetAlert) {
-                        SwiftUI.Button("Reset", role: .destructive) {
+                        
+                        divider
+                        
+                        SwiftUI.Button {
                             Task {
-                                await viewModel.reset()
+                                if let url = await viewModel.exportJSON() {
+                                    #if !os(tvOS)
+                                    guard let topVC = UIApplication.shared.topViewController() else { return }
+                                    let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                                    if let popover = activityVC.popoverPresentationController {
+                                        popover.sourceView = topVC.view
+                                        popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
+                                        popover.permittedArrowDirections = []
+                                    }
+                                    topVC.present(activityVC, animated: true)
+                                    #else
+                                    if let topVC = UIApplication.shared.topViewController() {
+                                        TVWebFileTransferManager.shared.startExport(
+                                            fileURL: url,
+                                            title: "Export Anisette Client Config JSON",
+                                            presentingVC: topVC
+                                        )
+                                    }
+                                    #endif
+                                }
                             }
+                        } label: {
+                            HStack {
+                                Label("Export Config JSON", systemImage: "square.and.arrow.up")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
                         }
-                        SwiftUI.Button("Cancel", role: .cancel) {}
-                    } message: {
-                        Text("This will restore the client headers to the default recommended macOS values.")
+                        
+                        divider
+                        
+                        SwiftUI.Button(role: .destructive) {
+                            showingResetAlert = true
+                        } label: {
+                            HStack {
+                                Label("Reset to Defaults", systemImage: "arrow.circlepath")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.red)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
+                        .alert("Reset to Defaults?", isPresented: $showingResetAlert) {
+                            SwiftUI.Button("Reset", role: .destructive) {
+                                Task {
+                                    await viewModel.reset()
+                                }
+                            }
+                            SwiftUI.Button("Cancel", role: .cancel) {}
+                        } message: {
+                            Text("This will restore the client headers to the default recommended values.")
+                        }
                     }
-                } header: {
-                    Text("Actions")
+                    .background(Color.settingsRowBackground)
+                    .cornerRadius(14)
                 }
             }
-            #if !os(tvOS)
-            .listStyle(.insetGrouped)
-            #else
-            .listStyle(.grouped)
-            #endif
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 32)
         }
+        .background(Color(uiColor: .settingsBackground).ignoresSafeArea())
         .navigationTitle("Client Config")
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -593,7 +699,7 @@ struct AnisetteDataView: View {
                 if viewModel.isLoading {
                     ProgressView()
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.anisetteSystemBackground))
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.settingsRowBackground))
                         .shadow(radius: 10)
                 }
             }
@@ -615,45 +721,92 @@ struct AnisetteDataView: View {
                 viewModel.showToast(text: "File Selection Failed", error: error)
             }
         }
-        .sheet(isPresented: $showingShareSheet) {
-            if let fileURL = exportFileURL {
-                ActivityViewController(activityItems: [fileURL])
+        #endif
+    }
+    
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(Color.white.opacity(0.6))
+            .padding(.horizontal, 16)
+    }
+    
+    private func headerFieldRow(
+        title: String,
+        headerKey: String,
+        text: Binding<String>,
+        placeholder: String,
+        isMultiline: Bool = false,
+        autocapitalization: UITextAutocapitalizationType = .none
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                Spacer()
+                Text(headerKey)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(Color.white.opacity(0.45))
+            }
+            
+            if isMultiline {
+                #if !os(tvOS)
+                TextEditor(text: text)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(.white)
+                    .frame(minHeight: 64)
+                    .padding(6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(8)
+                #else
+                TextField(placeholder, text: text)
+                    .font(.system(size: 13, design: .monospaced))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(8)
+                #endif
+            } else {
+                TextField(placeholder, text: text)
+                    .font(.system(size: 13, design: .monospaced))
+                    .foregroundColor(.white)
+                    .autocapitalization(autocapitalization)
+                    .disableAutocorrection(true)
+                    .padding(8)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(8)
             }
         }
-        #endif
-    }
-}
-
-private extension Color {
-    static var anisetteGroupedBackground: Color {
-        #if !os(tvOS)
-        Color(.systemGroupedBackground)
-        #else
-        Color.clear
-        #endif
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
     
-    static var anisetteSecondaryGroupedBackground: Color {
-        #if !os(tvOS)
-        Color(.secondarySystemGroupedBackground)
-        #else
-        Color.white.opacity(0.1)
-        #endif
+    private func infoTokenRow(title: String, headerKey: String, subtitle: String) -> some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack {
+                    Text(title)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text(headerKey)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(Color.white.opacity(0.45))
+                }
+                Text(subtitle)
+                    .font(.system(size: 12))
+                    .foregroundColor(Color.white.opacity(0.55))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
     }
     
-    static var anisetteSecondaryBackground: Color {
-        #if !os(tvOS)
-        Color(.secondarySystemBackground)
-        #else
-        Color.white.opacity(0.1)
-        #endif
-    }
-    
-    static var anisetteSystemBackground: Color {
-        #if !os(tvOS)
-        Color(.systemBackground)
-        #else
-        Color.black
-        #endif
+    private var divider: some View {
+        Rectangle()
+            .fill(Color.settingsDivider)
+            .frame(height: 0.5)
+            .padding(.horizontal, 16)
     }
 }

@@ -7,7 +7,7 @@
       "location" : "https://github.com/mahee96/AnisetteKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "9d8ad7050e67a76fa40025d46e38ae6aed6a112e"
+        "revision" : "1f5a7e36553cc865b873f222b87a6486c0bcc7bf"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/mahee96/CodeSignKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "33b4f736f018ad4dfcd2e1d83590b9a5d674ab47"
+        "revision" : "d0c67710fda9a2646b9e829cb2cf443892728371"
       }
     },
     {

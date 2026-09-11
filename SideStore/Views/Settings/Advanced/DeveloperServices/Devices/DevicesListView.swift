@@ -29,7 +29,7 @@ struct DevicesListView: View {
     @State private var showRegisterSheet = false
     @State private var newDeviceName = ""
     @State private var newDeviceUDID = ""
-    @State private var selectedDeviceType: ALTDeviceType = .iphone
+    @State private var selectedDeviceType: ALTDeviceType = DeveloperPortalProxy.currentDeviceType
     @State private var isFetchingUDID = false
 
     @State private var deviceToEdit: ALTDevice? = nil

@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import Network
 
 enum ServiceTypeSortOption: String, CaseIterable {
     case nameAscending = "Name (A to Z)"
@@ -620,5 +621,117 @@ final class BonjourDiscoveryViewModel: ObservableObject {
         }
         
         return records
+    }
+    
+    static func nameForInterfaceType(_ type: NWInterface.InterfaceType) -> String {
+        switch type {
+        case .wifi:             return "Wi-Fi"
+        case .loopback:         return "Loopback"
+        case .wiredEthernet:    return "Ethernet"
+        case .cellular:         return "Cellular"
+        default:                return "\(type)"
+        }
+    }
+    
+    func logDetails(for service: DiscoveredService, trigger: String, resolved: ResolvedServiceInfo? = nil) {
+        let activeResolved = resolved ?? self.resolvedService
+        let isLocal = service.interfaces.contains { $0.type == .loopback }
+        let localityStr = isLocal ? "LOCAL DEVICE (This iPhone / iPad — lo0 loopback present)" : "REMOTE DEVICE (Network peer — external only)"
+        let friendlyType = BonjourDiscoveryManager.friendlyName(for: service.type) ?? "Unknown Type"
+        
+        var lines: [String] = []
+        lines.append("===================================================")
+        lines.append("[ServiceDetailView] [\(trigger)] Details: '\(service.name)'")
+        lines.append("===================================================")
+        lines.append("• Name:       \(service.name)")
+        lines.append("• Type:       \(service.type) (\(friendlyType))")
+        lines.append("• Domain:     \(service.domain)")
+        lines.append("• Locality:   \(localityStr)")
+        
+        let ifaceDesc = service.interfaces.map { "\($0.name) (idx: \($0.index), type: \(Self.nameForInterfaceType($0.type)))" }.joined(separator: ", ")
+        lines.append("• Interfaces (\(service.interfaces.count)): [\(ifaceDesc.isEmpty ? "none" : ifaceDesc)]")
+        
+        if service.txtRecords.isEmpty {
+            lines.append("• Browse TXT: (none)")
+        } else {
+            lines.append("• Browse TXT (\(service.txtRecords.count)):")
+            for record in service.txtRecords {
+                lines.append("    - \(record.key) = \(record.value)")
+            }
+        }
+        
+        if let res = activeResolved {
+            lines.append("---------------------------------------------------")
+            lines.append("• Resolution: RESOLVED")
+            lines.append("• Hostname:   \(res.hostname)")
+            lines.append("• Port:       \(res.port) (\(Self.portCategory(for: res.port)))")
+            lines.append("• Addresses (\(res.addresses.count)):")
+            if res.addresses.isEmpty {
+                lines.append("    (No IP addresses resolved)")
+            } else {
+                for addr in res.addresses {
+                    let isV6 = addr.contains(":")
+                    let tag: String
+                    if isV6 {
+                        if addr.lowercased().hasPrefix("fe80:") {
+                            tag = "IPv6 Link-Local"
+                        } else if addr == "::1" {
+                            tag = "IPv6 Loopback"
+                        } else {
+                            tag = "IPv6 Global/ULA"
+                        }
+                    } else {
+                        if addr.hasPrefix("127.") {
+                            tag = "IPv4 Loopback"
+                        } else {
+                            tag = "IPv4"
+                        }
+                    }
+                    lines.append("    - \(addr) [\(tag)]")
+                }
+            }
+            
+            if res.txtRecords.isEmpty {
+                lines.append("• Resolved TXT: (none)")
+            } else {
+                lines.append("• Resolved TXT (\(res.txtRecords.count)):")
+                for record in res.txtRecords {
+                    lines.append("    - \(record.key) = \(record.value)")
+                }
+            }
+            
+            let modelRecord = res.txtRecords.first(where: { $0.key.lowercased() == "model" })?.value
+            let decodedModel = modelRecord != nil ? Self.decodeDeviceModel(modelRecord!) : nil
+            let osRecord = res.txtRecords.first(where: { $0.key.lowercased() == "osvers" || $0.key.lowercased() == "os" })?.value
+            if decodedModel != nil || osRecord != nil {
+                lines.append("• Device Info:")
+                if let model = decodedModel {
+                    lines.append("    - Model: \(model) (\(modelRecord ?? ""))")
+                }
+                if let os = osRecord {
+                    lines.append("    - OS:    \(os)")
+                }
+            }
+            
+            lines.append("• Usable Endpoints:")
+            lines.append("    - Host:Port: \(res.hostname):\(res.port)")
+            for addr in res.addresses {
+                if addr.contains(":") {
+                    lines.append("    - IPv6:      [\(addr)]:\(res.port)")
+                } else {
+                    lines.append("    - IPv4:      \(addr):\(res.port)")
+                }
+            }
+        } else if let error = self.resolveError {
+            lines.append("---------------------------------------------------")
+            lines.append("• Resolution: FAILED (\(error))")
+        } else {
+            lines.append("---------------------------------------------------")
+            lines.append("• Resolution: RESOLVING (awaiting network response)...")
+        }
+        lines.append("===================================================")
+        
+        let fullOutput = lines.joined(separator: "\n")
+        verboseLog(fullOutput)
     }
 }

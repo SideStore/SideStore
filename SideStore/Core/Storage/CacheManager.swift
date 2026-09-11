@@ -20,7 +20,7 @@ public final class CacheManager {
     }
     
     public var resignedAppsDirectory: URL {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let documentsURL = FileManager.default.documentsDirectory
         return documentsURL.appendingPathComponent("ResignedApps")
     }
     

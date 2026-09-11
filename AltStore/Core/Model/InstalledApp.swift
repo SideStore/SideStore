@@ -470,7 +470,7 @@ public extension InstalledApp
     
     class func alternateIconURL(forBundleIdentifier bundleIdentifier: String) -> URL
     {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let appSupport = FileManager.default.applicationSupportDirectory
         let iconsDirectory = appSupport.appendingPathComponent("AppIcons", isDirectory: true)
         try? FileManager.default.createDirectory(at: iconsDirectory, withIntermediateDirectories: true, attributes: nil)
         return iconsDirectory.appendingPathComponent("\(bundleIdentifier).png")

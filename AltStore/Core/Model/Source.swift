@@ -13,7 +13,7 @@ public extension Source
 {
 
     // @livecontainer
-    @objc dynamic static let altStoreSourceURL = URL(string: "https://sidestore.io/apps-v2.json/")!
+    @objc dynamic static let altStoreSourceURL = AppConstants.Sources.sideStoreCommunitySourceURL
     static let altStoreGroupIdentifier = Bundle.Info.appbundleIdentifier
     
     // normalized url is the source identifier (or) p-key!

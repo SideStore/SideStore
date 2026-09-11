@@ -94,6 +94,72 @@ struct UserCustomizationsView: View {
                                 }
                             )
                         )
+                        
+                        divider
+                        
+                        NavigationLink(destination: AnisetteDataView()) {
+                            HStack {
+                                Text("Anisette Client Configuration")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
+                        
+                        divider
+                        
+                        SwiftUI.Button(role: .destructive) {
+                            presentResetAdiDialog()
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Reset adi.pb")
+                                        .font(.system(size: 17, weight: .bold))
+                                        .foregroundColor(.red)
+                                    Text("Clear local Anisette provisioning data from Keychain")
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(Color.white.opacity(0.6))
+                                }
+                                Spacer()
+                                Image(systemName: "trash")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.red)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .frame(minHeight: 50)
+                        }
+                    }
+                    .background(Color.settingsRowBackground)
+                    .cornerRadius(14)
+                }
+
+                // Section: SIDESIGN
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("SIDESIGN")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(Color.white.opacity(0.6))
+                        .padding(.horizontal, 16)
+                    
+                    VStack(spacing: 0) {
+                        NavigationLink(destination: SideSignConfigurationView()) {
+                            HStack {
+                                Text("SideSign Client Configuration")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
                     }
                     .background(Color.settingsRowBackground)
                     .cornerRadius(14)
@@ -460,5 +526,36 @@ struct UserCustomizationsView: View {
         #else
         TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export SideStore.conf", presentingVC: top)
         #endif
+    }
+
+    private func presentResetAdiDialog() {
+        guard let top = UIApplication.shared.topViewController() else { return }
+        let alertController = UIAlertController(
+            title: NSLocalizedString("Reset adi.pb", comment: ""),
+            message: NSLocalizedString("This will sign you out of Apple ID in SideStore and clear the provisioned adi.pb data from your Keychain. Your active signing certificate will be preserved.", comment: ""),
+            preferredStyle: .alert
+        )
+        let contentVC = ResetAdiAlertViewController()
+        alertController.setValue(contentVC, forKey: "contentViewController")
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil)
+        let resetAction = UIAlertAction(title: NSLocalizedString("Reset & Sign Out", comment: ""), style: .destructive) { _ in
+            let keepHeaders = contentVC.isKeepHeadersChecked
+            AuthManager.shared.signOut(keepCertificate: true, keepAnisetteData: false, keepAnisetteHeaders: keepHeaders)
+            debugLog("Reset adi.pb (keepAnisetteHeaders: \(keepHeaders)) and signed out")
+            if let topVC = UIApplication.shared.topViewController() {
+                let detail = keepHeaders
+                    ? NSLocalizedString("Signed out of Apple ID. You can now sign back in with fresh provisioning.", comment: "")
+                    : NSLocalizedString("Signed out of Apple ID. Reset adi.pb and header configs to defaults.", comment: "")
+                ToastView(
+                    text: NSLocalizedString("Cleared adi.pb!", comment: ""),
+                    detailText: detail
+                ).show(in: topVC)
+            }
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(resetAction)
+        top.present(alertController, animated: true, completion: nil)
     }
 }

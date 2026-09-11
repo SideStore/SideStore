@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum CertificateType: String, Codable {
+public enum CertificateEncryptionType: String, Codable {
     case encrypted
     case unencrypted
 }
@@ -24,7 +24,7 @@ struct ImportedAccount: Codable {
     let anisetteIdentifier: String
     let anisetteAdiBlob: String
 
-    var certificateType: CertificateType {
+    var certificateType: CertificateEncryptionType {
         certificatePassword != nil ? .encrypted : .unencrypted
     }
 
@@ -94,7 +94,7 @@ struct ImportedAccount: Codable {
             self.certificateData = try container.decode(Data.self, forKey: .legacyCert)
         }
 
-        if let explicitType = try container.decodeIfPresent(CertificateType.self, forKey: .certificateType) {
+        if let explicitType = try container.decodeIfPresent(CertificateEncryptionType.self, forKey: .certificateType) {
             // v2.0 Payload: Strict, explicit certType (no guessing)
             switch explicitType {
             case .encrypted:

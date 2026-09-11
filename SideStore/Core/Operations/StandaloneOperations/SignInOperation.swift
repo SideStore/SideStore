@@ -607,14 +607,14 @@ private extension SignInOperation {
         }
         self.debugLog("[SignInOperation] Fetched device UDID: \(udid). Fetching team devices...")
         
-        let devices = try await DeveloperPortalProxy.shared.fetchDevices(for: team, types: [.iphone, .ipad])
+        let devices = try await DeveloperPortalProxy.shared.fetchDevices(for: team, types: .all)
         if let device = devices.first(where: { $0.identifier == udid }) {
             self.debugLog("[SignInOperation] Device '\(device.name)' (UDID: \(udid)) is registered on team.")
             return device
         } else {
             let deviceName = await MainActor.run { UIDevice.current.name }
             self.debugLog("[SignInOperation] Registering new device '\(deviceName)' (UDID: \(udid))...")
-            let device = try await DeveloperPortalProxy.shared.registerDevice(name: UIDevice.current.name, identifier: udid, type: .iphone, team: team)
+            let device = try await DeveloperPortalProxy.shared.registerDevice(name: deviceName, identifier: udid, type: DeveloperPortalProxy.currentDeviceType, team: team)
             self.debugLog("[SignInOperation] Device '\(device.name)' (UDID: \(udid)) successfully registered.")
             return device
         }

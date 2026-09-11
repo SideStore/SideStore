@@ -28,7 +28,7 @@ func startEMProxy(bind_addr: String = AppConstants.Proxy.serverURL) async throws
     let port = ConnectionConfig.shared.wireguardServerPort
     let overrideIp = ConnectionConfig.shared.overrideTunnelPeerIp.trimmingCharacters(in: .whitespacesAndNewlines)
     let initialHandshakePeer = !overrideIp.isEmpty ? overrideIp : (ConnectionConfig.shared.tunnelPeerIp ?? "")
-    let lockdowndPort = MinimuxerConstants.lockdowndPort
+    let lockdowndPort = AppConstants.Minimuxer.lockdowndPort
     
     minimuxer.emproxy.setHandshakeClient(host: initialHandshakePeer, port: lockdowndPort, enabled: !initialHandshakePeer.isEmpty)
     
