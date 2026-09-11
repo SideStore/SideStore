@@ -168,12 +168,12 @@ extension SideJITManager {
     @MainActor
     public func presentJITPrompt(presentingVC: UIViewController) {
         let alert = UIAlertController(
-            title: "SideJITServer Detected",
-            message: "Would you like to enable SideJITServer",
+            title: NSLocalizedString("SideJITServer Detected", comment: ""),
+            message: NSLocalizedString("Would you like to enable SideJITServer?", comment: ""),
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in UserDefaults.standard.isSideJITServerEnabled = true })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: systemLocalizedString("OK"), style: .default) { _ in UserDefaults.standard.isSideJITServerEnabled = true })
+        alert.addAction(.cancel)
         presentingVC.present(alert, animated: true)
     }
 }

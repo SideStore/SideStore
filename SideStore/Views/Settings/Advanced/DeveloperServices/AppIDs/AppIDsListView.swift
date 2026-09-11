@@ -179,23 +179,22 @@ struct AppIDsListView: View {
 
     private var deleteAlertMessage: String {
         guard let appID = appIDToDelete else { return "" }
-        let name = appID.name.isEmpty ? "this App ID" : "'\(appID.name)'"
+        let name = appID.name.isEmpty ? NSLocalizedString("this App ID", comment: "") : "'\(appID.name)'"
         let bundleID = appID.bundleIdentifier.isEmpty ? "" : " (\(appID.bundleIdentifier))"
 
         if viewModel.isPaidAccount {
-            return "Are you sure you want to delete \(name)\(bundleID)? This will also remove any associated provisioning profiles."
+            return String(format: NSLocalizedString("Are you sure you want to delete %@%@? This will also remove any associated provisioning profiles.", comment: ""), name, bundleID)
         }
 
-        var expiryNotice = "until it expires automatically after the remaining days of its usual 7-day validity."
         if let expiration = appID.expirationDate {
             let calendar = Calendar.current
             let components = calendar.dateComponents([.day], from: Date(), to: expiration)
             if let days = components.day, days > 0 {
-                expiryNotice = "until it expires automatically in \(days) day\(days == 1 ? "" : "s") (from its usual 7-day validity)."
+                return String(format: NSLocalizedString("Warning: Deleting %1$@%2$@ does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use until it expires automatically in %3$d day(s) (from its usual 7-day validity).\n\nAre you sure you want to delete it?", comment: ""), name, bundleID, days)
             }
         }
 
-        return "Warning: Deleting \(name)\(bundleID) does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use \(expiryNotice)\n\nAre you sure you want to delete it?"
+        return String(format: NSLocalizedString("Warning: Deleting %@%@ does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use until it expires automatically after the remaining days of its usual 7-day validity.\n\nAre you sure you want to delete it?", comment: ""), name, bundleID)
     }
 
     private func formatDate(_ date: Date) -> String {

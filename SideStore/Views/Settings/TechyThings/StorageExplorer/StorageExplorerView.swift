@@ -88,7 +88,7 @@ public struct StorageExplorerView: View {
             // 1. Private Documents
             if let docsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                 locs.append(StorageLocation(
-                    name: "Private Documents",
+                    name: NSLocalizedString("Private Documents", comment: ""),
                     subtitle: docsURL.path,
                     iconName: "folder.badge.gearshape",
                     url: docsURL
@@ -102,7 +102,7 @@ public struct StorageExplorerView: View {
                    !seenGroupPaths.contains(groupURL.path) {
                     seenGroupPaths.insert(groupURL.path)
                     locs.append(StorageLocation(
-                        name: "App Group Container (\(groupID))",
+                        name: String(format: NSLocalizedString("App Group Container (%@)", comment: ""), groupID),
                         subtitle: groupURL.path,
                         iconName: "shippingbox",
                         url: groupURL
@@ -113,7 +113,7 @@ public struct StorageExplorerView: View {
             // 3. App Backups Directory
             if let backupsURL = fileManager.appBackupsDirectory {
                 locs.append(StorageLocation(
-                    name: "App Backups Directory",
+                    name: NSLocalizedString("App Backups Directory", comment: ""),
                     subtitle: backupsURL.path,
                     iconName: "archivebox",
                     url: backupsURL
@@ -123,7 +123,7 @@ public struct StorageExplorerView: View {
             // 4. Temporary Directory
             let tmpURL = fileManager.temporaryDirectory
             locs.append(StorageLocation(
-                name: "Temporary Directory (tmp)",
+                name: NSLocalizedString("Temporary Directory (tmp)", comment: ""),
                 subtitle: tmpURL.path,
                 iconName: "trash.circle",
                 url: tmpURL

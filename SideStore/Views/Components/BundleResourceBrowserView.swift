@@ -242,7 +242,7 @@ struct BundleItemRow: View {
 
     private var subtitle: String {
         if item.isDirectory {
-            return "\(item.childCount) item\(item.childCount == 1 ? "" : "s")"
+            return String(format: NSLocalizedString("%d items", comment: ""), item.childCount)
         }
         let fmt = ByteCountFormatter()
         fmt.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
@@ -537,7 +537,7 @@ struct FullAppBundleView: View {
 
             // Resources — recursive browser
             Section(header: Text("Resources")) {
-                NavigationLink(destination: BundleResourceBrowserView(rootURL: bundleURL, title: "Bundle Contents")) {
+                NavigationLink(destination: BundleResourceBrowserView(rootURL: bundleURL, title: NSLocalizedString("Bundle Contents", comment: ""))) {
                     Text("Browse Bundle Contents")
                         .font(.subheadline)
                 }

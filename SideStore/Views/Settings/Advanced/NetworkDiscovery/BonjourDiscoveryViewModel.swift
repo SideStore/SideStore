@@ -148,7 +148,7 @@ final class BonjourDiscoveryViewModel: ObservableObject {
             }
             return keys.map { DomainSection(id: "group_\($0)", title: "\($0) (\(grouped[$0]?.count ?? 0))", items: grouped[$0] ?? []) }
         } else {
-            return [DomainSection(id: "all_domains", title: "Browsable Domains", items: sorted)]
+            return [DomainSection(id: "all_domains", title: NSLocalizedString("Browsable Domains", comment: ""), items: sorted)]
         }
     }
     
@@ -305,13 +305,13 @@ final class BonjourDiscoveryViewModel: ObservableObject {
             let clean = raw.strippingInterfaceScope
             let label: String = {
                 if !clean.contains(":") {
-                    return "IPv4 Address"
+                    return NSLocalizedString("IPv4 Address", comment: "")
                 } else if raw.lowercased().hasPrefix("fe80:") || raw.contains("%") {
-                    return "IPv6 Address (Link-Local)"
+                    return NSLocalizedString("IPv6 Address (Link-Local)", comment: "")
                 } else if clean.lowercased().hasPrefix("fd") || clean.lowercased().hasPrefix("fc") {
-                    return "IPv6 Address (Unique-Local)"
+                    return NSLocalizedString("IPv6 Address (Unique-Local)", comment: "")
                 } else {
-                    return "IPv6 Address"
+                    return NSLocalizedString("IPv6 Address", comment: "")
                 }
             }()
             return DiscoveredAddressItem(

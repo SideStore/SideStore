@@ -21,6 +21,28 @@
         }
       }
     },
+    "%1$@ (%2$@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "%1$@, %2$@ (%3$@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@ (%3$@)"
+          }
+        }
+      }
+    },
     "%@ %@": {
       "localizations": {
         "en": {
@@ -468,6 +490,28 @@
         }
       }
     },
+    "%d File(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 %d개"
+          }
+        }
+      }
+    },
+    "%d Folder(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더 %d개"
+          }
+        }
+      }
+    },
     "%d Instance(s)": {
       "localizations": {
         "ko": {
@@ -630,6 +674,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "**설정 -> 앱 -> SideStore -> 로컬 네트워크 = 켜기 **"
+          }
+        }
+      }
+    },
+    "0 items (Zero KB)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0개 항목 (0KB)"
           }
         }
       }
@@ -1124,6 +1179,17 @@
         }
       }
     },
+    "Advertising server...": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서버 광고 중..."
+          }
+        }
+      }
+    },
     "All Certificates": {
       "localizations": {
         "ko": {
@@ -1174,6 +1240,17 @@
         }
       }
     },
+    "Alpha Version": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알파 버전"
+          }
+        }
+      }
+    },
     "AltServer could not be found.": {
       "localizations": {
         "ko": {
@@ -1220,6 +1297,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱을 제거하는 동안 오류가 발생했습니다."
+          }
+        }
+      }
+    },
+    "An error occurred during pairing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링 중 오류가 발생했습니다."
+          }
+        }
+      }
+    },
+    "An error occurred during pairing: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링 중 오류가 발생했습니다: %@"
           }
         }
       }
@@ -1334,6 +1433,17 @@
         }
       }
     },
+    "App Bundle ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 번들 ID"
+          }
+        }
+      }
+    },
     "App Contains Extensions": {
       "localizations": {
         "ko": {
@@ -1440,6 +1550,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱 ID"
+          }
+        }
+      }
+    },
+    "App ID (Identifier)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID (식별자)"
           }
         }
       }
@@ -1664,6 +1785,17 @@
         }
       }
     },
+    "Architectures": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아키텍처"
+          }
+        }
+      }
+    },
     "Are you sure to reset the pairing file?": {
       "localizations": {
         "ko": {
@@ -1710,6 +1842,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "활성 서명 인증서를 로컬에서 비활성화하시겠습니까?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete %@%@? This will also remove any associated provisioning profiles.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@%@을(를) 삭제하시겠습니까? 연결된 프로비저닝 프로파일도 함께 제거됩니다."
           }
         }
       }
@@ -2120,6 +2263,17 @@
         }
       }
     },
+    "Browsable Domains": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "브라우징 가능한 도메인"
+          }
+        }
+      }
+    },
     "Browse": {
       "localizations": {
         "ko": {
@@ -2146,6 +2300,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d개 항목 일괄 이름 변경"
+          }
+        }
+      }
+    },
+    "Bundle Contents": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번들 콘텐츠"
+          }
+        }
+      }
+    },
+    "Bundle ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번들 ID"
           }
         }
       }
@@ -2196,6 +2372,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "번들 메타데이터"
+          }
+        }
+      }
+    },
+    "CDHash": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CDHash"
           }
         }
       }
@@ -2450,12 +2637,34 @@
         }
       }
     },
+    "Certificate Serial": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 일련번호"
+          }
+        }
+      }
+    },
     "Certificate Type": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "인증서 유형"
+          }
+        }
+      }
+    },
+    "Certificate import completed.\nSuccess: %d\nFailed: %d": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 가져오기가 완료되었습니다.\n성공: %d\n실패: %d"
           }
         }
       }
@@ -2576,6 +2785,17 @@
         }
       }
     },
+    "Checking Connection…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 확인 중…"
+          }
+        }
+      }
+    },
     "Checksum (SHA-256) Check": {
       "localizations": {
         "ko": {
@@ -2612,6 +2832,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "다른 번호 선택"
+          }
+        }
+      }
+    },
+    "Choose a method to send feedback:": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "피드백을 보낼 방법을 선택하세요:"
           }
         }
       }
@@ -2903,6 +3134,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Developer Portal에 연결하는 중..."
+          }
+        }
+      }
+    },
+    "Connecting to device...": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기에 연결하는 중..."
           }
         }
       }
@@ -3447,12 +3689,34 @@
         }
       }
     },
+    "Created": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "생성일"
+          }
+        }
+      }
+    },
     "Created App Group '%@'": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "App Group '%@'을(를) 생성했습니다"
+          }
+        }
+      }
+    },
+    "Created Date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "생성일"
           }
         }
       }
@@ -3773,6 +4037,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "삭제 후 종료"
+          }
+        }
+      }
+    },
+    "Delete (%d)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "삭제 (%d)"
           }
         }
       }
@@ -4158,6 +4433,17 @@
         }
       }
     },
+    "Device Connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 연결됨"
+          }
+        }
+      }
+    },
     "Device Details": {
       "localizations": {
         "ko": {
@@ -4434,6 +4720,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "검색된 인터페이스 (%d)"
+          }
+        }
+      }
+    },
+    "Discovering Bonjour…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonjour 검색 중…"
           }
         }
       }
@@ -4774,6 +5071,17 @@
         }
       }
     },
+    "Encrypted (DRM)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호화됨 (DRM)"
+          }
+        }
+      }
+    },
     "Ensure **Local Network Access** is provided otherwise this function may not work as intended since it is based on L N A...": {
       "localizations": {
         "ko": {
@@ -4790,6 +5098,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "두 기기가 동일한 Wi-Fi 네트워크에 연결되어 있는지 확인하세요."
+          }
+        }
+      }
+    },
+    "Ensure both devices are on the same Wi-Fi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 기기가 동일한 Wi-Fi에 연결되어 있는지 확인하세요."
           }
         }
       }
@@ -4850,6 +5169,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apple TV / 기기 화면에 표시된 6자리 코드를 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter the 6-digit code shown on your Apple TV / device screen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple TV/기기 화면에 표시된 6자리 코드를 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter the pairing code shown below on your other device settings screen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 기기의 설정 화면에 아래 페어링 코드를 입력하세요."
           }
         }
       }
@@ -4924,6 +5265,17 @@
         }
       }
     },
+    "Entry Point": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "진입점"
+          }
+        }
+      }
+    },
     "Error": {
       "localizations": {
         "ko": {
@@ -4994,12 +5346,34 @@
         }
       }
     },
+    "Expiration Date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "만료일"
+          }
+        }
+      }
+    },
     "Expired": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "만료됨"
+          }
+        }
+      }
+    },
+    "Expires": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "만료일"
           }
         }
       }
@@ -5184,6 +5558,17 @@
         }
       }
     },
+    "Export Private Key": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개인 키 내보내기"
+          }
+        }
+      }
+    },
     "Export Public (.der)": {
       "localizations": {
         "ko": {
@@ -5200,6 +5585,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "공개 키 내보내기 (.pem)"
+          }
+        }
+      }
+    },
+    "Export Public Key": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공개 키 내보내기"
           }
         }
       }
@@ -5534,6 +5930,17 @@
         }
       }
     },
+    "Failed to read file: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일을 읽지 못했습니다: %@"
+          }
+        }
+      }
+    },
     "Failed to refresh %@ Sources": {
       "localizations": {
         "ko": {
@@ -5580,6 +5987,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "스토어 갱신 실패"
+          }
+        }
+      }
+    },
+    "Failed to select file: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일을 선택하지 못했습니다: %@"
           }
         }
       }
@@ -5734,6 +6152,17 @@
         }
       }
     },
+    "File": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일"
+          }
+        }
+      }
+    },
     "File Already Exists": {
       "localizations": {
         "ko": {
@@ -5844,6 +6273,17 @@
         }
       }
     },
+    "Format Version": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "형식 버전"
+          }
+        }
+      }
+    },
     "Free": {
       "localizations": {
         "ko": {
@@ -5860,6 +6300,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "무료 개발자 계정"
+          }
+        }
+      }
+    },
+    "Free Developer Profile": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무료 개발자 프로파일"
           }
         }
       }
@@ -6185,6 +6636,17 @@
         }
       }
     },
+    "IPv4 Address": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv4 주소"
+          }
+        }
+      }
+    },
     "IPv4 First": {
       "localizations": {
         "ko": {
@@ -6211,6 +6673,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "IPv4: %@"
+          }
+        }
+      }
+    },
+    "IPv6 Address": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6 주소"
+          }
+        }
+      }
+    },
+    "IPv6 Address (Link-Local)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6 주소 (Link-Local)"
+          }
+        }
+      }
+    },
+    "IPv6 Address (Unique-Local)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6 주소 (Unique-Local)"
           }
         }
       }
@@ -6557,6 +7052,17 @@
         }
       }
     },
+    "Initiating pairing handshake on %@:%@...": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:%@에서 페어링 핸드셰이크를 시작하는 중..."
+          }
+        }
+      }
+    },
     "Install": {
       "localizations": {
         "ko": {
@@ -6603,6 +7109,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치됨"
+          }
+        }
+      }
+    },
+    "Installed Date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치일"
           }
         }
       }
@@ -7136,6 +7653,17 @@
         }
       }
     },
+    "Local": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로컬"
+          }
+        }
+      }
+    },
     "Local User ID": {
       "localizations": {
         "ko": {
@@ -7212,6 +7740,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "머신 ID"
+          }
+        }
+      }
+    },
+    "Machine Identifier": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "머신 식별자"
           }
         }
       }
@@ -7296,12 +7835,34 @@
         }
       }
     },
+    "Managed By": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "관리 방식"
+          }
+        }
+      }
+    },
     "Manual": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "수동"
+          }
+        }
+      }
+    },
+    "Manual (Portal)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수동 (포털)"
           }
         }
       }
@@ -7332,6 +7893,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "서명 인증서 및 테스트 기기 승인을 수동으로 선택합니다."
+          }
+        }
+      }
+    },
+    "Min OS Version": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최소 OS 버전"
+          }
+        }
+      }
+    },
+    "Min iOS": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최소 iOS"
           }
         }
       }
@@ -7544,6 +8127,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "새 업데이트 사용 가능"
+          }
+        }
+      }
+    },
+    "Nightly Build": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "야간 빌드"
           }
         }
       }
@@ -8216,6 +8810,17 @@
         }
       }
     },
+    "Open Remote Pairing on your Apple TV / Vision Pro / host device to discover this server.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple TV/Vision Pro/호스트 기기에서 원격 페어링을 열어 이 서버를 검색하세요."
+          }
+        }
+      }
+    },
     "Open in Safari (%@://)": {
       "localizations": {
         "ko": {
@@ -8463,6 +9068,17 @@
         }
       }
     },
+    "Pairing Failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링 실패"
+          }
+        }
+      }
+    },
     "Pairing File": {
       "localizations": {
         "ko": {
@@ -8564,6 +9180,17 @@
         }
       }
     },
+    "Path": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경로"
+          }
+        }
+      }
+    },
     "Performing Diagnostic Check...": {
       "localizations": {
         "ko": {
@@ -8640,6 +9267,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "사진"
+          }
+        }
+      }
+    },
+    "Platform": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "플랫폼"
           }
         }
       }
@@ -8814,6 +9452,17 @@
         }
       }
     },
+    "Portal ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "포털 ID"
+          }
+        }
+      }
+    },
     "Prefer App Bundle": {
       "localizations": {
         "ko": {
@@ -8895,12 +9544,34 @@
         }
       }
     },
+    "Profile Created": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 생성일"
+          }
+        }
+      }
+    },
     "Profile Details": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "프로파일 세부 정보"
+          }
+        }
+      }
+    },
+    "Profile Expires": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 만료일"
           }
         }
       }
@@ -9202,6 +9873,28 @@
         }
       }
     },
+    "Ready (%d ms)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "준비됨 (%d ms)"
+          }
+        }
+      }
+    },
+    "Ready to pair": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링 준비됨"
+          }
+        }
+      }
+    },
     "Reason:": {
       "localizations": {
         "ko": {
@@ -9298,6 +9991,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "갱신된 앱"
+          }
+        }
+      }
+    },
+    "Refreshed Date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "갱신일"
           }
         }
       }
@@ -10697,6 +11401,28 @@
         }
       }
     },
+    "Send Email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이메일 보내기"
+          }
+        }
+      }
+    },
+    "Send Feedback": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "피드백 보내기"
+          }
+        }
+      }
+    },
     "Serial Number": {
       "localizations": {
         "ko": {
@@ -10903,6 +11629,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideJITServer"
+          }
+        }
+      }
+    },
+    "SideJITServer Detected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideJITServer 감지됨"
           }
         }
       }
@@ -11387,6 +12124,17 @@
         }
       }
     },
+    "Signing Rules": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서명 규칙"
+          }
+        }
+      }
+    },
     "Signing Rules (%d)": {
       "localizations": {
         "ko": {
@@ -11403,6 +12151,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "서명 인증서 불일치가 감지되었습니다."
+          }
+        }
+      }
+    },
+    "Size": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "크기"
           }
         }
       }
@@ -11537,12 +12296,34 @@
         }
       }
     },
+    "Sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장소"
+          }
+        }
+      }
+    },
     "Sources determine what apps are available in SideStore. The more sources you add, the better your SideStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "저장소는 SideStore에서 사용할 수 있는 앱을 결정합니다. 저장소를 더 많이 추가할수록 SideStore 경험이 더 좋아집니다.\n\n어디서부터 시작해야 할지 모르시겠나요? 추천 저장소 중 하나를 추가해 보세요!"
+          }
+        }
+      }
+    },
+    "Stable Version": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "안정 버전"
           }
         }
       }
@@ -11687,12 +12468,34 @@
         }
       }
     },
+    "Success!": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "성공!"
+          }
+        }
+      }
+    },
     "Successfully imported '%@'!": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "'%@'을(를) 성공적으로 가져왔습니다!"
+          }
+        }
+      }
+    },
+    "Successfully paired with %@ (%@)!\nPairing file saved to documents.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@(%@)와(과) 페어링에 성공했습니다!\n페어링 파일이 문서에 저장되었습니다."
           }
         }
       }
@@ -11817,6 +12620,17 @@
         }
       }
     },
+    "Tap Start to advertise this device on the local network.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시작을 눌러 로컬 네트워크에서 이 기기를 광고하세요."
+          }
+        }
+      }
+    },
     "Tap a permission to learn more.": {
       "localizations": {
         "ko": {
@@ -11857,12 +12671,45 @@
         }
       }
     },
+    "Team ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Team ID"
+          }
+        }
+      }
+    },
     "Team ID: %@": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "팀 ID: %@"
+          }
+        }
+      }
+    },
+    "Team Identifier": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "팀 식별자"
+          }
+        }
+      }
+    },
+    "Team Name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "팀 이름"
           }
         }
       }
@@ -12846,6 +13693,17 @@
         }
       }
     },
+    "Total Sealed Files": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봉인된 파일 수"
+          }
+        }
+      }
+    },
     "Total Space:": {
       "localizations": {
         "ko": {
@@ -12935,6 +13793,17 @@
         }
       }
     },
+    "Type": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유형"
+          }
+        }
+      }
+    },
     "Type: ": {
       "localizations": {
         "ko": {
@@ -12981,6 +13850,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "등록된 Anisette 서버가 포함된 JSON 파일의 URL입니다. 내보내려면 행을 길게 누르세요."
+          }
+        }
+      }
+    },
+    "UUID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UUID"
           }
         }
       }
@@ -13387,6 +14267,17 @@
         }
       }
     },
+    "Uses Main Profile": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본 프로파일 사용 여부"
+          }
+        }
+      }
+    },
     "Utilities": {
       "localizations": {
         "ko": {
@@ -13546,6 +14437,28 @@
         }
       }
     },
+    "Version 1 (SHA-1)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버전 1 (SHA-1)"
+          }
+        }
+      }
+    },
+    "Version 2 (SHA-256)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버전 2 (SHA-256)"
+          }
+        }
+      }
+    },
     "View All": {
       "localizations": {
         "ko": {
@@ -13666,6 +14579,17 @@
         }
       }
     },
+    "WARNING: Outdated anisette server": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경고: 오래된 Anisette 서버"
+          }
+        }
+      }
+    },
     "WIDGET OPTIONS": {
       "localizations": {
         "ko": {
@@ -13682,6 +14606,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "WIREGUARD 구성"
+          }
+        }
+      }
+    },
+    "Waiting for connection...": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 대기 중..."
           }
         }
       }
@@ -13706,12 +14641,45 @@
         }
       }
     },
+    "Warning: Deleting %1$@%2$@ does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use until it expires automatically in %3$d day(s) (from its usual 7-day validity).\n\nAre you sure you want to delete it?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경고: %1$@%2$@을(를) 삭제해도 앱 ID 슬롯이 확보되지는 않습니다.\n\n이 앱 ID는 예약된 상태가 되며, 일반적인 7일 유효 기간 중 남은 %3$d일 후 자동으로 만료될 때까지 사용할 수 없습니다.\n\n정말 삭제하시겠습니까?"
+          }
+        }
+      }
+    },
+    "Warning: Deleting %@%@ does not free up an App ID slot.\n\nThis App ID will become reserved and will not be available for use until it expires automatically after the remaining days of its usual 7-day validity.\n\nAre you sure you want to delete it?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경고: %@%@을(를) 삭제해도 앱 ID 슬롯이 확보되지는 않습니다.\n\n이 앱 ID는 예약된 상태가 되며, 일반적인 7일 유효 기간 중 남은 기간이 지나 자동으로 만료될 때까지 사용할 수 없습니다.\n\n정말 삭제하시겠습니까?"
+          }
+        }
+      }
+    },
     "Warning: Repeatedly skipping this without completing required verification or terms may lead to your account being restricted by Apple over time.": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "경고: 필수 인증 또는 약관을 완료하지 않고 반복적으로 건너뛰면 시간이 지남에 따라 Apple에 의해 계정이 제한될 수 있습니다."
+          }
+        }
+      }
+    },
+    "We've detected you are using an older anisette server. Using this server has a higher likelihood of locking your account and causing other issues. Are you sure you want to continue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오래된 Anisette 서버를 사용 중인 것으로 감지되었습니다. 이 서버를 사용하면 계정이 잠기거나 다른 문제가 발생할 가능성이 높아집니다. 계속하시겠습니까?"
           }
         }
       }
@@ -13847,6 +14815,17 @@
         }
       }
     },
+    "Would you like to enable SideJITServer?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideJITServer를 활성화하시겠습니까?"
+          }
+        }
+      }
+    },
     "Would you like to install \"%@\"?": {
       "localizations": {
         "ko": {
@@ -13913,6 +14892,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "XML"
+          }
+        }
+      }
+    },
+    "Xcode (Team Profile)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xcode (팀 프로파일)"
           }
         }
       }
@@ -14379,6 +15369,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "동일한 번들 식별자"
+          }
+        }
+      }
+    },
+    "this App ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱 ID"
           }
         }
       }

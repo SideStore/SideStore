@@ -67,7 +67,7 @@ struct PrivateKeyTextInputView: View {
                                     isEditing = false
                                     errorMessage = nil
                                 } catch {
-                                    errorMessage = "Failed to read file: \(error.localizedDescription)"
+                                    errorMessage = String(format: NSLocalizedString("Failed to read file: %@", comment: ""), error.localizedDescription)
                                 }
                             }
                         }
@@ -138,11 +138,11 @@ struct PrivateKeyTextInputView: View {
                             isEditing = false
                             errorMessage = nil
                         } catch {
-                            errorMessage = "Failed to read file: \(error.localizedDescription)"
+                            errorMessage = String(format: NSLocalizedString("Failed to read file: %@", comment: ""), error.localizedDescription)
                         }
                     }
                 case .failure(let error):
-                    errorMessage = "Failed to select file: \(error.localizedDescription)"
+                    errorMessage = String(format: NSLocalizedString("Failed to select file: %@", comment: ""), error.localizedDescription)
                 }
             }
             #endif

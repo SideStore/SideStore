@@ -27,7 +27,7 @@ struct MachOResourceViewer: View {
                     InfoRow(label: "Size", value: formatSize(url))
 
                     let archs = parser.architectures()
-                    InfoRow(label: "Architectures", value: archs.isEmpty ? "Unknown" : archs.joined(separator: ", "))
+                    InfoRow(label: "Architectures", value: archs.isEmpty ? NSLocalizedString("Unknown", comment: "") : archs.joined(separator: ", "))
 
                     if let platform = parser.platformType() {
                         InfoRow(label: "Platform", value: platform)
@@ -39,7 +39,7 @@ struct MachOResourceViewer: View {
 
                     InfoRow(
                         label: "Encrypted (DRM)",
-                        value: parser.isEncrypted() ? "Yes" : "No",
+                        value: parser.isEncrypted() ? NSLocalizedString("Yes", comment: "") : NSLocalizedString("No", comment: ""),
                         valueColor: parser.isEncrypted() ? .orange : .green
                     )
 
@@ -85,7 +85,7 @@ struct MachOResourceViewer: View {
 
                 if let ent = try? parser.entitlements(), !ent.isEmpty {
                     Section(header: Text("Entitlements")) {
-                        NavigationLink(destination: ResourceTextViewer(title: "Entitlements", explicitContent: ent)) {
+                        NavigationLink(destination: ResourceTextViewer(title: NSLocalizedString("Entitlements", comment: ""), explicitContent: ent)) {
                             HStack {
                                 Image(systemName: "lock.doc.fill")
                                     .foregroundColor(.green)
@@ -136,7 +136,7 @@ struct MachOResourceViewer: View {
                 }
 
                 Section(header: Text("Raw Dump")) {
-                    NavigationLink(destination: ResourceTextViewer(title: "Mach-O Dump", explicitContent: dumpText)) {
+                    NavigationLink(destination: ResourceTextViewer(title: NSLocalizedString("Mach-O Dump", comment: ""), explicitContent: dumpText)) {
                         HStack {
                             Image(systemName: "doc.plaintext.fill")
                                 .foregroundColor(.blue)

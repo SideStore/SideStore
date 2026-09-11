@@ -35,7 +35,7 @@ struct ContentView: View {
                         .padding(.horizontal, 8)
                     
                 } else if let operation = state.currentOperation {
-                    Text(operation == .backup ? "Backing up app data…" : "Restoring app data…")
+                    Text(operation == .backup ? NSLocalizedString("Backing up app data…", comment: "") : NSLocalizedString("Restoring app data…", comment: ""))
                         .font(.title2)
                         .foregroundColor(Color("Text"))
                         .multilineTextAlignment(.center)

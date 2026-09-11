@@ -229,7 +229,7 @@ class AppState: ObservableObject {
             self.progressText = "\(copiedStr) / \(totalStr) (\(percent)%)"
         } else {
             self.progressFraction = 0.0
-            self.progressText = "Processing…"
+            self.progressText = NSLocalizedString("Processing…", comment: "")
         }
     }
 
@@ -242,7 +242,7 @@ class AppState: ObservableObject {
         }
         self.currentOperation = .backup
         self.progressFraction = 0.0
-        self.progressText = "Calculating size…"
+        self.progressText = NSLocalizedString("Calculating size…", comment: "")
         
         let appName = Bundle.main.appName ?? NSLocalizedString("App", comment: "")
         
@@ -268,7 +268,7 @@ class AppState: ObservableObject {
         }
         self.currentOperation = .restore
         self.progressFraction = 0.0
-        self.progressText = "Calculating size…"
+        self.progressText = NSLocalizedString("Calculating size…", comment: "")
         
         let appName = Bundle.main.appName ?? NSLocalizedString("App", comment: "")
         

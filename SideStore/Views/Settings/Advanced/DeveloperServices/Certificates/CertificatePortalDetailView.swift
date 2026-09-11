@@ -46,7 +46,7 @@ struct CertificatePortalDetailView: View {
                 }
                 InfoRow(label: "Created Date", value: formatDate(certificate.creationDate))
                 InfoRow(label: "Expiration Date", value: formatDate(certificate.expiryDate), valueColor: isExpired ? .red : .primary)
-                InfoRow(label: "Status", value: isExpired ? "Expired" : "Active", valueColor: isExpired ? .red : .green)
+                InfoRow(label: "Status", value: isExpired ? NSLocalizedString("Expired", comment: "") : NSLocalizedString("Active", comment: ""), valueColor: isExpired ? .red : .green)
             }
 
             Section(footer: Text("Revoking a certificate permanently invalidates it on Apple's servers. Any provisioning profiles tied exclusively to this certificate may need to be re-generated.")) {

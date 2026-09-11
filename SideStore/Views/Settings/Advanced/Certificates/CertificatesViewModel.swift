@@ -66,7 +66,7 @@ class CertificatesViewModel: ObservableObject {
     @Published var showFailuresAlert: Bool = false
     
     var importSummaryMessage: String {
-        "Certificate import completed.\nSuccess: \(importSuccessCount)\nFailed: \(importFailedCount)"
+        String(format: NSLocalizedString("Certificate import completed.\nSuccess: %d\nFailed: %d", comment: ""), importSuccessCount, importFailedCount)
     }
     
     var failuresAlertMessage: String {

@@ -159,7 +159,7 @@ private struct CertTrailingIcons: View {
 }
 
 private struct AdaptiveMenu<Content: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     let systemImage: String
     @ViewBuilder let content: () -> Content
     

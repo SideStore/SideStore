@@ -46,9 +46,9 @@ class ConsoleLogViewModel: ObservableObject {
     var activeHeaderTitle: String {
         switch activeSource {
         case .console:
-            return "Console Log"
+            return NSLocalizedString("Console Log", comment: "")
         case .widget:
-            return "Widget Log"
+            return NSLocalizedString("Widget Log", comment: "")
         case .imported(let url):
             return url.lastPathComponent
         }

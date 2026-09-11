@@ -34,6 +34,22 @@ public enum ReleaseTrackType: String, CaseIterable, CustomStringConvertible
         return self.rawValue
     }
 
+    /// User-facing display name. Never use this for storage/comparison — use `rawValue`/`description` for that.
+    public var displayName: String {
+        switch self {
+        case .unknown:
+            return NSLocalizedString("Unknown", comment: "")
+        case .local:
+            return NSLocalizedString("Local", comment: "")
+        case .alpha:
+            return NSLocalizedString("Alpha Version", comment: "")
+        case .nightly:
+            return NSLocalizedString("Nightly Build", comment: "")
+        case .stable:
+            return NSLocalizedString("Stable Version", comment: "")
+        }
+    }
+
     // Static Version Parser
     public static func from(version: String) -> ReleaseTrackType {
         let lowercased = version.lowercased()

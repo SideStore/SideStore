@@ -63,7 +63,7 @@ struct AppInfoView: View {
                 
                 // Metadata Section
                 Section(header: Text("General Metadata")) {
-                    InfoRow(label: "Status", value: installedApp.isActive ? "Active" : "Inactive", valueColor: installedApp.isActive ? .green : .red)
+                    InfoRow(label: "Status", value: installedApp.isActive ? NSLocalizedString("Active", comment: "") : NSLocalizedString("Inactive", comment: ""), valueColor: installedApp.isActive ? .green : .red)
                     InfoRow(label: "Version", value: installedApp.localizedVersion)
                     if let team = installedApp.team {
                         InfoRow(label: "Team Name", value: team.name)
@@ -93,7 +93,7 @@ struct AppInfoView: View {
                             InfoRow(label: "Executable", value: execName)
                         }
                     }
-                    InfoRow(label: "Uses Main Profile", value: installedApp.useMainProfile ? "Yes" : "No")
+                    InfoRow(label: "Uses Main Profile", value: installedApp.useMainProfile ? NSLocalizedString("Yes", comment: "") : NSLocalizedString("No", comment: ""))
                 }
                 
                 // Provisioning Profile Section
@@ -139,7 +139,7 @@ struct AppInfoView: View {
 
                 // Resources Section
                 Section(header: Text("Resources")) {
-                    NavigationLink(destination: BundleResourceBrowserView(rootURL: appBundleURL, title: "Bundle Contents")) {
+                    NavigationLink(destination: BundleResourceBrowserView(rootURL: appBundleURL, title: NSLocalizedString("Bundle Contents", comment: ""))) {
                         Text("Browse Bundle Contents")
                             .font(.subheadline)
                     }
@@ -189,7 +189,7 @@ struct ProvisioningProfileDetailView: View {
                 ProfileInfoRow(label: "App Bundle ID", value: profile.bundleIdentifier)
                 ProfileInfoRow(label: "Created", value: formatDate(profile.creationDate))
                 ProfileInfoRow(label: "Expires", value: formatDate(profile.expirationDate))
-                ProfileInfoRow(label: "Free Developer Profile", value: profile.isFreeProvisioningProfile ? "Yes" : "No")
+                ProfileInfoRow(label: "Free Developer Profile", value: profile.isFreeProvisioningProfile ? NSLocalizedString("Yes", comment: "") : NSLocalizedString("No", comment: ""))
             }
             
             if !profile.certificates.isEmpty {
@@ -278,7 +278,7 @@ struct AppIconView: View {
 }
 
 struct InfoRow: View {
-    let label: String
+    let label: LocalizedStringKey
     let value: String
     var valueColor: Color = .primary
     
@@ -297,7 +297,7 @@ struct InfoRow: View {
 }
 
 struct ProfileInfoRow: View {
-    let label: String
+    let label: LocalizedStringKey
     let value: String
     var valueColor: Color = .primary
     
@@ -679,7 +679,7 @@ struct BundleInspectorView: View {
 
             // Resources
             Section(header: Text("Resources")) {
-                NavigationLink(destination: BundleResourceBrowserView(rootURL: bundleURL, title: "Bundle Contents")) {
+                NavigationLink(destination: BundleResourceBrowserView(rootURL: bundleURL, title: NSLocalizedString("Bundle Contents", comment: ""))) {
                     Text("Browse Bundle Contents")
                         .font(.subheadline)
                 }

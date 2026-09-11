@@ -50,7 +50,7 @@ final class SourcesViewController: UICollectionViewController
         #endif
 
         // Set title
-        navigationItem.title = "Sources"
+        navigationItem.title = NSLocalizedString("Sources", comment: "")
         navigationController?.navigationBar.layoutMargins.left = 20
         
         let layout = self.makeLayout()

@@ -1,0 +1,226 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@ could not be backed up.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@을(를) 백업할 수 없습니다."
+          }
+        }
+      }
+    },
+    "%@ could not be restored.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@을(를) 복원할 수 없습니다."
+          }
+        }
+      }
+    },
+    "%@ is inactive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@이(가) 비활성 상태입니다."
+          }
+        }
+      }
+    },
+    "A random error occurred.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알 수 없는 오류가 발생했습니다."
+          }
+        }
+      }
+    },
+    "App": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱"
+          }
+        }
+      }
+    },
+    "Backing up app data…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 데이터 백업 중…"
+          }
+        }
+      }
+    },
+    "Backup Error": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "백업 오류"
+          }
+        }
+      }
+    },
+    "Calculating size…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "크기 계산 중…"
+          }
+        }
+      }
+    },
+    "Processing…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "처리 중…"
+          }
+        }
+      }
+    },
+    "Refresh %@ in SideStore to continue using it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계속 사용하려면 SideStore에서 %@을(를) 갱신하세요."
+          }
+        }
+      }
+    },
+    "Restoring app data…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 데이터 복원 중…"
+          }
+        }
+      }
+    },
+    "SideBackup could not start": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideBackup을 시작할 수 없습니다"
+          }
+        }
+      }
+    },
+    "The AltStore app group could not be found.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AltStore 앱 그룹을 찾을 수 없습니다."
+          }
+        }
+      }
+    },
+    "The app group “%@” could not be found.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 그룹 “%@”을(를) 찾을 수 없습니다."
+          }
+        }
+      }
+    },
+    "The bundle identifier is invalid.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번들 식별자가 유효하지 않습니다."
+          }
+        }
+      }
+    },
+    "Unable to access backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "백업에 접근할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Unable to create app group backup directory.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 그룹 백업 디렉터리를 생성할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Unable to create backup directory.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "백업 디렉터리를 생성할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Unable to read app group backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 그룹 백업을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "this app": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.1"
+}

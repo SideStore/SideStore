@@ -26,11 +26,11 @@ enum SideJITConnectionStatus: Equatable {
     
     var title: String {
         switch self {
-        case .disabled: return "Disabled"
-        case .ready(let latency, _): return "Ready (\(latency) ms)"
-        case .discovering: return "Discovering Bonjour…"
-        case .checking: return "Checking Connection…"
-        case .disconnected: return "Unreachable"
+        case .disabled: return NSLocalizedString("Disabled", comment: "")
+        case .ready(let latency, _): return String(format: NSLocalizedString("Ready (%d ms)", comment: ""), latency)
+        case .discovering: return NSLocalizedString("Discovering Bonjour…", comment: "")
+        case .checking: return NSLocalizedString("Checking Connection…", comment: "")
+        case .disconnected: return NSLocalizedString("Unreachable", comment: "")
         }
     }
 }

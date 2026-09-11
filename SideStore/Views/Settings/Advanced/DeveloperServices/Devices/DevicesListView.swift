@@ -303,7 +303,7 @@ struct DevicesListView: View {
 
                     Section(header: Text("Device Details")) {
                         InfoRow(label: "Type", value: device.type.displayName)
-                        InfoRow(label: "Status", value: device.status == "d" ? "Disabled" : "Active", valueColor: device.status == "d" ? .red : .green)
+                        InfoRow(label: "Status", value: device.status == "d" ? NSLocalizedString("Disabled", comment: "") : NSLocalizedString("Active", comment: ""), valueColor: device.status == "d" ? .red : .green)
                         if let devID = device.deviceID, !devID.isEmpty {
                             InfoRow(label: "Portal ID", value: devID)
                         }

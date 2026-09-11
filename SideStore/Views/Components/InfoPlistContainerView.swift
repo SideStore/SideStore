@@ -658,7 +658,7 @@ struct InfoPlistSemanticView: View {
 
 // MARK: - Localized Semantic Value Row
 struct SemanticValueRow: View {
-    let label: String
+    let label: LocalizedStringKey
     let value: String
     
     var body: some View {

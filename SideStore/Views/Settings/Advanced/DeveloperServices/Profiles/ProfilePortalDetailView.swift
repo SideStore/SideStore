@@ -66,9 +66,9 @@ struct ProfilePortalDetailView: View {
                     InfoRow(label: "Type", value: rawType)
                 }
                 if let isTeam = profile.isTeamProfile {
-                    InfoRow(label: "Managed By", value: isTeam ? "Xcode (Team Profile)" : "Manual (Portal)")
+                    InfoRow(label: "Managed By", value: isTeam ? NSLocalizedString("Xcode (Team Profile)", comment: "") : NSLocalizedString("Manual (Portal)", comment: ""))
                 }
-                InfoRow(label: "Status", value: isExpired ? "Expired" : (profile.status ?? "Active"), valueColor: isExpired ? .red : .primary)
+                InfoRow(label: "Status", value: isExpired ? NSLocalizedString("Expired", comment: "") : (profile.status ?? NSLocalizedString("Active", comment: "")), valueColor: isExpired ? .red : .primary)
                 InfoRow(label: "Expiration Date", value: formatDate(profile.dateExpire), valueColor: isExpired ? .red : .primary)
             }
 

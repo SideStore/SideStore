@@ -24,22 +24,22 @@ public struct DirectoryExplorerView: View {
     private var folderSummaryString: String {
         let items = viewModel.filteredAndSortedItems
         if items.isEmpty {
-            return "0 items (Zero KB)"
+            return NSLocalizedString("0 items (Zero KB)", comment: "")
         }
         let folders = items.filter { $0.isDirectory }
         let files = items.filter { !$0.isDirectory }
         let sizeStr = ByteCountFormatter.string(fromByteCount: viewModel.currentFolderSize, countStyle: .file)
-        
+
         if !folders.isEmpty && !files.isEmpty {
-            let folderLabel = folders.count == 1 ? "1 Folder" : "\(folders.count) Folders"
-            let fileLabel = files.count == 1 ? "1 File" : "\(files.count) Files"
-            return "\(folderLabel), \(fileLabel) (\(sizeStr))"
+            let folderLabel = String(format: NSLocalizedString("%d Folder(s)", comment: ""), folders.count)
+            let fileLabel = String(format: NSLocalizedString("%d File(s)", comment: ""), files.count)
+            return String(format: NSLocalizedString("%1$@, %2$@ (%3$@)", comment: ""), folderLabel, fileLabel, sizeStr)
         } else if !folders.isEmpty {
-            let folderLabel = folders.count == 1 ? "1 Folder" : "\(folders.count) Folders"
-            return "\(folderLabel) (\(sizeStr))"
+            let folderLabel = String(format: NSLocalizedString("%d Folder(s)", comment: ""), folders.count)
+            return String(format: NSLocalizedString("%1$@ (%2$@)", comment: ""), folderLabel, sizeStr)
         } else {
-            let fileLabel = files.count == 1 ? "1 File" : "\(files.count) Files"
-            return "\(fileLabel) (\(sizeStr))"
+            let fileLabel = String(format: NSLocalizedString("%d File(s)", comment: ""), files.count)
+            return String(format: NSLocalizedString("%1$@ (%2$@)", comment: ""), fileLabel, sizeStr)
         }
     }
     
@@ -321,9 +321,9 @@ private struct SelectionActionBarView: View {
         let count = selectedURLs.count
         let copyTitle = count > 0 ? "Copy (\(count))" : "Copy"
         let renameTitle = count > 0 ? "Rename (\(count))" : "Rename"
-        let deleteTitle = count > 0 ? "Delete (\(count))" : "Delete"
+        let deleteTitle = count > 0 ? String(format: NSLocalizedString("Delete (%d)", comment: ""), count) : NSLocalizedString("Delete", comment: "")
         let isAllSelected = count > 0 && count == filteredCount
-        let selectTitle = isAllSelected ? "Deselect All" : "Select All"
+        let selectTitle = isAllSelected ? NSLocalizedString("Deselect All", comment: "") : NSLocalizedString("Select All", comment: "")
         
         HStack(spacing: 6) {
             SwiftUI.Button {

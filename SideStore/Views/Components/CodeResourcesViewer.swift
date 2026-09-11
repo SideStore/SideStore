@@ -76,7 +76,7 @@ struct CodeResourcesViewer: View {
                     InfoRow(label: "Total Sealed Files", value: "\(entries.count)")
                     InfoRow(label: "Signing Rules", value: "\(rules.count)")
                     let hasV2 = rawPlist?["files2"] != nil
-                    InfoRow(label: "Format Version", value: hasV2 ? "Version 2 (SHA-256)" : "Version 1 (SHA-1)")
+                    InfoRow(label: "Format Version", value: hasV2 ? NSLocalizedString("Version 2 (SHA-256)", comment: "") : NSLocalizedString("Version 1 (SHA-1)", comment: ""))
                 }
 
                 Section {
@@ -197,7 +197,7 @@ struct CodeResourcesViewer: View {
                         }
 
                         if !rawXML.isEmpty {
-                            NavigationLink(destination: ResourceTextViewer(title: "CodeResources XML", explicitContent: rawXML)) {
+                            NavigationLink(destination: ResourceTextViewer(title: NSLocalizedString("CodeResources XML", comment: ""), explicitContent: rawXML)) {
                                 HStack {
                                     Image(systemName: "doc.plaintext")
                                         .foregroundColor(.blue)
