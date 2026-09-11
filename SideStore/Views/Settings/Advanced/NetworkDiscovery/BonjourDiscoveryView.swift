@@ -297,7 +297,7 @@ struct ServiceTypesView: View {
                 }
                 .confirmationDialog("Group By", isPresented: $showGroupDialog) {
                     ForEach(ServiceTypeGroupOption.allCases, id: \.self) { opt in
-                        SwiftUI.Button(opt.rawValue) {
+                        SwiftUI.Button(NSLocalizedString(opt.rawValue, comment: "")) {
                             viewModel.serviceTypeGroupOption = opt
                         }
                     }
@@ -310,7 +310,7 @@ struct ServiceTypesView: View {
                 }
                 .confirmationDialog("Sort By", isPresented: $showSortDialog) {
                     ForEach(ServiceTypeSortOption.allCases, id: \.self) { opt in
-                        SwiftUI.Button(opt.rawValue) {
+                        SwiftUI.Button(NSLocalizedString(opt.rawValue, comment: "")) {
                             viewModel.serviceTypeSortOption = opt
                         }
                     }
@@ -543,7 +543,7 @@ struct ServiceInstancesView: View {
                 }
                 .confirmationDialog("Group By", isPresented: $showGroupDialog) {
                     ForEach(ServiceInstanceGroupOption.allCases, id: \.self) { opt in
-                        SwiftUI.Button(opt.rawValue) {
+                        SwiftUI.Button(NSLocalizedString(opt.rawValue, comment: "")) {
                             viewModel.instanceGroupOption = opt
                         }
                     }
@@ -556,7 +556,7 @@ struct ServiceInstancesView: View {
                 }
                 .confirmationDialog("Sort By", isPresented: $showSortDialog) {
                     ForEach(ServiceInstanceSortOption.allCases, id: \.self) { opt in
-                        SwiftUI.Button(opt.rawValue) {
+                        SwiftUI.Button(NSLocalizedString(opt.rawValue, comment: "")) {
                             viewModel.instanceSortOption = opt
                         }
                     }

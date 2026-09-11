@@ -21,9 +21,9 @@ enum PrivateKeyImportError: LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .isCertificate:    return "The selected file is a certificate, not a private key."
-        case .invalidKey:       return "The input does not contain a valid private key."
-        case .conversionFailed: return "Failed to convert binary private key to PEM format."
+        case .isCertificate:    return NSLocalizedString("The selected file is a certificate, not a private key.", comment: "")
+        case .invalidKey:       return NSLocalizedString("The input does not contain a valid private key.", comment: "")
+        case .conversionFailed: return NSLocalizedString("Failed to convert binary private key to PEM format.", comment: "")
         }
     }
 }
@@ -313,7 +313,7 @@ class CertificatesViewModel: ObservableObject {
             currentImportIndex += 1
             processNextImport()
         } catch ALTCertificateError.decryptionFailed {
-            self.errorMessage = "Incorrect password for " + pending.filename
+            self.errorMessage = String(format: NSLocalizedString("Incorrect password for %@", comment: ""), pending.filename)
         } catch {
             self.showPasswordPromptForImport = false
             failedImportsList.append("\(pending.filename): \(error.localizedDescription)")
@@ -346,7 +346,7 @@ class CertificatesViewModel: ObservableObject {
                 
                 let newCert = try await DeveloperPortalProxy.shared.createCertificate(machineName: machineName, type: type)
                 self.saveLocalCertificate(newCert)
-                self.alertMessage = "\(type.displayName) created successfully."
+                self.alertMessage = String(format: NSLocalizedString("%@ created successfully.", comment: ""), type.displayName)
                 self.showAlert    = true
                 self.loadCertificates(presentingViewController: presentingViewController)
             } catch {
@@ -357,7 +357,7 @@ class CertificatesViewModel: ObservableObject {
     
     func revokeCertificate(_ certificate: ALTX509Certificate, keepLocal: Bool = false, presentingViewController: UIViewController? = nil) {
         guard self.remoteSerials.contains(certificate.serialNumber) else {
-            self.errorMessage = "This certificate is already revoked on Apple's servers."
+            self.errorMessage = NSLocalizedString("This certificate is already revoked on Apple's servers.", comment: "")
             return
         }
         
@@ -378,14 +378,14 @@ class CertificatesViewModel: ObservableObject {
                             CertificateManager.shared.clearActiveCertificate()
                             self.activeSerialNumber = nil
                         }
-                        self.alertMessage = "Certificate revoked successfully."
+                        self.alertMessage = NSLocalizedString("Certificate revoked successfully.", comment: "")
                     } else {
-                        self.alertMessage = "Certificate revoked on Apple's servers. Local copy preserved."
+                        self.alertMessage = NSLocalizedString("Certificate revoked on Apple's servers. Local copy preserved.", comment: "")
                     }
                     self.showAlert    = true
                     self.loadCertificates(presentingViewController: presentingViewController)
                 } else {
-                    self.errorMessage = "Failed to revoke certificate."
+                    self.errorMessage = NSLocalizedString("Failed to revoke certificate.", comment: "")
                 }
             } catch {
                 if !(error is CancellationError) { self.errorMessage = error.localizedDescription }
@@ -400,29 +400,29 @@ class CertificatesViewModel: ObservableObject {
             CertificateManager.shared.clearActiveCertificate()
             self.activeSerialNumber = nil
         }
-        self.alertMessage = "Certificate deleted locally."
+        self.alertMessage = NSLocalizedString("Certificate deleted locally.", comment: "")
         self.showAlert    = true
     }
     
     func makeCertificateActive(_ certificate: ALTX509Certificate) {
         guard let signable = self.getSignableCertificate(for: certificate.serialNumber) else {
-            self.errorMessage = "Cannot activate certificate: private key missing."
+            self.errorMessage = NSLocalizedString("Cannot activate certificate: private key missing.", comment: "")
             return
         }
         do {
             try CertificateManager.shared.setActiveCertificate(signable)
             self.fetchActiveSerialNumber()
-            self.alertMessage = "Active signing certificate replaced successfully."
+            self.alertMessage = NSLocalizedString("Active signing certificate replaced successfully.", comment: "")
             self.showAlert    = true
         } catch {
-            self.errorMessage = "Failed to activate certificate: \(error.localizedDescription)"
+            self.errorMessage = String(format: NSLocalizedString("Failed to activate certificate: %@", comment: ""), error.localizedDescription)
         }
     }
 
     func deactivateActiveCertificate() {
         CertificateManager.shared.clearActiveCertificate()
         self.activeSerialNumber = nil
-        self.alertMessage = "Local certificate deactivated."
+        self.alertMessage = NSLocalizedString("Local certificate deactivated.", comment: "")
         self.showAlert    = true
     }
     
@@ -600,7 +600,7 @@ class CertificatesViewModel: ObservableObject {
             let signable = ALTCertificate(x509: cert, privateKey: key)
             saveLocalCertificate(signable)
             self.loadCertificates(presentingViewController: nil)
-            self.alertMessage = "Successfully added private key to certificate \(cert.name)."
+            self.alertMessage = String(format: NSLocalizedString("Successfully added private key to certificate %@.", comment: ""), cert.name)
             self.showAlert    = true
         } catch {
             self.errorMessage = error.localizedDescription
@@ -610,7 +610,7 @@ class CertificatesViewModel: ObservableObject {
     func clearPrivateKey(for cert: ALTX509Certificate) {
         CertificateManager.shared.saveX509Certificate(cert)
         self.loadCertificates(presentingViewController: nil)
-        self.alertMessage = "Successfully removed private key from certificate \(cert.name)."
+        self.alertMessage = String(format: NSLocalizedString("Successfully removed private key from certificate %@.", comment: ""), cert.name)
         self.showAlert    = true
     }
     

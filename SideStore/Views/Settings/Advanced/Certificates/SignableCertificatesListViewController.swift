@@ -29,11 +29,11 @@ struct SignableCertificateRowView: View {
     
     private var statusText: String? {
         if isAppCert && isActiveGlobal {
-            return "Current App & Active Global"
+            return NSLocalizedString("Current App & Active Global", comment: "")
         } else if isAppCert {
-            return "Current App"
+            return NSLocalizedString("Current App", comment: "")
         } else if isActiveGlobal {
-            return "Active Global"
+            return NSLocalizedString("Active Global", comment: "")
         }
         return nil
     }

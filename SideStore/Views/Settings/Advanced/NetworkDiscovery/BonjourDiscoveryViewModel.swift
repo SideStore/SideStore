@@ -523,11 +523,11 @@ final class BonjourDiscoveryViewModel: ObservableObject {
     static func portCategory(for port: UInt16) -> String {
         switch port {
         case 0...1023:
-            return "Well-Known Port"
+            return NSLocalizedString("Well-Known Port", comment: "")
         case 1024...49151:
-            return "Registered Port"
+            return NSLocalizedString("Registered Port", comment: "")
         default:
-            return "Dynamic / Ephemeral Port"
+            return NSLocalizedString("Dynamic / Ephemeral Port", comment: "")
         }
     }
     
@@ -625,10 +625,10 @@ final class BonjourDiscoveryViewModel: ObservableObject {
     
     static func nameForInterfaceType(_ type: NWInterface.InterfaceType) -> String {
         switch type {
-        case .wifi:             return "Wi-Fi"
-        case .loopback:         return "Loopback"
-        case .wiredEthernet:    return "Ethernet"
-        case .cellular:         return "Cellular"
+        case .wifi:             return NSLocalizedString("Wi-Fi", comment: "")
+        case .loopback:         return NSLocalizedString("Loopback", comment: "")
+        case .wiredEthernet:    return NSLocalizedString("Ethernet", comment: "")
+        case .cellular:         return NSLocalizedString("Cellular", comment: "")
         default:                return "\(type)"
         }
     }

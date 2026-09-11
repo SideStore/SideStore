@@ -25,11 +25,11 @@ public final class StorageExplorerClipboard: ObservableObject {
     
     public var pasteLabelText: String {
         if copiedURLs.count == 1, let first = copiedURLs.first {
-            return "Paste “\(first.lastPathComponent)”"
+            return String(format: NSLocalizedString("Paste “%@”", comment: ""), first.lastPathComponent)
         } else if copiedURLs.count > 1 {
-            return "Paste \(copiedURLs.count) Items"
+            return String(format: NSLocalizedString("Paste %d Items", comment: ""), copiedURLs.count)
         }
-        return "Paste"
+        return NSLocalizedString("Paste", comment: "")
     }
     
     public func setCopied(urls: [URL]) {

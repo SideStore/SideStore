@@ -180,27 +180,27 @@ struct AppIDDetailView: View {
 
     private func displayName(for feature: Feature) -> String {
         switch feature {
-        case .appGroups: return "App Groups"
-        case .gameCenter: return "Game Center"
-        case .inAppPurchase: return "In-App Purchase"
-        case .pushNotifications: return "Push Notifications"
-        case .interAppAudio: return "Inter-App Audio"
-        case .associatedDomains: return "Associated Domains"
-        case .dataProtection: return "Data Protection"
-        case .siri: return "Siri"
-        case .applePay: return "Apple Pay"
-        case .vpn: return "Personal VPN"
-        case .networkExtensions: return "Network Extensions"
-        case .multipath: return "Multipath"
-        case .hotspot: return "Hotspot"
-        case .nfc: return "NFC Tag Reading"
-        case .classKit: return "ClassKit"
-        case .autoFillCredentialProvider: return "AutoFill Credential Provider"
-        case .accessWiFiInformation: return "Access WiFi Information"
-        case .wirelessAccessoryConfiguration: return "Wireless Accessory Config"
-        case .increasedMemoryLimit: return "Increased Memory Limit"
-        case .extendedVirtualAddressing: return "Extended Virtual Addressing"
-        case .increasedDebuggingMemoryLimit: return "Increased Debugging Memory Limit"
+        case .appGroups: return NSLocalizedString("App Groups", comment: "")
+        case .gameCenter: return NSLocalizedString("Game Center", comment: "")
+        case .inAppPurchase: return NSLocalizedString("In-App Purchase", comment: "")
+        case .pushNotifications: return NSLocalizedString("Push Notifications", comment: "")
+        case .interAppAudio: return NSLocalizedString("Inter-App Audio", comment: "")
+        case .associatedDomains: return NSLocalizedString("Associated Domains", comment: "")
+        case .dataProtection: return NSLocalizedString("Data Protection", comment: "")
+        case .siri: return NSLocalizedString("Siri", comment: "")
+        case .applePay: return NSLocalizedString("Apple Pay", comment: "")
+        case .vpn: return NSLocalizedString("Personal VPN", comment: "")
+        case .networkExtensions: return NSLocalizedString("Network Extensions", comment: "")
+        case .multipath: return NSLocalizedString("Multipath", comment: "")
+        case .hotspot: return NSLocalizedString("Hotspot", comment: "")
+        case .nfc: return NSLocalizedString("NFC Tag Reading", comment: "")
+        case .classKit: return NSLocalizedString("ClassKit", comment: "")
+        case .autoFillCredentialProvider: return NSLocalizedString("AutoFill Credential Provider", comment: "")
+        case .accessWiFiInformation: return NSLocalizedString("Access WiFi Information", comment: "")
+        case .wirelessAccessoryConfiguration: return NSLocalizedString("Wireless Accessory Config", comment: "")
+        case .increasedMemoryLimit: return NSLocalizedString("Increased Memory Limit", comment: "")
+        case .extendedVirtualAddressing: return NSLocalizedString("Extended Virtual Addressing", comment: "")
+        case .increasedDebuggingMemoryLimit: return NSLocalizedString("Increased Debugging Memory Limit", comment: "")
         default: return feature.rawValue
         }
     }

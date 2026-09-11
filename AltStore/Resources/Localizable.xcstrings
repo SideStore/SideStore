@@ -235,6 +235,17 @@
         }
       }
     },
+    "%@ created successfully.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@을(를) 생성했습니다."
+          }
+        }
+      }
+    },
     "%@ does not have any app versions.": {
       "localizations": {
         "ko": {
@@ -909,6 +920,17 @@
         }
       }
     },
+    "Access WiFi Information": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi 정보 접근"
+          }
+        }
+      }
+    },
     "Account %@ imported successfully!": {
       "localizations": {
         "ko": {
@@ -999,6 +1021,17 @@
         }
       }
     },
+    "Active Global": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활성 전역"
+          }
+        }
+      }
+    },
     "Active Local Certificate": {
       "localizations": {
         "ko": {
@@ -1055,6 +1088,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "활성 테마 강조색"
+          }
+        }
+      }
+    },
+    "Active signing certificate replaced successfully.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활성 서명 인증서를 교체했습니다."
           }
         }
       }
@@ -1190,6 +1234,17 @@
         }
       }
     },
+    "AirPort Base Station": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirPort 베이스 스테이션"
+          }
+        }
+      }
+    },
     "All Certificates": {
       "localizations": {
         "ko": {
@@ -1251,6 +1306,17 @@
         }
       }
     },
+    "AltServer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AltServer"
+          }
+        }
+      }
+    },
     "AltServer could not be found.": {
       "localizations": {
         "ko": {
@@ -1277,6 +1343,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "AltServer가 SideStore에 연결을 설정할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Amazon Alexa Service": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amazon Alexa 서비스"
           }
         }
       }
@@ -1399,6 +1476,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "알 수 없는 오류가 발생했습니다."
+          }
+        }
+      }
+    },
+    "Android Debug Bridge (ADB)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Android 디버그 브리지 (ADB)"
           }
         }
       }
@@ -1715,6 +1803,39 @@
         }
       }
     },
+    "Apple AirDrop": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple AirDrop"
+          }
+        }
+      }
+    },
+    "Apple AirPrint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple AirPrint"
+          }
+        }
+      }
+    },
+    "Apple CoreDevice Debug Service": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple CoreDevice 디버그 서비스"
+          }
+        }
+      }
+    },
     "Apple Devices": {
       "localizations": {
         "ko": {
@@ -1735,6 +1856,17 @@
         }
       }
     },
+    "Apple Filing Protocol (AFP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 파일 프로토콜 (AFP)"
+          }
+        }
+      }
+    },
     "Apple ID Password": {
       "localizations": {
         "ko": {
@@ -1745,12 +1877,89 @@
         }
       }
     },
+    "Apple Mobile Device v1 (Wi-Fi Sync)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 모바일 기기 v1 (Wi-Fi 동기화)"
+          }
+        }
+      }
+    },
+    "Apple Mobile Device v2": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 모바일 기기 v2"
+          }
+        }
+      }
+    },
+    "Apple Pay": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay"
+          }
+        }
+      }
+    },
+    "Apple QUIC Service": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple QUIC 서비스"
+          }
+        }
+      }
+    },
+    "Apple Remote Desktop": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 원격 데스크톱"
+          }
+        }
+      }
+    },
+    "Apple Sidecar": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Sidecar"
+          }
+        }
+      }
+    },
     "Apple TV": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "Apple TV"
+          }
+        }
+      }
+    },
+    "Apple TV Companion Remote Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple TV Companion 리모트 프로토콜"
           }
         }
       }
@@ -2039,6 +2248,17 @@
         }
       }
     },
+    "Associated Domains": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결된 도메인"
+          }
+        }
+      }
+    },
     "At least one app": {
       "localizations": {
         "ko": {
@@ -2095,6 +2315,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "AppGroup ID 자동 수정"
+          }
+        }
+      }
+    },
+    "AutoFill Credential Provider": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자동 완성 자격 증명 제공자"
           }
         }
       }
@@ -2517,6 +2748,17 @@
         }
       }
     },
+    "Cannot activate certificate: private key missing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서를 활성화할 수 없습니다: 개인 키가 없습니다."
+          }
+        }
+      }
+    },
     "Cannot register more than 10 App IDs within a 7 day period.": {
       "localizations": {
         "ko": {
@@ -2563,6 +2805,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "카테고리"
+          }
+        }
+      }
+    },
+    "Cellular": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셀룰러"
           }
         }
       }
@@ -2658,6 +2911,17 @@
         }
       }
     },
+    "Certificate deleted locally.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로컬에서 인증서를 삭제했습니다."
+          }
+        }
+      }
+    },
     "Certificate import completed.\nSuccess: %d\nFailed: %d": {
       "extractionState": "manual",
       "localizations": {
@@ -2665,6 +2929,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "인증서 가져오기가 완료되었습니다.\n성공: %d\n실패: %d"
+          }
+        }
+      }
+    },
+    "Certificate revoked on Apple's servers. Local copy preserved.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 서버에서 인증서를 취소했습니다. 로컬 사본은 유지됩니다."
+          }
+        }
+      }
+    },
+    "Certificate revoked successfully.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서를 취소했습니다."
           }
         }
       }
@@ -2867,6 +3153,17 @@
         }
       }
     },
+    "ClassKit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ClassKit"
+          }
+        }
+      }
+    },
     "Classic": {
       "localizations": {
         "ko": {
@@ -3057,6 +3354,17 @@
         }
       }
     },
+    "Companion Link (Apple Watch)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Companion Link (Apple Watch)"
+          }
+        }
+      }
+    },
     "Configured Target": {
       "localizations": {
         "ko": {
@@ -3225,6 +3533,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "콘솔 로그"
+          }
+        }
+      }
+    },
+    "Constrained Application Protocol (CoAP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제한된 애플리케이션 프로토콜 (CoAP)"
           }
         }
       }
@@ -3529,6 +3848,17 @@
         }
       }
     },
+    "CoreDevice Remote Service Discovery (RSD)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CoreDevice 원격 서비스 검색 (RSD)"
+          }
+        }
+      }
+    },
     "Correct & Proceed": {
       "localizations": {
         "ko": {
@@ -3741,6 +4071,28 @@
         }
       }
     },
+    "Current App": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 앱"
+          }
+        }
+      }
+    },
+    "Current App & Active Global": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 앱 및 활성 전역"
+          }
+        }
+      }
+    },
     "Current Device UDID not available": {
       "localizations": {
         "ko": {
@@ -3907,6 +4259,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "동적 암호화 토큰"
+          }
+        }
+      }
+    },
+    "Data Protection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데이터 보호"
           }
         }
       }
@@ -4623,6 +4986,28 @@
         }
       }
     },
+    "Digital Audio Access Protocol (iTunes)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "디지털 오디오 액세스 프로토콜 (iTunes)"
+          }
+        }
+      }
+    },
+    "Digital Photo Access Protocol (iPhoto)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "디지털 사진 액세스 프로토콜 (iPhoto)"
+          }
+        }
+      }
+    },
     "Disable": {
       "localizations": {
         "ko": {
@@ -4867,6 +5252,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "드래그하여 서버 우선순위를 재정렬하세요. 서버를 왼쪽으로 스와이프하면 숨기거나 숨김을 해제할 수 있습니다."
+          }
+        }
+      }
+    },
+    "Dynamic / Ephemeral Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동적/임시 포트"
           }
         }
       }
@@ -5326,6 +5722,17 @@
         }
       }
     },
+    "Ethernet": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이더넷"
+          }
+        }
+      }
+    },
     "Executable": {
       "localizations": {
         "ko": {
@@ -5660,6 +6067,17 @@
         }
       }
     },
+    "Extended Virtual Addressing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확장된 가상 주소 지정"
+          }
+        }
+      }
+    },
     "Extension Metadata": {
       "localizations": {
         "ko": {
@@ -5850,6 +6268,28 @@
         }
       }
     },
+    "Failed to activate certificate: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서를 활성화하지 못했습니다: %@"
+          }
+        }
+      }
+    },
+    "Failed to convert binary private key to PEM format.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바이너리 개인 키를 PEM 형식으로 변환하지 못했습니다."
+          }
+        }
+      }
+    },
     "Failed to encode pairingFile!": {
       "localizations": {
         "ko": {
@@ -5987,6 +6427,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "스토어 갱신 실패"
+          }
+        }
+      }
+    },
+    "Failed to revoke certificate.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서를 취소하지 못했습니다."
           }
         }
       }
@@ -6193,6 +6644,17 @@
         }
       }
     },
+    "File Transfer Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 전송 프로토콜"
+          }
+        }
+      }
+    },
     "File password cannot be empty.": {
       "localizations": {
         "ko": {
@@ -6365,6 +6827,17 @@
         }
       }
     },
+    "Game Center": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "게임 센터"
+          }
+        }
+      }
+    },
     "Games": {
       "localizations": {
         "ko": {
@@ -6401,6 +6874,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "생성"
+          }
+        }
+      }
+    },
+    "Google Cast (Chromecast)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google Cast (Chromecast)"
           }
         }
       }
@@ -6481,6 +6965,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "그룹: 없음"
+          }
+        }
+      }
+    },
+    "H.323 Video Conferencing (TCP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "H.323 화상 회의 (TCP)"
+          }
+        }
+      }
+    },
+    "H.323 Video Conferencing (UDP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "H.323 화상 회의 (UDP)"
           }
         }
       }
@@ -6591,6 +7097,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "숨긴 항목 숨기기"
+          }
+        }
+      }
+    },
+    "Home Assistant Smart Home": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Assistant 스마트 홈"
+          }
+        }
+      }
+    },
+    "HomeKit Accessory": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomeKit 액세서리"
+          }
+        }
+      }
+    },
+    "HomeKit Accessory Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomeKit 액세서리 프로토콜"
+          }
+        }
+      }
+    },
+    "Hotspot": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "핫스팟"
           }
         }
       }
@@ -7012,6 +7562,17 @@
         }
       }
     },
+    "In-App Purchase": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 내 구입"
+          }
+        }
+      }
+    },
     "Inactive": {
       "localizations": {
         "ko": {
@@ -7028,6 +7589,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "계정 비밀번호 포함"
+          }
+        }
+      }
+    },
+    "Incorrect password for %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@의 비밀번호가 올바르지 않습니다"
+          }
+        }
+      }
+    },
+    "Increased Debugging Memory Limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "디버깅 메모리 제한 증가"
+          }
+        }
+      }
+    },
+    "Increased Memory Limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메모리 제한 증가"
           }
         }
       }
@@ -7124,6 +7718,17 @@
         }
       }
     },
+    "Inter-App Audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 간 오디오"
+          }
+        }
+      }
+    },
     "Interactive": {
       "localizations": {
         "ko": {
@@ -7140,6 +7745,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "내부 앱 캐시"
+          }
+        }
+      }
+    },
+    "Internet Printing Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인터넷 프린팅 프로토콜"
           }
         }
       }
@@ -7312,6 +7928,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "JSON 구성을 성공적으로 저장했습니다!"
+          }
+        }
+      }
+    },
+    "JitStreamer Service": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JitStreamer 서비스"
           }
         }
       }
@@ -7684,6 +8311,17 @@
         }
       }
     },
+    "Local certificate deactivated.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로컬 인증서를 비활성화했습니다."
+          }
+        }
+      }
+    },
     "Locale": {
       "localizations": {
         "ko": {
@@ -7700,6 +8338,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "로그 메뉴"
+          }
+        }
+      }
+    },
+    "Loopback": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "루프백"
           }
         }
       }
@@ -7897,6 +8546,39 @@
         }
       }
     },
+    "Matter Device Commissioning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Matter 기기 커미셔닝"
+          }
+        }
+      }
+    },
+    "Matter Smart Home Device": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Matter 스마트 홈 기기"
+          }
+        }
+      }
+    },
+    "Message Queuing Telemetry Transport (MQTT)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메시지 큐잉 원격 측정 전송 (MQTT)"
+          }
+        }
+      }
+    },
     "Min OS Version": {
       "extractionState": "manual",
       "localizations": {
@@ -7970,12 +8652,34 @@
         }
       }
     },
+    "Multipath": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "멀티패스"
+          }
+        }
+      }
+    },
     "My Apps": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "내 앱"
+          }
+        }
+      }
+    },
+    "NFC Tag Reading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NFC 태그 읽기"
           }
         }
       }
@@ -8077,6 +8781,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "네트워크 검색"
+          }
+        }
+      }
+    },
+    "Network Extensions": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네트워크 확장"
+          }
+        }
+      }
+    },
+    "Network File System": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네트워크 파일 시스템"
           }
         }
       }
@@ -9170,12 +9896,45 @@
         }
       }
     },
+    "Paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "붙여넣기"
+          }
+        }
+      }
+    },
+    "Paste %d Items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "항목 %d개 붙여넣기"
+          }
+        }
+      }
+    },
     "Paste your PEM-formatted private key below, or import it from a text file.": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "아래에 PEM 형식의 개인 키를 붙여넣거나 텍스트 파일에서 가져오세요."
+          }
+        }
+      }
+    },
+    "Paste “%@”": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” 붙여넣기"
           }
         }
       }
@@ -9217,6 +9976,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "권한 검사"
+          }
+        }
+      }
+    },
+    "Personal VPN": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개인 VPN"
           }
         }
       }
@@ -9442,6 +10212,17 @@
         }
       }
     },
+    "Plex Media Server": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plex 미디어 서버"
+          }
+        }
+      }
+    },
     "Port: %@": {
       "localizations": {
         "ko": {
@@ -9489,6 +10270,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "재서명된 IPA 선호"
+          }
+        }
+      }
+    },
+    "Printer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프린터"
           }
         }
       }
@@ -9646,6 +10438,17 @@
         }
       }
     },
+    "Protocol for streaming of audio/video content": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오디오/비디오 콘텐츠 스트리밍용 프로토콜"
+          }
+        }
+      }
+    },
     "Provisioned Devices (%d)": {
       "localizations": {
         "ko": {
@@ -9728,6 +10531,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "프로파일 %1$d개를 정리했습니다(%2$d개 실패)"
+          }
+        }
+      }
+    },
+    "Push Notifications": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "푸시 알림"
           }
         }
       }
@@ -9891,6 +10705,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "페어링 준비됨"
+          }
+        }
+      }
+    },
+    "Real Time Streaming Protocol (RTSP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실시간 스트리밍 프로토콜 (RTSP)"
           }
         }
       }
@@ -10096,6 +10921,17 @@
         }
       }
     },
+    "Registered Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등록된 포트"
+          }
+        }
+      }
+    },
     "Reload All Widgets": {
       "localizations": {
         "ko": {
@@ -10136,6 +10972,39 @@
         }
       }
     },
+    "Remote App (Apple TV Remote)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "리모트 앱 (Apple TV 리모컨)"
+          }
+        }
+      }
+    },
+    "Remote Audio Output Protocol (AirTunes)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 오디오 출력 프로토콜 (AirTunes)"
+          }
+        }
+      }
+    },
+    "Remote Debug Link": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 디버그 링크"
+          }
+        }
+      }
+    },
     "Remote Endpoint": {
       "localizations": {
         "ko": {
@@ -10153,6 +11022,61 @@
           "stringUnit": {
             "state": "translated",
             "value": "원격 엔드포인트 IP"
+          }
+        }
+      }
+    },
+    "Remote Frame Buffer (VNC)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 프레임 버퍼 (VNC)"
+          }
+        }
+      }
+    },
+    "Remote Pairing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 페어링"
+          }
+        }
+      }
+    },
+    "Remote Pairing (Manual / Apple TV)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 페어링 (수동 / Apple TV)"
+          }
+        }
+      }
+    },
+    "Remote Pairing (Pairable Host)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 페어링 (페어링 가능한 호스트)"
+          }
+        }
+      }
+    },
+    "Remote Pairing Tunnel": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 페어링 터널"
           }
         }
       }
@@ -10901,6 +11825,17 @@
         }
       }
     },
+    "SMB File Sharing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMB 파일 공유"
+          }
+        }
+      }
+    },
     "SN: ": {
       "localizations": {
         "ko": {
@@ -10917,6 +11852,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "저장소 데이터"
+          }
+        }
+      }
+    },
+    "SSH Remote Login Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH 원격 로그인 프로토콜"
           }
         }
       }
@@ -11047,6 +11993,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "WidgetLogs/%@에 저장됨"
+          }
+        }
+      }
+    },
+    "Scanner": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "스캐너"
           }
         }
       }
@@ -11237,6 +12194,61 @@
           "stringUnit": {
             "state": "translated",
             "value": "검색 중…"
+          }
+        }
+      }
+    },
+    "Secure CoAP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보안 CoAP"
+          }
+        }
+      }
+    },
+    "Secure File Transfer Protocol over SSH": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH 기반 보안 파일 전송 프로토콜"
+          }
+        }
+      }
+    },
+    "Secure Internet Printing Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보안 인터넷 프린팅 프로토콜"
+          }
+        }
+      }
+    },
+    "Secure WebDAV": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보안 WebDAV"
+          }
+        }
+      }
+    },
+    "Secure WebSocket Connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보안 WebSocket 연결"
           }
         }
       }
@@ -11539,6 +12551,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "서비스 버전"
+          }
+        }
+      }
+    },
+    "Session Initiation Protocol (SIP over TCP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세션 개시 프로토콜 (TCP 기반 SIP)"
+          }
+        }
+      }
+    },
+    "Session Initiation Protocol (SIP over UDP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세션 개시 프로토콜 (UDP 기반 SIP)"
           }
         }
       }
@@ -12155,6 +13189,17 @@
         }
       }
     },
+    "Siri": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siri"
+          }
+        }
+      }
+    },
     "Size": {
       "extractionState": "manual",
       "localizations": {
@@ -12196,6 +13241,17 @@
         }
       }
     },
+    "Sleep Proxy Server": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep Proxy 서버"
+          }
+        }
+      }
+    },
     "Social": {
       "localizations": {
         "ko": {
@@ -12212,6 +13268,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "일부 저장소를 불러올 수 없습니다"
+          }
+        }
+      }
+    },
+    "Sonos Speaker System": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonos 스피커 시스템"
           }
         }
       }
@@ -12313,6 +13380,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "저장소는 SideStore에서 사용할 수 있는 앱을 결정합니다. 저장소를 더 많이 추가할수록 SideStore 경험이 더 좋아집니다.\n\n어디서부터 시작해야 할지 모르시겠나요? 추천 저장소 중 하나를 추가해 보세요!"
+          }
+        }
+      }
+    },
+    "Spatial Remote Playback Link TLS": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공간 원격 재생 링크 TLS"
+          }
+        }
+      }
+    },
+    "Spotify Connect": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotify Connect"
           }
         }
       }
@@ -12479,6 +13568,17 @@
         }
       }
     },
+    "Successfully added private key to certificate %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 %@에 개인 키를 추가했습니다."
+          }
+        }
+      }
+    },
     "Successfully imported '%@'!": {
       "localizations": {
         "ko": {
@@ -12496,6 +13596,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@(%@)와(과) 페어링에 성공했습니다!\n페어링 파일이 문서에 저장되었습니다."
+          }
+        }
+      }
+    },
+    "Successfully removed private key from certificate %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 %@에서 개인 키를 제거했습니다."
           }
         }
       }
@@ -12710,6 +13821,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "팀 이름"
+          }
+        }
+      }
+    },
+    "Telnet Remote Login Protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telnet 원격 로그인 프로토콜"
           }
         }
       }
@@ -13063,6 +14185,17 @@
         }
       }
     },
+    "The input does not contain a valid private key.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "입력한 내용에 유효한 개인 키가 없습니다."
+          }
+        }
+      }
+    },
     "The latest version of %@ could not be downloaded.": {
       "localizations": {
         "ko": {
@@ -13199,6 +14332,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "선택한 인증서는 이미 이 앱에 사용되고 있습니다. 대신 재서명 옵션을 사용하세요."
+          }
+        }
+      }
+    },
+    "The selected file is a certificate, not a private key.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 파일은 인증서이며, 개인 키가 아닙니다."
           }
         }
       }
@@ -13425,6 +14569,17 @@
         }
       }
     },
+    "This certificate is already revoked on Apple's servers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 인증서는 이미 Apple 서버에서 취소되었습니다."
+          }
+        }
+      }
+    },
     "This certificate type requires a paid Apple Developer account.": {
       "localizations": {
         "ko": {
@@ -13609,6 +14764,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideStore에서 Apple 계정을 로그아웃하고 Keychain의 프로비저닝된 adi.pb 데이터를 지웁니다. 활성 서명 인증서는 유지됩니다."
+          }
+        }
+      }
+    },
+    "Thread Mesh Commissioning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thread 메시 커미셔닝"
+          }
+        }
+      }
+    },
+    "Thread Radio Encapsulation Link": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thread 라디오 캡슐화 링크"
           }
         }
       }
@@ -14288,6 +15465,17 @@
         }
       }
     },
+    "VNC Remote Desktop": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VNC 원격 데스크톱"
+          }
+        }
+      }
+    },
     "VPN Connection Error:\n%@\n\nPlease make sure LocalDevVPN is connected and running properly.": {
       "localizations": {
         "ko": {
@@ -14684,12 +15872,45 @@
         }
       }
     },
+    "Web Distributed Authoring and Versioning (WebDAV)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "웹 분산 저작 및 버전 관리 (WebDAV)"
+          }
+        }
+      }
+    },
+    "WebSocket Connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WebSocket 연결"
+          }
+        }
+      }
+    },
     "Weight: %@": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "가중치: %@"
+          }
+        }
+      }
+    },
+    "Well-Known Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잘 알려진 포트"
           }
         }
       }
@@ -14710,6 +15931,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideStore가 JIT를 트리거하면 SideJITServer가 디버그 연결(attach) 신호를 전송하여 즉시 JIT(Just-In-Time) 실행을 활성화합니다."
+          }
+        }
+      }
+    },
+    "Wi-Fi": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi"
           }
         }
       }
@@ -14775,6 +16007,17 @@
         }
       }
     },
+    "Wireless Accessory Config": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무선 액세서리 구성"
+          }
+        }
+      }
+    },
     "Wireless Pairing": {
       "localizations": {
         "ko": {
@@ -14791,6 +16034,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "유효한 페어링 파일이 없으면 앱 설치, 갱신, 재서명 등 페어링 파일이 필요한 작업이 작동하지 않습니다."
+          }
+        }
+      }
+    },
+    "Workstation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "워크스테이션"
+          }
+        }
+      }
+    },
+    "World Wide Web (HTTP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "월드 와이드 웹 (HTTP)"
+          }
+        }
+      }
+    },
+    "World Wide Web (HTTPS)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "월드 와이드 웹 (HTTPS)"
           }
         }
       }
