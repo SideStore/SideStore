@@ -74,7 +74,7 @@ struct CertificateRowView: View {
         .contextMenu {
             let isMasked = viewModel.isSerialMasked(for: cert)
             SwiftUI.Button { toggleReveal() } label: {
-                Label(isMasked ? "Reveal Details" : "Hide Details",
+                Label(isMasked ? NSLocalizedString("Reveal Details", comment: "") : NSLocalizedString("Hide Details", comment: ""),
                       systemImage: isMasked ? "eye" : "eye.slash")
             }
             if hasPrivateKey && !isActive {

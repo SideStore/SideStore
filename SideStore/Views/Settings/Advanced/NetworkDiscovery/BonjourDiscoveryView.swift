@@ -100,10 +100,10 @@ struct BonjourDiscoveryView: View {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
                 .confirmationDialog("Filter & Sort", isPresented: $showFilterDialog) {
-                    SwiftUI.Button(viewModel.domainGroupByFirstLetter ? "Group: None" : "Group: First Letter") {
+                    SwiftUI.Button(viewModel.domainGroupByFirstLetter ? NSLocalizedString("Group: None", comment: "") : NSLocalizedString("Group: First Letter", comment: "")) {
                         viewModel.domainGroupByFirstLetter.toggle()
                     }
-                    SwiftUI.Button(viewModel.domainSortAscending ? "Sort: Name (Z to A)" : "Sort: Name (A to Z)") {
+                    SwiftUI.Button(viewModel.domainSortAscending ? NSLocalizedString("Sort: Name (Z to A)", comment: "") : NSLocalizedString("Sort: Name (A to Z)", comment: "")) {
                         viewModel.domainSortAscending.toggle()
                     }
                 }
@@ -268,7 +268,7 @@ struct ServiceTypesView: View {
                             SwiftUI.Button {
                                 viewModel.serviceTypeGroupOption = opt
                             } label: {
-                                Label(opt.rawValue, systemImage: viewModel.serviceTypeGroupOption == opt ? "checkmark" : "")
+                                Label(NSLocalizedString(opt.rawValue, comment: ""), systemImage: viewModel.serviceTypeGroupOption == opt ? "checkmark" : "")
                             }
                         }
                     } label: {
@@ -280,7 +280,7 @@ struct ServiceTypesView: View {
                             SwiftUI.Button {
                                 viewModel.serviceTypeSortOption = opt
                             } label: {
-                                Label(opt.rawValue, systemImage: viewModel.serviceTypeSortOption == opt ? "checkmark" : "")
+                                Label(NSLocalizedString(opt.rawValue, comment: ""), systemImage: viewModel.serviceTypeSortOption == opt ? "checkmark" : "")
                             }
                         }
                     } label: {
@@ -514,7 +514,7 @@ struct ServiceInstancesView: View {
                             SwiftUI.Button {
                                 viewModel.instanceGroupOption = opt
                             } label: {
-                                Label(opt.rawValue, systemImage: viewModel.instanceGroupOption == opt ? "checkmark" : "")
+                                Label(NSLocalizedString(opt.rawValue, comment: ""), systemImage: viewModel.instanceGroupOption == opt ? "checkmark" : "")
                             }
                         }
                     } label: {
@@ -526,7 +526,7 @@ struct ServiceInstancesView: View {
                             SwiftUI.Button {
                                 viewModel.instanceSortOption = opt
                             } label: {
-                                Label(opt.rawValue, systemImage: viewModel.instanceSortOption == opt ? "checkmark" : "")
+                                Label(NSLocalizedString(opt.rawValue, comment: ""), systemImage: viewModel.instanceSortOption == opt ? "checkmark" : "")
                             }
                         }
                     } label: {
@@ -875,7 +875,7 @@ struct ServiceDetailView: View {
                     }
                     
                     HStack(spacing: 8) {
-                        Text(resolved.type.contains("_tcp") ? "TCP" : "UDP")
+                        Text(resolved.type.contains("_tcp") ? NSLocalizedString("TCP", comment: "") : NSLocalizedString("UDP", comment: ""))
                             .font(.system(size: 11, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)

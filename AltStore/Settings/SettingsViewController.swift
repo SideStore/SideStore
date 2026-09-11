@@ -679,7 +679,7 @@ private extension SettingsViewController
                     guard UserDefaults.standard.recreateDatabaseOnNextStart else {
                         return
                     }
-                    let toast = ToastView(text: "Database Delete Scheduled on Next Launch", detailText: "App is closing in \(time) seconds...")
+                    let toast = ToastView(text: NSLocalizedString("Database Delete Scheduled on Next Launch", comment: ""), detailText: String(format: NSLocalizedString("App is closing in %d seconds...", comment: ""), time))
                     toast.tintColor = .altPrimary
                     toast.preferredDuration = 1
                     toast.show(in: self)
@@ -1202,7 +1202,7 @@ extension SettingsViewController
                     selected: UserDefaults.standard.menuAnisetteURL,
                     onResetAdiPb: { [weak self] in
                         guard let self = self else { return }
-                        ToastView(text: "Cleared adi.pb!", detailText: "You will need to log back into Apple ID in SideStore.")
+                        ToastView(text: NSLocalizedString("Cleared adi.pb!", comment: ""), detailText: NSLocalizedString("You will need to log back into Apple ID in SideStore.", comment: ""))
                             .show(in: self)
                     }
                 )

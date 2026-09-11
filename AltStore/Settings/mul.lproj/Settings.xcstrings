@@ -266,7 +266,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Side Team"
+            "value": "Side 팀"
           }
         }
       }
@@ -356,7 +356,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "SideStore Team"
+            "value": "SideStore 팀"
           }
         }
       }

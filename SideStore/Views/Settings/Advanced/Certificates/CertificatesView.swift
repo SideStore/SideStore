@@ -376,8 +376,8 @@ private struct CreateCertificateSheetView: View {
                 Section(
                     header: Text("Certificate Information"),
                     footer: Text(isPaidWarningVisible
-                        ? "This certificate type requires a paid Apple Developer account."
-                        : "Select the certificate type and machine name. This registers the certificate on Apple's servers and saves the private key locally.")
+                        ? NSLocalizedString("This certificate type requires a paid Apple Developer account.", comment: "")
+                        : NSLocalizedString("Select the certificate type and machine name. This registers the certificate on Apple's servers and saves the private key locally.", comment: ""))
                 ) {
                     Picker("Certificate Type", selection: $selectedCertificateType) {
                         ForEach(viewModel.availableCertificateTypes, id: \.rawValue) { certType in

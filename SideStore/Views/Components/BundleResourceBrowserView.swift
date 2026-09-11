@@ -78,7 +78,7 @@ struct BundleResourceBrowserView: View {
         .toolbar {
             // Trailing: Select / Done
             ToolbarItem(placement: .navigationBarTrailing) {
-                SwiftUI.Button(isSelecting ? "Done" : "Select") {
+                SwiftUI.Button(isSelecting ? NSLocalizedString("Done", comment: "") : NSLocalizedString("Select", comment: "")) {
                     withAnimation {
                         isSelecting.toggle()
                         if !isSelecting { selectedURLs.removeAll() }
@@ -648,12 +648,12 @@ struct ResourceTextViewer: View {
 
     var body: some View {
         ScrollView {
-            Text(content.isEmpty ? "Loading\u{2026}" : content)
+            Text(content.isEmpty ? NSLocalizedString("Loading\u{2026}", comment: "") : content)
                 .font(.system(size: 12, design: .monospaced))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
         }
-        .navigationTitle(title ?? url?.lastPathComponent ?? "Text")
+        .navigationTitle(title ?? url?.lastPathComponent ?? NSLocalizedString("Text", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

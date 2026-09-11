@@ -96,12 +96,12 @@ class SideSignConfigurationViewModel: ObservableObject {
         let headers = buildHeadersFromState()
         await SideSignConfigManager.shared.saveConfig(headers)
         updateRawEditableJSON()
-        showToast(text: "Saved SideSign headers successfully.")
+        showToast(text: NSLocalizedString("Saved SideSign headers successfully.", comment: ""))
     }
 
     func saveRawJSON() async {
         guard let data = rawEditableJSON.data(using: .utf8) else {
-            showToast(text: "Encoding Failed", detailText: "Unable to encode JSON as UTF-8.")
+            showToast(text: NSLocalizedString("Encoding Failed", comment: ""), detailText: NSLocalizedString("Unable to encode JSON as UTF-8.", comment: ""))
             return
         }
 
@@ -109,9 +109,9 @@ class SideSignConfigurationViewModel: ObservableObject {
             let headers = try JSONDecoder().decode(SideSignHeaders.self, from: data)
             applyHeadersToState(headers)
             await SideSignConfigManager.shared.saveConfig(headers)
-            showToast(text: "SideSign JSON configuration saved successfully!")
+            showToast(text: NSLocalizedString("SideSign JSON configuration saved successfully!", comment: ""))
         } catch {
-            showToast(text: "Invalid JSON Structure", error: error)
+            showToast(text: NSLocalizedString("Invalid JSON Structure", comment: ""), error: error)
         }
     }
 
@@ -119,7 +119,7 @@ class SideSignConfigurationViewModel: ObservableObject {
         let headers = await SideSignConfigManager.shared.resetToDefaults()
         applyHeadersToState(headers)
         updateRawEditableJSON()
-        showToast(text: "Reset to default SideSign configuration.")
+        showToast(text: NSLocalizedString("Reset to default SideSign configuration.", comment: ""))
     }
 
     func importJSON(url: URL) async {
@@ -137,9 +137,9 @@ class SideSignConfigurationViewModel: ObservableObject {
             let headers = try await SideSignConfigManager.shared.importFromFile(url: url)
             applyHeadersToState(headers)
             updateRawEditableJSON()
-            showToast(text: "Imported successfully", detailText: url.lastPathComponent)
+            showToast(text: NSLocalizedString("Imported successfully", comment: ""), detailText: url.lastPathComponent)
         } catch {
-            showToast(text: "Import Failed", error: error)
+            showToast(text: NSLocalizedString("Import Failed", comment: ""), error: error)
         }
     }
 
@@ -150,7 +150,7 @@ class SideSignConfigurationViewModel: ObservableObject {
             try data.write(to: tempURL, options: .atomic)
             return tempURL
         } catch {
-            showToast(text: "Export Failed", error: error)
+            showToast(text: NSLocalizedString("Export Failed", comment: ""), error: error)
             return nil
         }
     }
@@ -190,11 +190,11 @@ struct SideSignConfigurationView: View {
                 if viewModel.viewMode == 0 {
                     // SECTION 1: GRANDSLAM AUTH (gsa.apple.com)
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("GRANDSLAM AUTH (GSA)")
+                        sectionHeader(NSLocalizedString("GRANDSLAM AUTH (GSA)", comment: ""))
 
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "Service",
+                                title: NSLocalizedString("Service", comment: ""),
                                 headerKey: "svct",
                                 text: $viewModel.grandSlamService,
                                 placeholder: Constants.GrandSlam.service
@@ -203,7 +203,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "Header Version",
+                                title: NSLocalizedString("Header Version", comment: ""),
                                 headerKey: "Header: Version",
                                 text: $viewModel.grandSlamHeaderVersion,
                                 placeholder: Constants.GrandSlam.headerVersion
@@ -212,7 +212,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "Auth App",
+                                title: NSLocalizedString("Auth App", comment: ""),
                                 headerKey: "X-Apple-App-Info",
                                 text: $viewModel.grandSlamAuthApp,
                                 placeholder: Constants.GrandSlam.authApp
@@ -221,7 +221,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "User Agent",
+                                title: NSLocalizedString("User Agent", comment: ""),
                                 headerKey: "User-Agent",
                                 text: $viewModel.grandSlamUserAgent,
                                 placeholder: Constants.GrandSlam.userAgent,
@@ -234,11 +234,11 @@ struct SideSignConfigurationView: View {
 
                     // SECTION 2: APPLE AUTH (idmsa.apple.com)
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("APPLE AUTH (IDMSA)")
+                        sectionHeader(NSLocalizedString("APPLE AUTH (IDMSA)", comment: ""))
 
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "App ID Key",
+                                title: NSLocalizedString("App ID Key", comment: ""),
                                 headerKey: "appIdKey",
                                 text: $viewModel.appleAuthAppIDKey,
                                 placeholder: Constants.AppleAuth.appIDKey,
@@ -248,7 +248,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "User Agent",
+                                title: NSLocalizedString("User Agent", comment: ""),
                                 headerKey: "User-Agent",
                                 text: $viewModel.appleAuthUserAgent,
                                 placeholder: Constants.AppleAuth.userAgent,
@@ -261,11 +261,11 @@ struct SideSignConfigurationView: View {
 
                     // SECTION 3: DEVELOPER SERVICES (developerservices2.apple.com)
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("DEVELOPER SERVICES")
+                        sectionHeader(NSLocalizedString("DEVELOPER SERVICES", comment: ""))
 
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "Client ID",
+                                title: NSLocalizedString("Client ID", comment: ""),
                                 headerKey: "clientId",
                                 text: $viewModel.developerServicesClientID,
                                 placeholder: Constants.DeveloperServices.clientID
@@ -274,7 +274,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "Protocol Version",
+                                title: NSLocalizedString("Protocol Version", comment: ""),
                                 headerKey: "protocolVersion",
                                 text: $viewModel.developerServicesProtocolVersion,
                                 placeholder: Constants.DeveloperServices.protocolVersion
@@ -283,7 +283,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "Services Version",
+                                title: NSLocalizedString("Services Version", comment: ""),
                                 headerKey: "servicesProtocolVersion",
                                 text: $viewModel.developerServicesServicesProtocolVersion,
                                 placeholder: Constants.DeveloperServices.servicesProtocolVersion
@@ -292,7 +292,7 @@ struct SideSignConfigurationView: View {
                             divider
 
                             headerFieldRow(
-                                title: "User Agent",
+                                title: NSLocalizedString("User Agent", comment: ""),
                                 headerKey: "User-Agent",
                                 text: $viewModel.developerServicesUserAgent,
                                 placeholder: Constants.DeveloperServices.userAgent
@@ -322,7 +322,7 @@ struct SideSignConfigurationView: View {
                 } else {
                     // RAW JSON VIEW
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("RAW CONFIGURATION JSON")
+                        sectionHeader(NSLocalizedString("RAW CONFIGURATION JSON", comment: ""))
 
                         VStack(spacing: 12) {
                             TextEditor(text: $viewModel.rawEditableJSON)
@@ -359,7 +359,7 @@ struct SideSignConfigurationView: View {
 
                 // SECTION: ACTIONS
                 VStack(alignment: .leading, spacing: 8) {
-                    sectionHeader("ACTIONS")
+                    sectionHeader(NSLocalizedString("ACTIONS", comment: ""))
 
                     VStack(spacing: 0) {
                         SwiftUI.Button {
@@ -494,7 +494,7 @@ struct SideSignConfigurationView: View {
                     }
                 }
             case .failure(let error):
-                viewModel.showToast(text: "File Selection Failed", error: error)
+                viewModel.showToast(text: NSLocalizedString("File Selection Failed", comment: ""), error: error)
             }
         }
         #endif

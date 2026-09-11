@@ -132,7 +132,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "App ID %@개 남음"
+            "value": "앱 ID %@개 남음"
           }
         }
       }
@@ -307,6 +307,17 @@
         }
       }
     },
+    "%@ may request access to the following:": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에서 다음 항목에 접근을 요청할 수 있습니다:"
+          }
+        }
+      }
+    },
     "%@ received an invalid request from SideStore.": {
       "localizations": {
         "ko": {
@@ -328,7 +339,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@에는 App ID %2$@개가 필요하지만, %3$@."
+            "value": "%1$@에는 앱 ID %2$@개가 필요하지만, %3$@."
           }
         }
       }
@@ -457,6 +468,26 @@
         }
       }
     },
+    "%d Instance(s)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인스턴스 %d개"
+          }
+        }
+      }
+    },
+    "%d Service(s) Found": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서비스 %d개 발견됨"
+          }
+        }
+      }
+    },
     "%d active on portal": {
       "localizations": {
         "ko": {
@@ -527,6 +558,16 @@
         }
       }
     },
+    "%d update(s) available": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업데이트 %d개 사용 가능"
+          }
+        }
+      }
+    },
     "%d/%d": {
       "localizations": {
         "en": {
@@ -558,7 +599,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "‘기기 IP’ 및 ‘RemotePair Port’는 선택 사항이며, 지정할 경우 대상 VPN의 구성과 정확히 일치해야 합니다. 자동 검색 또는 기본 포트 %@를 사용하려면 비워 두십시오."
+            "value": "‘기기 IP’ 및 ‘RemotePair 포트’는 선택 사항이며, 지정할 경우 대상 VPN의 구성과 정확히 일치해야 합니다. 자동 검색 또는 기본 포트 %@를 사용하려면 비워 두십시오."
           }
         }
       }
@@ -568,7 +609,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "'Device IP'는 필수입니다. 'RemotePair Port'는 선택 사항이며 자동 검색 또는 기본값 %@을(를) 우선 사용합니다."
+            "value": "'기기 IP'는 필수입니다. 'RemotePair 포트'는 선택 사항이며 자동 검색 또는 기본값 %@을(를) 우선 사용합니다."
           }
         }
       }
@@ -713,6 +754,16 @@
         }
       }
     },
+    "ACTIONS": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작업"
+          }
+        }
+      }
+    },
     "ACTIVATE": {
       "localizations": {
         "ko": {
@@ -773,12 +824,52 @@
         }
       }
     },
+    "APPLE AUTH (IDMSA)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APPLE 인증 (IDMSA)"
+          }
+        }
+      }
+    },
     "About": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "정보"
+          }
+        }
+      }
+    },
+    "Accept IPv6 Config": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6 구성 허용"
+          }
+        }
+      }
+    },
+    "Account %@ imported successfully!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 계정을 성공적으로 가져왔습니다!"
+          }
+        }
+      }
+    },
+    "Account Imported": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정 가져오기 완료"
           }
         }
       }
@@ -1053,6 +1144,26 @@
         }
       }
     },
+    "All requirements met. Local device pairing & Remote server connection active.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 요구 사항이 충족되었습니다. 로컬 기기 페어링 및 원격 서버 연결이 활성화되어 있습니다."
+          }
+        }
+      }
+    },
+    "All requirements met. Local device pairing & VPN tunnel active.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 요구 사항이 충족되었습니다. 로컬 기기 페어링 및 VPN 터널이 활성화되어 있습니다."
+          }
+        }
+      }
+    },
     "Almost there…": {
       "localizations": {
         "ko": {
@@ -1263,6 +1374,16 @@
         }
       }
     },
+    "App File Size Check": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 파일 크기 검사"
+          }
+        }
+      }
+    },
     "App Group Details": {
       "localizations": {
         "ko": {
@@ -1333,6 +1454,16 @@
         }
       }
     },
+    "App ID Details": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID 세부 정보"
+          }
+        }
+      }
+    },
     "App ID ID": {
       "localizations": {
         "ko": {
@@ -1359,6 +1490,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱 ID 정보"
+          }
+        }
+      }
+    },
+    "App ID Key": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID 키"
           }
         }
       }
@@ -1409,6 +1550,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "사용된 앱 스토리지:"
+          }
+        }
+      }
+    },
+    "App Version Check": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 버전 검사"
+          }
+        }
+      }
+    },
+    "App is closing in %d seconds...": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d초 후 앱이 종료됩니다..."
           }
         }
       }
@@ -1479,6 +1640,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apple Watch"
+          }
+        }
+      }
+    },
+    "Apple automatically provisions active certificates and devices for this App ID and platform.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple이 이 앱 ID 및 플랫폼에 대해 활성 인증서와 기기를 자동으로 프로비저닝합니다."
           }
         }
       }
@@ -1685,6 +1856,16 @@
         }
       }
     },
+    "Ascending": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오름차순"
+          }
+        }
+      }
+    },
     "Associated App Groups": {
       "localizations": {
         "ko": {
@@ -1725,6 +1906,16 @@
         }
       }
     },
+    "Auth App": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증 앱"
+          }
+        }
+      }
+    },
     "Authenticated": {
       "localizations": {
         "ko": {
@@ -1751,6 +1942,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "네트워크에서 자동 검색됨"
+          }
+        }
+      }
+    },
+    "Auto-Fix AppGroup IDs": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AppGroup ID 자동 수정"
+          }
+        }
+      }
+    },
+    "Automatically fix App Group casing mismatches": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Group 대소문자 불일치를 자동으로 수정합니다"
           }
         }
       }
@@ -1865,6 +2076,50 @@
         }
       }
     },
+    "Bind Host / IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바인드 호스트 / IP"
+          }
+        }
+      }
+    },
+    "Bind Host / IP cannot be empty.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바인드 호스트 / IP는 비워 둘 수 없습니다."
+          }
+        }
+      }
+    },
+    "Bind Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바인드 포트"
+          }
+        }
+      }
+    },
+    "Bind Port must be a valid number between 1 and 65535.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바인드 포트는 1에서 65535 사이의 유효한 숫자여야 합니다."
+          }
+        }
+      }
+    },
     "Browse": {
       "localizations": {
         "ko": {
@@ -1921,6 +2176,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "번들 식별자"
+          }
+        }
+      }
+    },
+    "Bundle Identifier Check": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번들 식별자 검사"
           }
         }
       }
@@ -2115,6 +2380,16 @@
         }
       }
     },
+    "Cellular Refresh": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셀룰러 갱신"
+          }
+        }
+      }
+    },
     "Certificate": {
       "localizations": {
         "ko": {
@@ -2131,6 +2406,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "인증서 세부 정보"
+          }
+        }
+      }
+    },
+    "Certificate ID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 ID"
           }
         }
       }
@@ -2287,6 +2572,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "버전 정보 확인 (/ver/)"
+          }
+        }
+      }
+    },
+    "Checksum (SHA-256) Check": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체크섬(SHA-256) 검사"
           }
         }
       }
@@ -2481,12 +2776,32 @@
         }
       }
     },
+    "Client ID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클라이언트 ID"
+          }
+        }
+      }
+    },
     "Client Info": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "클라이언트 정보"
+          }
+        }
+      }
+    },
+    "Client Time": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클라이언트 시간"
           }
         }
       }
@@ -2567,6 +2882,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wi-Fi 네트워크, 브리지 또는 유선 네트워크 연결에 연결하세요!"
+          }
+        }
+      }
+    },
+    "Connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결됨"
           }
         }
       }
@@ -2721,6 +3047,16 @@
         }
       }
     },
+    "Copied!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "복사됨!"
+          }
+        }
+      }
+    },
     "Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app.": {
       "localizations": {
         "ko": {
@@ -2831,6 +3167,16 @@
         }
       }
     },
+    "Copy JSON": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON 복사"
+          }
+        }
+      }
+    },
     "Copy Key": {
       "localizations": {
         "ko": {
@@ -2887,6 +3233,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "값 복사"
+          }
+        }
+      }
+    },
+    "Copy XML": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "XML 복사"
           }
         }
       }
@@ -3091,12 +3447,42 @@
         }
       }
     },
+    "Created App Group '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Group '%@'을(를) 생성했습니다"
+          }
+        }
+      }
+    },
+    "Created profile '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 '%@'을(를) 생성했습니다"
+          }
+        }
+      }
+    },
     "Cryptographic Keys": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "암호화 키"
+          }
+        }
+      }
+    },
+    "Current Device UDID not available": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 기기 UDID를 사용할 수 없습니다"
           }
         }
       }
@@ -3141,6 +3527,26 @@
         }
       }
     },
+    "Customize App Extensions": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 확장 사용자 지정"
+          }
+        }
+      }
+    },
+    "Customize AppID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AppID 사용자 지정"
+          }
+        }
+      }
+    },
     "Customize the AppID if required and press 'Confirm' to proceed.": {
       "localizations": {
         "ko": {
@@ -3157,6 +3563,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "데이터베이스 옵션"
+          }
+        }
+      }
+    },
+    "DEVELOPER SERVICES": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발자 서비스"
+          }
+        }
+      }
+    },
+    "DEVICE & IDENTITY": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 및 신원"
           }
         }
       }
@@ -3207,6 +3633,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "DNS-SD 레코드"
+          }
+        }
+      }
+    },
+    "DYNAMIC CRYPTOGRAPHIC TOKENS": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동적 암호화 토큰"
+          }
+        }
+      }
+    },
+    "Database Delete Scheduled on Next Launch": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 실행 시 데이터베이스 삭제 예약됨"
           }
         }
       }
@@ -3521,6 +3967,46 @@
         }
       }
     },
+    "Deleted App Group '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Group '%@'을(를) 삭제했습니다"
+          }
+        }
+      }
+    },
+    "Deleted App ID '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID '%@'을(를) 삭제했습니다"
+          }
+        }
+      }
+    },
+    "Deleted Device '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 '%@'을(를) 삭제했습니다"
+          }
+        }
+      }
+    },
+    "Deleted profile '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 '%@'을(를) 삭제했습니다"
+          }
+        }
+      }
+    },
     "Deleting profiles on the developer portal allows Apple to issue fresh profiles with updated certificates and unflagged UUIDs.": {
       "localizations": {
         "ko": {
@@ -3537,6 +4023,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "데이터베이스를 삭제하면 SideStore의 모든 앱 항목과 저장소가 제거됩니다."
+          }
+        }
+      }
+    },
+    "Descending": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내림차순"
           }
         }
       }
@@ -3587,6 +4083,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "개발자 인증서 (%d)"
+          }
+        }
+      }
+    },
+    "Developer Disk Image (DDI)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발자 디스크 이미지 (DDI)"
           }
         }
       }
@@ -3671,6 +4178,38 @@
         }
       }
     },
+    "Device IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 IP"
+          }
+        }
+      }
+    },
+    "Device IP is mandatory for Remote Endpoint mode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 엔드포인트 모드에서는 기기 IP가 필수입니다."
+          }
+        }
+      }
+    },
+    "Device Identifier": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 식별자"
+          }
+        }
+      }
+    },
     "Device Identifier (UDID)": {
       "localizations": {
         "ko": {
@@ -3707,6 +4246,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "기기 이름"
+          }
+        }
+      }
+    },
+    "Device Reachability (Ping)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 연결 가능 여부 (Ping)"
           }
         }
       }
@@ -3797,6 +4347,16 @@
         }
       }
     },
+    "Disable All Verifications": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 검증 비활성화"
+          }
+        }
+      }
+    },
     "Disable Device": {
       "localizations": {
         "ko": {
@@ -3817,12 +4377,53 @@
         }
       }
     },
+    "Disable Text Wrap": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "텍스트 줄바꿈 비활성화"
+          }
+        }
+      }
+    },
+    "Disable URL Response Caching": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL 응답 캐싱 비활성화"
+          }
+        }
+      }
+    },
     "Disabled": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "비활성화됨"
+          }
+        }
+      }
+    },
+    "Disabled Device '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 '%@'을(를) 비활성화했습니다"
+          }
+        }
+      }
+    },
+    "Disconnected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 끊김"
           }
         }
       }
@@ -3877,12 +4478,32 @@
         }
       }
     },
+    "Don't Group Folders First": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더 먼저 그룹화 안 함"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "완료"
+          }
+        }
+      }
+    },
+    "Done Selecting": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택 완료"
           }
         }
       }
@@ -3959,6 +4580,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "EMPROXY 및 WIREGUARD"
+          }
+        }
+      }
+    },
+    "EMProxy (WireGuard) Server": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EMProxy(WireGuard) 서버"
+          }
+        }
+      }
+    },
+    "ENVIRONMENT & LOCALIZATION": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "환경 및 지역화"
           }
         }
       }
@@ -4109,6 +4750,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideJITServer 사용"
+          }
+        }
+      }
+    },
+    "Enable Text Wrap": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "텍스트 줄바꿈 사용"
+          }
+        }
+      }
+    },
+    "Encoding Failed": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인코딩 실패"
           }
         }
       }
@@ -4483,6 +5144,26 @@
         }
       }
     },
+    "Export Error": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내보내기 오류"
+          }
+        }
+      }
+    },
+    "Export Failed": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내보내기 실패"
+          }
+        }
+      }
+    },
     "Export Full (.p12)": {
       "localizations": {
         "ko": {
@@ -4519,6 +5200,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "공개 키 내보내기 (.pem)"
+          }
+        }
+      }
+    },
+    "Export Resigned IPAs": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재서명된 IPA 내보내기"
           }
         }
       }
@@ -4983,6 +5674,46 @@
         }
       }
     },
+    "Fetch Failed": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기 실패"
+          }
+        }
+      }
+    },
+    "Fetch from server first.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 서버에서 가져오세요."
+          }
+        }
+      }
+    },
+    "Fetched Device UDID: %@...": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 기기 UDID: %@..."
+          }
+        }
+      }
+    },
+    "Fetched server config!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서버 구성을 가져왔습니다!"
+          }
+        }
+      }
+    },
     "Fetching Anisette Servers...": {
       "localizations": {
         "ko": {
@@ -5019,6 +5750,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "파일 비밀번호"
+          }
+        }
+      }
+    },
+    "File Selection Failed": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 선택 실패"
+          }
+        }
+      }
+    },
+    "File password cannot be empty.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 비밀번호는 비워 둘 수 없습니다."
           }
         }
       }
@@ -5153,6 +5904,16 @@
         }
       }
     },
+    "GRANDSLAM AUTH (GSA)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GRANDSLAM 인증 (GSA)"
+          }
+        }
+      }
+    },
     "Games": {
       "localizations": {
         "ko": {
@@ -5213,6 +5974,16 @@
         }
       }
     },
+    "Group Folders First": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더 먼저 그룹화"
+          }
+        }
+      }
+    },
     "Group ID: %@": {
       "localizations": {
         "ko": {
@@ -5239,6 +6010,76 @@
           "stringUnit": {
             "state": "translated",
             "value": "그룹 식별자는 'group.' 접두사로 시작해야 합니다 (예: group.com.example.shared)."
+          }
+        }
+      }
+    },
+    "Group: First Letter": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그룹: 첫 글자"
+          }
+        }
+      }
+    },
+    "Group: None": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그룹: 없음"
+          }
+        }
+      }
+    },
+    "HEX Code": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HEX 코드"
+          }
+        }
+      }
+    },
+    "HSL Format": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HSL 형식"
+          }
+        }
+      }
+    },
+    "Hardware identifier computed from adi.pb and device identity": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "adi.pb 및 기기 신원 정보로부터 계산된 하드웨어 식별자"
+          }
+        }
+      }
+    },
+    "Has Private Key": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개인 키 보유 여부"
+          }
+        }
+      }
+    },
+    "Header Version": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "헤더 버전"
           }
         }
       }
@@ -5273,6 +6114,36 @@
         }
       }
     },
+    "Hide": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨기기"
+          }
+        }
+      }
+    },
+    "Hide Details": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세부 정보 숨기기"
+          }
+        }
+      }
+    },
+    "Hide Hidden": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨긴 항목 숨기기"
+          }
+        }
+      }
+    },
     "How would you like to receive your verification code?": {
       "localizations": {
         "ko": {
@@ -5299,6 +6170,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "ID: %@"
+          }
+        }
+      }
+    },
+    "IPSec/IKEv2 Tunnel": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPSec/IKEv2 터널"
           }
         }
       }
@@ -5343,6 +6225,28 @@
         }
       }
     },
+    "IPv6 addresses are not supported for Bind Host / IP unless 'Accept IPv6 Config' is enabled in Developer Options.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발자 옵션에서 'IPv6 구성 허용'을 활성화하지 않으면 바인드 호스트 / IP에 IPv6 주소를 사용할 수 없습니다."
+          }
+        }
+      }
+    },
+    "IPv6 addresses are not supported for Device IP unless 'Accept IPv6 Config' is enabled in Developer Options.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발자 옵션에서 'IPv6 구성 허용'을 활성화하지 않으면 기기 IP에 IPv6 주소를 사용할 수 없습니다."
+          }
+        }
+      }
+    },
     "IPv6:": {
       "localizations": {
         "ko": {
@@ -5359,6 +6263,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "IPv6: %@"
+          }
+        }
+      }
+    },
+    "ISO8601 UTC timestamp locked to OTP generation time": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OTP 생성 시간에 고정된 ISO8601 UTC 타임스탬프"
           }
         }
       }
@@ -5443,6 +6357,16 @@
         }
       }
     },
+    "Import Backup successful for %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 대한 백업 가져오기 성공"
+          }
+        }
+      }
+    },
     "Import Certificate Password": {
       "localizations": {
         "ko": {
@@ -5469,6 +6393,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "구성 JSON 가져오기"
+          }
+        }
+      }
+    },
+    "Import Error": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기 오류"
+          }
+        }
+      }
+    },
+    "Import Failed": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기 실패"
           }
         }
       }
@@ -5559,6 +6503,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "가져온 로그 (%@)"
+          }
+        }
+      }
+    },
+    "Imported successfully": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기 성공"
           }
         }
       }
@@ -5683,6 +6637,38 @@
         }
       }
     },
+    "Invalid IPv6 address for Bind Host / IP.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바인드 호스트 / IP의 IPv6 주소가 올바르지 않습니다."
+          }
+        }
+      }
+    },
+    "Invalid IPv6 address for Device IP.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 IP의 IPv6 주소가 올바르지 않습니다."
+          }
+        }
+      }
+    },
+    "Invalid JSON Structure": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잘못된 JSON 구조"
+          }
+        }
+      }
+    },
     "Invalid Mach-O Binary": {
       "localizations": {
         "ko": {
@@ -5753,12 +6739,62 @@
         }
       }
     },
+    "Issuer": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "발급자"
+          }
+        }
+      }
+    },
+    "JIT Enabled For %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 대해 JIT 활성화됨"
+          }
+        }
+      }
+    },
     "JIT Requirements": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "JIT 요구 사항"
+          }
+        }
+      }
+    },
+    "JIT Successfully Enabled": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JIT가 성공적으로 활성화되었습니다"
+          }
+        }
+      }
+    },
+    "JIT Successfully Enabled for %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 대해 JIT가 성공적으로 활성화되었습니다"
+          }
+        }
+      }
+    },
+    "JSON configuration saved successfully!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON 구성을 성공적으로 저장했습니다!"
           }
         }
       }
@@ -6029,6 +7065,27 @@
         }
       }
     },
+    "Loaded (Connection down)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로드됨 (연결 끊김)"
+          }
+        }
+      }
+    },
+    "Loaded fetched data into overrides!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 데이터를 재정의 값으로 불러왔습니다!"
+          }
+        }
+      }
+    },
     "Loading Cache...": {
       "localizations": {
         "ko": {
@@ -6069,12 +7126,42 @@
         }
       }
     },
+    "Loading…": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로드하는 중…"
+          }
+        }
+      }
+    },
+    "Local User ID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로컬 사용자 ID"
+          }
+        }
+      }
+    },
     "Local VPN": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "로컬 VPN"
+          }
+        }
+      }
+    },
+    "Locale": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로케일"
           }
         }
       }
@@ -6115,6 +7202,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mac"
+          }
+        }
+      }
+    },
+    "Machine ID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "머신 ID"
           }
         }
       }
@@ -6229,6 +7326,26 @@
         }
       }
     },
+    "Manually select which signing certificates and test devices are authorized.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서명 인증서 및 테스트 기기 승인을 수동으로 선택합니다."
+          }
+        }
+      }
+    },
+    "Minimuxer Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimuxer 상세 로깅"
+          }
+        }
+      }
+    },
     "Minimuxer has not been started yet.\n\nPlease complete pairing or start minimuxer before performing operations.": {
       "localizations": {
         "ko": {
@@ -6255,6 +7372,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "더 보기"
+          }
+        }
+      }
+    },
+    "Mounted": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마운트됨"
           }
         }
       }
@@ -6314,7 +7442,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이름 (예: Shared Storage)"
+            "value": "이름 (예: 공유 스토리지)"
           }
         }
       }
@@ -6345,6 +7473,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "네트워크 연결 오류:\n%@\n\n추가 작업을 시도하기 전에 Wi-Fi에 연결해 주세요."
+          }
+        }
+      }
+    },
+    "Network Connectivity": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네트워크 연결"
           }
         }
       }
@@ -6405,6 +7544,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "새 업데이트 사용 가능"
+          }
+        }
+      }
+    },
+    "No": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아니요"
           }
         }
       }
@@ -6475,6 +7624,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 도메인에서 현재 광고되는 Bonjour 서비스가 없습니다."
+          }
+        }
+      }
+    },
+    "No Connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 없음"
           }
         }
       }
@@ -6579,6 +7739,26 @@
         }
       }
     },
+    "No active local certificate found.Create a new certificate or import a .p12 file to sign your apps.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활성 로컬 인증서가 없습니다. 새 인증서를 생성하거나 .p12 파일을 가져와 앱에 서명하세요."
+          }
+        }
+      }
+    },
+    "No active local certificate found.Import a .p12 file to sign your apps.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활성 로컬 인증서가 없습니다. .p12 파일을 가져와 앱에 서명하세요."
+          }
+        }
+      }
+    },
     "No active local interfaces detected.": {
       "localizations": {
         "ko": {
@@ -6645,6 +7825,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "내보낸 재서명된 앱이 없습니다."
+          }
+        }
+      }
+    },
+    "No fetched headers found": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 헤더가 없습니다"
           }
         }
       }
@@ -6820,7 +8010,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비개발자 Apple ID는 활성 앱 및 앱 확장 프로그램을 최대 3개까지 사용할 수 있으며, “%1$@”에는 %2$@ %3$@이(가) 포함되어 있습니다. 비활성화할 앱을 선택해 주세요."
+            "value": "비개발자 Apple 계정은 활성 앱 및 앱 확장 프로그램을 최대 3개까지 사용할 수 있으며, \"%1$@\"에는 %2$@ %3$@이(가) 포함되어 있습니다. 비활성화할 앱을 선택해 주세요."
           }
         }
       }
@@ -6870,7 +8060,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비개발자 Apple 게정은 앱을 최대 3개까지 사용할 수 있습니다. 비활성 앱은 백업 후 삭제되어 총 개수에 포함되지 않으며, 다시 활성화하면 모든 데이터와 함께 재설치됩니다."
+            "value": "비개발자 Apple 계정은 앱을 최대 3개까지 사용할 수 있습니다. 비활성 앱은 백업 후 삭제되어 총 개수에 포함되지 않으며, 다시 활성화하면 모든 데이터와 함께 재설치됩니다."
           }
         }
       }
@@ -6895,12 +8085,33 @@
         }
       }
     },
+    "Not Mounted (JIT unavailable)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마운트되지 않음 (JIT 사용 불가)"
+          }
+        }
+      }
+    },
     "Note: ": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "참고: "
+          }
+        }
+      }
+    },
+    "Nothing to rotate.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "교체할 항목이 없습니다."
           }
         }
       }
@@ -6935,12 +8146,32 @@
         }
       }
     },
+    "On-Device Anisette": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 내 Anisette"
+          }
+        }
+      }
+    },
     "One or more apps in source “%@” are missing a marketplaceID. This most likely means they are not notarized, which is not supported by this version of SideStore.": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "저장소 “%@”의 하나 이상의 앱에 marketplaceID가 없습니다. 이는 앱이 공증되지 않았음을 의미할 가능성이 높으며, 이 버전의 SideStore는 이를 지원하지 않습니다."
+          }
+        }
+      }
+    },
+    "One-Time Password (OTP)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일회용 비밀번호(OTP)"
           }
         }
       }
@@ -7051,6 +8282,16 @@
         }
       }
     },
+    "Operations Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작업 상세 로깅"
+          }
+        }
+      }
+    },
     "Opt in for beta testing to receive regular updates and early previews of upcoming releases.\n\nPlease note that these builds are experimental and may be unstable or break unexpectedly.": {
       "localizations": {
         "ko": {
@@ -7101,6 +8342,16 @@
         }
       }
     },
+    "Other / Raw Services (%d)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기타/원시 서비스(%d)"
+          }
+        }
+      }
+    },
     "Other Entitlements": {
       "localizations": {
         "ko": {
@@ -7117,6 +8368,27 @@
           "stringUnit": {
             "state": "translated",
             "value": "기타 옵션…"
+          }
+        }
+      }
+    },
+    "Other Services (%d)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기타 서비스(%d)"
+          }
+        }
+      }
+    },
+    "Override Peer IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재정의 피어 IP"
           }
         }
       }
@@ -7167,6 +8439,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "사전 설정 테마"
+          }
+        }
+      }
+    },
+    "PRIMARY CLIENT HEADERS": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본 클라이언트 헤더"
           }
         }
       }
@@ -7231,6 +8513,17 @@
         }
       }
     },
+    "Pairing file": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링 파일"
+          }
+        }
+      }
+    },
     "Parse Error": {
       "localizations": {
         "ko": {
@@ -7287,6 +8580,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "권한"
+          }
+        }
+      }
+    },
+    "Permission Checks": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한 검사"
           }
         }
       }
@@ -7511,6 +8814,47 @@
         }
       }
     },
+    "Prefer App Bundle": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 번들 선호"
+          }
+        }
+      }
+    },
+    "Prefer IPA (speed) vs App (storage) efficiency": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPA(속도) 또는 앱(저장 공간 효율성) 선호"
+          }
+        }
+      }
+    },
+    "Prefer Resigned IPA": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재서명된 IPA 선호"
+          }
+        }
+      }
+    },
+    "Privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개인정보"
+          }
+        }
+      }
+    },
     "Privacy Permission": {
       "localizations": {
         "ko": {
@@ -7601,12 +8945,32 @@
         }
       }
     },
+    "Profile generated for '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "'%@'에 대한 프로파일을 생성했습니다"
+          }
+        }
+      }
+    },
     "Profiles": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "프로파일"
+          }
+        }
+      }
+    },
+    "Protocol Version": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로토콜 버전"
           }
         }
       }
@@ -7651,12 +9015,48 @@
         }
       }
     },
+    "Public Key": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공개 키"
+          }
+        }
+      }
+    },
     "Purge All Profiles?": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "모든 프로파일을 삭제하시겠습니까?"
+          }
+        }
+      }
+    },
+    "Purged %d profile(s)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 %d개를 정리했습니다"
+          }
+        }
+      }
+    },
+    "Purged %d profile(s) (%d failed)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Purged %1$d profile(s) (%2$d failed)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 %1$d개를 정리했습니다(%2$d개 실패)"
           }
         }
       }
@@ -7681,12 +9081,32 @@
         }
       }
     },
+    "RAW CONFIGURATION JSON": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원시 구성 JSON"
+          }
+        }
+      }
+    },
     "REFRESHING APPS": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "앱 갱신 중"
+          }
+        }
+      }
+    },
+    "REMOTE SERVER SYNC": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 서버 동기화"
           }
         }
       }
@@ -7707,6 +9127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "취소됨"
+          }
+        }
+      }
+    },
+    "RGB Format": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RGB 형식"
           }
         }
       }
@@ -7741,6 +9171,17 @@
         }
       }
     },
+    "Reachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 가능"
+          }
+        }
+      }
+    },
     "Reaching catalog source '%@'...": {
       "localizations": {
         "ko": {
@@ -7767,6 +9208,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "이유:"
+          }
+        }
+      }
+    },
+    "Recognized Services (%d)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인식된 서비스(%d)"
           }
         }
       }
@@ -7891,12 +9342,32 @@
         }
       }
     },
+    "Registered App ID '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID '%@'을(를) 등록했습니다"
+          }
+        }
+      }
+    },
     "Registered App IDs (%d)": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "등록된 앱 ID (%d)"
+          }
+        }
+      }
+    },
+    "Registered Device '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 '%@'을(를) 등록했습니다"
           }
         }
       }
@@ -7917,6 +9388,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "등록된 기기 (%d)"
+          }
+        }
+      }
+    },
+    "Reload All Widgets": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 위젯 새로고침"
+          }
+        }
+      }
+    },
+    "Reload Top Shelf": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Shelf 새로고침"
           }
         }
       }
@@ -7951,6 +9442,17 @@
         }
       }
     },
+    "Remote Endpoint IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 엔드포인트 IP"
+          }
+        }
+      }
+    },
     "Remote Server": {
       "localizations": {
         "ko": {
@@ -7967,6 +9469,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "원격 서버 동기화"
+          }
+        }
+      }
+    },
+    "RemotePair Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RemotePair 포트"
+          }
+        }
+      }
+    },
+    "RemotePair Port must be a valid number between 1 and 65535 or left empty for auto-discovery.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RemotePair 포트는 1에서 65535 사이의 유효한 숫자이거나, 자동 검색을 위해 비워 두어야 합니다."
           }
         }
       }
@@ -8081,6 +9605,26 @@
         }
       }
     },
+    "Renamed Device to '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 이름을 '%@'(으)로 변경했습니다"
+          }
+        }
+      }
+    },
+    "Requester Email": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "요청자 이메일"
+          }
+        }
+      }
+    },
     "Requester: ": {
       "localizations": {
         "ko": {
@@ -8097,6 +9641,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "iOS 17 이상에서 JIT에 필요"
+          }
+        }
+      }
+    },
+    "Required for free developer accounts": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무료 개발자 계정에 필요합니다"
           }
         }
       }
@@ -8196,7 +9750,27 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "SideStore Classic으로 재설정"
+            "value": "SideStore 클래식으로 재설정"
+          }
+        }
+      }
+    },
+    "Reset to default SideSign configuration.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideSign 구성을 기본값으로 재설정합니다."
+          }
+        }
+      }
+    },
+    "Reset to default configuration.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구성을 기본값으로 재설정합니다."
           }
         }
       }
@@ -8331,6 +9905,16 @@
         }
       }
     },
+    "Restart required to apply changes": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "변경 사항을 적용하려면 재시작이 필요합니다"
+          }
+        }
+      }
+    },
     "Restore %@ Failed": {
       "localizations": {
         "ko": {
@@ -8389,6 +9973,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "다시 시도하는 중..."
+          }
+        }
+      }
+    },
+    "Reveal Details": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세부 정보 표시"
           }
         }
       }
@@ -8463,6 +10057,16 @@
         }
       }
     },
+    "Revoked certificate '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 '%@'을(를) 취소했습니다"
+          }
+        }
+      }
+    },
     "Revoking a certificate permanently invalidates it on Apple's servers. Any provisioning profiles tied exclusively to this certificate may need to be re-generated.": {
       "localizations": {
         "ko": {
@@ -8473,12 +10077,62 @@
         }
       }
     },
+    "Rotate Logs on Startup": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시작 시 로그 교체"
+          }
+        }
+      }
+    },
+    "Rotate Top Shelf Log": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Shelf 로그 교체"
+          }
+        }
+      }
+    },
+    "Rotate Widget Log": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위젯 로그 교체"
+          }
+        }
+      }
+    },
     "Rotated %@ Log": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ 로그 순환됨"
+          }
+        }
+      }
+    },
+    "Routing Info": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "라우팅 정보"
+          }
+        }
+      }
+    },
+    "Run ADI emulation directly on device instead of remote servers": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원격 서버 대신 기기에서 직접 ADI 에뮬레이션을 실행합니다"
           }
         }
       }
@@ -8659,6 +10313,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "재정의로 저장"
+          }
+        }
+      }
+    },
+    "Saved SideSign headers successfully.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideSign 헤더를 성공적으로 저장했습니다."
+          }
+        }
+      }
+    },
+    "Saved configuration successfully.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구성을 성공적으로 저장했습니다."
+          }
+        }
+      }
+    },
+    "Saved to WidgetLogs/%@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WidgetLogs/%@에 저장됨"
           }
         }
       }
@@ -8893,6 +10577,16 @@
         }
       }
     },
+    "Select Device To Pair": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페어링할 기기 선택"
+          }
+        }
+      }
+    },
     "Select File": {
       "localizations": {
         "ko": {
@@ -8909,6 +10603,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "전화번호 선택"
+          }
+        }
+      }
+    },
+    "Select Server Interface": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서버 인터페이스 선택"
           }
         }
       }
@@ -8953,6 +10657,16 @@
         }
       }
     },
+    "Select the certificate type and machine name. This registers the certificate on Apple's servers and saves the private key locally.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인증서 유형과 머신 이름을 선택하세요. 이렇게 하면 Apple 서버에 인증서가 등록되고 개인 키가 로컬에 저장됩니다."
+          }
+        }
+      }
+    },
     "Select the pairing file or select \"Help\" for help.": {
       "localizations": {
         "ko": {
@@ -8979,6 +10693,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 프로파일로 앱에 서명할 수 있는 인증서를 선택하세요."
+          }
+        }
+      }
+    },
+    "Serial Number": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일련번호"
+          }
+        }
+      }
+    },
+    "Serial Number (dec)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일련번호(10진수)"
+          }
+        }
+      }
+    },
+    "Serial Number (hex)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일련번호(16진수)"
           }
         }
       }
@@ -9043,12 +10787,32 @@
         }
       }
     },
+    "Service": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서비스"
+          }
+        }
+      }
+    },
     "Service Details": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "서비스 세부 정보"
+          }
+        }
+      }
+    },
+    "Services Version": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서비스 버전"
           }
         }
       }
@@ -9113,6 +10877,26 @@
         }
       }
     },
+    "Show Hidden": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨긴 항목 표시"
+          }
+        }
+      }
+    },
+    "Show WireGuard Settings": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WireGuard 설정 표시"
+          }
+        }
+      }
+    },
     "SideJITServer": {
       "localizations": {
         "ko": {
@@ -9159,6 +10943,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideSign 구성"
+          }
+        }
+      }
+    },
+    "SideSign JSON configuration saved successfully!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideSign JSON 구성을 성공적으로 저장했습니다!"
+          }
+        }
+      }
+    },
+    "SideSign Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideSign 상세 로깅"
           }
         }
       }
@@ -9219,6 +11023,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "SideStore 준비 완료"
+          }
+        }
+      }
+    },
+    "SideStore Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideStore 상세 로깅"
           }
         }
       }
@@ -9383,6 +11197,16 @@
         }
       }
     },
+    "SideStore should be fully operational!": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이제 SideStore를 정상적으로 사용할 수 있습니다!"
+          }
+        }
+      }
+    },
     "SideStore was denied permission to launch %@.": {
       "localizations": {
         "ko": {
@@ -9513,6 +11337,16 @@
         }
       }
     },
+    "Signature Algorithm": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서명 알고리즘"
+          }
+        }
+      }
+    },
     "Signatures & Certificates (%d)": {
       "localizations": {
         "ko": {
@@ -9523,12 +11357,22 @@
         }
       }
     },
+    "Signed HMAC token dynamically calculated by ADI engine per request": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "요청마다 ADI 엔진이 동적으로 계산하는 서명된 HMAC 토큰"
+          }
+        }
+      }
+    },
     "Signed out of Apple ID. Reset adi.pb and header configs to defaults.": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apple ID에서 로그아웃했습니다. adi.pb와 헤더 구성을 기본값으로 재설정했습니다."
+            "value": "Apple 계정에서 로그아웃했습니다. adi.pb와 헤더 구성을 기본값으로 재설정했습니다."
           }
         }
       }
@@ -9538,7 +11382,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apple ID에서 로그아웃했습니다. 이제 새로운 프로비저닝으로 다시 로그인할 수 있습니다."
+            "value": "Apple 계정에서 로그아웃했습니다. 이제 새로운 프로비저닝으로 다시 로그인할 수 있습니다."
           }
         }
       }
@@ -9579,6 +11423,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "건너뛰고 계속"
+          }
+        }
+      }
+    },
+    "Skip Uncopyable Backup Files": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "복사할 수 없는 백업 파일 건너뛰기"
           }
         }
       }
@@ -9639,6 +11493,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "정렬: %@"
+          }
+        }
+      }
+    },
+    "Sort: Name (A to Z)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정렬: 이름(A-Z)"
+          }
+        }
+      }
+    },
+    "Sort: Name (Z to A)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정렬: 이름(Z-A)"
           }
         }
       }
@@ -9793,6 +11667,16 @@
         }
       }
     },
+    "Subject": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주체"
+          }
+        }
+      }
+    },
     "Success": {
       "localizations": {
         "ko": {
@@ -9873,12 +11757,52 @@
         }
       }
     },
+    "System Generated Device UUID": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시스템 생성 기기 UUID"
+          }
+        }
+      }
+    },
+    "TCP": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TCP"
+          }
+        }
+      }
+    },
+    "TCP Services (%d)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TCP 서비스(%d)"
+          }
+        }
+      }
+    },
     "TECHY THINGS": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "기술적인 항목"
+          }
+        }
+      }
+    },
+    "TOP SHELF OPTIONS": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOP SHELF 옵션"
           }
         }
       }
@@ -9949,6 +11873,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "연결 테스트 (Ping)"
+          }
+        }
+      }
+    },
+    "Text": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "텍스트"
           }
         }
       }
@@ -10644,6 +12578,16 @@
         }
       }
     },
+    "This certificate type requires a paid Apple Developer account.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 인증서 유형은 유료 Apple Developer 계정이 필요합니다."
+          }
+        }
+      }
+    },
     "This device is running iOS %@, but %@": {
       "localizations": {
         "en": {
@@ -10817,7 +12761,17 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "SideStore에서 Apple ID를 로그아웃하고 Keychain의 프로비저닝된 adi.pb 데이터를 지웁니다. 활성 서명 인증서는 유지됩니다."
+            "value": "SideStore에서 Apple 계정을 로그아웃하고 Keychain의 프로비저닝된 adi.pb 데이터를 지웁니다. 활성 서명 인증서는 유지됩니다."
+          }
+        }
+      }
+    },
+    "Time Zone": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시간대"
           }
         }
       }
@@ -10872,6 +12826,26 @@
         }
       }
     },
+    "Top Shelf": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Shelf"
+          }
+        }
+      }
+    },
+    "Top Shelf Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Shelf 상세 로깅"
+          }
+        }
+      }
+    },
     "Total Space:": {
       "localizations": {
         "ko": {
@@ -10882,12 +12856,81 @@
         }
       }
     },
+    "Total: %d, Elapsed: %d, Remaining: %d": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Total: %1$d, Elapsed: %2$d, Remaining: %3$d"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "총 %1$d일, 경과 %2$d일, 남음 %3$d일"
+          }
+        }
+      }
+    },
+    "Triggered Top Shelf refresh.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Shelf 새로고침을 실행했습니다."
+          }
+        }
+      }
+    },
+    "Triggered timeline refresh for all widgets.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 위젯의 타임라인 새로고침을 실행했습니다."
+          }
+        }
+      }
+    },
     "Try Again": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "다시 시도"
+          }
+        }
+      }
+    },
+    "Tunnel IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "터널 IP"
+          }
+        }
+      }
+    },
+    "Tunnel Iface IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "터널 인터페이스 IP"
+          }
+        }
+      }
+    },
+    "Tunnel Peer IP": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "터널 피어 IP"
           }
         }
       }
@@ -10908,6 +12951,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "UDID는 25자 또는 40자로 구성된 고유 기기 식별자입니다."
+          }
+        }
+      }
+    },
+    "UDP": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UDP"
+          }
+        }
+      }
+    },
+    "UDP Services (%d)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UDP 서비스(%d)"
           }
         }
       }
@@ -11052,6 +13115,16 @@
         }
       }
     },
+    "Unable to encode JSON as UTF-8.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON을 UTF-8로 인코딩할 수 없습니다."
+          }
+        }
+      }
+    },
     "Undefined": {
       "localizations": {
         "ko": {
@@ -11078,6 +13151,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "근본 오류"
+          }
+        }
+      }
+    },
+    "Unhide": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨김 해제"
           }
         }
       }
@@ -11122,6 +13205,17 @@
         }
       }
     },
+    "Unreachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 불가"
+          }
+        }
+      }
+    },
     "Unsupported Update Available": {
       "localizations": {
         "ko": {
@@ -11148,6 +13242,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "지원되지 않는 iOS 버전"
+          }
+        }
+      }
+    },
+    "Unverified / Missing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인되지 않음 / 없음"
           }
         }
       }
@@ -11182,12 +13287,52 @@
         }
       }
     },
+    "Updated App Group '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Group '%@'을(를) 업데이트했습니다"
+          }
+        }
+      }
+    },
+    "Updated App Groups for '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "'%@'의 App Group을 업데이트했습니다"
+          }
+        }
+      }
+    },
+    "Updated profile '%@'": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로파일 '%@'을(를) 업데이트했습니다"
+          }
+        }
+      }
+    },
     "Updating sources…": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "저장소 업데이트 중…"
+          }
+        }
+      }
+    },
+    "Use 'Restore Backup' option to restore data from this imported backup": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 백업에서 데이터를 복원하려면 '백업 복원' 옵션을 사용하세요"
           }
         }
       }
@@ -11262,6 +13407,47 @@
         }
       }
     },
+    "VPN Tunnel (utun)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VPN 터널 (utun)"
+          }
+        }
+      }
+    },
+    "Valid From": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유효 시작일"
+          }
+        }
+      }
+    },
+    "Valid Until": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유효 종료일"
+          }
+        }
+      }
+    },
+    "Validity Days": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유효 기간"
+          }
+        }
+      }
+    },
     "Validity Period": {
       "localizations": {
         "ko": {
@@ -11308,6 +13494,27 @@
           "stringUnit": {
             "state": "translated",
             "value": "인증 방법"
+          }
+        }
+      }
+    },
+    "Verified": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인됨"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버전"
           }
         }
       }
@@ -11459,6 +13666,16 @@
         }
       }
     },
+    "WIDGET OPTIONS": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위젯 옵션"
+          }
+        }
+      }
+    },
     "WIREGUARD CONFIGURATION": {
       "localizations": {
         "ko": {
@@ -11529,12 +13746,53 @@
         }
       }
     },
+    "Wi-Fi Active": {
+      "extractionState": "manual",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi 활성"
+          }
+        }
+      }
+    },
+    "Widget": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위젯"
+          }
+        }
+      }
+    },
     "Widget Log": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "위젯 로그"
+          }
+        }
+      }
+    },
+    "Widget Verbose Logging": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위젯 상세 로깅"
+          }
+        }
+      }
+    },
+    "Wipe Database on Next Start": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 시작 시 데이터베이스 삭제"
           }
         }
       }
@@ -11619,6 +13877,26 @@
         }
       }
     },
+    "Wrap: Off": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "줄바꿈: 끔"
+          }
+        }
+      }
+    },
+    "Wrap: On": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "줄바꿈: 켬"
+          }
+        }
+      }
+    },
     "X.509 Fields": {
       "localizations": {
         "ko": {
@@ -11645,6 +13923,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xcode 관리"
+          }
+        }
+      }
+    },
+    "Xcode Version": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xcode 버전"
+          }
+        }
+      }
+    },
+    "Yes": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예"
           }
         }
       }
@@ -11759,6 +14057,16 @@
         }
       }
     },
+    "You will need to log back into Apple ID in SideStore.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideStore에서 Apple 계정으로 다시 로그인해야 합니다."
+          }
+        }
+      }
+    },
     "Your active custom/third-party signing certificate (Team: %@) has expired.\n\nIf you did not intend to use a custom certificate, please reset it in Settings -> Advanced -> Certificates.": {
       "localizations": {
         "ko": {
@@ -11859,6 +14167,16 @@
         }
       }
     },
+    "e.g. UTC, EDT": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예: UTC, EDT"
+          }
+        }
+      }
+    },
     "https://...": {
       "localizations": {
         "ko": {
@@ -11885,6 +14203,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "iOS %@ 이상"
+          }
+        }
+      }
+    },
+    "iOS Version Check": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS 버전 검사"
           }
         }
       }

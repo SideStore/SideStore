@@ -77,7 +77,7 @@ struct ActiveCertSectionView: View {
                         if viewModel.revealedSerials.contains(key) { viewModel.revealedSerials.remove(key) }
                         else { viewModel.revealedSerials.insert(key) }
                     } label: {
-                        Label(isMasked ? "Reveal Details" : "Hide Details",
+                        Label(isMasked ? NSLocalizedString("Reveal Details", comment: "") : NSLocalizedString("Hide Details", comment: ""),
                               systemImage: isMasked ? "eye" : "eye.slash")
                     }
                     #if !os(tvOS)
@@ -95,8 +95,8 @@ struct ActiveCertSectionView: View {
                 }
             } else {
                 Text(viewModel.team == nil
-                     ? "No active local certificate found.Import a .p12 file to sign your apps."
-                     : "No active local certificate found.Create a new certificate or import a .p12 file to sign your apps.")
+                     ? NSLocalizedString("No active local certificate found.Import a .p12 file to sign your apps.", comment: "")
+                     : NSLocalizedString("No active local certificate found.Create a new certificate or import a .p12 file to sign your apps.", comment: ""))
                     .foregroundColor(.secondary)
                     .font(.subheadline)
             }

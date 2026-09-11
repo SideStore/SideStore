@@ -46,13 +46,13 @@ struct CertificateDetailView: View {
             Section {
                 Section {
                     if let identifier = portalMetadata?.identifier {
-                        detailRowWithCopy(title: "Certificate ID", value: identifier, isCopied: $copiedIdentifier)
+                        detailRowWithCopy(title: NSLocalizedString("Certificate ID", comment: ""), value: identifier, isCopied: $copiedIdentifier)
                     }
                     if let machineID = portalMetadata?.machineIdentifier {
-                        detailRow(title: "Machine ID", value: machineID)
+                        detailRow(title: NSLocalizedString("Machine ID", comment: ""), value: machineID)
                     }
                     if let email = portalMetadata?.requesterEmail {
-                        detailRow(title: "Requester Email", value: redactableValue(email))
+                        detailRow(title: NSLocalizedString("Requester Email", comment: ""), value: redactableValue(email))
                     }
                 } header: {
                     Text("Developer Portal Info")
@@ -62,11 +62,11 @@ struct CertificateDetailView: View {
             if let certData = certificate.data {
                 let details = parseCertificate(derData: certData)
                 Section {
-                    detailRow(title: "Version", value: details.version)
-                    detailRow(title: "Subject", value: redactableValue(details.subject))
-                    detailRow(title: "Issuer", value: details.issuer)
-                    detailRow(title: "Serial Number (hex)", value: details.serialHex)
-                    detailRow(title: "Serial Number (dec)", value: details.serialDec)
+                    detailRow(title: NSLocalizedString("Version", comment: ""), value: details.version)
+                    detailRow(title: NSLocalizedString("Subject", comment: ""), value: redactableValue(details.subject))
+                    detailRow(title: NSLocalizedString("Issuer", comment: ""), value: details.issuer)
+                    detailRow(title: NSLocalizedString("Serial Number (hex)", comment: ""), value: details.serialHex)
+                    detailRow(title: NSLocalizedString("Serial Number (dec)", comment: ""), value: details.serialDec)
                 } header: {
                     Text("X.509 Fields")
                 }
@@ -74,8 +74,8 @@ struct CertificateDetailView: View {
                 if let from = details.validFrom, let until = details.validUntil {
                     let stats = computeValidityStats(from: from, until: until)
                     Section {
-                        detailRow(title: "Valid From", value: formatDate(from))
-                        detailRow(title: "Valid Until", value: formatDate(until))
+                        detailRow(title: NSLocalizedString("Valid From", comment: ""), value: formatDate(from))
+                        detailRow(title: NSLocalizedString("Valid Until", comment: ""), value: formatDate(until))
                         
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
@@ -88,15 +88,15 @@ struct CertificateDetailView: View {
                                 .tint(.accentColor)
                         }
                         
-                        detailRow(title: "Validity Days", value: "Total: \(stats.totalDays), Elapsed: \(stats.elapsedDays), Remaining: \(stats.remainingDays)")
+                        detailRow(title: NSLocalizedString("Validity Days", comment: ""), value: String(format: NSLocalizedString("Total: %d, Elapsed: %d, Remaining: %d", comment: ""), stats.totalDays, stats.elapsedDays, stats.remainingDays))
                     } header: {
                         Text("Validity Period")
                     }
                 }
                 
                 Section {
-                    detailRow(title: "Public Key", value: details.publicKeyType)
-                    detailRow(title: "Signature Algorithm", value: details.signatureAlgorithm)
+                    detailRow(title: NSLocalizedString("Public Key", comment: ""), value: details.publicKeyType)
+                    detailRow(title: NSLocalizedString("Signature Algorithm", comment: ""), value: details.signatureAlgorithm)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
@@ -169,7 +169,7 @@ struct CertificateDetailView: View {
             }
             
             Section {
-                detailRow(title: "Has Private Key", value: signableCert != nil ? "Yes" : "No")
+                detailRow(title: NSLocalizedString("Has Private Key", comment: ""), value: signableCert != nil ? NSLocalizedString("Yes", comment: "") : NSLocalizedString("No", comment: ""))
                 
                 if let privateKey = signableCert?.privateKey {
                     VStack(alignment: .leading, spacing: 8) {

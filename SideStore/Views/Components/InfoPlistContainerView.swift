@@ -81,7 +81,7 @@ struct InfoPlistContainerView: View {
         VStack(spacing: 0) {
             Picker("Visualization Mode", selection: $selectedMode) {
                 ForEach(InfoPlistMode.allCases) { mode in
-                    Text(mode.rawValue).tag(mode)
+                    Text(NSLocalizedString(mode.rawValue, comment: "")).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
@@ -286,7 +286,7 @@ struct InfoPlistRawXMLView: View {
                             isWrapped.toggle()
                         }
                     } label: {
-                        Label(isWrapped ? "Wrap: On" : "Wrap: Off", systemImage: isWrapped ? "text.alignleft" : "text.chevron.right")
+                        Label(isWrapped ? NSLocalizedString("Wrap: On", comment: "") : NSLocalizedString("Wrap: Off", comment: ""), systemImage: isWrapped ? "text.alignleft" : "text.chevron.right")
                             .font(.footnote)
                     }
                     .buttonStyle(.bordered)
@@ -303,7 +303,7 @@ struct InfoPlistRawXMLView: View {
                             }
                         }
                     } label: {
-                        Label(isCopied ? "Copied!" : "Copy XML", systemImage: isCopied ? "checkmark" : "doc.on.doc")
+                        Label(isCopied ? NSLocalizedString("Copied!", comment: "") : NSLocalizedString("Copy XML", comment: ""), systemImage: isCopied ? "checkmark" : "doc.on.doc")
                             .font(.footnote)
                     }
                     .buttonStyle(.borderedProminent)
@@ -377,7 +377,7 @@ struct InfoPlistRawView: View {
                             isWrapped.toggle()
                         }
                     } label: {
-                        Label(isWrapped ? "Wrap: On" : "Wrap: Off", systemImage: isWrapped ? "text.alignleft" : "text.chevron.right")
+                        Label(isWrapped ? NSLocalizedString("Wrap: On", comment: "") : NSLocalizedString("Wrap: Off", comment: ""), systemImage: isWrapped ? "text.alignleft" : "text.chevron.right")
                             .font(.footnote)
                     }
                     .buttonStyle(.bordered)
@@ -394,7 +394,7 @@ struct InfoPlistRawView: View {
                             }
                         }
                     } label: {
-                        Label(isCopied ? "Copied!" : "Copy JSON", systemImage: isCopied ? "checkmark" : "doc.on.doc")
+                        Label(isCopied ? NSLocalizedString("Copied!", comment: "") : NSLocalizedString("Copy JSON", comment: ""), systemImage: isCopied ? "checkmark" : "doc.on.doc")
                             .font(.footnote)
                     }
                     .buttonStyle(.borderedProminent)

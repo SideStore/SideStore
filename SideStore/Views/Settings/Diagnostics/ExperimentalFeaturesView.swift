@@ -87,7 +87,7 @@ struct ExperimentalFeaturesView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Cellular Refresh", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Cellular Refresh", comment: ""), isOn: Binding(
                             get: { isCellularRefreshEnabled },
                             set: { newValue in
                                 isCellularRefreshEnabled = newValue

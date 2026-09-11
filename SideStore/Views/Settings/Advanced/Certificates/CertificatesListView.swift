@@ -115,9 +115,9 @@ private struct CertGroupHeaderView: View {
                         else { viewModel.currentSort = option; viewModel.isAscending = (option == .name) }
                     } label: {
                         if viewModel.currentSort == option {
-                            Label(String(format: NSLocalizedString("%@ %@", comment: ""), option.rawValue, viewModel.isAscending ? "↑" : "↓"), systemImage: "checkmark")
+                            Label(String(format: NSLocalizedString("%@ %@", comment: ""), NSLocalizedString(option.rawValue, comment: ""), viewModel.isAscending ? "↑" : "↓"), systemImage: "checkmark")
                         } else {
-                            Text(option.rawValue)
+                            Text(NSLocalizedString(option.rawValue, comment: ""))
                         }
                     }
                 }
@@ -127,7 +127,7 @@ private struct CertGroupHeaderView: View {
             Menu {
                 Picker("Group By", selection: $viewModel.currentGroup) {
                     ForEach(GroupOption.allCases) { option in
-                        Text(option.rawValue).tag(option)
+                        Text(NSLocalizedString(option.rawValue, comment: "")).tag(option)
                     }
                 }
             } label: {
@@ -141,7 +141,7 @@ private struct CertGroupHeaderView: View {
             }
             .confirmationDialog("Sort Certificates", isPresented: $showSortDialog) {
                 ForEach(SortOption.allCases) { option in
-                    SwiftUI.Button(String(format: NSLocalizedString("%@ %@", comment: ""), option.rawValue, viewModel.currentSort == option && viewModel.isAscending ? "↑" : "↓")) {
+                    SwiftUI.Button(String(format: NSLocalizedString("%@ %@", comment: ""), NSLocalizedString(option.rawValue, comment: ""), viewModel.currentSort == option && viewModel.isAscending ? "↑" : "↓")) {
                         if viewModel.currentSort == option { viewModel.isAscending.toggle() }
                         else { viewModel.currentSort = option; viewModel.isAscending = (option == .name) }
                     }
@@ -154,7 +154,7 @@ private struct CertGroupHeaderView: View {
             }
             .confirmationDialog("Group Certificates", isPresented: $showGroupDialog) {
                 ForEach(GroupOption.allCases) { option in
-                    SwiftUI.Button(option.rawValue) {
+                    SwiftUI.Button(NSLocalizedString(option.rawValue, comment: "")) {
                         viewModel.currentGroup = option
                     }
                 }

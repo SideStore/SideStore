@@ -84,8 +84,8 @@ struct UserCustomizationsView: View {
                     
                     VStack(spacing: 0) {
                         toggleRow(
-                            title: "On-Device Anisette",
-                            subtitle: "Run ADI emulation directly on device instead of remote servers",
+                            title: NSLocalizedString("On-Device Anisette", comment: ""),
+                            subtitle: NSLocalizedString("Run ADI emulation directly on device instead of remote servers", comment: ""),
                             isOn: Binding(
                                 get: { useOnDeviceAnisette },
                                 set: { newValue in
@@ -173,7 +173,7 @@ struct UserCustomizationsView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Customize AppID", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Customize AppID", comment: ""), isOn: Binding(
                             get: { customizeAppId },
                             set: { newValue in
                                 customizeAppId = newValue
@@ -183,7 +183,7 @@ struct UserCustomizationsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Customize App Extensions", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Customize App Extensions", comment: ""), isOn: Binding(
                             get: { customizeAppExtensions },
                             set: { newValue in
                                 customizeAppExtensions = newValue
@@ -194,8 +194,8 @@ struct UserCustomizationsView: View {
                         divider
                         
                         toggleRow(
-                            title: "Auto-Fix AppGroup IDs",
-                            subtitle: isFreeAccount ? "Required for free developer accounts" : "Automatically fix App Group casing mismatches",
+                            title: NSLocalizedString("Auto-Fix AppGroup IDs", comment: ""),
+                            subtitle: isFreeAccount ? NSLocalizedString("Required for free developer accounts", comment: "") : NSLocalizedString("Automatically fix App Group casing mismatches", comment: ""),
                             isOn: Binding(
                                 get: { isFreeAccount ? true : autoFixAppGroupIDs },
                                 set: { newValue in
@@ -210,8 +210,8 @@ struct UserCustomizationsView: View {
                         divider
                         
                         toggleRow(
-                            title: "Prefer Resigned IPA",
-                            subtitle: "Prefer IPA (speed) vs App (storage) efficiency",
+                            title: NSLocalizedString("Prefer Resigned IPA", comment: ""),
+                            subtitle: NSLocalizedString("Prefer IPA (speed) vs App (storage) efficiency", comment: ""),
                             isOn: Binding(
                                 get: { preferResignedIPA },
                                 set: { newValue in
@@ -223,7 +223,7 @@ struct UserCustomizationsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Export Resigned IPAs", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Export Resigned IPAs", comment: ""), isOn: Binding(
                             get: { isExportResignedAppEnabled },
                             set: { newValue in
                                 isExportResignedAppEnabled = newValue
@@ -233,7 +233,7 @@ struct UserCustomizationsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Skip Uncopyable Backup Files", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Skip Uncopyable Backup Files", comment: ""), isOn: Binding(
                             get: { skipNonCopyableFiles },
                             set: { newValue in
                                 skipNonCopyableFiles = newValue
@@ -253,7 +253,7 @@ struct UserCustomizationsView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Disable All Verifications", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Disable All Verifications", comment: ""), isOn: Binding(
                             get: { appVerificationDisabled },
                             set: { newValue in
                                 appVerificationDisabled = newValue
@@ -264,7 +264,7 @@ struct UserCustomizationsView: View {
                         divider
                         
                         Group {
-                            toggleRow(title: "Bundle Identifier Check", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("Bundle Identifier Check", comment: ""), isOn: Binding(
                                 get: { isBundleIDVerificationEnabled },
                                 set: { newValue in
                                     isBundleIDVerificationEnabled = newValue
@@ -274,7 +274,7 @@ struct UserCustomizationsView: View {
                             
                             divider
                             
-                            toggleRow(title: "iOS Version Check", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("iOS Version Check", comment: ""), isOn: Binding(
                                 get: { isiOSVersionVerificationEnabled },
                                 set: { newValue in
                                     isiOSVersionVerificationEnabled = newValue
@@ -284,7 +284,7 @@ struct UserCustomizationsView: View {
                             
                             divider
                             
-                            toggleRow(title: "App Version Check", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("App Version Check", comment: ""), isOn: Binding(
                                 get: { isAppVersionVerificationEnabled },
                                 set: { newValue in
                                     isAppVersionVerificationEnabled = newValue
@@ -294,7 +294,7 @@ struct UserCustomizationsView: View {
                             
                             divider
                             
-                            toggleRow(title: "Checksum (SHA-256) Check", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("Checksum (SHA-256) Check", comment: ""), isOn: Binding(
                                 get: { isChecksumVerificationEnabled },
                                 set: { newValue in
                                     isChecksumVerificationEnabled = newValue
@@ -304,7 +304,7 @@ struct UserCustomizationsView: View {
                             
                             divider
                             
-                            toggleRow(title: "App File Size Check", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("App File Size Check", comment: ""), isOn: Binding(
                                 get: { isFileSizeVerificationEnabled },
                                 set: { newValue in
                                     isFileSizeVerificationEnabled = newValue
@@ -314,7 +314,7 @@ struct UserCustomizationsView: View {
                             
                             divider
                             
-                            toggleRow(title: "Permission Checks", isOn: Binding(
+                            toggleRow(title: NSLocalizedString("Permission Checks", comment: ""), isOn: Binding(
                                 get: { !permissionCheckingDisabled },
                                 set: { newValue in
                                     permissionCheckingDisabled = !newValue
@@ -365,8 +365,8 @@ struct UserCustomizationsView: View {
                         divider
                         
                         toggleRow(
-                            title: "EMProxy (WireGuard) Server",
-                            subtitle: "Restart required to apply changes",
+                            title: NSLocalizedString("EMProxy (WireGuard) Server", comment: ""),
+                            subtitle: NSLocalizedString("Restart required to apply changes", comment: ""),
                             isOn: Binding(
                                 get: { enableEMPforWireguard },
                                 set: { newValue in
@@ -465,7 +465,7 @@ struct UserCustomizationsView: View {
         } message: {
             Text("Changing the Minimuxer backend requires restarting SideStore. If canceled, changes will not be saved.")
         }
-        .alert(pendingPreferIPAOngoing ? "Prefer Resigned IPA" : "Prefer App Bundle", isPresented: $showPreferIPAToggleAlert) {
+        .alert(pendingPreferIPAOngoing ? NSLocalizedString("Prefer Resigned IPA", comment: "") : NSLocalizedString("Prefer App Bundle", comment: ""), isPresented: $showPreferIPAToggleAlert) {
             SwiftUI.Button("Switch") {
                 preferResignedIPA = pendingPreferIPAOngoing
                 UserDefaults.standard.preferResignedIPA = pendingPreferIPAOngoing

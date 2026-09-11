@@ -53,7 +53,7 @@ struct DeveloperOptionsView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Disable URL Response Caching", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Disable URL Response Caching", comment: ""), isOn: Binding(
                             get: { responseCachingDisabled },
                             set: { newValue in
                                 responseCachingDisabled = newValue
@@ -63,7 +63,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Rotate Logs on Startup", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Rotate Logs on Startup", comment: ""), isOn: Binding(
                             get: { isRotateLogsOnStartupEnabled },
                             set: { newValue in
                                 isRotateLogsOnStartupEnabled = newValue
@@ -77,7 +77,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "SideStore Verbose Logging", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("SideStore Verbose Logging", comment: ""), isOn: Binding(
                             get: { isSideStoreVerboseLoggingEnabled },
                             set: { newValue in
                                 isSideStoreVerboseLoggingEnabled = newValue
@@ -89,9 +89,9 @@ struct DeveloperOptionsView: View {
                         divider
                         
                         #if !os(tvOS)
-                        let title = "Widget Verbose Logging"
+                        let title = NSLocalizedString("Widget Verbose Logging", comment: "")
                         #else
-                        let title = "Top Shelf Verbose Logging"
+                        let title = NSLocalizedString("Top Shelf Verbose Logging", comment: "")
                         #endif
                         toggleRow(title: title, isOn: Binding(
                             get: { isAltWidgetVerboseLoggingEnabled },
@@ -103,7 +103,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "SideSign Verbose Logging", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("SideSign Verbose Logging", comment: ""), isOn: Binding(
                             get: { isSideSignVerboseLoggingEnabled },
                             set: { newValue in
                                 isSideSignVerboseLoggingEnabled = newValue
@@ -114,7 +114,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Minimuxer Verbose Logging", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Minimuxer Verbose Logging", comment: ""), isOn: Binding(
                             get: { isMinimuxerVerboseLoggingEnabled },
                             set: { newValue in
                                 isMinimuxerVerboseLoggingEnabled = newValue
@@ -125,7 +125,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Operations Verbose Logging", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Operations Verbose Logging", comment: ""), isOn: Binding(
                             get: { isVerboseOperationsLoggingEnabled },
                             set: { newValue in
                                 isVerboseOperationsLoggingEnabled = newValue
@@ -156,9 +156,9 @@ struct DeveloperOptionsView: View {
                 // Section: Widget Options
                 VStack(alignment: .leading, spacing: 8) {
                     #if !os(tvOS)
-                    let title = "WIDGET OPTIONS"
+                    let title = NSLocalizedString("WIDGET OPTIONS", comment: "")
                     #else
-                    let title = "TOP SHELF OPTIONS"
+                    let title = NSLocalizedString("TOP SHELF OPTIONS", comment: "")
                     #endif
                     Text(title)
                         .font(.system(size: 13, weight: .semibold))
@@ -173,9 +173,9 @@ struct DeveloperOptionsView: View {
                                     .foregroundColor(.white)
 
                                 #if !os(tvOS)
-                                let title = "Reload All Widgets"
+                                let title = NSLocalizedString("Reload All Widgets", comment: "")
                                 #else
-                                let title = "Reload Top Shelf"
+                                let title = NSLocalizedString("Reload Top Shelf", comment: "")
                                 #endif
                                 Text(title)
                                     .font(.system(size: 17, weight: .bold))
@@ -195,9 +195,9 @@ struct DeveloperOptionsView: View {
                                     .foregroundColor(.white)
                                 
                                 #if !os(tvOS)
-                                let title = "Rotate Widget Log"
+                                let title = NSLocalizedString("Rotate Widget Log", comment: "")
                                 #else
-                                let title = "Rotate Top Shelf Log"
+                                let title = NSLocalizedString("Rotate Top Shelf Log", comment: "")
                                 #endif
                                 Text(title)
                                     .font(.system(size: 17, weight: .bold))
@@ -289,7 +289,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Wipe Database on Next Start", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Wipe Database on Next Start", comment: ""), isOn: Binding(
                             get: { recreateDatabaseOnNextStart },
                             set: { newValue in
                                 recreateDatabaseOnNextStart = newValue
@@ -341,7 +341,7 @@ struct DeveloperOptionsView: View {
                         
                         divider
                         
-                        toggleRow(title: "Show WireGuard Settings", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Show WireGuard Settings", comment: ""), isOn: Binding(
                             get: { alwaysShowWireGuardConfig },
                             set: { newValue in
                                 alwaysShowWireGuardConfig = newValue
@@ -419,7 +419,7 @@ struct DeveloperOptionsView: View {
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
-                        toggleRow(title: "Accept IPv6 Config", isOn: Binding(
+                        toggleRow(title: NSLocalizedString("Accept IPv6 Config", comment: ""), isOn: Binding(
                             get: { acceptIPv6ConnectionConfig },
                             set: { newValue in
                                 acceptIPv6ConnectionConfig = newValue
@@ -700,11 +700,11 @@ struct DeveloperOptionsView: View {
         #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
         let title = NSLocalizedString("Reloaded All Widgets", comment: "")
-        let detail = "Triggered timeline refresh for all widgets."
+        let detail = NSLocalizedString("Triggered timeline refresh for all widgets.", comment: "")
         #else
         NotificationCenter.default.post(name: .TVTopShelfItemsDidChange, object: nil)
         let title = NSLocalizedString("Reloaded Top Shelf", comment: "")
-        let detail = "Triggered Top Shelf refresh."
+        let detail = NSLocalizedString("Triggered Top Shelf refresh.", comment: "")
         #endif
         if let top = UIApplication.shared.topViewController() {
             let toastView = ToastView(text: title, detailText: detail)
@@ -715,16 +715,16 @@ struct DeveloperOptionsView: View {
     private func triggerRotateWidgetLog() {
         guard let top = UIApplication.shared.topViewController() else { return }
         #if !os(tvOS)
-        let logName = "Widget"
+        let logName = NSLocalizedString("Widget", comment: "")
         #else
-        let logName = "Top Shelf"
+        let logName = NSLocalizedString("Top Shelf", comment: "")
         #endif
         do {
             if let rotatedURL = try WidgetLogManager.rotateLog() {
-                let toastView = ToastView(text: String(format: NSLocalizedString("Rotated %@ Log", comment: ""), logName), detailText: "Saved to WidgetLogs/\(rotatedURL.lastPathComponent)")
+                let toastView = ToastView(text: String(format: NSLocalizedString("Rotated %@ Log", comment: ""), logName), detailText: String(format: NSLocalizedString("Saved to WidgetLogs/%@", comment: ""), rotatedURL.lastPathComponent))
                 toastView.show(in: top)
             } else {
-                let toastView = ToastView(text: String(format: NSLocalizedString("%@ Log Empty", comment: ""), logName), detailText: "Nothing to rotate.")
+                let toastView = ToastView(text: String(format: NSLocalizedString("%@ Log Empty", comment: ""), logName), detailText: NSLocalizedString("Nothing to rotate.", comment: ""))
                 toastView.show(in: top)
             }
         } catch {

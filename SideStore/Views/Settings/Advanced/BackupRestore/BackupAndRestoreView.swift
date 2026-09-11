@@ -137,7 +137,7 @@ struct BackupAndRestoreView: View {
                     self.importFilePassword = ""
                     self.showingImportPasswordAlert = true
                 } catch {
-                    showAlert(title: "Import Error", message: error.localizedDescription)
+                    showAlert(title: NSLocalizedString("Import Error", comment: ""), message: error.localizedDescription)
                 }
             }
         }
@@ -194,7 +194,7 @@ struct BackupAndRestoreView: View {
             let includeApplePassword = alertVC.isIncludePasswordChecked
             
             guard !filePassword.isEmpty else {
-                showAlert(title: "Export Error", message: "File password cannot be empty.")
+                showAlert(title: NSLocalizedString("Export Error", comment: ""), message: NSLocalizedString("File password cannot be empty.", comment: ""))
                 return
             }
             
@@ -213,7 +213,7 @@ struct BackupAndRestoreView: View {
                 TVWebFileTransferManager.shared.startExport(fileURL: fileURL, title: "Export Account", presentingVC: top)
                 #endif
             } catch {
-                showAlert(title: "Export Error", message: error.localizedDescription)
+                showAlert(title: NSLocalizedString("Export Error", comment: ""), message: error.localizedDescription)
             }
         }
         
@@ -232,20 +232,20 @@ struct BackupAndRestoreView: View {
             self.importedAccount = account
             
             if let pass = account.password, !pass.isEmpty {
-                showAlert(title: "Account Imported", message: "Account \(account.email) imported successfully!")
+                showAlert(title: NSLocalizedString("Account Imported", comment: ""), message: String(format: NSLocalizedString("Account %@ imported successfully!", comment: ""), account.email))
             } else {
                 self.applePasswordInput = ""
                 self.showingApplePasswordAlert = true
             }
         } catch {
-            showAlert(title: "Import Error", message: error.localizedDescription)
+            showAlert(title: NSLocalizedString("Import Error", comment: ""), message: error.localizedDescription)
         }
     }
     
     private func performAppleSignIn() {
         guard let account = importedAccount, !applePasswordInput.isEmpty else { return }
         AuthManager.shared.password = applePasswordInput
-        showAlert(title: "Account Imported", message: "Account \(account.email) imported successfully!")
+        showAlert(title: NSLocalizedString("Account Imported", comment: ""), message: String(format: NSLocalizedString("Account %@ imported successfully!", comment: ""), account.email))
     }
 
     private func showAlert(title: String, message: String) {

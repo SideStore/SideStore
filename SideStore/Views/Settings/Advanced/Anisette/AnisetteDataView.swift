@@ -94,12 +94,12 @@ class AnisetteDataViewModel: ObservableObject {
         )
         await AnisetteConfigManager.shared.saveConfig(config)
         updateRawEditableJSON()
-        showToast(text: "Saved configuration successfully.")
+        showToast(text: NSLocalizedString("Saved configuration successfully.", comment: ""))
     }
     
     func saveRawJSON() async {
         guard let data = rawEditableJSON.data(using: .utf8) else {
-            showToast(text: "Encoding Failed", detailText: "Unable to encode JSON as UTF-8.")
+            showToast(text: NSLocalizedString("Encoding Failed", comment: ""), detailText: NSLocalizedString("Unable to encode JSON as UTF-8.", comment: ""))
             return
         }
         
@@ -117,9 +117,9 @@ class AnisetteDataViewModel: ObservableObject {
             customXcodeVersion = config.customXcodeVersion ?? ""
             
             await AnisetteConfigManager.shared.saveConfig(config)
-            showToast(text: "JSON configuration saved successfully!")
+            showToast(text: NSLocalizedString("JSON configuration saved successfully!", comment: ""))
         } catch {
-            showToast(text: "Invalid JSON Structure", error: error)
+            showToast(text: NSLocalizedString("Invalid JSON Structure", comment: ""), error: error)
         }
     }
     
@@ -136,7 +136,7 @@ class AnisetteDataViewModel: ObservableObject {
         customXcodeVersion = ""
         updateRawEditableJSON()
         await save()
-        showToast(text: "Reset to default configuration.")
+        showToast(text: NSLocalizedString("Reset to default configuration.", comment: ""))
     }
     
     func importJSON(url: URL) async {
@@ -162,12 +162,12 @@ class AnisetteDataViewModel: ObservableObject {
             customRoutingInfo = config.customRoutingInfo ?? ""
             customXcodeVersion = config.customXcodeVersion ?? ""
             updateRawEditableJSON()
-            showToast(text: "Imported successfully", detailText: url.lastPathComponent)
+            showToast(text: NSLocalizedString("Imported successfully", comment: ""), detailText: url.lastPathComponent)
         } catch {
-            showToast(text: "Import Failed", error: error)
+            showToast(text: NSLocalizedString("Import Failed", comment: ""), error: error)
         }
     }
-    
+
     func exportJSON() async -> URL? {
         guard let data = await AnisetteConfigManager.shared.exportConfigData() else { return nil }
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("anisette-config.json")
@@ -175,7 +175,7 @@ class AnisetteDataViewModel: ObservableObject {
             try data.write(to: tempURL, options: .atomic)
             return tempURL
         } catch {
-            showToast(text: "Export Failed", error: error)
+            showToast(text: NSLocalizedString("Export Failed", comment: ""), error: error)
             return nil
         }
     }
@@ -207,16 +207,16 @@ class AnisetteDataViewModel: ObservableObject {
                 serverReturnedHeadersJSON = str
             }
             
-            showToast(text: "Fetched server config!", detailText: url.host)
+            showToast(text: NSLocalizedString("Fetched server config!", comment: ""), detailText: url.host)
         } catch {
-            showToast(text: "Fetch Failed", error: error)
+            showToast(text: NSLocalizedString("Fetch Failed", comment: ""), error: error)
         }
     }
     
     func loadServerHeadersIntoOverrides() async {
         let serverHeaders = await AnisetteConfigManager.shared.loadServerHeaders()
         guard !serverHeaders.isEmpty else {
-            showToast(text: "No fetched headers found", detailText: "Fetch from server first.")
+            showToast(text: NSLocalizedString("No fetched headers found", comment: ""), detailText: NSLocalizedString("Fetch from server first.", comment: ""))
             return
         }
         
@@ -258,7 +258,7 @@ class AnisetteDataViewModel: ObservableObject {
         }
         
         await save()
-        showToast(text: "Loaded fetched data into overrides!")
+        showToast(text: NSLocalizedString("Loaded fetched data into overrides!", comment: ""))
     }
     
     func showToast(text: String, detailText: String? = nil, error: Error? = nil) {
@@ -298,11 +298,11 @@ struct AnisetteDataView: View {
                 if viewModel.viewMode == 0 {
                     // SECTION 1: PRIMARY CLIENT HEADERS
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("PRIMARY CLIENT HEADERS")
+                        sectionHeader(NSLocalizedString("PRIMARY CLIENT HEADERS", comment: ""))
                         
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "Client Info",
+                                title: NSLocalizedString("Client Info", comment: ""),
                                 headerKey: "X-Mme-Client-Info",
                                 text: $viewModel.clientInfo,
                                 placeholder: AppConstants.Anisette.defaultClientInfo,
@@ -312,7 +312,7 @@ struct AnisetteDataView: View {
                             divider
                             
                             headerFieldRow(
-                                title: "User Agent",
+                                title: NSLocalizedString("User Agent", comment: ""),
                                 headerKey: "User-Agent",
                                 text: $viewModel.userAgent,
                                 placeholder: AppConstants.Anisette.defaultUserAgent,
@@ -325,20 +325,20 @@ struct AnisetteDataView: View {
                     
                     // SECTION 2: DEVICE & IDENTITY
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("DEVICE & IDENTITY")
+                        sectionHeader(NSLocalizedString("DEVICE & IDENTITY", comment: ""))
                         
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "Device Identifier",
+                                title: NSLocalizedString("Device Identifier", comment: ""),
                                 headerKey: "X-Mme-Device-Id",
                                 text: $viewModel.customDeviceID,
-                                placeholder: "System Generated Device UUID"
+                                placeholder: NSLocalizedString("System Generated Device UUID", comment: "")
                             )
                             
                             divider
                             
                             headerFieldRow(
-                                title: "Local User ID",
+                                title: NSLocalizedString("Local User ID", comment: ""),
                                 headerKey: "X-Apple-I-MD-LU",
                                 text: $viewModel.customLocalUserID,
                                 placeholder: "0"
@@ -347,7 +347,7 @@ struct AnisetteDataView: View {
                             divider
                             
                             headerFieldRow(
-                                title: "Serial Number",
+                                title: NSLocalizedString("Serial Number", comment: ""),
                                 headerKey: "X-Apple-I-SRL-NO",
                                 text: $viewModel.customSerialNumber,
                                 placeholder: AppConstants.Anisette.defaultDeviceSerialNumber
@@ -356,7 +356,7 @@ struct AnisetteDataView: View {
                             divider
                             
                             headerFieldRow(
-                                title: "Routing Info",
+                                title: NSLocalizedString("Routing Info", comment: ""),
                                 headerKey: "X-Apple-I-MD-RINFO",
                                 text: $viewModel.customRoutingInfo,
                                 placeholder: "17106176"
@@ -368,11 +368,11 @@ struct AnisetteDataView: View {
                     
                     // SECTION 3: ENVIRONMENT & LOCALIZATION
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("ENVIRONMENT & LOCALIZATION")
+                        sectionHeader(NSLocalizedString("ENVIRONMENT & LOCALIZATION", comment: ""))
                         
                         VStack(spacing: 0) {
                             headerFieldRow(
-                                title: "Locale",
+                                title: NSLocalizedString("Locale", comment: ""),
                                 headerKey: "X-Apple-Locale",
                                 text: $viewModel.customLocale,
                                 placeholder: "en_US"
@@ -381,17 +381,17 @@ struct AnisetteDataView: View {
                             divider
                             
                             headerFieldRow(
-                                title: "Time Zone",
+                                title: NSLocalizedString("Time Zone", comment: ""),
                                 headerKey: "X-Apple-I-TimeZone",
                                 text: $viewModel.customTimeZone,
-                                placeholder: "e.g. UTC, EDT",
+                                placeholder: NSLocalizedString("e.g. UTC, EDT", comment: ""),
                                 autocapitalization: .allCharacters
                             )
                             
                             divider
                             
                             headerFieldRow(
-                                title: "Xcode Version",
+                                title: NSLocalizedString("Xcode Version", comment: ""),
                                 headerKey: "X-Xcode-Version",
                                 text: $viewModel.customXcodeVersion,
                                 placeholder: "26.0 (26A242)"
@@ -403,29 +403,29 @@ struct AnisetteDataView: View {
                     
                     // SECTION 4: DYNAMIC TOKENS (INFORMATIONAL)
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("DYNAMIC CRYPTOGRAPHIC TOKENS")
+                        sectionHeader(NSLocalizedString("DYNAMIC CRYPTOGRAPHIC TOKENS", comment: ""))
                         
                         VStack(spacing: 0) {
                             infoTokenRow(
-                                title: "One-Time Password (OTP)",
+                                title: NSLocalizedString("One-Time Password (OTP)", comment: ""),
                                 headerKey: "X-Apple-I-MD",
-                                subtitle: "Signed HMAC token dynamically calculated by ADI engine per request"
+                                subtitle: NSLocalizedString("Signed HMAC token dynamically calculated by ADI engine per request", comment: "")
                             )
                             
                             divider
                             
                             infoTokenRow(
-                                title: "Machine ID",
+                                title: NSLocalizedString("Machine ID", comment: ""),
                                 headerKey: "X-Apple-I-MD-M",
-                                subtitle: "Hardware identifier computed from adi.pb and device identity"
+                                subtitle: NSLocalizedString("Hardware identifier computed from adi.pb and device identity", comment: "")
                             )
                             
                             divider
                             
                             infoTokenRow(
-                                title: "Client Time",
+                                title: NSLocalizedString("Client Time", comment: ""),
                                 headerKey: "X-Apple-I-Client-Time",
-                                subtitle: "ISO8601 UTC timestamp locked to OTP generation time"
+                                subtitle: NSLocalizedString("ISO8601 UTC timestamp locked to OTP generation time", comment: "")
                             )
                         }
                         .background(Color.settingsRowBackground)
@@ -453,7 +453,7 @@ struct AnisetteDataView: View {
                 } else {
                     // RAW JSON VIEW
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("RAW CONFIGURATION JSON")
+                        sectionHeader(NSLocalizedString("RAW CONFIGURATION JSON", comment: ""))
                         
                         VStack(spacing: 12) {
                             TextEditor(text: $viewModel.rawEditableJSON)
@@ -491,7 +491,7 @@ struct AnisetteDataView: View {
                 // SECTION: REMOTE SERVER SYNC (ONLY IN REMOTE MODE)
                 if !UserDefaults.standard.useOnDeviceAnisette {
                     VStack(alignment: .leading, spacing: 8) {
-                        sectionHeader("REMOTE SERVER SYNC")
+                        sectionHeader(NSLocalizedString("REMOTE SERVER SYNC", comment: ""))
                         
                         VStack(spacing: 0) {
                             DisclosureGroup(isExpanded: $showingServerHeaders) {
@@ -583,7 +583,7 @@ struct AnisetteDataView: View {
                 
                 // SECTION: ACTIONS
                 VStack(alignment: .leading, spacing: 8) {
-                    sectionHeader("ACTIONS")
+                    sectionHeader(NSLocalizedString("ACTIONS", comment: ""))
                     
                     VStack(spacing: 0) {
                         SwiftUI.Button {
@@ -718,7 +718,7 @@ struct AnisetteDataView: View {
                     }
                 }
             case .failure(let error):
-                viewModel.showToast(text: "File Selection Failed", error: error)
+                viewModel.showToast(text: NSLocalizedString("File Selection Failed", comment: ""), error: error)
             }
         }
         #endif

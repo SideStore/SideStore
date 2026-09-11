@@ -56,8 +56,8 @@ struct CreateManualProfileView: View {
         NavigationView {
             Form {
                 Section(footer: Text(isManualConfiguration
-                    ? "Manually select which signing certificates and test devices are authorized."
-                    : "Apple automatically provisions active certificates and devices for this App ID and platform.")) {
+                    ? NSLocalizedString("Manually select which signing certificates and test devices are authorized.", comment: "")
+                    : NSLocalizedString("Apple automatically provisions active certificates and devices for this App ID and platform.", comment: ""))) {
 
                     if viewModel.appIDs.isEmpty {
                         if viewModel.isLoading {
@@ -168,7 +168,7 @@ struct CreateManualProfileView: View {
                             Text(String(format: NSLocalizedString("Devices (%d/%d)", comment: ""), selectedDeviceIDs.count, filteredDevices.count))
                             Spacer()
                             if !filteredDevices.isEmpty {
-                                SwiftUI.Button(selectedDeviceIDs.count == filteredDevices.count ? "Deselect All" : "Select All") {
+                                SwiftUI.Button(selectedDeviceIDs.count == filteredDevices.count ? NSLocalizedString("Deselect All", comment: "") : NSLocalizedString("Select All", comment: "")) {
                                     if selectedDeviceIDs.count == filteredDevices.count {
                                         selectedDeviceIDs.removeAll()
                                     } else {

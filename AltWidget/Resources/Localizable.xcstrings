@@ -271,6 +271,16 @@
         }
       }
     },
+    "DAY": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일"
+          }
+        }
+      }
+    },
     "DAYS": {
       "localizations": {
         "ko": {
@@ -749,7 +759,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비개발자 Apple ID로는 앱을 3개 초과하여 활성화할 수 없습니다."
+            "value": "비개발자 Apple 계정으로는 앱을 3개 초과하여 활성화할 수 없습니다."
           }
         }
       }

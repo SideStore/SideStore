@@ -216,11 +216,11 @@ struct ThemePickerView: View {
                 .padding(.horizontal, 16)
 
             VStack(spacing: 0) {
-                metricRow(label: "HEX Code", value: uiColor.hexString)
+                metricRow(label: NSLocalizedString("HEX Code", comment: ""), value: uiColor.hexString)
                 Rectangle().fill(Color.settingsDivider).frame(height: 0.5).padding(.horizontal, 16)
-                metricRow(label: "RGB Format", value: "R: \(rgb.r)  G: \(rgb.g)  B: \(rgb.b)")
+                metricRow(label: NSLocalizedString("RGB Format", comment: ""), value: "R: \(rgb.r)  G: \(rgb.g)  B: \(rgb.b)")
                 Rectangle().fill(Color.settingsDivider).frame(height: 0.5).padding(.horizontal, 16)
-                metricRow(label: "HSL Format", value: "H: \(hsl.h)°  S: \(hsl.s)%  L: \(hsl.l)%")
+                metricRow(label: NSLocalizedString("HSL Format", comment: ""), value: "H: \(hsl.h)°  S: \(hsl.s)%  L: \(hsl.l)%")
             }
             .background(Color.settingsRowBackground)
             .cornerRadius(14)

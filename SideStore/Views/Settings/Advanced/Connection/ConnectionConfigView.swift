@@ -272,23 +272,23 @@ struct ConnectionConfigView: View {
             let overridePeer = draftOverrideTunnelPeerIp.trimmingCharacters(in: .whitespacesAndNewlines)
             if !overridePeer.isEmpty && isIPv6Address(overridePeer) {
                 guard acceptIPv6 else {
-                    return "IPv6 addresses are not supported for Device IP unless 'Accept IPv6 Config' is enabled in Developer Options."
+                    return NSLocalizedString("IPv6 addresses are not supported for Device IP unless 'Accept IPv6 Config' is enabled in Developer Options.", comment: "")
                 }
                 guard isValidIPv6Address(overridePeer) else {
-                    return "Invalid IPv6 address for Device IP."
+                    return NSLocalizedString("Invalid IPv6 address for Device IP.", comment: "")
                 }
             }
         } else {
             let remoteIp = draftRemoteServerIp.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !remoteIp.isEmpty else {
-                return "Device IP is mandatory for Remote Endpoint mode."
+                return NSLocalizedString("Device IP is mandatory for Remote Endpoint mode.", comment: "")
             }
             if isIPv6Address(remoteIp) {
                 guard acceptIPv6 else {
-                    return "IPv6 addresses are not supported for Device IP unless 'Accept IPv6 Config' is enabled in Developer Options."
+                    return NSLocalizedString("IPv6 addresses are not supported for Device IP unless 'Accept IPv6 Config' is enabled in Developer Options.", comment: "")
                 }
                 guard isValidIPv6Address(remoteIp) else {
-                    return "Invalid IPv6 address for Device IP."
+                    return NSLocalizedString("Invalid IPv6 address for Device IP.", comment: "")
                 }
             }
         }
@@ -296,25 +296,25 @@ struct ConnectionConfigView: View {
             let portStr = draftRemotePairingPortOverride.trimmingCharacters(in: .whitespacesAndNewlines)
             if !portStr.isEmpty {
                 guard let port = UInt16(portStr), port > 0 else {
-                    return "RemotePair Port must be a valid number between 1 and 65535 or left empty for auto-discovery."
+                    return NSLocalizedString("RemotePair Port must be a valid number between 1 and 65535 or left empty for auto-discovery.", comment: "")
                 }
             }
         }
         if UserDefaults.standard.enableEMPforWireguard || UserDefaults.standard.alwaysShowWireGuardConfig {
             let host = draftWireGuardServerHost.trimmingCharacters(in: .whitespaces)
             guard !host.isEmpty else {
-                return "Bind Host / IP cannot be empty."
+                return NSLocalizedString("Bind Host / IP cannot be empty.", comment: "")
             }
             if isIPv6Address(host) {
                 guard acceptIPv6 else {
-                    return "IPv6 addresses are not supported for Bind Host / IP unless 'Accept IPv6 Config' is enabled in Developer Options."
+                    return NSLocalizedString("IPv6 addresses are not supported for Bind Host / IP unless 'Accept IPv6 Config' is enabled in Developer Options.", comment: "")
                 }
                 guard isValidIPv6Address(host) else {
-                    return "Invalid IPv6 address for Bind Host / IP."
+                    return NSLocalizedString("Invalid IPv6 address for Bind Host / IP.", comment: "")
                 }
             }
             guard let port = UInt16(draftWireGuardServerPort), port > 0 else {
-                return "Bind Port must be a valid number between 1 and 65535."
+                return NSLocalizedString("Bind Port must be a valid number between 1 and 65535.", comment: "")
             }
         }
         return nil

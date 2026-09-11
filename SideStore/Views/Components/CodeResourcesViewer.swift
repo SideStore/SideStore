@@ -82,7 +82,7 @@ struct CodeResourcesViewer: View {
                 Section {
                     Picker("Display Mode", selection: $filterMode) {
                         ForEach(FilterMode.allCases, id: \.self) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(NSLocalizedString(mode.rawValue, comment: "")).tag(mode)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())

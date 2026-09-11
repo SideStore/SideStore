@@ -148,7 +148,7 @@ struct AppIDDetailView: View {
         #else
         .listStyle(GroupedListStyle())
         #endif
-        .navigationTitle(currentAppID.name.isEmpty ? "App ID Details" : currentAppID.name)
+        .navigationTitle(currentAppID.name.isEmpty ? NSLocalizedString("App ID Details", comment: "") : currentAppID.name)
         .onAppear {
             initializeSelectedGroups()
         }

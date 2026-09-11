@@ -377,7 +377,7 @@ struct AnisetteServersView: View {
                             SwiftUI.Button {
                                 viewModel.toggleHide(item: item)
                             } label: {
-                                Label(item.isHidden ? "Unhide" : "Hide", systemImage: item.isHidden ? "eye" : "eye.slash")
+                                Label(item.isHidden ? NSLocalizedString("Unhide", comment: "") : NSLocalizedString("Hide", comment: ""), systemImage: item.isHidden ? "eye" : "eye.slash")
                             }
                             .tint(item.isHidden ? .blue : .orange)
                         }
@@ -514,7 +514,7 @@ struct AnisetteServersView: View {
                             Text("Server Catalog Source")
                             Spacer()
                             if !viewModel.isOfflineMode {
-                                SwiftUI.Button(isEditingURL ? "Done" : "Edit") {
+                                SwiftUI.Button(isEditingURL ? NSLocalizedString("Done", comment: "") : NSLocalizedString("Edit", comment: "")) {
                                     if isEditingURL {
                                         isEditingURL = false
                                         let trimmed = editingURLText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -614,7 +614,7 @@ struct AnisetteServersView: View {
                         SwiftUI.Button {
                             viewModel.showHiddenServers.toggle()
                         } label: {
-                            Label(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden", systemImage: viewModel.showHiddenServers ? "eye.slash" : "eye")
+                            Label(viewModel.showHiddenServers ? NSLocalizedString("Hide Hidden", comment: "") : NSLocalizedString("Show Hidden", comment: ""), systemImage: viewModel.showHiddenServers ? "eye.slash" : "eye")
                         }
                     }
 
@@ -664,7 +664,7 @@ struct AnisetteServersView: View {
         #if os(tvOS)
         .confirmationDialog("Options", isPresented: $showingTvOptionsMenu) {
             if viewModel.hasHiddenItems {
-                SwiftUI.Button(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden") {
+                SwiftUI.Button(viewModel.showHiddenServers ? NSLocalizedString("Hide Hidden", comment: "") : NSLocalizedString("Show Hidden", comment: "")) {
                     viewModel.showHiddenServers.toggle()
                 }
             }

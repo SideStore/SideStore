@@ -146,7 +146,7 @@ private struct ComplicationView: View
                         Text(String(format: NSLocalizedString("%d", comment: ""), daysRemaining))
                             .font(.system(size: fontSize, weight: .bold, design: .rounded))
                         
-                        Text(daysRemaining == 1 ? "DAY" : "DAYS")
+                        Text(daysRemaining == 1 ? NSLocalizedString("DAY", comment: "") : NSLocalizedString("DAYS", comment: ""))
                             .font(.caption)
                     }
                     .fixedSize()

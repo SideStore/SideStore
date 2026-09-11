@@ -489,7 +489,7 @@ private struct TrailingToolbarMenuView: View {
                 viewModel.isSelectionMode.toggle()
                 if !viewModel.isSelectionMode { viewModel.selectedURLs.removeAll() }
             } label: {
-                Label(isSelectionMode ? "Done Selecting" : "Select", systemImage: "checkmark.circle")
+                Label(isSelectionMode ? NSLocalizedString("Done Selecting", comment: "") : NSLocalizedString("Select", comment: ""), systemImage: "checkmark.circle")
             }
             
             Divider()
@@ -505,9 +505,9 @@ private struct TrailingToolbarMenuView: View {
                         }
                     } label: {
                         if sortOption == option {
-                            Label(String(format: NSLocalizedString("%@ (%@)", comment: ""), option.rawValue, sortAscending ? "Ascending" : "Descending"), systemImage: sortAscending ? "arrow.up" : "arrow.down")
+                            Label(String(format: NSLocalizedString("%@ (%@)", comment: ""), NSLocalizedString(option.rawValue, comment: ""), sortAscending ? NSLocalizedString("Ascending", comment: "") : NSLocalizedString("Descending", comment: "")), systemImage: sortAscending ? "arrow.up" : "arrow.down")
                         } else {
-                            Text(option.rawValue)
+                            Text(NSLocalizedString(option.rawValue, comment: ""))
                         }
                     }
                 }
@@ -536,12 +536,12 @@ private struct TrailingToolbarMenuView: View {
             Image(systemName: "ellipsis.circle")
         }
         .confirmationDialog("Options", isPresented: $showTvMenu) {
-            SwiftUI.Button(isSelectionMode ? "Done Selecting" : "Select") {
+            SwiftUI.Button(isSelectionMode ? NSLocalizedString("Done Selecting", comment: "") : NSLocalizedString("Select", comment: "")) {
                 viewModel.isSelectionMode.toggle()
                 if !viewModel.isSelectionMode { viewModel.selectedURLs.removeAll() }
             }
             ForEach(StorageSortOption.allCases) { option in
-                SwiftUI.Button(String(format: NSLocalizedString("Sort: %@", comment: ""), option.rawValue)) {
+                SwiftUI.Button(String(format: NSLocalizedString("Sort: %@", comment: ""), NSLocalizedString(option.rawValue, comment: ""))) {
                     if viewModel.sortOption == option {
                         viewModel.sortAscending.toggle()
                     } else {
@@ -550,10 +550,10 @@ private struct TrailingToolbarMenuView: View {
                     }
                 }
             }
-            SwiftUI.Button(groupFoldersFirst ? "Don't Group Folders First" : "Group Folders First") {
+            SwiftUI.Button(groupFoldersFirst ? NSLocalizedString("Don't Group Folders First", comment: "") : NSLocalizedString("Group Folders First", comment: "")) {
                 viewModel.groupFoldersFirst.toggle()
             }
-            SwiftUI.Button(isTextWrapEnabled ? "Disable Text Wrap" : "Enable Text Wrap") {
+            SwiftUI.Button(isTextWrapEnabled ? NSLocalizedString("Disable Text Wrap", comment: "") : NSLocalizedString("Enable Text Wrap", comment: "")) {
                 viewModel.isTextWrapEnabled.toggle()
             }
         }

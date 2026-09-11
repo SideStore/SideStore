@@ -246,9 +246,9 @@ struct DevicesListView: View {
                                         selectedDeviceType = .iphone
                                     }
                                     #endif
-                                    viewModel.showToastMessage("Fetched Device UDID: \(foundUDID.prefix(8))...")
+                                    viewModel.showToastMessage(String(format: NSLocalizedString("Fetched Device UDID: %@...", comment: ""), String(foundUDID.prefix(8))))
                                 } else {
-                                    viewModel.showToastMessage("Current Device UDID not available")
+                                    viewModel.showToastMessage(NSLocalizedString("Current Device UDID not available", comment: ""))
                                 }
                             }
                         } label: {

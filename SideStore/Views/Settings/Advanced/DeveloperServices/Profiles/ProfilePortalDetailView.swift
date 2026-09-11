@@ -144,7 +144,7 @@ struct ProfilePortalDetailView: View {
                 Text(String(format: NSLocalizedString("Associated Devices (%d)", comment: ""), selectedDeviceIDs.count))
                 Spacer()
                 if !viewModel.devices.isEmpty {
-                    SwiftUI.Button(selectedDeviceIDs.count >= viewModel.devices.count ? "Deselect All" : "Select All") {
+                    SwiftUI.Button(selectedDeviceIDs.count >= viewModel.devices.count ? NSLocalizedString("Deselect All", comment: "") : NSLocalizedString("Select All", comment: "")) {
                         if selectedDeviceIDs.count >= viewModel.devices.count {
                             selectedDeviceIDs.removeAll()
                         } else {
