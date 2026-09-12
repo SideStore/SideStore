@@ -66,13 +66,7 @@ enum CertificateExporter {
         }
         guard let rootVC = UIApplication.shared.topViewController() else { return }
         #if !os(tvOS)
-        let activityVC = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = rootVC.view
-            popover.sourceRect = CGRect(x: rootVC.view.bounds.midX, y: rootVC.view.bounds.midY, width: 0, height: 0)
-            popover.permittedArrowDirections = []
-        }
-        rootVC.present(activityVC, animated: true)
+        rootVC.presentShareSheet(for: [tempURL])
         #else
         TVWebFileTransferManager.shared.startExport(fileURL: tempURL, title: "Export Certificate / Key", presentingVC: rootVC)
         #endif

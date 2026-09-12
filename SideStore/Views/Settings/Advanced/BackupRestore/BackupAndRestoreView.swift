@@ -207,8 +207,7 @@ struct BackupAndRestoreView: View {
                 try encryptedData.write(to: fileURL)
                 
                 #if !os(tvOS)
-                let activityVC = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                top.present(activityVC, animated: true)
+                top.presentShareSheet(for: [fileURL])
                 #else
                 TVWebFileTransferManager.shared.startExport(fileURL: fileURL, title: "Export Account", presentingVC: top)
                 #endif

@@ -247,11 +247,7 @@ struct ProfilePortalDetailView: View {
                         do {
                             try downloaded.data.write(to: tempURL)
                             #if !os(tvOS)
-                            let activityVC = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
-                            if let popover = activityVC.popoverPresentationController {
-                                popover.sourceView = presentingViewController?.view
-                            }
-                            presentingViewController?.present(activityVC, animated: true)
+                            presentingViewController?.presentShareSheet(for: [tempURL])
                             #endif
                         } catch {
                             debugLog("[ProfilePortalDetailView] Failed to write profile to temp: \(error)")

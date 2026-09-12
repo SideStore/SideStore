@@ -521,8 +521,7 @@ struct UserCustomizationsView: View {
             return
         }
         #if !os(tvOS)
-        let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        top.present(activityVC, animated: true)
+        top.presentShareSheet(for: [url])
         #else
         TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export SideStore.conf", presentingVC: top)
         #endif

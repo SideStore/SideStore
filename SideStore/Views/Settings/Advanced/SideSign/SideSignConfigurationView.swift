@@ -400,13 +400,7 @@ struct SideSignConfigurationView: View {
                                 if let url = await viewModel.exportJSON() {
                                     #if !os(tvOS)
                                     guard let topVC = UIApplication.shared.topViewController() else { return }
-                                    let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                    if let popover = activityVC.popoverPresentationController {
-                                        popover.sourceView = topVC.view
-                                        popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
-                                        popover.permittedArrowDirections = []
-                                    }
-                                    topVC.present(activityVC, animated: true)
+                                    topVC.presentShareSheet(for: [url])
                                     #else
                                     if let topVC = UIApplication.shared.topViewController() {
                                         TVWebFileTransferManager.shared.startExport(
