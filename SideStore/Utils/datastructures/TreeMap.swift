@@ -274,9 +274,16 @@ public class TreeMap<Key: Comparable, Value>: Sequence {
             y = minimum(z.right!)
             let yOriginalColor = y.color
             x = y.right
+            // Parent that `x` sits under once `y` has been spliced out of its old spot
+            // and moved into z's place. It has to be captured here: `transplant(z, y)`
+            // below overwrites `y.parent` with z's parent, so reading it afterwards
+            // would point the fix-up at the wrong subtree.
+            let xParent: Node?
             if y.parent === z {
+                xParent = y
                 if x != nil { x!.parent = y }
             } else {
+                xParent = y.parent
                 transplant(y, y.right)
                 y.right = z.right
                 y.right?.parent = y
@@ -286,7 +293,7 @@ public class TreeMap<Key: Comparable, Value>: Sequence {
             y.left?.parent = y
             y.color = z.color
             if yOriginalColor == .black {
-                fixAfterDeletion(x, parent: y.parent)
+                fixAfterDeletion(x, parent: xParent)
             }
             return
         }
@@ -299,7 +306,10 @@ public class TreeMap<Key: Comparable, Value>: Sequence {
     private func fixAfterDeletion(_ x: Node?, parent: Node?) {
         var x = x
         var parent = parent
-        while (x == nil || x!.color == .black) && (x !== root) {
+        // For a well-formed tree `parent != nil` is implied by `x !== root`; keeping it in
+        // the condition makes the loop total, so a bad (x, parent) pair can never spin
+        // forever or force-unwrap a nil parent.
+        while (x == nil || x!.color == .black) && (x !== root) && (parent != nil) {
             if x === parent?.left {
                 var w = parent?.right
                 if w?.color == .red {
@@ -357,11 +367,6 @@ public class TreeMap<Key: Comparable, Value>: Sequence {
             }
         }
         x?.color = .black
-    }
-    
-    // Convenience overload if parent is not separately tracked.
-    private func fixAfterDeletion(_ x: Node?) {
-        fixAfterDeletion(x, parent: x?.parent)
     }
     
     // MARK: - Sequence Conformance (In-Order Traversal)
