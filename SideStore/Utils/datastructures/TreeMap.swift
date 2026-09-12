@@ -399,4 +399,63 @@ public class TreeMap<Key: Comparable, Value>: Sequence {
     public func makeIterator() -> Iterator {
         return Iterator(root: root)
     }
+    
+    // MARK: - Invariant Checking (test hook)
+    
+    /// Walks the tree and returns a description of the first red-black invariant it finds
+    /// violated, or `nil` when the tree is well formed.
+    ///
+    /// Meant for tests. A broken rebalance keeps returning the right keys, values and counts
+    /// while quietly wrecking the structure, so checking the result of an operation is not
+    /// enough to notice it - the tree has to be inspected from the inside, which only code in
+    /// this file can do.
+    func firstRedBlackInvariantViolation() -> String? {
+        guard let root = root else {
+            return count == 0 ? nil : "empty tree reports a count of \(count)"
+        }
+        
+        if root.color != .black { return "root \(root.key) is red" }
+        if root.parent != nil { return "root \(root.key) still points at a parent" }
+        
+        var violation: String? = nil
+        var nodeCount = 0
+        
+        // Returns the number of black nodes on the paths from `node` down to its leaves,
+        // recording a violation if those paths disagree.
+        func blackHeight(of node: Node?, parent: Node?) -> Int {
+            guard let node = node else { return 1 }  // missing children count as black
+            
+            nodeCount += 1
+            
+            if node.parent !== parent {
+                violation = violation ?? "\(node.key) points at the wrong parent"
+            }
+            if node.color == .red, node.left?.color == .red || node.right?.color == .red {
+                violation = violation ?? "red node \(node.key) has a red child"
+            }
+            if let left = node.left, left.key >= node.key {
+                violation = violation ?? "left child \(left.key) of \(node.key) is out of order"
+            }
+            if let right = node.right, right.key <= node.key {
+                violation = violation ?? "right child \(right.key) of \(node.key) is out of order"
+            }
+            
+            let leftHeight = blackHeight(of: node.left, parent: node)
+            let rightHeight = blackHeight(of: node.right, parent: node)
+            
+            if leftHeight != rightHeight {
+                violation = violation ?? "\(node.key) has black heights \(leftHeight) and \(rightHeight)"
+            }
+            
+            return leftHeight + (node.color == .black ? 1 : 0)
+        }
+        
+        _ = blackHeight(of: root, parent: nil)
+        
+        if violation == nil, nodeCount != count {
+            violation = "tree holds \(nodeCount) nodes but reports a count of \(count)"
+        }
+        
+        return violation
+    }
 }

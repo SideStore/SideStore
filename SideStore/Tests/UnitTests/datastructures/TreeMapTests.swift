@@ -167,12 +167,15 @@ class TreeMapTests: XCTestCase {
             XCTAssertNil(map[2])
             XCTAssertEqual(map.keys, [1, 3, 4, 5, 6])
             XCTAssertEqual(map.count, 5)
+            XCTAssertNil(map.firstRedBlackInvariantViolation())
         }
     }
 
     func testEverySingleRemovalKeepsMapConsistent() {
-        // Walks every (map size, removed key) pair for ascending inserts up to 40
-        // elements, which covers all of the shapes the deletion fix-up has to handle.
+        // Walks every (map size, removed key) pair for ascending inserts up to 40 elements.
+        // That is not every tree shape a red-black tree can take, but it does reach all four
+        // deletion cases (no child, one child, two children with the successor as the removed
+        // node's right child, and two children with a deeper successor) in both colours.
         assertTerminates("remove each key of every map size", timeout: 60) {
             for size in 1...40 {
                 for key in 1...size {
@@ -185,14 +188,18 @@ class TreeMapTests: XCTestCase {
                     XCTAssertEqual(map.keys, expected, context)
                     XCTAssertEqual(map.values, expected.map { $0 * 10 }, context)
                     XCTAssertEqual(map.count, expected.count, context)
+                    XCTAssertNil(map.firstRedBlackInvariantViolation(), context)
                 }
             }
         }
     }
 
     func testRandomizedInsertAndRemoveMatchesDictionary() {
-        // Interleaves inserts and removals and compares against a plain dictionary,
-        // so any ordering, count or return value drift shows up.
+        // Interleaves inserts and removals and compares against a plain dictionary, so any
+        // ordering, count or return value drift shows up. The red-black invariants are checked
+        // after every single mutation as well: a broken rebalance keeps handing back the right
+        // keys and counts while the tree quietly degrades toward a plain binary search tree,
+        // which no amount of checking the results would catch.
         assertTerminates("randomized insert/remove", timeout: 60) {
             var generator = SeededGenerator(seed: 0x5EED)
 
@@ -207,6 +214,11 @@ class TreeMapTests: XCTestCase {
                         reference[key] = key * 3
                     } else {
                         XCTAssertEqual(map.remove(key: key), reference.removeValue(forKey: key), "round \(round)")
+                    }
+
+                    if let violation = map.firstRedBlackInvariantViolation() {
+                        XCTFail("round \(round), key \(key): \(violation)")
+                        return
                     }
                 }
 
