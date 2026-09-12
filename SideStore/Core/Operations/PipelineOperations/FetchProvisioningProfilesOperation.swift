@@ -210,8 +210,10 @@ private extension FetchProvisioningProfilesOperation{
             
             let sortedExpirationDates = appIDs.compactMap { $0.expirationDate }.sorted(by: { $0 < $1 })
             
-            let sanitized = name.filter { $0.isLetter || $0.isNumber || $0.isWhitespace }
-            let appIDName = sanitized.isEmpty ? bundleIdentifier : sanitized
+            // Falls back to the bundle identifier when the name has nothing usable left in it
+            // (e.g. "哔哩哔哩"), sanitized the same way so its periods cannot be rejected either.
+            let appIDName = [name.sanitizedForAppIDName, bundleIdentifier.sanitizedForAppIDName]
+                .first { !$0.isEmpty } ?? "SideStore App"
             
             self.debugLog("[FetchProvisioningProfiles] Calling DeveloperPortalProxy.shared.addAppID with name '\(appIDName)' and identifier '\(bundleIdentifier)'...")
             let appID = try await DeveloperPortalProxy.shared.addAppID(name: appIDName, bundleIdentifier: bundleIdentifier, team: team)
@@ -426,5 +428,27 @@ private extension FetchProvisioningProfilesOperation{
         }
 
         return groupIdentifier + "." + team.identifier
+    }
+}
+
+private extension String {
+
+    /// Apple's developer portal only accepts ASCII letters, digits and spaces for an App ID name
+    /// and rejects everything else with
+    /// `An invalid value '...' was provided for the parameter 'appIdName'`.
+    ///
+    /// `isLetter` and `isNumber` are Unicode aware, so a name written in Chinese, Japanese,
+    /// Cyrillic and so on satisfies them and reaches the portal untouched. Diacritics are folded
+    /// first so that "Café" keeps its letters ("Cafe"), anything the portal does not accept
+    /// becomes a space, and runs of spaces are collapsed.
+    var sanitizedForAppIDName: String {
+        let folded = self.folding(options: [.diacriticInsensitive], locale: nil)
+
+        let allowed = folded.map { character -> Character in
+            guard character.isASCII, character.isLetter || character.isNumber else { return " " }
+            return character
+        }
+
+        return String(allowed).split(separator: " ").joined(separator: " ")
     }
 }
