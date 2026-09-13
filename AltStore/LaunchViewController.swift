@@ -11,21 +11,38 @@
 import SideSign
 import UniformTypeIdentifiers
 import CryptoKit
+import SwiftUI
 
 final class LaunchViewController: UIViewController {
     private var didFinishLaunching = false
     private var retries = 0
     private var maxRetries = 3
-    private var splashView: SplashView!
+    private var splashViewModel = SplashViewModel()
     private var destinationViewController: TabBarController?
     private var startTime: Date!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         debugLog("[LaunchViewController] viewDidLoad()")
-        splashView = SplashView(frame: view.bounds, appName: "SideStore")
         destinationViewController = storyboard!.instantiateViewController(withIdentifier: "tabBarController") as? TabBarController
-        view.addSubview(splashView)
+        let splashHosting = UIHostingController(rootView: SplashView(viewModel: splashViewModel))
+        embed(child: splashHosting)
+    }
+
+    @MainActor
+    private func embed(child: UIViewController) {
+        child.loadViewIfNeeded()
+        addChild(child)
+        child.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(child.view)
+        child.didMove(toParent: self)
+
+        NSLayoutConstraint.activate([
+            child.view.topAnchor.constraint(equalTo: view.topAnchor),
+            child.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            child.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            child.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -33,7 +50,7 @@ final class LaunchViewController: UIViewController {
         super.viewDidAppear(animated)
         guard !didFinishLaunching else { return }
         startTime = Date()
-        splashView.updateStatus(NSLocalizedString("Starting…", comment: ""))
+        splashViewModel.updateStatus(NSLocalizedString("Starting…", comment: ""))
         
         // spin off the startup sequence concurrently
         Task.detached { [weak self] in
@@ -103,13 +120,12 @@ final class LaunchViewController: UIViewController {
         guard !didFinishLaunching else { return }
         didFinishLaunching = true
         
-        splashView.updateStatus(NSLocalizedString("Loading apps…", comment: ""))
+        splashViewModel.updateStatus(NSLocalizedString("Loading apps…", comment: ""))
         await AppManager.shared.reconcileInstalledApps()
-        splashView.updateStatus(NSLocalizedString("Updating sources…", comment: ""))
+        splashViewModel.updateStatus(NSLocalizedString("Updating sources…", comment: ""))
         AppManager.shared.updateAllSources { result in
             guard case .failure(let error) = result else { return }
             debugLog("Failed to update sources on launch. \(error.localizedDescription)")
-            
             
             let errorDesc = ErrorProcessing(.fullError).getDescription(error: error as NSError)
             debugLog("Failed to update sources on launch. \(errorDesc)")
@@ -119,38 +135,37 @@ final class LaunchViewController: UIViewController {
             toastView.show(in: self.destinationViewController!.selectedViewController ?? self.destinationViewController!)
         }
         updateKnownSources()
-        splashView.updateStatus(NSLocalizedString("Almost there…", comment: ""))
-        didFinishLaunching = true
-        
-        let destinationVC = destinationViewController!
+        splashViewModel.updateStatus(NSLocalizedString("Almost there…", comment: ""))
         
         let elapsed = abs(startTime.timeIntervalSinceNow)
         let remaining = elapsed >= 1 ? 0 : 1 - elapsed
         try? await Task.sleep(nanoseconds: UInt64(remaining * 500_000_000))
         
-        destinationVC.loadViewIfNeeded()
-        addChild(destinationVC)
-        destinationVC.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(destinationVC.view)
-        destinationVC.didMove(toParent: self)
-        
-        // Pin edges BEFORE animation
-        NSLayoutConstraint.activate([
-            destinationVC.view.topAnchor.constraint(equalTo: view.topAnchor),
-            destinationVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            destinationVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            destinationVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        transitionToMainInterface()
+    }
+
+    @MainActor
+    private func transitionToMainInterface() {
+        let destinationVC = destinationViewController!
+
+        embed(child: destinationVC)
 
         // Set initial alpha for fade-in
         destinationVC.view.alpha = 0
 
         UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) { [self] in
-            self.splashView.alpha = 0
+            for child in self.children where child !== destinationVC {
+                child.view.alpha = 0
+            }
+
             destinationVC.view.alpha = 1
         } completion: { [self] _ in
-            debugLog("[LaunchViewController] Transition complete — exiting LaunchViewController, handing off to TabBarController")
-            self.splashView.removeFromSuperview()
+            debugLog("[LaunchViewController] Transition complete - exiting LaunchViewController, handing off to TabBarController")
+            for child in self.children where child !== destinationVC {
+                child.willMove(toParent: nil)
+                child.view.removeFromSuperview()
+                child.removeFromParent()
+            }
             self.destinationViewController = destinationVC
             
             Task.detached { @MainActor [weak self] in
