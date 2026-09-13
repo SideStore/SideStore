@@ -41,6 +41,7 @@ struct DeveloperOptionsView: View {
     @State private var showClearKeychainConfirmation: Bool = false
     @State private var showExportPasswordPrompt: Bool = false
     @State private var exportCertPassword: String = ""
+    @State private var showOnboardingSheet: Bool = false
     
     var body: some View {
         ScrollView {
@@ -486,6 +487,62 @@ struct DeveloperOptionsView: View {
                     .cornerRadius(14)
                 }
                 #endif
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ONBOARDING")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(Color.white.opacity(0.6))
+                        .padding(.horizontal, 16)
+
+                    VStack(spacing: 0) {
+                        SwiftUI.Button(action: { showOnboardingSheet = true }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.white)
+                                Text("Replay Onboarding")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
+                        .sheet(isPresented: $showOnboardingSheet) {
+                            OnboardingView(onFinish: {
+                                showOnboardingSheet = false
+                            })
+                        }
+
+                        divider
+
+                        SwiftUI.Button(action: {
+                            UserDefaults.standard.hasCompletedOnboarding = false
+                            UserDefaults.standard.synchronize()
+                            if let top = UIApplication.shared.topViewController() {
+                                let toastView = ToastView(text: NSLocalizedString("Onboarding reset for next launch", comment: ""), detailText: nil)
+                                toastView.show(in: top)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "arrow.counterclockwise")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.white)
+                                Text("Reset Onboarding State")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 50)
+                        }
+                    }
+                    .background(Color.settingsRowBackground)
+                    .cornerRadius(14)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)

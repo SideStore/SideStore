@@ -25,6 +25,19 @@ final class LaunchViewController: UIViewController {
         super.viewDidLoad()
         debugLog("[LaunchViewController] viewDidLoad()")
         destinationViewController = storyboard!.instantiateViewController(withIdentifier: "tabBarController") as? TabBarController
+
+        #if !os(tvOS)
+            if !UserDefaults.standard.hasCompletedOnboarding {
+                let hostingController = UIHostingController(rootView: OnboardingView { [weak self] in
+                    Task { @MainActor in
+                        self?.transitionToMainInterface()
+                    }
+                })
+                embed(child: hostingController)
+                return
+            }
+        #endif
+
         let splashHosting = UIHostingController(rootView: SplashView(viewModel: splashViewModel))
         embed(child: splashHosting)
     }
@@ -118,6 +131,17 @@ final class LaunchViewController: UIViewController {
     @MainActor
     func finishLaunching() async {
         guard !didFinishLaunching else { return }
+
+        #if !os(tvOS)
+            if !UserDefaults.standard.hasCompletedOnboarding {
+                await AppManager.shared.reconcileInstalledApps()
+                AppManager.shared.updateAllSources { _ in }
+                updateKnownSources()
+                didFinishLaunching = true
+                return
+            }
+        #endif
+
         didFinishLaunching = true
         
         splashViewModel.updateStatus(NSLocalizedString("Loading apps…", comment: ""))
@@ -136,11 +160,11 @@ final class LaunchViewController: UIViewController {
         }
         updateKnownSources()
         splashViewModel.updateStatus(NSLocalizedString("Almost there…", comment: ""))
-        
+
         let elapsed = abs(startTime.timeIntervalSinceNow)
         let remaining = elapsed >= 1 ? 0 : 1 - elapsed
         try? await Task.sleep(nanoseconds: UInt64(remaining * 500_000_000))
-        
+
         transitionToMainInterface()
     }
 
