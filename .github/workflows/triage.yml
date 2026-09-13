@@ -24,6 +24,15 @@ jobs:
 
     - name: Welcome first-time contributors
       uses: actions/first-interaction@v3
+      if: |
+        (github.event.pull_request && (
+          github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
+          github.event.pull_request.author_association == 'FIRST_TIMER'
+        )) ||
+        (github.event.issue && (
+          github.event.issue.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
+          github.event.issue.author_association == 'FIRST_TIMER'
+        ))
       with:
         issue_message: |-
           ## Thank you for opening an issue!
