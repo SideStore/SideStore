@@ -72,6 +72,12 @@ local-build.sh
 source-metadata.json
 release-notes.md
 *.md
+!README.md
+!CONTRIBUTING.md
+!CERTIFICATE-OF-ORIGIN.md
+!AGENTS.md
+!CLAUDE.md
+!GEMINI.md
 *.log
 *.pdf
 *.txt
