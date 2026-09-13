@@ -18,10 +18,10 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
     case unknownResult
 
     case cacheClearError(errors: [String])
-    case certificateExpired(appName: String)
-    case certificateRevoked(appName: String)
-    case customCertificateExpired(appName: String, activeTeam: String)
-    case customCertificateRevoked(appName: String, activeTeam: String)
+    case certificateExpired(appName: String, context: CertificateValidationContext? = nil)
+    case certificateRevoked(appName: String, context: CertificateValidationContext? = nil)
+    case customCertificateExpired(appName: String, activeTeam: String, context: CertificateValidationContext? = nil)
+    case customCertificateRevoked(appName: String, activeTeam: String, context: CertificateValidationContext? = nil)
     case forbidden(failureReason: String, file: String = #fileID, line: UInt = #line)
     case invalidApp(reason: String)
     case invalidPairingFile(reason: String)
@@ -65,14 +65,14 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
 
         case .cacheClearError(let errors):
             return "An error occurred while clearing the cache: \(errors.joined(separator: "\n"))"
-        case .certificateExpired(let appName):
-            return "The signing certificate used to install “\(appName)” has expired. Please re-sign or reinstall the app."
-        case .certificateRevoked(let appName):
-            return "The signing certificate used to install “\(appName)” was revoked on the Apple Developer portal. Please re-sign or reinstall the app."
-        case .customCertificateExpired(_, let activeTeam):
-            return "Your active custom/third-party signing certificate (Team: \(activeTeam)) has expired.\n\nIf you did not intend to use a custom certificate, please reset it in Settings -> Advanced -> Certificates."
-        case .customCertificateRevoked(_, let activeTeam):
-            return "Your active custom/third-party signing certificate (Team: \(activeTeam)) was revoked on the Developer Portal.\n\nIf you did not intend to use a custom certificate, please reset it in Settings -> Advanced -> Certificates."
+        case .certificateExpired(let appName, let context):
+            return context?.failureReason(appName: appName, expired: true) ?? String(format: NSLocalizedString("The certificate in the existing signature of “%@” has expired.", comment: "Existing app signature failure"), appName)
+        case .certificateRevoked(let appName, let context):
+            return context?.failureReason(appName: appName, expired: false) ?? String(format: NSLocalizedString("The certificate in the existing signature of “%@” has been revoked.", comment: "Existing app signature failure"), appName)
+        case .customCertificateExpired(let appName, _, let context):
+            return context?.failureReason(appName: appName, expired: true) ?? NSLocalizedString("The custom signing certificate has expired.", comment: "Custom certificate failure")
+        case .customCertificateRevoked(let appName, _, let context):
+            return context?.failureReason(appName: appName, expired: false) ?? NSLocalizedString("The custom signing certificate has been revoked.", comment: "Custom certificate failure")
         case .forbidden(let reason, _, _):
             return reason
         case .invalidApp(let reason):
@@ -123,11 +123,66 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
     }
 
     public var failureReason: String? {
-        return NSLocalizedString(self.rawDescription, comment: "")
+        // Certificate messages use static format keys before substituting the app name.
+        switch self {
+        case .certificateExpired, .certificateRevoked, .customCertificateExpired, .customCertificateRevoked:
+            return self.rawDescription
+        default:
+            return NSLocalizedString(self.rawDescription, comment: "")
+        }
+    }
+
+    private var certificateContext: CertificateValidationContext? {
+        switch self {
+        case .certificateExpired(_, let context), .certificateRevoked(_, let context),
+             .customCertificateExpired(_, _, let context), .customCertificateRevoked(_, _, let context):
+            return context
+        default:
+            return nil
+        }
+    }
+
+    public var errorUserInfo: [String: Any] {
+        // CustomNSError needs explicit localized values for the certificate error to survive
+        // NSError bridging and LoggedError persistence. Leave unrelated error cases unchanged.
+        switch self {
+        case .certificateExpired, .certificateRevoked, .customCertificateExpired, .customCertificateRevoked:
+            break
+        default:
+            return [:]
+        }
+        var info: [String: Any] = [:]
+        info[NSLocalizedDescriptionKey] = errorDescription
+        info[NSLocalizedFailureReasonErrorKey] = failureReason
+        info[NSLocalizedRecoverySuggestionErrorKey] = recoverySuggestion
+        if let context = certificateContext {
+            info[CertificateValidationContext.purposeErrorKey] = context.purpose.rawValue
+            var details = context.diagnosticDetails
+            switch self {
+            case .certificateExpired, .customCertificateExpired:
+                details += "\ncertificateValidationStatus: expired"
+            case .certificateRevoked, .customCertificateRevoked:
+                details += "\ncertificateValidationStatus: revoked"
+            default:
+                break
+            }
+            switch self {
+            case .customCertificateExpired(_, let team, _), .customCertificateRevoked(_, let team, _):
+                details += "\ncheckedCertificateCustomTeam: \(team)"
+            default:
+                break
+            }
+            info[NSDebugDescriptionErrorKey] = details
+        }
+        return info
     }
 
     public var recoverySuggestion: String? {
         switch self {
+        case .certificateExpired(_, let context), .certificateRevoked(_, let context):
+            return context?.recoverySuggestion ?? CertificateValidationContext.dataWarning + "\n\n" + CertificateValidationContext.existingSignatureRecovery
+        case .customCertificateExpired(_, _, let context), .customCertificateRevoked(_, _, let context):
+            return context?.recoverySuggestion ?? CertificateValidationContext.dataWarning + "\n\n" + CertificateValidationContext.certificateManagement
         case .invalidPairingFile:
             return NSLocalizedString("Import a valid mobiledevicepairing file.", comment: "")
         case .invalidVPN, .noVPN:

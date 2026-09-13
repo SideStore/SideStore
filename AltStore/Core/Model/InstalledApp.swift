@@ -13,12 +13,6 @@ import SideSign
 @preconcurrency import UIKit
 import SemanticVersion
 
-public enum CertificateStatus: Equatable, Sendable {
-    case valid(isCrossSigned: Bool)
-    case revoked
-    case expired
-}
-
 extension InstalledApp
 {
     public static var freeAccountActiveAppsLimit: Int {

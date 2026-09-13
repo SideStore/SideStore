@@ -71,6 +71,7 @@
 		BF58047B246A28F7008AE704 /* SideBackup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SideBackup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AltWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD2476A2284B9A500981D42 /* SideStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SideStore.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3D1A6000000000000000001 /* CertificateDiagnosticsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CertificateDiagnosticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -197,6 +198,7 @@
 			membershipExceptions = (
 				Tests/UITests/UITests.swift,
 				Tests/UITests/UITestsLaunchTests.swift,
+				Tests/UnitTests/certificates/CertificateDiagnosticsTests.swift,
 				Tests/UnitTests/datastructures/DataStructuresTests.swift,
 				Tests/UnitTests/datastructures/LinkedHashMapTests.swift,
 				Tests/UnitTests/datastructures/TreeMapTests.swift,
@@ -215,15 +217,32 @@
 			);
 			target = BF989166250AABF3002ACF50 /* AltWidgetExtension */;
 		};
+		C3D1A6000000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Certificates/CertificateStatus.swift,
+				Core/Operations/Errors/CertificateValidationContext.swift,
+				Core/Operations/Errors/OperationError.swift,
+				Tests/UnitTests/certificates/CertificateDiagnosticsTests.swift,
+			);
+			target = C3D1A6000000000000000004 /* CertificateDiagnosticsTests */;
+		};
+		C3D1A6000000000000000003 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Errors/ALTWrappedError.swift,
+			);
+			target = C3D1A6000000000000000004 /* CertificateDiagnosticsTests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A8EEC3482F4B0D8600F2436D /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC36B2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A82BE360304AAF490055C3DE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		A8EEC3482F4B0D8600F2436D /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C3D1A6000000000000000003 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC36B2F4B0D8700F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A82BE360304AAF490055C3DE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		A8EEC3B92F4B0EFC00F2436D /* AltWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3CA2F4B0EFC00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltWidget; sourceTree = "<group>"; };
 		A8EEC3D92F4B0FC800F2436D /* SideBackup */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC3E22F4B0FC800F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SideBackup; sourceTree = "<group>"; };
 		A8EEC71D2F4B10D900F2436D /* xcconfigs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = xcconfigs; sourceTree = "<group>"; };
 		A8EEC8412F4B146A00F2436D /* AltStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EEC8CB2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EEC8CD2F4B146B00F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AltStore; sourceTree = "<group>"; };
-		A8EECF2A2F4B195000F2436D /* SideStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A8EECF492F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EECF4A2F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SideStore; sourceTree = "<group>"; };
+		A8EECF2A2F4B195000F2436D /* SideStore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C3D1A6000000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EECF492F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, A8EECF4A2F4B195000F2436D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SideStore; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -255,6 +274,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C3D1A6000000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -282,6 +308,7 @@
 		BFD2476B2284B9A500981D42 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				C3D1A6000000000000000001 /* CertificateDiagnosticsTests.xctest */,
 				BFD2476A2284B9A500981D42 /* SideStore.app */,
 				BF58047B246A28F7008AE704 /* SideBackup.app */,
 				BF989167250AABF3002ACF50 /* AltWidgetExtension.appex */,
@@ -369,6 +396,23 @@
 			productReference = BFD2476A2284B9A500981D42 /* SideStore.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C3D1A6000000000000000004 /* CertificateDiagnosticsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C3D1A6000000000000000008 /* Build configuration list for PBXNativeTarget "CertificateDiagnosticsTests" */;
+			buildPhases = (
+				C3D1A6000000000000000005 /* Sources */,
+				C3D1A6000000000000000006 /* Frameworks */,
+				C3D1A6000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CertificateDiagnosticsTests;
+			productName = CertificateDiagnosticsTests;
+			productReference = C3D1A6000000000000000001 /* CertificateDiagnosticsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -423,6 +467,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				C3D1A6000000000000000004 /* CertificateDiagnosticsTests */,
 				BFD247692284B9A500981D42 /* SideStore */,
 				BF58047A246A28F7008AE704 /* SideBackup */,
 				BF989166250AABF3002ACF50 /* AltWidgetExtension */,
@@ -450,6 +495,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A84596F62F7DC4C90000B8CD /* SideStore.conf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3D1A6000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +545,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BFD247662284B9A500981D42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3D1A6000000000000000005 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -895,6 +954,38 @@
 			};
 			name = Release;
 		};
+		C3D1A6000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.CertificateDiagnosticsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		C3D1A600000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SideStore.CertificateDiagnosticsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -930,6 +1021,15 @@
 			buildConfigurations = (
 				BFD2477F2284B9A700981D42 /* Debug */,
 				BFD247802284B9A700981D42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C3D1A6000000000000000008 /* Build configuration list for PBXNativeTarget "CertificateDiagnosticsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3D1A6000000000000000009 /* Debug */,
+				C3D1A600000000000000000A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

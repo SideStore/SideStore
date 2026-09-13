@@ -67,7 +67,7 @@ final class VerifyCertificateOperation: BasePipelineOperation<InstallAppOperatio
                 let result = await validateCertificate(binaryCert, portalCertificateSerials: portalCertificateSerials, signingCertificateSerial: signingCertificateSerial)
                 finalStatus = result
                 self.context.targetCertStatus = result
-                try processValidationResult(result, description: "Target bundle binary certificate", appName: appName, team: team)
+                try processValidationResult(result, certificate: binaryCert, appName: appName, installedAppSerial: installedAppSerial, portalCertificateSerials: portalCertificateSerials, team: team)
                 
             } else {
                 // resigning branch
@@ -81,7 +81,7 @@ final class VerifyCertificateOperation: BasePipelineOperation<InstallAppOperatio
                 let result = await validateCertificate(target.x509, portalCertificateSerials: portalCertificateSerials, signingCertificateSerial: signingCertificateSerial)
                 finalStatus = result
                 self.context.targetCertStatus = result
-                try processValidationResult(result, description: "Target signing certificate", appName: appName, team: team)
+                try processValidationResult(result, certificate: target.x509, appName: appName, installedAppSerial: installedAppSerial, portalCertificateSerials: portalCertificateSerials, team: team)
             }
             
             await self.persistStateIfChanged(bundleID: bundleID, status: finalStatus, initialStatus: initialStatus)
@@ -164,50 +164,32 @@ final class VerifyCertificateOperation: BasePipelineOperation<InstallAppOperatio
         }
     }
     
-    private func processValidationResult(_ result: CertificateStatus, description: String, appName: String, team: ALTTeam) throws {
-        // Check if there is a team ID mismatch with the active certificate
-        var activeTeamID: String? = nil
-        var isCustomCertActive = false
-        
-        if let activeCert = CertificateManager.shared.activeCertificate?.certificate,
-           let data = activeCert.data {
-                let details = parseCertificate(derData: data)
-                let belongsToAuthenticatedTeam = details.subject.contains(team.identifier) || details.issuer.contains(team.identifier)
-                if !belongsToAuthenticatedTeam {
-                    isCustomCertActive = true
-                    // Try to extract the team ID of the active cert from its Subject
-                    // (It is friendly labeled as "Organizational Unit" in the parsed DN string)
-                    if let ouPart = details.subject.components(separatedBy: ", ").first(where: { $0.hasPrefix("Organizational Unit=") }) {
-                        activeTeamID = ouPart.replacingOccurrences(of: "Organizational Unit=", with: "")
-                    }
-                }
+    private func processValidationResult(_ result: CertificateStatus, certificate: ALTX509Certificate,
+                                         appName: String, installedAppSerial: String?,
+                                         portalCertificateSerials: Set<String>, team: ALTTeam) throws {
+        let validationContext = CertificateValidationContext(
+            willResign: self.willResign,
+            checkedCertificateSerial: certificate.serialNumber,
+            installedAppSerial: installedAppSerial,
+            activeCertificateSerial: self.context.activeSigningCertificate?.serialNumber,
+            overrideCertificateSerial: self.context.overrideSigningCertificate?.serialNumber,
+            portalCertificateSerials: portalCertificateSerials
+        )
+
+        // Classify the certificate we actually checked, not a possibly unrelated global identity.
+        var customTeam: String?
+        if let data = certificate.data {
+            let details = parseCertificate(derData: data)
+            let belongsToAuthenticatedTeam = details.subject.contains(team.identifier) || details.issuer.contains(team.identifier)
+            if !belongsToAuthenticatedTeam {
+                let ouPart = details.subject.components(separatedBy: ", ").first { $0.hasPrefix("Organizational Unit=") }
+                customTeam = ouPart?.replacingOccurrences(of: "Organizational Unit=", with: "") ?? "Unknown Custom Team"
             }
-        
-        switch result {
-        case .valid(let isCrossSigned):
-            if isCrossSigned {
-                debugLog("[VerifyCertificateOperation] \(description) is VALID (cross-signed)")
-            } else {
-                debugLog("[VerifyCertificateOperation] \(description) is VALID")
-            }
-        case .revoked:
-            debugLog("[VerifyCertificateOperation] \(description) is REVOKED")
-            if isCustomCertActive {
-                throw OperationError.customCertificateRevoked(
-                    appName: appName,
-                    activeTeam: activeTeamID ?? "Unknown Custom Team"
-                )
-            }
-            throw OperationError.certificateRevoked(appName: appName)
-        case .expired:
-            debugLog("[VerifyCertificateOperation] \(description) is EXPIRED")
-            if isCustomCertActive {
-                throw OperationError.customCertificateExpired(
-                    appName: appName,
-                    activeTeam: activeTeamID ?? "Unknown Custom Team"
-                )
-            }
-            throw OperationError.certificateExpired(appName: appName)
+        }
+
+        debugLog("[VerifyCertificateOperation] \(validationContext.purpose.rawValue): \(result)")
+        if let error = validationContext.error(for: result, appName: appName, customTeam: customTeam) {
+            throw error
         }
     }
 }

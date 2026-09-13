@@ -63,6 +63,9 @@ jobs:
             ~/Library/Caches/org.swift.swiftpm
           key: xcode-build-cache-${{ github.ref_name }}-
 
+      - name: Test certificate diagnostics
+        run: xcodebuild test -project AltStore.xcodeproj -scheme CertificateDiagnosticsTests -destination 'platform=macOS'
+
       - name: Build
         env:
           BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}

@@ -2726,18 +2726,9 @@ extension MyAppsViewController {
         picker.onSelectCertificate = { [weak self] cert in
             guard let self = self else { return }
             
-            let binaryCert = CertificateManager.shared.getSigningCertificate(at: installedApp.fileURL)
-            if let binaryCert = binaryCert, cert.serialNumber == binaryCert.serialNumber {
-                let alert = UIAlertController(
-                    title: NSLocalizedString("Same Certificate", comment: ""),
-                    message: NSLocalizedString("The selected certificate is already being used for this app. Please use the Resign option instead.", comment: ""),
-                    preferredStyle: .alert
-                )
-                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default))
-                self.present(alert, animated: true)
-            } else {
-                self.setCertificate(cert, for: installedApp)
-            }
+            // A matching binary signature does not imply the same effective signing identity.
+            // Honor the user's explicit selection so the next resign uses this app override.
+            self.setCertificate(cert, for: installedApp)
         }
         picker.present(from: self)
     }

@@ -136,7 +136,8 @@ private extension ErrorLogViewController
             let errorDescription = [nsError.localizedDescription, nsError.localizedRecoverySuggestion].compactMap { $0 }.joined(separator: "\n\n")
             cell.errorDescriptionTextView.text = errorDescription
             cell.errorDescriptionTextView.maximumNumberOfLines = 5
-            cell.errorDescriptionTextView.isCollapsed = !self.expandedErrorIDs.contains(loggedError.objectID)
+            // Keep certificate recovery and the data-loss warning visible beyond the five-line preview.
+            cell.errorDescriptionTextView.isCollapsed = nsError.userInfo[CertificateValidationContext.purposeErrorKey] == nil && !self.expandedErrorIDs.contains(loggedError.objectID)
             cell.errorDescriptionTextView.moreButton.addTarget(self, action: #selector(ErrorLogViewController.toggleCollapsingCell(_:)), for: .primaryActionTriggered)
             
             cell.appIconImageView.image = nil

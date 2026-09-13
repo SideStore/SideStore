@@ -152,10 +152,14 @@ private extension ResignAltStoreViewController
                             return
                         }
                         
-                        let alertController = UIAlertController(title: NSLocalizedString("Failed to Resign SideStore", comment: ""), message: error.localizedFailureReason ?? error.localizedDescription, preferredStyle: .alert)
-                        alertController.addAction(UIAlertAction(title: NSLocalizedString("Try Again", comment: ""), style: .default, handler: { (action) in
-                            refresh()
-                        }))
+                        let message = CertificateValidationContext.message(for: error, description: error.localizedFailureReason ?? error.localizedDescription)
+                        let alertController = UIAlertController(title: NSLocalizedString("Failed to Resign SideStore", comment: ""), message: message, preferredStyle: .alert)
+                        // Retrying here cannot change the rejected signing identity.
+                        if error.userInfo[CertificateValidationContext.purposeErrorKey] == nil {
+                            alertController.addAction(UIAlertAction(title: NSLocalizedString("Try Again", comment: ""), style: .default, handler: { (action) in
+                                refresh()
+                            }))
+                        }
                         alertController.addAction(UIAlertAction(title: NSLocalizedString("Resign Later", comment: ""), style: .cancel, handler: { (action) in
                             self.completionHandler?(.failure(error))
                         }))

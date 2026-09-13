@@ -31,7 +31,7 @@ struct CertificatesPortalListView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Certificates (\(viewModel.certificates.count))"), footer: Text("Certificates registered on your Apple Developer team. Revoking invalidates the certificate on Apple's portal.")) {
+            Section(header: Text("Certificates (\(viewModel.certificates.count))"), footer: Text("Certificates registered on your Apple Developer team. Listed certificates are not necessarily selected for local signing or available with a private key. Manage local signing in Settings → Advanced → Certificates. Revoking invalidates the certificate on Apple's portal.")) {
                 if filteredCertificates.isEmpty {
                     if viewModel.isLoading {
                         HStack {
@@ -130,7 +130,7 @@ private struct CertificatePortalRow: View {
                         .foregroundColor(.red)
                         .cornerRadius(6)
                 } else {
-                    Text("Active")
+                    Text("Not Expired")
                         .font(.caption2)
                         .fontWeight(.medium)
                         .padding(.horizontal, 6)

@@ -42,7 +42,7 @@ class ErrorProcessing {
                 return NSLocalizedString("Keychain security error.", comment: "")
             }
         }
-        return error.localizedDescription
+        return CertificateValidationContext.message(for: error)
     }
 
     private func processError(_ error: NSError, ignoreTitle: Bool = false, getMoreErrors: (_ error: NSError)->String) -> String{
