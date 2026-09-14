@@ -518,7 +518,7 @@ private extension AppDelegate
                         guard let previousVersion = previousUpdate[#keyPath(InstalledApp.storeApp.latestSupportedVersion.version)] else { continue }
                         
                         // previousUpdate might not contain buildVersion, but if it does then map empty string to nil to match AppVersion.
-                        let previousBuildVersion = previousUpdate[#keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion)].map { $0.isEmpty ? nil : "" }
+                        let previousBuildVersion = previousUpdate[#keyPath(InstalledApp.storeApp.latestSupportedVersion._buildVersion)].flatMap { $0.isEmpty ? nil : $0 }
                         
                         // Only show notification if previous latestSupportedVersion does not _exactly_ match current latestSupportedVersion.
                         guard previousVersion != latestSupportedVersion.version || previousBuildVersion != latestSupportedVersion.buildVersion  else { continue }
