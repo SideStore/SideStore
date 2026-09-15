@@ -25,9 +25,10 @@ public extension UIColor
     convenience init?(hexString: String)
     {
         let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        guard let int32 = Scanner(string: hex).scanInt32(representation: .hexadecimal), case let int = UInt32(int32) else { return nil }
+        // Scanned as 64-bit: an 8 digit value can reach 0xFFFFFFFF, which does not fit in an Int32.
+        guard let int = Scanner(string: hex).scanUInt64(representation: .hexadecimal) else { return nil }
         
-        let a, r, g, b: UInt32
+        let a, r, g, b: UInt64
         switch hex.count {
         case 3: // RGB (12-bit)
             (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
