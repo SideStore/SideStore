@@ -121,8 +121,28 @@ final class LaunchViewController: UIViewController {
             let title = error.userInfo[NSLocalizedFailureErrorKey] as? String ?? NSLocalizedString("Unable to Launch SideStore", comment: "")
             let desc = ([error.debugDescription] + error.underlyingErrors.map { ($0 as NSError).debugDescription }).joined(separator: "\n\n")
             let alert = UIAlertController(title: title, message: desc, preferredStyle: .alert)
+            
+            let developerOptionsAction = {
+                let developerOptionsVC = UIHostingController(rootView: DeveloperOptionsView().onDisappear { Task { await retryCallback?() }})
+                developerOptionsVC.modalPresentationStyle = .pageSheet
+                self.present(developerOptionsVC, animated: true)
+            }
+            
+            let experimentalFeaturesAction = {
+                let experimentalFeaturesVC = UIHostingController(rootView: ExperimentalFeaturesView().onDisappear { Task { await retryCallback?() }})
+                experimentalFeaturesVC.modalPresentationStyle = .pageSheet
+                self.present(experimentalFeaturesVC, animated: true)
+            }
+            
+            
             alert.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
                 Task { await retryCallback?() }
+            })
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Developer Options", comment: ""), style: .default) { _ in
+                developerOptionsAction()
+            })
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Experimental Features", comment: ""), style: .default) { _ in
+                experimentalFeaturesAction()
             })
             present(alert, animated: true)
         }
