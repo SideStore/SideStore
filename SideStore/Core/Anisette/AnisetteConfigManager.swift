@@ -130,8 +130,10 @@ public actor AnisetteConfigManager {
             return config
         }()
 
-        let resolvedClientInfo   = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
-        let resolvedUserAgent    = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
+        // Apple's GSA edge returns 503 for any X-MMe-Client-Info naming com.apple.dt.Xcode (#1506),
+        // so skip such overrides left behind by older builds and fall back to the akd default.
+        let resolvedClientInfo   = [udClientInfo, fileConfig?.clientInfo].compactMap { $0 }.first { !$0.isEmpty && !$0.contains("com.apple.dt.Xcode") } ?? AppConstants.Anisette.defaultClientInfo
+        let resolvedUserAgent    = [udUserAgent, fileConfig?.userAgent].compactMap { $0 }.first { !$0.isEmpty } ?? AppConstants.Anisette.defaultUserAgent
         let resolvedDeviceID     = (udDeviceID?.isEmpty == false ? udDeviceID : fileConfig?.customDeviceID)
         let resolvedLocalUserID  = (udLocalUserID?.isEmpty == false ? udLocalUserID : fileConfig?.customLocalUserID)
         let resolvedLocale       = (udLocale?.isEmpty == false ? udLocale : fileConfig?.customLocale)
@@ -172,6 +174,10 @@ public actor AnisetteConfigManager {
     }
     
     public func saveConfig(_ config: AnisetteConfig) {
+        // Persist built-in defaults as "no override" so a later default change still takes effect.
+        var config = config
+        if config.clientInfo == AppConstants.Anisette.defaultClientInfo { config.clientInfo = "" }
+        if config.userAgent == AppConstants.Anisette.defaultUserAgent { config.userAgent = "" }
         let encoder = Foundation.JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         if let data = try? encoder.encode(config) {
