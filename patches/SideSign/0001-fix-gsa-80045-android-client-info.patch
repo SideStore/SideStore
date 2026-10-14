@@ -1,0 +1,48 @@
+diff --git a/Sources/Constants.swift b/Sources/Constants.swift
+index 53d3070..c58f26e 100644
+--- a/Sources/Constants.swift
++++ b/Sources/Constants.swift
+@@ -16,6 +16,11 @@ public enum Constants {
+         public static let headerVersion  = "1.0.1"
+         public static let authApp        = "com.apple.gs.xcode.auth"
+         public static let userAgent      = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.dt.Xcode/26.0)"
++        // Since 2026-10-12 GsService2 answers -80045 when the client OS doesn't match the
++        // one the anisette machine ID was made on. Public anisette servers use Apple's
++        // Android ADI library, so sign-in has to claim an Android device.
++        // Temporary workaround, needs proper testing (SMS-only 2FA accounts untested).
++        public static let clientInfo     = "<Pixel 7> <Android;14;UQ1A.240205.002> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+     }
+ 
+     // https://idmsa.apple.com/appleauth/auth/devices
+diff --git a/Sources/DeveloperPortal/Authentication.swift b/Sources/DeveloperPortal/Authentication.swift
+index 0b8e0f2..ab95c86 100644
+--- a/Sources/DeveloperPortal/Authentication.swift
++++ b/Sources/DeveloperPortal/Authentication.swift
+@@ -319,7 +319,7 @@ public extension DeveloperPortal {
+ 
+         let headers: [String: String] = [
+             "Content-Type": "text/x-xml-plist",
+-            "X-MMe-Client-Info": anisetteData.clientInfo,
++            "X-MMe-Client-Info": Constants.GrandSlam.clientInfo,
+             "Accept": "*/*",
+             "User-Agent": h.grandSlam.userAgent,
+             "Connection": "close"
+@@ -900,6 +900,9 @@ public extension DeveloperPortal {
+         var request = URLRequest(url: url)
+         let a = context.anisetteData
+         let h = customHeaders
++        // GsService2/validate goes with sign-in and must claim Android too. The /auth/verify
++        // pages answer an Android client with 403, so they keep the anisette client info.
++        let clientInfo = url.path.hasPrefix("/grandslam/") ? Constants.GrandSlam.clientInfo : a.clientInfo
+         let headers: [String: String] = [
+             "Accept": "application/x-buddyml",
+             "Accept-Language": "en-us",
+@@ -911,7 +914,7 @@ public extension DeveloperPortal {
+             "X-Apple-I-MD": a.oneTimePassword,
+             "X-Apple-I-MD-M": a.machineID,
+             "X-Mme-Device-Id": a.deviceID,
+-            "X-MMe-Client-Info": a.clientInfo,
++            "X-MMe-Client-Info": clientInfo,
+             "X-Apple-I-MD-LU": a.localUserID,
+             "X-Apple-I-MD-RINFO": a.routingInfo,
+             "X-Apple-I-SRL-NO": a.serialNumber,

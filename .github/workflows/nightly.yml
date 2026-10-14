@@ -34,6 +34,9 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Apply dependency patches
+        run: python3 scripts/apply_dependency_patches.py
+
       - name: Find Last Successful commit
         run: |
           LAST_SUCCESSFUL_COMMIT=$(python3 scripts/ci/workflow.py last-successful-commit \

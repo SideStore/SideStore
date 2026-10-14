@@ -28,6 +28,9 @@ jobs:
           submodules: recursive
           fetch-depth: 1    # shallow clone just for PR
 
+      - name: Apply dependency patches
+        run: python3 scripts/apply_dependency_patches.py
+
       - run: brew install ldid xcbeautify
 
       - name: Setup Env

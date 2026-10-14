@@ -190,6 +190,7 @@ COMMON_BUILD_SETTINGS += BUNDLE_ID_SUFFIX=$(BUNDLE_ID_SUFFIX)
 endif
 
 build:
+	@python3 scripts/apply_dependency_patches.py
 	@echo ">>>>>>>>> BUILD_CONFIG is set to '$(BUILD_CONFIG)', Building for $(BUILD_CONFIG) mode! <<<<<<<<<<"
 	@echo ""
 	@xcodebuild archive -archivePath ./SideStore \
