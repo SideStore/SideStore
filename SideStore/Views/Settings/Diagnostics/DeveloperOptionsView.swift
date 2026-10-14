@@ -143,10 +143,10 @@ struct DeveloperOptionsView: View {
                         divider
 
                         toggleRow(title: "AnisetteKit Verbose Logging", isOn: Binding(
-                            get: { isVerboseOperationsLoggingEnabled },
+                            get: { isAnisetteKitVerboseLoggingEnabled },
                             set: { newValue in
-                                isVerboseOperationsLoggingEnabled = newValue
-                                UserDefaults.standard.isVerboseOperationsLoggingEnabled = newValue
+                                isAnisetteKitVerboseLoggingEnabled = newValue
+                                UserDefaults.standard.isAnisetteKitVerboseLoggingEnabled = newValue
                                 AnisetteKitLogging.setLogging(newValue)
                             }
                         ))
