@@ -21,6 +21,8 @@ concurrency:
 jobs:
   build:
     runs-on: macos-26
+    permissions:
+      contents: write
     env:
       DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
