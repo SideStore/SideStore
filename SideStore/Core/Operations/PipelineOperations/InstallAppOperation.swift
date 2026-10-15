@@ -186,9 +186,31 @@ final class InstallAppOperation: BasePipelineOperation<InstallAppOperationContex
         
         // Phase 2: App installation
         if UserDefaults.standard.preferResignedIPA {
-            try await installIPA(bundleID)
+            do {
+                try await installIPA(bundleID)
+            } catch {
+                self.debugLog("[InstallAppOperation] installIPA failed: \(error). Attempting fallback to direct App Bundle installation...")
+                do {
+                    try await sendAppBundleAfc(bundleID, at: resignedAppBundle.fileURL)
+                    try await installAppBundle(bundleID, appName: resignedAppBundle.fileURL.lastPathComponent)
+                } catch {
+                    self.debugLog("[InstallAppOperation] Fallback installAppBundle also failed: \(error)")
+                    throw error
+                }
+            }
         } else {
-            try await installAppBundle(bundleID, appName: resignedAppBundle.fileURL.lastPathComponent)
+            do {
+                try await installAppBundle(bundleID, appName: resignedAppBundle.fileURL.lastPathComponent)
+            } catch {
+                self.debugLog("[InstallAppOperation] installAppBundle failed: \(error). Attempting fallback to IPA installation...")
+                if let ipaURL = self.context.ipaURL ?? (try? FileManager.default.zipAppBundle(at: resignedAppBundle.fileURL, compressionLevel: .none)) {
+                    let rawBytes = try Data(contentsOf: ipaURL, options: .mappedIfSafe)
+                    try await sendIpaAfc(bundleID, rawBytes)
+                    try await installIPA(bundleID)
+                } else {
+                    throw error
+                }
+            }
         }
         
         self.setProgress(90)
