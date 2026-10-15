@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ALTAnisetteURL</key>
-	<string>https://ani.sidestore.io</string>
+	<string>https://ani.jkcoxson.com</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDocumentTypes</key>

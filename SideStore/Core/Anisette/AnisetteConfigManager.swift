@@ -130,8 +130,24 @@ public actor AnisetteConfigManager {
             return config
         }()
 
-        let resolvedClientInfo   = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
-        let resolvedUserAgent    = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
+        var resolvedClientInfo = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
+        if resolvedClientInfo.contains("MacBookPro18,3") || resolvedClientInfo.contains("macOS;26.6") {
+            debugLog("[AnisetteConfigManager] Migrating legacy MacBookPro18,3 client_info to Android fallback")
+            resolvedClientInfo = AppConstants.Anisette.defaultClientInfo
+            if udClientInfo != nil {
+                ud.customAnisetteClientInfo = resolvedClientInfo
+            }
+        }
+
+        var resolvedUserAgent = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
+        if resolvedUserAgent.contains("Macintosh; Intel Mac OS X 26_6") || resolvedUserAgent.contains("OS X 26.6") {
+            debugLog("[AnisetteConfigManager] Migrating legacy macOS user agent to Android fallback")
+            resolvedUserAgent = AppConstants.Anisette.defaultUserAgent
+            if udUserAgent != nil {
+                ud.customAnisetteUserAgent = resolvedUserAgent
+            }
+        }
+
         let resolvedDeviceID     = (udDeviceID?.isEmpty == false ? udDeviceID : fileConfig?.customDeviceID)
         let resolvedLocalUserID  = (udLocalUserID?.isEmpty == false ? udLocalUserID : fileConfig?.customLocalUserID)
         let resolvedLocale       = (udLocale?.isEmpty == false ? udLocale : fileConfig?.customLocale)

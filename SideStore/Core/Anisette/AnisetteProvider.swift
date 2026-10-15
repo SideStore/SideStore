@@ -42,17 +42,29 @@ enum AnisetteProvider {
             existingAdiBlob: existingBlob,
             headers: headers,
             onError: { error in
-                if let anisetteError = error as? SideSign.AnisetteError,
-                   case .outdatedV1Server(let serverURL, _) = anisetteError {
-                    if UserDefaults.standard.defaultServerURL == serverURL.absoluteString {
+                if let anisetteError = error as? SideSign.AnisetteError {
+                    switch anisetteError {
+                    case .incorrectlyProvisioned:
+                        debugLog("[AnisetteProvider] State de-synced / corrupt ADI blob detected. Purging stored adi.pb...")
+                        AnisetteConfigManager.shared.anisetteAdiBlob = nil
                         return true
-                    }
-                    if let handler = handler {
-                        let shouldContinue = try await handler.warnOutdatedAnisetteServer()
-                        if shouldContinue {
-                            UserDefaults.standard.defaultServerURL = serverURL.absoluteString
+                    case .badServerResponse(_, let payload) where payload.contains("-45061"):
+                        debugLog("[AnisetteProvider] State de-synced / corrupt ADI blob detected (-45061). Purging stored adi.pb...")
+                        AnisetteConfigManager.shared.anisetteAdiBlob = nil
+                        return true
+                    case .outdatedV1Server(let serverURL, _):
+                        if UserDefaults.standard.defaultServerURL == serverURL.absoluteString {
+                            return true
                         }
-                        return shouldContinue
+                        if let handler = handler {
+                            let shouldContinue = try await handler.warnOutdatedAnisetteServer()
+                            if shouldContinue {
+                                UserDefaults.standard.defaultServerURL = serverURL.absoluteString
+                            }
+                            return shouldContinue
+                        }
+                    default:
+                        break
                     }
                 }
                 return false

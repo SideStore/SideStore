@@ -49,7 +49,13 @@ public extension UserDefaults
         set { self.set(newValue, forKey: #function) }
     }
     @objc var menuAnisetteURL: String {
-        get { self.string(forKey: #function) ?? "" }
+        get {
+            let val = self.string(forKey: #function) ?? ""
+            if val.isEmpty || val.contains("ani.sidestore.io") {
+                return AppConstants.Anisette.Servers.defaultServerURL
+            }
+            return val
+        }
         set { self.set(newValue, forKey: #function) }
     }
     @objc var menuAnisetteList: String {
@@ -61,11 +67,23 @@ public extension UserDefaults
         set { self.set(newValue, forKey: #function) }
     }
     @objc var customAnisetteClientInfo: String? {
-        get { self.string(forKey: #function) }
+        get {
+            let val = self.string(forKey: #function)
+            if let v = val, v.contains("MacBookPro18,3") || v.contains("macOS;26.6") {
+                return AppConstants.Anisette.defaultClientInfo
+            }
+            return val
+        }
         set { self.set(newValue, forKey: #function) }
     }
     @objc var customAnisetteUserAgent: String? {
-        get { self.string(forKey: #function) }
+        get {
+            let val = self.string(forKey: #function)
+            if let v = val, v.contains("Macintosh; Intel Mac OS X 26_6") || v.contains("OS X 26.6") {
+                return AppConstants.Anisette.defaultUserAgent
+            }
+            return val
+        }
         set { self.set(newValue, forKey: #function) }
     }
     @objc var customAnisetteDeviceID: String? {
