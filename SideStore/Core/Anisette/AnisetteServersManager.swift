@@ -56,8 +56,9 @@ public actor AnisetteServersManager {
     // MARK: - Local Persistence & In-Memory Caching
 
     public static let defaultInitialServers: [AnisetteServerItem] = [
-        AnisetteServerItem(name: "Jkcoxson (Windows)", address: AppConstants.Anisette.Servers.defaultServerURL, isHidden: false),
-        AnisetteServerItem(name: "StikStore 2 (Windows)", address: AppConstants.Anisette.Servers.secondaryServerURL, isHidden: false),
+        AnisetteServerItem(name: "StikStore 2 (Windows)", address: AppConstants.Anisette.Servers.defaultServerURL, isHidden: false),
+        AnisetteServerItem(name: "Jkcoxson (Windows)", address: AppConstants.Anisette.Servers.secondaryServerURL, isHidden: false),
+        AnisetteServerItem(name: "SideStore (Windows ADI)", address: "https://win.ani.sidestore.io", isHidden: false),
         AnisetteServerItem(name: "SideStore (.io)", address: "https://ani.sidestore.io", isHidden: false)
     ]
 
@@ -106,6 +107,14 @@ public actor AnisetteServersManager {
         if items.isEmpty {
             items = Self.defaultInitialServers
             saveLocalServers(items)
+        } else {
+            // Ensure modern Windows servers are present in existing saved list
+            let existingAddresses = Set(items.map(\.address))
+            let missingDefaults = Self.defaultInitialServers.filter { !existingAddresses.contains($0.address) }
+            if !missingDefaults.isEmpty {
+                items.insert(contentsOf: missingDefaults, at: 0)
+                saveLocalServers(items)
+            }
         }
 
         inMemoryServersCache = items

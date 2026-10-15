@@ -69,7 +69,7 @@ public extension UserDefaults
     @objc var customAnisetteClientInfo: String? {
         get {
             let val = self.string(forKey: #function)
-            if let v = val, v.contains("MacBookPro18,3") || v.contains("macOS;26.6") {
+            if let v = val, v.contains("Pixel") || v.contains("Android") || v.contains("MacBookPro18,3") || v.contains("macOS;26.6") || v.contains("dt.Xcode") {
                 return AppConstants.Anisette.defaultClientInfo
             }
             return val
@@ -79,7 +79,7 @@ public extension UserDefaults
     @objc var customAnisetteUserAgent: String? {
         get {
             let val = self.string(forKey: #function)
-            if let v = val, v.contains("Macintosh; Intel Mac OS X 26_6") || v.contains("OS X 26.6") {
+            if let v = val, v.contains("Macintosh; Intel Mac OS X 26_6") || v.contains("OS X 26.6") || v.contains("dt.Xcode") {
                 return AppConstants.Anisette.defaultUserAgent
             }
             return val

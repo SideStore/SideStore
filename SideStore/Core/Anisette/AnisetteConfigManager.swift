@@ -131,8 +131,8 @@ public actor AnisetteConfigManager {
         }()
 
         var resolvedClientInfo = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
-        if resolvedClientInfo.contains("MacBookPro18,3") || resolvedClientInfo.contains("macOS;26.6") {
-            debugLog("[AnisetteConfigManager] Migrating legacy MacBookPro18,3 client_info to Android fallback")
+        if resolvedClientInfo.contains("Pixel") || resolvedClientInfo.contains("Android") || resolvedClientInfo.contains("MacBookPro18,3") || resolvedClientInfo.contains("macOS;26.6") || resolvedClientInfo.contains("dt.Xcode") {
+            debugLog("[AnisetteConfigManager] Migrating legacy/blocked client_info to Windows default")
             resolvedClientInfo = AppConstants.Anisette.defaultClientInfo
             if udClientInfo != nil {
                 ud.customAnisetteClientInfo = resolvedClientInfo
@@ -140,8 +140,8 @@ public actor AnisetteConfigManager {
         }
 
         var resolvedUserAgent = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
-        if resolvedUserAgent.contains("Macintosh; Intel Mac OS X 26_6") || resolvedUserAgent.contains("OS X 26.6") {
-            debugLog("[AnisetteConfigManager] Migrating legacy macOS user agent to Android fallback")
+        if resolvedUserAgent.contains("Macintosh; Intel Mac OS X 26_6") || resolvedUserAgent.contains("OS X 26.6") || resolvedUserAgent.contains("dt.Xcode") {
+            debugLog("[AnisetteConfigManager] Migrating legacy macOS/Xcode user agent to Windows default")
             resolvedUserAgent = AppConstants.Anisette.defaultUserAgent
             if udUserAgent != nil {
                 ud.customAnisetteUserAgent = resolvedUserAgent
