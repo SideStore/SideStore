@@ -68,9 +68,16 @@ public enum AppConstants {
         public static let defaultODAMetadataURL       = URL(string: "https://zzz.haus/oda.json")!
         public static var defaultODAMetadataURLString: String { defaultODAMetadataURL.absoluteString }
 
-        // Proxied from upstream SideSign
-        public static let defaultClientInfo           = Constants.Anisette.defaultClientInfo
+        // GSA now rejects the macOS client info used by third-party anisette with -80045,
+        // the Android identity is still accepted (same fix as iloader 2.3.7 / isideload 0.4.5)
+        public static let defaultClientInfo           = "<Pixel 7> <Android;14;UQ1A.240205.002> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
         public static let defaultUserAgent            = Constants.Anisette.defaultUserAgent
+
+        // Previous defaults that saveConfig may have persisted; migrated to defaultClientInfo on load
+        public static let legacyClientInfos: Set<String> = [
+            Constants.Anisette.defaultClientInfo,
+            "<MacBookPro13,2> <macOS;13.1;22C65> <com.apple.AuthKit/1 (com.apple.akd/1.0)>",
+        ]
 
         public enum URLs {
             public static let grandSlamLookup = Constants.Anisette.URLs.grandSlamLookup

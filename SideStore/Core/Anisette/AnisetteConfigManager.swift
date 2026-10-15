@@ -130,7 +130,7 @@ public actor AnisetteConfigManager {
             return config
         }()
 
-        let resolvedClientInfo   = (udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo) ?? AppConstants.Anisette.defaultClientInfo
+        let resolvedClientInfo   = Self.normalizedClientInfo(udClientInfo?.isEmpty == false ? udClientInfo : fileConfig?.clientInfo)
         let resolvedUserAgent    = (udUserAgent?.isEmpty == false ? udUserAgent : fileConfig?.userAgent) ?? AppConstants.Anisette.defaultUserAgent
         let resolvedDeviceID     = (udDeviceID?.isEmpty == false ? udDeviceID : fileConfig?.customDeviceID)
         let resolvedLocalUserID  = (udLocalUserID?.isEmpty == false ? udLocalUserID : fileConfig?.customLocalUserID)
@@ -151,6 +151,16 @@ public actor AnisetteConfigManager {
             customSerialNumber: resolvedSerialNumber,
             customRoutingInfo: resolvedRoutingInfo
         )
+    }
+
+    /// Persisted macOS defaults are now rejected by GSA (-80045), and a trailing newline
+    /// from pasting makes the auth endpoint return an empty response.
+    private static func normalizedClientInfo(_ clientInfo: String?) -> String {
+        let trimmed = clientInfo?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if trimmed.isEmpty || AppConstants.Anisette.legacyClientInfos.contains(trimmed) {
+            return AppConstants.Anisette.defaultClientInfo
+        }
+        return trimmed
     }
 
     public func makeRequestHeaders() -> AnisetteRequestHeaders {
