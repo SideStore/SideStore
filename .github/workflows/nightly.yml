@@ -259,6 +259,7 @@ jobs:
       # --------------------------------------------------
       - name: Upload Release
         if: steps.build_gate.outputs.should_skip != 'true'
+        continue-on-error: true
         run: |
           python3 scripts/ci/workflow.py upload-release \
             "$RELEASE_NAME" \

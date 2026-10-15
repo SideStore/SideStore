@@ -39,7 +39,10 @@ public final class AppBootManager {
             try await startEMProxy()
         }
 
-        let preferred = PairingFileManager.shared.preferredProtocol
+        let preferred = PairingFileManager.shared.preferredProtocol 
+            ?? PairingFileManager.shared.persistedActiveProtocol 
+            ?? (try? PairingFileManager.shared.parse(content: pairingFile).mode)
+            ?? PairingFileManager.shared.defaultProtocol()
         try await minimuxerStart(pairingFile, preferred: preferred)
         
         // Validate the pairing by trying to fetch the UDID

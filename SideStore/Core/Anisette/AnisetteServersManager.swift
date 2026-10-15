@@ -56,9 +56,8 @@ public actor AnisetteServersManager {
     // MARK: - Local Persistence & In-Memory Caching
 
     public static let defaultInitialServers: [AnisetteServerItem] = [
-        AnisetteServerItem(name: "StikStore 2 (Windows)", address: AppConstants.Anisette.Servers.defaultServerURL, isHidden: false),
+        AnisetteServerItem(name: "SideStore (Windows ADI)", address: AppConstants.Anisette.Servers.defaultServerURL, isHidden: false),
         AnisetteServerItem(name: "Jkcoxson (Windows)", address: AppConstants.Anisette.Servers.secondaryServerURL, isHidden: false),
-        AnisetteServerItem(name: "SideStore (Windows ADI)", address: "https://win.ani.sidestore.io", isHidden: false),
         AnisetteServerItem(name: "SideStore (.io)", address: "https://ani.sidestore.io", isHidden: false)
     ]
 
