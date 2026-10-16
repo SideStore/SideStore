@@ -8,7 +8,6 @@
 
 import Foundation
 import Minimuxer
-import MinimuxerCommon
 
 public extension UserDefaults
 {
@@ -243,7 +242,9 @@ public extension UserDefaults
         set { self.set(newValue, forKey: "customizeAppExtensions") }
     }
     var appImportSourceMode: AppImportSourceMode {
-        get { _appImportSourceMode.flatMap { AppImportSourceMode(rawValue: $0) } ?? .prompt
+        get {
+            let mode = _appImportSourceMode.flatMap { AppImportSourceMode(rawValue: $0) } ?? .prompt
+            return mode
         }
         set {
             _appImportSourceMode = newValue.rawValue
@@ -289,40 +290,6 @@ public extension UserDefaults
     @objc var isMinimuxerVerboseLoggingEnabled: Bool {
         get { self.bool(forKey: #function) }
         set { self.set(newValue, forKey: #function) }
-    }
-    @objc var isMinimuxerBackendHotswapEnabled: Bool {
-        get { self.bool(forKey: #function) }
-        set { self.set(newValue, forKey: #function) }
-    }
-    @objc var pairingFileEditSuppressedSHAs: [String: Bool] {
-        get { (self.dictionary(forKey: #function) as? [String: Bool]) ?? [:] }
-        set { self.set(newValue, forKey: #function) }
-    }
-    func isPairingFileEditSuppressed(forHash sha: String) -> Bool {
-        pairingFileEditSuppressedSHAs[sha] ?? false
-    }
-    func setPairingFileEditSuppressed(_ suppressed: Bool, forHash sha: String) {
-        var map = pairingFileEditSuppressedSHAs
-        map[sha] = suppressed
-        pairingFileEditSuppressedSHAs = map
-    }
-
-    var activePairingProtocol: PairingProtocol? {
-        get { _activePairingProtocol.flatMap { PairingProtocol(rawValue: $0) } }
-        set { _activePairingProtocol = newValue?.rawValue }
-    }
-    @objc(activePairingProtocol) private var _activePairingProtocol: String? {
-        get { self.string(forKey: "activePairingProtocol") }
-        set { self.set(newValue, forKey: "activePairingProtocol") }
-    }
-
-    var preferredPairingProtocol: PairingProtocol? {
-        get { _preferredPairingProtocol.flatMap { PairingProtocol(rawValue: $0) } }
-        set { _preferredPairingProtocol = newValue?.rawValue }
-    }
-    @objc(preferredPairingProtocol) private var _preferredPairingProtocol: String? {
-        get { self.string(forKey: "preferredPairingProtocol") }
-        set { self.set(newValue, forKey: "preferredPairingProtocol") }
     }
     @objc var keepSigningCertsAfterLogout: Bool {
         get { self.bool(forKey: #function) }
@@ -578,8 +545,6 @@ public extension UserDefaults
             #keyPath(UserDefaults.isSideStoreVerboseLoggingEnabled): false,
             #keyPath(UserDefaults.isAltSignVerboseLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerVerboseLoggingEnabled): false,
-            #keyPath(UserDefaults.isMinimuxerBackendHotswapEnabled): false,
-            #keyPath(UserDefaults.pairingFileEditSuppressedSHAs): [String: Bool](),
             #keyPath(UserDefaults.isRotateLogsOnStartupEnabled): true,
             #keyPath(UserDefaults.recreateDatabaseOnNextStart): false,
             #keyPath(UserDefaults.isCellularRefreshEnabled): false,

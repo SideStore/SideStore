@@ -161,12 +161,11 @@ public enum AppConstants {
     }
 
     public enum Pairing {
-        public static let fileExtension             = "plist"
-        public static let supportedExtensions       = ["mobiledevicepairing", "mobiledevicepair" , "plist", "xml"]
-        public static let legacyPairingFileName     = "ALTPairingFile.mobiledevicepairing"
-        public static let lockdownPairingFileName   = "PairingFile_Lockdown.plist"
-        public static let remotePairingFileName     = "PairingFile_RemoteRP.plist"
-        public static let documentationURL          = AppConstants.URLs.pairingDocumentation
+        public static let bundleResourceName = "ALTPairingFile"
+        public static let fileExtension      = "mobiledevicepairing"
+        public static let fileName           = "\(bundleResourceName).\(fileExtension)"
+        public static let placeholderString  = "insert pairing file here"
+        public static let documentationURL   = AppConstants.URLs.pairingDocumentation
     }
 
     public enum Shortcuts {
@@ -183,6 +182,7 @@ public enum AppConstants {
         public static let selfInstallSuspendDelayNs: UInt64 = 500_000_000
     }
 
+    public static let pairingFileName              = Pairing.fileName
     public static let accountConfigurationFileName = "Account.sideconf"
     public static let defaultAccountRepairMessage  = Constants.defaultAccountRepairMessage
 

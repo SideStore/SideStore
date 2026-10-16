@@ -351,12 +351,8 @@ struct UserCustomizationsView: View {
                         ForEach(GatewayBackend.allCases, id: \.self) { backend in
                             SwiftUI.Button(action: {
                                 if selectedBackend != backend {
-                                    if UserDefaults.standard.isMinimuxerBackendHotswapEnabled {
-                                        applyBackendChange(backend, restartRequired: false)
-                                    } else {
-                                        pendingBackendOption = backend
-                                        showBackendRestartConfirmation = true
-                                    }
+                                    pendingBackendOption = backend
+                                    showBackendRestartConfirmation = true
                                 }
                             }) {
                                 HStack {
@@ -471,7 +467,11 @@ struct UserCustomizationsView: View {
         .alert("Restart Required", isPresented: $showBackendRestartConfirmation) {
             SwiftUI.Button("Restart Now", role: .destructive) {
                 if let newBackend = pendingBackendOption {
-                    applyBackendChange(newBackend, restartRequired: true)
+                    selectedBackend = newBackend
+                    selectedGatewayBackendCache = newBackend
+                    UserDefaults.standard.minimuxerGatewayBackend = newBackend.rawValue
+                    UserDefaults.standard.synchronize()
+                    exit(0)
                 }
             }
             SwiftUI.Button("Cancel", role: .cancel) {
@@ -1062,17 +1062,5 @@ struct UserCustomizationsView: View {
         alertController.addAction(cancelAction)
         alertController.addAction(resetAction)
         top.present(alertController, animated: true, completion: nil)
-    }
-
-    private func applyBackendChange(_ newBackend: GatewayBackend, restartRequired: Bool) {
-        selectedBackend = newBackend
-        selectedGatewayBackendCache = newBackend
-        UserDefaults.standard.minimuxerGatewayBackend = newBackend.rawValue
-        UserDefaults.standard.synchronize()
-        if restartRequired {
-            exit(0)
-        } else {
-            syncMinimuxerBackendFromUserDefaults()
-        }
     }
 }

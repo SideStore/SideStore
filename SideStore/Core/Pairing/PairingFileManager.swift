@@ -6,164 +6,248 @@
 //  Copyright © 2026 SideStore. All rights reserved.
 //
 
-import Foundation
+@preconcurrency import UIKit
 import UniformTypeIdentifiers
 import MinimuxerCommon
 
-public struct PairingFileMetadata: Sendable {
-    public let exists: Bool
-    public let size: Int64
-    public let creationDate: Date?
-    public let modificationDate: Date?
-}
-
 final class PairingFileManager: NSObject {
     static let shared = PairingFileManager()
+    static let pairingFileName = AppConstants.Pairing.fileName
 
-    static var supportedContentTypes: [UTType] {
-        var types = AppConstants.Pairing.supportedExtensions.compactMap { UTType(filenameExtension: $0) }
-        types.append(contentsOf: [.propertyList, .xml])
-        return types
-    }
+    private var completion: ((URL?) -> Void)?
 
-    var activeProtocol: PairingProtocol {
-        minimuxerPairingProtocol()
-    }
-
-    var persistedActiveProtocol: PairingProtocol? {
-        get { UserDefaults.standard.activePairingProtocol }
-        set { UserDefaults.standard.activePairingProtocol = newValue }
-    }
-
-    var preferredProtocol: PairingProtocol? {
-        get { UserDefaults.standard.preferredPairingProtocol }
-        set { UserDefaults.standard.preferredPairingProtocol = newValue }
-    }
-
-    nonisolated func pairingFileURL(for mode: PairingProtocol) -> URL {
-        let fileName = mode == .rppairing ? AppConstants.Pairing.remotePairingFileName : AppConstants.Pairing.lockdownPairingFileName
-        return FileManager.default.documentsDirectory.appendingPathComponent(fileName)
-    }
-
-    nonisolated func hasPairingFile(for mode: PairingProtocol) -> Bool {
-        return FileManager.default.fileExists(atPath: pairingFileURL(for: mode).path)
-    }
-
-    nonisolated func hasPairingFile() -> Bool {
-        guard !UserDefaults.standard.isPairingReset else { return false }
-        if let target = preferredProtocol, hasPairingFile(for: target) {
-            return true
+    nonisolated var pairingUDID: String? {
+        guard let contents = fetchPairingFile() else {
+            debugLog("[PairingFile] pairingUDID: fetchPairingFile() returned nil")
+            return nil
         }
-        if let mode = persistedActiveProtocol, hasPairingFile(for: mode) {
-            return true
+        do {
+            let pairing = try PairingFileParser.parse(content: contents)
+            guard let lockdown = pairing as? LockdownPairingFile else {
+                debugLog("[PairingFile] pairingUDID: Remote Pairing files do not contain a hardware UDID")
+                return nil
+            }
+            return lockdown.udid
+        } catch {
+            debugLog("[PairingFile] pairingUDID: failed to parse pairing file: \(error)")
+            return nil
         }
-        return false
     }
 
-    nonisolated func metadata(for mode: PairingProtocol) -> PairingFileMetadata {
-        let fileURL = pairingFileURL(for: mode)
-        let path = fileURL.path
+    nonisolated func fetchPairingFile() -> String? {
         let fm = FileManager.default
-        guard fm.fileExists(atPath: path) else {
-            return PairingFileMetadata(exists: false, size: 0, creationDate: nil, modificationDate: nil)
-        }
-        let attrs = (try? fm.attributesOfItem(atPath: path)) ?? [:]
-        let size = (attrs[.size] as? NSNumber)?.int64Value ?? 0
-        let creation = (attrs[.creationDate] as? Date) ?? (attrs[.modificationDate] as? Date)
-        let mod = attrs[.modificationDate] as? Date
-        return PairingFileMetadata(exists: true, size: size, creationDate: creation, modificationDate: mod)
-    }
-
-    nonisolated func fetchPairingFile(for mode: PairingProtocol) -> String? {
-        let fileURL = pairingFileURL(for: mode)
-        let fm = FileManager.default
-        if fm.fileExists(atPath: fileURL.path),
-           let contents = try? String(contentsOf: fileURL), !contents.isEmpty 
+        let documentsPath = fm.documentsDirectory.appendingPathComponent("/\(Self.pairingFileName)")
+        if fm.fileExists(atPath: documentsPath.path),
+           let contents = try? String(contentsOf: documentsPath), !contents.isEmpty 
         {
             return contents
         }
+        if let url = Bundle.main.url(forResource: AppConstants.Pairing.bundleResourceName, withExtension: AppConstants.Pairing.fileExtension),
+           fm.fileExists(atPath: url.path),
+           let data = fm.contents(atPath: url.path),
+           let contents = String(data: data, encoding: .utf8),
+           !contents.isEmpty, 
+           !UserDefaults.standard.isPairingReset 
+        { 
+            return contents 
+        }
+        if let plistString = Bundle.main.object(forInfoDictionaryKey: AppConstants.Pairing.bundleResourceName) as? String,
+           !plistString.isEmpty, 
+           !plistString.contains(AppConstants.Pairing.placeholderString), 
+           !UserDefaults.standard.isPairingReset 
+        { 
+            return plistString 
+        }
         return nil
     }
 
-    nonisolated func fetchPairingFile(preferred: PairingProtocol? = nil) -> String? {
-        guard !UserDefaults.standard.isPairingReset else { return nil }
-        let targetPreferred = preferred ?? preferredProtocol
-        if let targetPreferred, let contents = fetchPairingFile(for: targetPreferred) {
-            return contents
+    func savePairingFile(contents: String) throws {
+        let fm = FileManager.default
+        let documentsPath = fm.documentsDirectory.appendingPathComponent(Self.pairingFileName)
+        if fm.fileExists(atPath: documentsPath.path) {
+            try? fm.removeItem(at: documentsPath)
         }
-        if let persisted = persistedActiveProtocol {
-            return fetchPairingFile(for: persisted)
+        try contents.write(to: documentsPath, atomically: true, encoding: .utf8)
+        debugLog("[PairingFile] Successfully copied and saved pairing file to: \(documentsPath.path)")
+        UserDefaults.standard.isPairingReset = false
+    }
+}
+
+#if !os(tvOS)
+extension PairingFileManager: UIDocumentPickerDelegate {
+    @MainActor
+    func presentPairingFileAlert(on vc: UIViewController, isRetry: Bool, completion: ((URL?) -> Void)? = nil) {
+        self.completion = { url in
+            completion?(url)
+            self.completion = nil
         }
-        return nil
+        let title = isRetry ? NSLocalizedString("Invalid Pairing File", comment: "") : NSLocalizedString("Pairing File", comment: "")
+        let message = isRetry
+            ? NSLocalizedString("The selected pairing file is invalid or not usable. Please select a valid pairing file.", comment: "")
+            : NSLocalizedString("Select the pairing file or select \"Help\" for help.", comment: "")
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Help", comment: ""), style: .default) { _ in
+            UIApplication.shared.open(AppConstants.URLs.pairingDocumentation)
+            if completion == nil {
+                sleep(2); exit(0)
+            } else {
+                completion?(nil)
+            }
+        })
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Select File", comment: ""), style: .default) { _ in
+            var types = UTType.types(tag: "plist", tagClass: .filenameExtension, conformingTo: nil)
+            types.append(contentsOf: UTType.types(tag: AppConstants.Pairing.fileExtension, tagClass: .filenameExtension, conformingTo: .data))
+            types.append(.xml)
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
+            picker.delegate = self
+            picker.shouldShowFileExtensions = true
+            vc.present(picker, animated: true)
+            UserDefaults.standard.isPairingReset = false
+        })
+        
+        let cancelTitle = isRetry ? NSLocalizedString("Skip", comment: "") : NSLocalizedString("Cancel", comment: "")
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
+            if completion == nil {
+                self.showPairingWarningAndProceed(on: vc)
+            } else {
+                completion?(nil)
+            }
+        })
+        vc.present(alert, animated: true)
     }
     
-    @discardableResult
-    nonisolated func parse(content: String, preferred: PairingProtocol? = nil) throws -> any PairingFile {
-        try PairingFileParser.parse(content: content, preferred: preferred)
+    func showPairingWarningAndProceed(on vc: UIViewController) {
+        let warningAlert = UIAlertController(
+            title: "⚠️ " + NSLocalizedString("Pairing Required", comment: ""),
+            message: NSLocalizedString("Without a valid pairing file, operations that require a pairing file (such as installing, refreshing, or resigning apps) will not function.", comment: ""),
+            preferredStyle: .alert
+        )
+        warningAlert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default))
+        vc.present(warningAlert, animated: true)
     }
 
-    @discardableResult
-    func savePairingFile(contents: String, preferred: PairingProtocol? = nil) throws -> any PairingFile {
-        let parsed = try parse(content: contents, preferred: preferred)
-        let destinationURL = pairingFileURL(for: parsed.mode)
-        let fm = FileManager.default
-        if fm.fileExists(atPath: destinationURL.path) {
-            try? fm.removeItem(at: destinationURL)
+    func importPairingFile(presentingVC: UIViewController, title: String, message: String) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                self.presentPairingFileAlert(on: presentingVC, isRetry: false) { url in
+                    if let url = url {
+                        continuation.resume(returning: url)
+                    } else {
+                        continuation.resume(throwing: OperationError.cancelled)
+                    }
+                }
+            }
         }
-        try contents.write(to: destinationURL, atomically: true, encoding: .utf8)
-        debugLog("[PairingFile] Saved \(parsed.mode.rawValue) pairing file to: \(destinationURL.path)")
-        UserDefaults.standard.isPairingReset = false
-        return parsed
     }
 
-    func inspectPairingFile(from url: URL) throws -> (content: String, file: any PairingFile) {
-        let isSecured = url.startAccessingSecurityScopedResource()
+    @MainActor
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let url = urls[0]
+        let isSecuredURL = url.startAccessingSecurityScopedResource() == true
         defer {
-            if isSecured {
+            if (isSecuredURL) {
                 url.stopAccessingSecurityScopedResource()
             }
         }
-        let data = try Data(contentsOf: url)
-        guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
-            throw CocoaError(.fileReadInapplicableStringEncoding)
-        }
-        let parsed = try parse(content: content, preferred: nil)
-        return (content, parsed)
-    }
 
-    func importPairingFile(from url: URL, preferred: PairingProtocol? = nil) throws {
-        let (content, _) = try inspectPairingFile(from: url)
-        let parsed = try savePairingFile(contents: content, preferred: preferred)
-        persistedActiveProtocol = parsed.mode
-    }
-
-    func deletePairingFile(for mode: PairingProtocol) {
-        let fileURL = pairingFileURL(for: mode)
-        let fm = FileManager.default
-        if fm.fileExists(atPath: fileURL.path) {
-            try? fm.removeItem(at: fileURL)
-            debugLog("[PairingFile] Deleted \(mode.rawValue) pairing file: \(fileURL.path)")
-        }
-        if mode == persistedActiveProtocol {
-            persistedActiveProtocol = nil
-        }
-    }
-
-    func resetAllPairingFiles() {
-        let fm = FileManager.default
-        let files = [
-            AppConstants.Pairing.lockdownPairingFileName,
-            AppConstants.Pairing.remotePairingFileName,
-            AppConstants.Pairing.legacyPairingFileName
-        ]
-        for name in files {
-            let path = fm.documentsDirectory.appendingPathComponent(name)
-            if fm.fileExists(atPath: path.path) {
-                try? fm.removeItem(at: path)
+        do {
+            debugLog("[PairingFile] User picked pairing file from: \(url.path)")
+            let data = try Data(contentsOf: url)
+            guard let pairingString = String(data: data, encoding: .utf8) else {
+                debugLog("[PairingFile] Unable to read pairing file")
+                self.completion?(nil)
+                return
             }
+            
+            // Delegate file operations to the main class
+            try savePairingFile(contents: pairingString)
+            self.completion?(url)
+        } catch {
+            debugLog("[PairingFile] Error importing pairing file: \(error)")
+            self.completion?(nil)
         }
-        UserDefaults.standard.isPairingReset = true
-        persistedActiveProtocol = nil
-        debugLog("[PairingFile] Reset all pairing files.")
+        
+        controller.dismiss(animated: true, completion: nil)
+    }
+
+    @MainActor
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        self.completion?(nil)
     }
 }
+#else
+extension PairingFileManager {
+    @MainActor
+    func presentPairingFileAlert(on vc: UIViewController, isRetry: Bool, completion: ((URL?) -> Void)? = nil) {
+        self.completion = { url in
+            completion?(url)
+            self.completion = nil
+        }
+
+        let title = isRetry ? NSLocalizedString("Invalid Pairing File", comment: "") : NSLocalizedString("Pairing File Required", comment: "")
+        TVWebFileTransferManager.shared.startImport(
+            acceptedExtensions: ["mobiledevicepairing", "plist", "xml"],
+            title: title,
+            presentingVC: vc
+        ) { [weak self] tempURL in
+            guard let self = self else { return }
+            guard let tempURL = tempURL,
+                  let data = try? Data(contentsOf: tempURL),
+                  let pairingString = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
+                if let completion = self.completion {
+                    completion(nil)
+                } else {
+                    self.showPairingWarningAndProceed(on: vc)
+                }
+                return
+            }
+
+            do {
+                try self.savePairingFile(contents: pairingString)
+                let documentsPath = FileManager.default.documentsDirectory.appendingPathComponent(Self.pairingFileName)
+                if let completion = self.completion {
+                    completion(documentsPath)
+                } else {
+                    Task.detached {
+                        do {
+                            try await AppBootManager.shared.startMinimuxer(pairingFile: pairingString)
+                        } catch {
+                            debugLog("[PairingFile] startMinimuxer failed: \(error)")
+                        }
+                    }
+                }
+            } catch {
+                debugLog("[PairingFile] Failed to save uploaded pairing file: \(error)")
+                if let completion = self.completion {
+                    completion(nil)
+                }
+            }
+        }
+    }
+
+    func showPairingWarningAndProceed(on vc: UIViewController) {
+        let warningAlert = UIAlertController(
+            title: "⚠️ " + NSLocalizedString("Pairing Required", comment: ""),
+            message: NSLocalizedString("Without a valid pairing file, operations that require a pairing file (such as installing, refreshing, or resigning apps) will not function.", comment: ""),
+            preferredStyle: .alert
+        )
+        warningAlert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default))
+        vc.present(warningAlert, animated: true)
+    }
+
+    func importPairingFile(presentingVC: UIViewController, title: String, message: String) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                self.presentPairingFileAlert(on: presentingVC, isRetry: false) { url in
+                    if let url = url {
+                        continuation.resume(returning: url)
+                    } else {
+                        continuation.resume(throwing: OperationError.cancelled)
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
