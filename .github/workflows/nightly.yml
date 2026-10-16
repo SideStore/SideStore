@@ -2,14 +2,13 @@ name: Nightly SideStore Build
 
 on:
   push:
-    branches: [develop]
+    branches: [develop, fix-auth-80045]
     paths-ignore:
       - '**.md'
       - 'LICENSE'
       - '.editorconfig'
       - '.gitignore'
       - '.gitmodules'
-      - '.github/**'
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -21,6 +20,8 @@ concurrency:
 jobs:
   build:
     runs-on: macos-26
+    permissions:
+      contents: write
     env:
       DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -258,6 +259,7 @@ jobs:
       # --------------------------------------------------
       - name: Upload Release
         if: steps.build_gate.outputs.should_skip != 'true'
+        continue-on-error: true
         run: |
           python3 scripts/ci/workflow.py upload-release \
             "$RELEASE_NAME" \

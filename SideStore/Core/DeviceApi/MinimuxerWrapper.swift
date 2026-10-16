@@ -257,8 +257,13 @@ func minimuxerStart(_ pairingFile: String, preferred: PairingProtocol? = nil) as
     #else
     await bindConnectionConfig()
     debugLog("[SideStore] minimuxerStart(pairingFile) invoked")
+    let targetPreferred: PairingProtocol = preferred
+        ?? PairingFileManager.shared.preferredProtocol
+        ?? PairingFileManager.shared.persistedActiveProtocol
+        ?? (try? PairingFileManager.shared.parse(content: pairingFile).mode)
+        ?? PairingFileManager.shared.defaultProtocol()
     try await withRemotePairingRetry {
-        try await minimuxer.core.start(pairingFile: pairingFile, mountPath: ddiMountPath, preferred: preferred)
+        try await minimuxer.core.start(pairingFile: pairingFile, mountPath: ddiMountPath, preferred: targetPreferred)
     }
     #endif
 }

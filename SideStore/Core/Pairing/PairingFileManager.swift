@@ -40,6 +40,14 @@ final class PairingFileManager: NSObject {
         set { UserDefaults.standard.preferredPairingProtocol = newValue }
     }
 
+    nonisolated func defaultProtocol() -> PairingProtocol {
+        if #available(iOS 17, tvOS 17, *) {
+            return .rppairing
+        } else {
+            return .lockdown
+        }
+    }
+
     nonisolated func pairingFileURL(for mode: PairingProtocol) -> URL {
         let fileName = mode == .rppairing ? AppConstants.Pairing.remotePairingFileName : AppConstants.Pairing.lockdownPairingFileName
         return FileManager.default.documentsDirectory.appendingPathComponent(fileName)
@@ -55,6 +63,18 @@ final class PairingFileManager: NSObject {
             return true
         }
         if let mode = persistedActiveProtocol, hasPairingFile(for: mode) {
+            return true
+        }
+        let primary = defaultProtocol()
+        if hasPairingFile(for: primary) {
+            return true
+        }
+        let fallback: PairingProtocol = (primary == .rppairing) ? .lockdown : .rppairing
+        if hasPairingFile(for: fallback) {
+            return true
+        }
+        let legacyURL = FileManager.default.documentsDirectory.appendingPathComponent(AppConstants.Pairing.legacyPairingFileName)
+        if FileManager.default.fileExists(atPath: legacyURL.path) {
             return true
         }
         return false
@@ -91,15 +111,53 @@ final class PairingFileManager: NSObject {
         if let targetPreferred, let contents = fetchPairingFile(for: targetPreferred) {
             return contents
         }
-        if let persisted = persistedActiveProtocol {
-            return fetchPairingFile(for: persisted)
+        if let persisted = persistedActiveProtocol, let contents = fetchPairingFile(for: persisted) {
+            return contents
+        }
+        let primary = defaultProtocol()
+        if let contents = fetchPairingFile(for: primary) {
+            UserDefaults.standard.activePairingProtocol = primary
+            return contents
+        }
+        let fallback: PairingProtocol = (primary == .rppairing) ? .lockdown : .rppairing
+        if let contents = fetchPairingFile(for: fallback) {
+            UserDefaults.standard.activePairingProtocol = fallback
+            return contents
+        }
+        let legacyURL = FileManager.default.documentsDirectory.appendingPathComponent(AppConstants.Pairing.legacyPairingFileName)
+        if FileManager.default.fileExists(atPath: legacyURL.path),
+           let contents = try? String(contentsOf: legacyURL), !contents.isEmpty {
+            if let parsed = try? parse(content: contents) {
+                UserDefaults.standard.activePairingProtocol = parsed.mode
+            }
+            return contents
         }
         return nil
     }
     
     @discardableResult
     nonisolated func parse(content: String, preferred: PairingProtocol? = nil) throws -> any PairingFile {
-        try PairingFileParser.parse(content: content, preferred: preferred)
+        if let preferred = preferred {
+            return try PairingFileParser.parse(content: content, preferred: preferred)
+        }
+        if let userPref = preferredProtocol {
+            if let parsed = try? PairingFileParser.parse(content: content, preferred: userPref) {
+                return parsed
+            }
+        }
+        do {
+            return try PairingFileParser.parse(content: content, preferred: nil)
+        } catch PairingError.ambiguous {
+            let primary = defaultProtocol()
+            if let parsed = try? PairingFileParser.parse(content: content, preferred: primary) {
+                return parsed
+            }
+            let fallback: PairingProtocol = (primary == .rppairing) ? .lockdown : .rppairing
+            if let parsed = try? PairingFileParser.parse(content: content, preferred: fallback) {
+                return parsed
+            }
+            throw PairingError.ambiguous("Unable to automatically resolve pairing protocol ambiguity.")
+        }
     }
 
     @discardableResult
@@ -113,10 +171,11 @@ final class PairingFileManager: NSObject {
         try contents.write(to: destinationURL, atomically: true, encoding: .utf8)
         debugLog("[PairingFile] Saved \(parsed.mode.rawValue) pairing file to: \(destinationURL.path)")
         UserDefaults.standard.isPairingReset = false
+        persistedActiveProtocol = parsed.mode
         return parsed
     }
 
-    func inspectPairingFile(from url: URL) throws -> (content: String, file: any PairingFile) {
+    func inspectPairingFile(from url: URL, preferred: PairingProtocol? = nil) throws -> (content: String, file: any PairingFile) {
         let isSecured = url.startAccessingSecurityScopedResource()
         defer {
             if isSecured {
@@ -127,14 +186,15 @@ final class PairingFileManager: NSObject {
         guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
             throw CocoaError(.fileReadInapplicableStringEncoding)
         }
-        let parsed = try parse(content: content, preferred: nil)
+        let parsed = try parse(content: content, preferred: preferred)
         return (content, parsed)
     }
 
     func importPairingFile(from url: URL, preferred: PairingProtocol? = nil) throws {
-        let (content, _) = try inspectPairingFile(from: url)
-        let parsed = try savePairingFile(contents: content, preferred: preferred)
-        persistedActiveProtocol = parsed.mode
+        let (content, parsed) = try inspectPairingFile(from: url, preferred: preferred)
+        let modeToSave = preferred ?? parsed.mode
+        let saved = try savePairingFile(contents: content, preferred: modeToSave)
+        persistedActiveProtocol = saved.mode
     }
 
     func deletePairingFile(for mode: PairingProtocol) {

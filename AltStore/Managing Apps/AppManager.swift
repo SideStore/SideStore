@@ -848,7 +848,18 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
             case .removeApp, .removeDeactivatedApp: localizedTitle = String(format: NSLocalizedString("Failed to Remove %@", comment: ""), appName)
         }
         
-        let nsError = error as NSError
+        var userInfo = (error as NSError).userInfo
+        let realDescription: String = {
+            if let localized = error as? LocalizedError, let desc = localized.errorDescription, !desc.isEmpty {
+                return desc
+            }
+            if let customDesc = (error as? CustomStringConvertible)?.description, !customDesc.isEmpty {
+                return customDesc
+            }
+            return error.localizedDescription
+        }()
+        userInfo[NSLocalizedDescriptionKey] = realDescription
+        let nsError = NSError(domain: (error as NSError).domain, code: (error as NSError).code, userInfo: userInfo)
         let mappedError = nsError.withLocalizedTitle(localizedTitle)
         return mappedError
     }

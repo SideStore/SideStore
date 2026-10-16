@@ -137,6 +137,11 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 return (account, session)
             } catch {
                 self.debugLog("[SignInOperation] authenticationLoop: Attempt failed with error: \(error)")
+                let errorString = "\(error)"
+                if errorString.contains("-80045") || errorString.contains("-45061") {
+                    self.debugLog("[SignInOperation] Detected auth error -80045/-45061. Purging stored anisette ADI blob...")
+                    AnisetteConfigManager.shared.anisetteAdiBlob = nil
+                }
                 await handler.handleSignInResult(.failure(error))
             }
         }

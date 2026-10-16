@@ -96,7 +96,8 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            public static let defaultServerURL     = "https://ani.sidestore.io"
+            public static let defaultServerURL     = "https://win.ani.sidestore.io"
+            public static let secondaryServerURL   = "https://ani.jkcoxson.com"
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
         }
 

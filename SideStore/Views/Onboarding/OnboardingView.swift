@@ -320,6 +320,9 @@ private struct PairingFileStep: View {
             }
         }
         #endif
+        .onAppear {
+            hasPairingFile = PairingFileManager.shared.hasPairingFile()
+        }
     }
 }
 

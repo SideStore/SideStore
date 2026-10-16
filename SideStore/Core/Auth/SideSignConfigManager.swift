@@ -19,7 +19,11 @@ public actor SideSignConfigManager {
     
     public func loadConfig() -> SideSignHeaders {
         if let data = try? Data(contentsOf: configFileURL),
-           let config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
+           var config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
+            if config.grandSlam.userAgent.contains("dt.Xcode") {
+                config.grandSlam.userAgent = Constants.GrandSlam.userAgent
+                saveConfig(config)
+            }
             DeveloperPortal.shared.customHeaders = config
             return config
         }
@@ -30,7 +34,10 @@ public actor SideSignConfigManager {
     
     public nonisolated func applyConfigToDeveloperPortal() {
         if let data = try? Data(contentsOf: configFileURL),
-           let config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
+           var config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
+            if config.grandSlam.userAgent.contains("dt.Xcode") {
+                config.grandSlam.userAgent = Constants.GrandSlam.userAgent
+            }
             DeveloperPortal.shared.customHeaders = config
         } else {
             DeveloperPortal.shared.customHeaders = SideSignHeaders()

@@ -55,12 +55,24 @@ public actor AnisetteServersManager {
 
     // MARK: - Local Persistence & In-Memory Caching
 
+    public static let defaultInitialServers: [AnisetteServerItem] = [
+        AnisetteServerItem(name: "SideStore (Windows ADI)", address: AppConstants.Anisette.Servers.defaultServerURL, isHidden: false),
+        AnisetteServerItem(name: "Jkcoxson (Windows)", address: AppConstants.Anisette.Servers.secondaryServerURL, isHidden: false),
+        AnisetteServerItem(name: "SideStore (.io)", address: "https://ani.sidestore.io", isHidden: false)
+    ]
+
     public func loadLocalServers() -> [AnisetteServerItem] {
         if let cached = inMemoryServersCache {
             return cached
         }
 
         let fileManager = FileManager.default
+
+        // Migrate default menuAnisetteURL if still pointed to ani.sidestore.io
+        let currentURL = UserDefaults.standard.menuAnisetteURL
+        if currentURL.isEmpty || currentURL.contains("ani.sidestore.io") {
+            UserDefaults.standard.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+        }
 
         // If user-facing file was deleted by user, restore from private internal mirror backup
         if !fileManager.fileExists(atPath: userFacingFileURL.path) && fileManager.fileExists(atPath: privateBackupFileURL.path) {
@@ -72,7 +84,9 @@ public actor AnisetteServersManager {
 
         guard fileManager.fileExists(atPath: targetURL.path),
               let data = try? Data(contentsOf: targetURL) else {
-            return []
+            let initial = Self.defaultInitialServers
+            saveLocalServers(initial)
+            return initial
         }
 
         let decoder = Foundation.JSONDecoder()
@@ -86,6 +100,19 @@ public actor AnisetteServersManager {
                     let isHidden = dict["isHidden"] as? Bool ?? false
                     items.append(AnisetteServerItem(name: name, address: address, isHidden: isHidden))
                 }
+            }
+        }
+
+        if items.isEmpty {
+            items = Self.defaultInitialServers
+            saveLocalServers(items)
+        } else {
+            // Ensure modern Windows servers are present in existing saved list
+            let existingAddresses = Set(items.map(\.address))
+            let missingDefaults = Self.defaultInitialServers.filter { !existingAddresses.contains($0.address) }
+            if !missingDefaults.isEmpty {
+                items.insert(contentsOf: missingDefaults, at: 0)
+                saveLocalServers(items)
             }
         }
 
