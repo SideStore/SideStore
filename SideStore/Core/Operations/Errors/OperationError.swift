@@ -78,7 +78,7 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
         case .invalidApp(let reason):
             return "The app is in an invalid format: \(reason)"
         case .invalidPairingFile(let reason):
-            return "The current pairing file is invalid or missing. Reason: \(reason)\n\nPlease make sure to input a valid pairing file! If the issue persists, replace your pairing with iloader."
+            return "The current pairing file is invalid. Reason: \(reason)\n\nPlease make sure to input a valid pairing file! If the issue persists, replace your pairing with iloader or idevice_pair."
         case .invalidParameters(let msg):
             return "Invalid parameters: \n\(msg)"
         case .invalidResponse(let reason):
@@ -114,7 +114,7 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
         case .SideJITIssue(let error):
             return "An error occurred while using SideJIT: \(error)"
         case .unknownUDID(let reason):
-            return "SideStore could not determine this device's UDID: \(reason)\n\nPlease replace your pairing using iloader."
+            return "SideStore could not determine this device's UDID: \(reason)\n\nPlease replace your pairing using iloader or idevice_pair."
         }
     }
 

@@ -258,7 +258,7 @@ public final class PairingWebUploadServer: @unchecked Sendable {
         <body>
             <div class="card">
                 <h1>SideStore Pairing</h1>
-                <p>Upload your <code>ALTPairingFile.mobiledevicepairing</code> to pair your Apple TV.</p>
+                <p>Upload your pairing file to pair your Apple TV.</p>
                 <form action="/upload" method="post" enctype="multipart/form-data">
                     <div class="upload-box">
                         <input type="file" name="pairingFile" accept=".mobiledevicepairing,.plist,.xml" required>

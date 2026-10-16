@@ -39,7 +39,8 @@ public final class AppBootManager {
             try await startEMProxy()
         }
 
-        try await minimuxerStart(pairingFile, mountPath: FileManager.default.documentsDirectory.absoluteString)
+        let preferred = PairingFileManager.shared.preferredProtocol
+        try await minimuxerStart(pairingFile, preferred: preferred)
         
         // Validate the pairing by trying to fetch the UDID
         do {
@@ -63,7 +64,7 @@ public final class AppBootManager {
         var isRetry = false
         while true {
             guard let selectedURL = await withCheckedContinuation({ (continuation: CheckedContinuation<URL?, Never>) in
-                PairingFileManager.shared.presentPairingFileAlert(on: vc, isRetry: isRetry) { selectedURL in
+                PairingViewController.shared.presentPairingFileAlert(on: vc, isRetry: isRetry) { selectedURL in
                     debugLog("[AppBootManager] promptForPairing: alert completed with selectedURL: \(selectedURL?.path ?? "nil")")
                     continuation.resume(returning: selectedURL)
                 }
@@ -80,11 +81,24 @@ public final class AppBootManager {
             }
             
             do {
-                try await startMinimuxer(pairingFile: pairingString)
+                try await self.startMinimuxer(pairingFile: pairingString)
                 self.needsPairingPrompt = false
                 break
             } catch {
                 debugLog("[AppBootManager] startMinimuxer failed with pairing file: \(error)")
+                let didSwitch = await PairingViewController.shared.handlePotentialProtocolMismatch(
+                    on: vc,
+                    pairingContent: pairingString
+                )
+                if didSwitch {
+                    do {
+                        try await self.startMinimuxer(pairingFile: pairingString)
+                        self.needsPairingPrompt = false
+                        break
+                    } catch {
+                        debugLog("[AppBootManager] startMinimuxer retry after protocol switch failed: \(error)")
+                    }
+                }
                 isRetry = true
             }
         }
@@ -92,16 +106,11 @@ public final class AppBootManager {
     
     public nonisolated func performBootSequence() async {
         debugLog("[AppBootManager] performBootSequence() entered")
-        defer {
-            debugLog("[AppBootManager] performBootSequence() exited")
-        }
+        defer { debugLog("[AppBootManager] performBootSequence() exited") }
         
-        // 1. Structured concurrent child task A
         async let jitCheck: Void = {
             debugLog("[AppBootManager] performBootSequence(): JIT check starting")
-            defer {
-                debugLog("[AppBootManager] performBootSequence(): JIT check completed")
-            }
+            defer { debugLog("[AppBootManager] performBootSequence(): JIT check completed") }
             if #available(iOS 17, *), !UserDefaults.standard.isSideJITServerEnabled {
                 do {
                     try await SideJITManager.shared.isSideJITServerDetected()
@@ -117,32 +126,23 @@ public final class AppBootManager {
             }
         }()
         
-        // 2. Structured concurrent child task B
         async let minimuxerCheck: Void = {
             debugLog("[AppBootManager] performBootSequence(): Minimuxer check starting")
-            defer {
-                debugLog("[AppBootManager] performBootSequence(): Minimuxer check completed")
+            defer { debugLog("[AppBootManager] performBootSequence(): Minimuxer check completed") }
+            guard let pf = PairingFileManager.shared.fetchPairingFile() else {
+                #if !targetEnvironment(simulator)
+                self.needsPairingPrompt = true
+                #endif
+                return
             }
-            #if targetEnvironment(simulator)
+
             do {
-                try await self.startMinimuxer(pairingFile: "ignored-for-sim")
+                try await self.startMinimuxer(pairingFile: pf)
             } catch {
                 debugLog("[AppBootManager] Failed to start minimuxer: \(error)")
             }
-            #else
-            if let pf = PairingFileManager.shared.fetchPairingFile() {
-                do {
-                    try await self.startMinimuxer(pairingFile: pf)
-                } catch {
-                    debugLog("[AppBootManager] Failed to start minimuxer: \(error)")
-                }
-            } else {
-                self.needsPairingPrompt = true
-            }
-            #endif
         }()
         
-        // Await both concurrently (Structured Concurrency awaits them in parallel)
         _ = await (jitCheck, minimuxerCheck)
     }
 }

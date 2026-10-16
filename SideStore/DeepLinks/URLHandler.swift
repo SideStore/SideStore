@@ -16,6 +16,9 @@ class URLHandler {
     @discardableResult
     func handle(_ url: URL) -> Bool {
         debugLog("[URLHandler] handle(_:) called with URL: \(url.absoluteString)")
+        if url.isFileURL {
+            return FileImportHandler.shared.handle(fileURL: url)
+        }
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             debugLog("[URLHandler] Failed to parse URLComponents for \(url)")
             return false
@@ -75,7 +78,7 @@ class URLHandler {
             guard let callbackTemplate = queryItems["urlname"]?.removingPercentEncoding ?? queryItems["urlName"]?.removingPercentEncoding else { return false }
             
             Task {
-                exportPairingFile(callbackTemplate)
+                ExportPairingFileHandler.handle(urlname: callbackTemplate)
             }
             return true
             

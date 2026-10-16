@@ -20,6 +20,12 @@ final class DownloadAppOperation: BasePipelineOperation<InstallAppOperationConte
 
     private let session = URLSession(configuration: .default)
     private let temporaryDirectory = FileManager.default.uniqueTemporaryURL()
+    private var activeDownloadTask: URLSessionDownloadTask?
+
+    override func cancel() {
+        super.cancel()
+        self.activeDownloadTask?.cancel()
+    }
 
     init(app: AppProtocol, destinationURL: URL, context: InstallAppOperationContext) throws {
         self.app = app
@@ -219,23 +225,18 @@ final class DownloadAppOperation: BasePipelineOperation<InstallAppOperationConte
     
     func downloadFile(from downloadURL: URL) async throws -> URL {
         debugLog("[DownloadAppOperation] download started: \(downloadURL)")
-        let delegate = DownloadProgressDelegate(progress: self.progress)
-        do {
-            let (fileURL, response) = try await self.session.download(from: downloadURL, delegate: delegate)
-            let resp = response as? HTTPURLResponse
-            if let resp {
-                debugLog("[DownloadAppOperation] downloadFile: completed with status \(resp.statusCode) at \(fileURL.path)")
-                guard resp.statusCode != 403 else { throw URLError(.noPermissionsToReadFile) }
-                guard resp.statusCode != 404 else { throw CocoaError(.fileNoSuchFile, userInfo: [NSURLErrorKey: downloadURL]) }
-            } else {
-                debugLog("[DownloadAppOperation] downloadFile: completed at \(fileURL.path)")
+        let fileURL: URL = try await withCheckedThrowingContinuation { continuation in
+            let delegate = DownloadProgressDelegate(progress: self.progress) { result in
+                continuation.resume(with: result)
             }
-            self.setProgress(75)
-            return fileURL
-        }catch{
-            debugLog("[DownloadAppOperation] download failed for url: \(downloadURL)")
-            throw error
+            let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+            let task = session.downloadTask(with: downloadURL)
+            delegate.task = task
+            self.activeDownloadTask = task
+            task.resume()
         }
+        self.setProgress(75)
+        return fileURL
     }
     
     
@@ -319,12 +320,19 @@ extension DownloadAppOperation {
     }
 }
 
-private class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate {
+private final class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
     let progress: Progress
+    weak var task: URLSessionDownloadTask?
     private var lastLoggedPercent: Int = -1
+    private var lastLogTime: CFAbsoluteTime = 0
+    private var continuation: ((Result<URL, Error>) -> Void)?
+    private var hasResumed = false
+    private let lock = NSLock()
     
-    init(progress: Progress) {
+    init(progress: Progress, completion: @escaping (Result<URL, Error>) -> Void) {
         self.progress = progress
+        self.continuation = completion
+        super.init()
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
@@ -332,14 +340,62 @@ private class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate {
             let fraction = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
             self.progress.completedUnitCount = Int64(fraction * 75.0)
             let percent = Int(fraction * 100.0)
-            if percent % 25 == 0 && percent != self.lastLoggedPercent {
+            let now = CFAbsoluteTimeGetCurrent()
+            if percent != self.lastLoggedPercent && (now - self.lastLogTime >= 0.3 || percent == 100) {
                 self.lastLoggedPercent = percent
+                self.lastLogTime = now
+                debugLog("[DownloadAppOperation] Download transfer: \(percent)% (\(ByteCountFormatter.string(fromByteCount: totalBytesWritten, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: totalBytesExpectedToWrite, countStyle: .file)))")
+            }
+        } else {
+            let mbWritten = Double(totalBytesWritten) / (1024.0 * 1024.0)
+            let estimatedFraction = min(0.95, mbWritten / 100.0)
+            self.progress.completedUnitCount = Int64(estimatedFraction * 75.0)
+            let percent = Int(estimatedFraction * 100.0)
+            let now = CFAbsoluteTimeGetCurrent()
+            if percent != self.lastLoggedPercent && (now - self.lastLogTime >= 0.3 || percent == 100) {
+                self.lastLoggedPercent = percent
+                self.lastLogTime = now
                 debugLog("[DownloadAppOperation] Download transfer: \(percent)% (\(ByteCountFormatter.string(fromByteCount: totalBytesWritten, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: totalBytesExpectedToWrite, countStyle: .file)))")
             }
         }
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        // Unused as download(from:delegate:) returns the file URL directly
+        defer { session.finishTasksAndInvalidate() }
+        if let resp = downloadTask.response as? HTTPURLResponse {
+            debugLog("[DownloadAppOperation] downloadFile: completed with status \(resp.statusCode) at \(location.path)")
+            if resp.statusCode == 403 {
+                finish(with: .failure(URLError(.noPermissionsToReadFile)))
+                return
+            }
+            if resp.statusCode == 404 {
+                let error = CocoaError(.fileNoSuchFile, userInfo: [NSURLErrorKey: downloadTask.originalRequest?.url ?? location])
+                finish(with: .failure(error))
+                return
+            }
+        }
+        let tempDestination = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".tmp")
+        do {
+            try FileManager.default.moveItem(at: location, to: tempDestination)
+            finish(with: .success(tempDestination))
+        } catch {
+            finish(with: .failure(error))
+        }
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            session.invalidateAndCancel()
+            finish(with: .failure(error))
+        }
+    }
+    
+    private func finish(with result: Result<URL, Error>) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !hasResumed else { return }
+        hasResumed = true
+        continuation?(result)
+        continuation = nil
     }
 }

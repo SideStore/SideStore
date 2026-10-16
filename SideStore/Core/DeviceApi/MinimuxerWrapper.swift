@@ -8,6 +8,7 @@
 import Foundation
 import Network
 import Minimuxer
+import MinimuxerCommon
 import Combine
 
 public var selectedGatewayBackendCache: GatewayBackend = .idevice
@@ -15,7 +16,7 @@ public var remotePairingPortCache: UInt16 = AppConstants.Minimuxer.remotePairing
 public var deviceProbeTimeoutCache: Int = AppConstants.Minimuxer.defaultTCPProbeTimeoutMs
 
 public func syncMinimuxerBackendFromUserDefaults() {
-    let raw = UserDefaults.standard.minimuxerGatewayBackend ?? ""
+    let raw = UserDefaults.standard.minimuxerGatewayBackend
     selectedGatewayBackendCache = GatewayBackend(rawValue: raw) ?? .idevice
 
     let overridePort = UserDefaults.standard.remotePairingPortOverride
@@ -46,6 +47,14 @@ public func syncMinimuxerBackendFromUserDefaults() {
 
 var minimuxer: any MinimuxerFacade {
     Minimuxer.shared
+}
+
+func minimuxerPairingProtocol() -> PairingProtocol {
+    minimuxer.core.pairingFileType
+}
+
+var ddiMountPath: String {
+    FileManager.default.documentsDirectory.absoluteString
 }
 
 private func resolveDiscoveredRemotePairingPort() async -> UInt16? {
@@ -227,34 +236,6 @@ extension MinimuxerError {
     }
 }
 
-func reinitializePairingData(_ pairingFile: String) async throws {
-    defer { debugLog("[SideStore] reinitializePairingData(pairingFile) completed") }
-    #if targetEnvironment(simulator)
-    debugLog("[SideStore] reinitializePairingData(pairingFile) is no-op on simulator")
-    #else
-    debugLog("[SideStore] reinitializePairingData(pairingFile) invoked")
-    try await withRemotePairingRetry {
-        try await minimuxer.core.reinitializePairingData(pairingFile: pairingFile)
-    }
-    #endif
-}
-
-func minimuxerStart(_ pairingFile: String, mountPath: String) async throws {
-    defer { debugLog("[SideStore] minimuxerStart(pairingFile) completed") }
-    #if targetEnvironment(simulator)
-    debugLog("[SideStore] minimuxerStart(pairingFile) is no-op on simulator")
-    await bindConnectionConfig()
-    await minimuxer.network.start()
-    #else
-    await bindConnectionConfig()
-    debugLog("[SideStore] minimuxerStart(pairingFile) invoked")
-    try await withRemotePairingRetry {
-        try await minimuxer.core.start(pairingFile: pairingFile, mountPath: mountPath)
-    }
-    #endif
-}
-
-
 func reinitializePairingData(pairingFile: String) async throws {
     defer { debugLog("[SideStore] reinitializePairingData(pairingFile) completed") }
     #if targetEnvironment(simulator)
@@ -264,6 +245,31 @@ func reinitializePairingData(pairingFile: String) async throws {
     try await withRemotePairingRetry {
         try await minimuxer.core.reinitializePairingData(pairingFile: pairingFile)
     }
+    #endif
+}
+
+func minimuxerStart(_ pairingFile: String, preferred: PairingProtocol? = nil) async throws {
+    defer { debugLog("[SideStore] minimuxerStart(pairingFile) completed") }
+    #if targetEnvironment(simulator)
+    debugLog("[SideStore] minimuxerStart(pairingFile) is no-op on simulator")
+    await bindConnectionConfig()
+    await minimuxer.network.start()
+    #else
+    await bindConnectionConfig()
+    debugLog("[SideStore] minimuxerStart(pairingFile) invoked")
+    try await withRemotePairingRetry {
+        try await minimuxer.core.start(pairingFile: pairingFile, mountPath: ddiMountPath, preferred: preferred)
+    }
+    #endif
+}
+
+func minimuxerStop() async throws {
+    defer { debugLog("[SideStore] minimuxerStop() completed") }
+    #if targetEnvironment(simulator)
+    debugLog("[SideStore] minimuxerStop() is no-op on simulator")
+    #else
+    debugLog("[SideStore] minimuxerStop() invoked")
+    try await minimuxer.core.stop()
     #endif
 }
 
@@ -466,11 +472,18 @@ extension Result {
     }
 }
 
-
-func minimuxerRestart() async throws {
+func minimuxerSwitchPairingProtocol(to proto: PairingProtocol) async throws {
+    defer { debugLog("[SideStore] minimuxerSwitchPairingProtocol(.\(proto)) completed") }
+    debugLog("[SideStore] minimuxerSwitchPairingProtocol(.\(proto)) invoked")
+    PairingFileManager.shared.persistedActiveProtocol = proto
     #if !targetEnvironment(simulator)
     try await withRemotePairingRetry {
-        try await minimuxer.core.restart()
+        debugLog("[SideStore] switchPairingProtocol(to: \(proto.rawValue)) entered")
+        guard let pf = PairingFileManager.shared.fetchPairingFile(for: proto) else {
+            throw MinimuxerError.pairingNotLoaded("Missing pairing file for \(proto.rawValue)")
+        }
+        try await minimuxerStop()
+        try await AppBootManager.shared.startMinimuxer(pairingFile: pf)
     }
     #endif
 }

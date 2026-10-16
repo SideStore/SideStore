@@ -14,7 +14,7 @@ public final class MaintenanceManager {
     public static let shared = MaintenanceManager()
 
     // Increment this counter whenever you want to trigger another maintenance pass in future updates
-    public static let currentMaintenanceCounter = 6
+    public static let currentMaintenanceCounter = 7
 
     public static let maintenanceCounterFileName = ".maintenance_counter"
 
@@ -73,6 +73,8 @@ public final class MaintenanceManager {
             case 6:
                 AnisetteConfigManager.shared.resetToDefaults()
                 SideSignConfigManager.shared.resetToDefaults()
+            case 7:
+                await migratePairingFiles()
             default:
                 break
             }
@@ -198,5 +200,32 @@ private extension MaintenanceManager {
                 }
             }
         }
+    }
+
+    func migratePairingFiles() async {
+        let fileManager = FileManager.default
+        let lockdownURL = fileManager.documentsDirectory.appendingPathComponent(AppConstants.Pairing.lockdownPairingFileName)
+        let remoteURL = fileManager.documentsDirectory.appendingPathComponent(AppConstants.Pairing.remotePairingFileName)
+
+        let legacyURL = fileManager.documentsDirectory.appendingPathComponent(AppConstants.Pairing.legacyPairingFileName)
+        guard fileManager.fileExists(atPath: legacyURL.path),
+              let content = try? String(contentsOf: legacyURL), !content.isEmpty else 
+        { 
+            return 
+        }
+
+        let remoteRP = try? PairingFileManager.shared.parse(content: content, preferred: .rppairing)
+        let lockdown = try? PairingFileManager.shared.parse(content: content, preferred: .lockdown)
+        if remoteRP != nil && !fileManager.fileExists(atPath: remoteURL.path) {
+            try? content.write(to: remoteURL, atomically: true, encoding: .utf8)
+            debugLog("[MaintenanceManager] Migrated remote pairing file to '\(remoteURL.path)'.")
+        }
+        if lockdown != nil && !fileManager.fileExists(atPath: lockdownURL.path) {
+            try? content.write(to: lockdownURL, atomically: true, encoding: .utf8)
+            debugLog("[MaintenanceManager] Migrated lockdown pairing file to '\(lockdownURL.path)'.")
+        }
+
+        try? fileManager.removeItem(at: legacyURL)
+        debugLog("[MaintenanceManager] Removed legacy pairing file '\(legacyURL.path)'.")
     }
 }

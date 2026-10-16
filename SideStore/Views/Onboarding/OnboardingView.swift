@@ -193,11 +193,11 @@ private struct WelcomeStep: View {
 
 private struct PairingFileStep: View {
     let onNext: () -> Void
-    @State private var hasPairingFile = PairingFileManager.shared.fetchPairingFile() != nil
+    @State private var hasPairingFile = PairingFileManager.shared.hasPairingFile()
     @State private var isShowingFilePicker = false
     @State private var errorMessage: String? = nil
 
-    private let contentTypes: [UTType] = [.propertyList, .xml, UTType(filenameExtension: AppConstants.Pairing.fileExtension)].compactMap { $0 }
+    private let contentTypes: [UTType] = PairingFileManager.supportedContentTypes
 
     var body: some View {
         VStack(spacing: 24) {
@@ -307,20 +307,8 @@ private struct PairingFileStep: View {
             switch result {
             case let .success(urls):
                 guard let url = urls.first else { return }
-                let isAccessing = url.startAccessingSecurityScopedResource()
-                defer {
-                    if isAccessing {
-                        url.stopAccessingSecurityScopedResource()
-                    }
-                }
-
                 do {
-                    let data = try Data(contentsOf: url)
-                    guard let contents = String(data: data, encoding: .utf8) else {
-                        errorMessage = NSLocalizedString("Unable to decode the selected pairing file.", comment: "")
-                        return
-                    }
-                    try PairingFileManager.shared.savePairingFile(contents: contents)
+                    try PairingFileManager.shared.importPairingFile(from: url)
                     hasPairingFile = true
                     errorMessage = nil
                     onNext()
@@ -658,7 +646,7 @@ private struct CompleteStep: View {
     let onFinish: () -> Void
 
     private var hasPairingFile: Bool {
-        PairingFileManager.shared.fetchPairingFile() != nil
+        PairingFileManager.shared.hasPairingFile()
     }
 
     private var isAuthenticated: Bool {

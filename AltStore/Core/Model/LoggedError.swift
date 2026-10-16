@@ -69,15 +69,7 @@ public class LoggedError: BaseEntity
         self.date = date
         self._operation = operation?.rawValue
         
-        let nsError: NSError
-        if let error = error as? ALTServerError, error.code == .underlyingError, let underlyingError = error.underlyingError
-        {
-            nsError = underlyingError as NSError
-        }
-        else
-        {
-            nsError = error as NSError
-        }
+        let nsError = error as NSError
         
         self.domain = nsError.domain
         self.code = Int32(nsError.code)
