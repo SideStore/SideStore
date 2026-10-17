@@ -290,6 +290,10 @@ public extension UserDefaults
         get { self.bool(forKey: #function) }
         set { self.set(newValue, forKey: #function) }
     }
+    @objc var isAnisetteKitVerboseLoggingEnabled: Bool {
+        get { self.bool(forKey: #function) }
+        set { self.set(newValue, forKey: #function) }
+    }
     @objc var isMinimuxerBackendHotswapEnabled: Bool {
         get { self.bool(forKey: #function) }
         set { self.set(newValue, forKey: #function) }
@@ -578,6 +582,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.isSideStoreVerboseLoggingEnabled): false,
             #keyPath(UserDefaults.isAltSignVerboseLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerVerboseLoggingEnabled): false,
+            #keyPath(UserDefaults.isAnisetteKitVerboseLoggingEnabled): false,
             #keyPath(UserDefaults.isMinimuxerBackendHotswapEnabled): false,
             #keyPath(UserDefaults.pairingFileEditSuppressedSHAs): [String: Bool](),
             #keyPath(UserDefaults.isRotateLogsOnStartupEnabled): true,
