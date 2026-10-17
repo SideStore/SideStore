@@ -151,6 +151,8 @@ struct DeveloperOptionsView: View {
                             }
                         ))
                         
+                        divider
+                        
                         NavigationLink(destination: OperationsLoggingControlView()) {
                             HStack {
                                 Text("Operations Logging Control")
