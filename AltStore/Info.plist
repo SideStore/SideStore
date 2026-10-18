@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ALTAnisetteURL</key>
-	<string>https://ani.sidestore.io</string>
+	<string>https://win.ani.sidestore.io</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDocumentTypes</key>
@@ -100,7 +100,7 @@
 		<string>_airplay._tcp</string>
 		<string>_raop._tcp</string>
 		<string>_sftp-ssh._tcp</string>
-		<string>_sleep-proxy._udp</string>
+		<string>_sleep-proxy.|udp</string>
 		<string>_ssh._tcp</string>
 		<string>_apple-mobdev2._tcp</string>
 		<string>_asquic._udp</string>
@@ -129,7 +129,7 @@
 		<string>_device-info._tcp</string>
 		<string>_workstation._tcp</string>
 		<string>_rfb._tcp</string>
-		<string>_net-assistant._udp</string>
+		<string>_net-assistant.|udp</string>
 		<string>_rdlink._tcp</string>
 		<string>_stikpairprobe._tcp</string>
 		<string>_webdav._tcp</string>
@@ -147,7 +147,7 @@
 		<string>_amzn-alexa._tcp</string>
 		<string>_home-assistant._tcp</string>
 		<string>_rtsp._tcp</string>
-		<string>_sip._udp</string>
+		<string>_rtp._udp</string>
 		<string>_sip._tcp</string>
 		<string>_h323._tcp</string>
 		<string>_h323._udp</string>
