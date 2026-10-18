@@ -18,6 +18,14 @@ enum AnisetteProvider {
             debugLog("[AnisetteProvider] On-device anisette requested but forced remote (temporary Windows auth fix)")
             UserDefaults.standard.useOnDeviceAnisette = false
         }
+        // One-shot: drop Mac-provisioned adi.pb so Windows ADI can provision fresh
+        // (matches SideInstaller / upstream PR#1660 recovery for -80045)
+        let migKey = "AnisetteWindowsADI.purgeAdi.v1"
+        if !UserDefaults.standard.bool(forKey: migKey) {
+            AnisetteConfigManager.shared.anisetteAdiBlob = nil
+            UserDefaults.standard.set(true, forKey: migKey)
+            debugLog("[AnisetteProvider] Purged stored adi.pb for Windows ADI re-provision")
+        }
         debugLog("[AnisetteProvider] Fetching anisette via remote server...")
         return try await fetchRemote(handler: handler)
     }
