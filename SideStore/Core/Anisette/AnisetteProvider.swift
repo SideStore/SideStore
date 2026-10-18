@@ -29,16 +29,27 @@ enum AnisetteProvider {
             throw AnisetteError.noServersConfigured
         }
 
+        // Prefer Windows ADI servers first (SideInstaller default: ani.jkcoxson.com)
+        let preferredWindows = ["https://ani.jkcoxson.com", "https://win.ani.sidestore.io", "https://ani2.stikstore.app"]
+        var ordered = servers
+        if let pref = preferredWindows.compactMap({ u in servers.first(where: { $0.absoluteString.hasPrefix(u) }) }).first,
+           let idx = ordered.firstIndex(of: pref) {
+            ordered.remove(at: idx)
+            ordered.insert(pref, at: 0)
+        }
         let lastServer = UserDefaults.standard.menuAnisetteURL
-        let startIndex = servers.firstIndex(where: { $0.absoluteString == lastServer }) ?? 0
+        let startIndex = ordered.firstIndex(where: { $0.absoluteString == lastServer }) ?? 0
 
         let provider = SideSign.AnisetteDataManager.shared
         let existingBlob = AnisetteConfigManager.shared.anisetteAdiBlob.flatMap { Data(base64Encoded: $0) }
         let identifier = await AnisetteConfigManager.shared.resolveDeviceIdentifier()
-        let headers = await AnisetteConfigManager.shared.makeRequestHeaders()
+        // SideInstaller-style: force Windows client-info + UA on every request
+        var headers = await AnisetteConfigManager.shared.makeRequestHeaders()
+        headers.clientInfo = "<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>"
+        headers.userAgent = "akd/1.0 CFNetwork/808.1.4"
 
         let (anisetteData, newAdiBlob) = try await provider.fetchAnisetteDataWithFailover(
-            servers: UserDefaults.standard.disableAnisetteRotation ? [servers[startIndex]] : servers,
+            servers: UserDefaults.standard.disableAnisetteRotation ? [ordered[startIndex]] : ordered,
             startIndex: startIndex,
             identifier: identifier,
             existingAdiBlob: existingBlob,
