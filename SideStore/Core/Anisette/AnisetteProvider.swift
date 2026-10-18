@@ -11,13 +11,15 @@ import SideSign
 
 enum AnisetteProvider {
     static func fetch(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
+        // Temporary SideInstaller-style fix: on-device Mac identity is blocked by Apple
+        // (-80045 / "could not connect to iCloud"). Always use remote Windows ADI servers.
+        // Users can still change the anisette server URL in Settings.
         if UserDefaults.standard.useOnDeviceAnisette {
-            debugLog("[AnisetteProvider] Fetching anisette via On-Device Anisette (ODA)...")
-            return try await OnDeviceAnisetteManager.shared.fetchAnisetteData()
-        } else {
-            debugLog("[AnisetteProvider] Fetching anisette via remote server...")
-            return try await fetchRemote(handler: handler)
+            debugLog("[AnisetteProvider] On-device anisette requested but forced remote (temporary Windows auth fix)")
+            UserDefaults.standard.useOnDeviceAnisette = false
         }
+        debugLog("[AnisetteProvider] Fetching anisette via remote server...")
+        return try await fetchRemote(handler: handler)
     }
 
     private static func fetchRemote(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
