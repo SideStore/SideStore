@@ -2,7 +2,8 @@
 //  AppConstants.swift
 //  SideStore
 //
-//  Created by Joseph Mattiello on 11/7/22.
+//
+  Created by Joseph Mattiello on 11/7/22.
 //  Copyright © 2022 Riley Testut. All rights reserved.
 //
 
@@ -27,11 +28,11 @@ public enum AppConstants {
         public static let address             = MinimuxerConstants.empServerHost
         public static let defaultPort: UInt16 = MinimuxerConstants.empServerPort
         public static let port                = String(defaultPort)
-        public static let serverURL           = "\(address):\(port)"
+        public static let serverURL          = "\(address):\(port)"
     }
     
     public enum Connection {
-        public static let defaultOverrideIP     = "10.7.0.1"
+        public static let defaultOverrideIP    = "10.7.0.1"
         public static let defaultRemoteServerIP = "10.7.0.1"
     }
     
@@ -53,7 +54,7 @@ public enum AppConstants {
         public static let bonjourServiceName    = "SideJITServer"
         public static let bonjourServiceType    = "_http._tcp"
         public static let timeout: TimeInterval = 2.0
-        public static let defaultServerURL      = "http://\(bonjourServiceName).\(bonjourServiceType).local:8080".lowercased()
+        public static let defaultServerURL       = "http://\(bonjourServiceName).\(bonjourServiceType).local:8080".lowercased()
     }
     
     public enum WebTransferServer {
@@ -113,7 +114,7 @@ public enum AppConstants {
         public static let service        = Constants.GrandSlam.service
         public static let headerVersion  = Constants.GrandSlam.headerVersion
         public static let authApp        = Constants.GrandSlam.authApp
-        public let userAgent       = Constants.GrandSlam.userAgent
+        public static let userAgent       = Constants.GrandSlam.userAgent
     }
 
     public enum AppleAuth {
@@ -125,7 +126,7 @@ public enum AppConstants {
         public static let clientID                = Constants.DeveloperServices.clientID
         public static let protocolVersion         = Constants.DeveloperServices.protocolVersion
         public static let servicesProtocolVersion = Constants.DeveloperServices.servicesProtocolVersion
-        public static let userAgent               = Constants.DeveloperServices.userAgent
+        public static let userAgent                = Constants.DeveloperServices.userAgent
     }
 
     public enum URLs {
@@ -136,11 +137,11 @@ public enum AppConstants {
         public static let grandSlamAuth             = Constants.URLs.grandSlamAuth
         public static let grandSlamValidate         = Constants.URLs.grandSlamValidate
         public static let trustedDevice             = Constants.URLs.trustedDevice
-        public static let appleAuthDevices          = Constants.URLs.appleAuthDevices
+        public static let appleAuthDevices         = Constants.URLs.appleAuthDevices
         public static let appleAccount              = URL(string: "https://account.apple.com")!
 
         // SideStore Documentation & Community URLs
-        public static let pairingDocumentation      = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file")!
+        public static let pairingDocumentation     = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file")!
         public static let errorCodesDocumentation   = URL(string: "https://docs.sidestore.io/docs/troubleshooting/error-codes")!
         public static let sideStoreWebsite          = URL(string: "https://sidestore.io")!
         public static let sideStoreGitHub           = URL(string: "https://github.com/SideStore")!
@@ -150,11 +151,11 @@ public enum AppConstants {
 
     public enum Minimuxer {
         public static let remotePairingPort                     = MinimuxerConstants.remotePairingPort
-        public static let lockdowndPort                         = MinimuxerConstants.lockdowndPort
-        public static let defaultTCPProbeTimeoutMs              = MinimuxerConstants.defaultTCPProbeTimeoutMs
-        public static let empServerHost                         = MinimuxerConstants.empServerHost
-        public static let empServerPort                         = MinimuxerConstants.empServerPort
-        public static let defaultHostName                       = MinimuxerConstants.defaultHostName
+        public static let lockdowndPort                          = MinimuxerConstants.lockdowndPort
+        public static let defaultTCPProbeTimeoutMs             = MinimuxerConstants.defaultTCPProbeTimeoutMs
+        public static let empServerHost                        = MinimuxerConstants.empServerHost
+        public static let empServerPort                        = MinimuxerConstants.empServerPort
+        public static let defaultHostName                      = MinimuxerConstants.defaultHostName
         public static let defaultHostModel                      = MinimuxerConstants.defaultHostModel
         public static let remotePairingDaemonServiceType        = MinimuxerConstants.remotePairingDaemonServiceType
         public static let remotePairingPairableHostServiceType  = MinimuxerConstants.remotePairingPairableHostServiceType
