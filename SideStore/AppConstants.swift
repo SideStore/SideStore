@@ -2,8 +2,7 @@
 //  AppConstants.swift
 //  SideStore
 //
-//
-  Created by Joseph Mattiello on 11/7/22.
+//  Created by Joseph Mattiello on 11/7/22.
 //  Copyright © 2022 Riley Testut. All rights reserved.
 //
 
@@ -126,7 +125,7 @@ public enum AppConstants {
         public static let clientID                = Constants.DeveloperServices.clientID
         public static let protocolVersion         = Constants.DeveloperServices.protocolVersion
         public static let servicesProtocolVersion = Constants.DeveloperServices.servicesProtocolVersion
-        public static let userAgent                = Constants.DeveloperServices.userAgent
+        public static let userAgent               = Constants.DeveloperServices.userAgent
     }
 
     public enum URLs {
@@ -137,11 +136,11 @@ public enum AppConstants {
         public static let grandSlamAuth             = Constants.URLs.grandSlamAuth
         public static let grandSlamValidate         = Constants.URLs.grandSlamValidate
         public static let trustedDevice             = Constants.URLs.trustedDevice
-        public static let appleAuthDevices         = Constants.URLs.appleAuthDevices
+        public static let appleAuthDevices          = Constants.URLs.appleAuthDevices
         public static let appleAccount              = URL(string: "https://account.apple.com")!
 
         // SideStore Documentation & Community URLs
-        public static let pairingDocumentation     = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file")!
+        public static let pairingDocumentation      = URL(string: "https://docs.sidestore.io/docs/advanced/pairing-file")!
         public static let errorCodesDocumentation   = URL(string: "https://docs.sidestore.io/docs/troubleshooting/error-codes")!
         public static let sideStoreWebsite          = URL(string: "https://sidestore.io")!
         public static let sideStoreGitHub           = URL(string: "https://github.com/SideStore")!
