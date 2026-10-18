@@ -68,9 +68,11 @@ public enum AppConstants {
         public static let defaultODAMetadataURL       = URL(string: "https://zzz.haus/oda.json")!
         public static var defaultODAMetadataURLString: String { defaultODAMetadataURL.absoluteString }
 
-        // Proxied from upstream SideSign
-        public static let defaultClientInfo           = Constants.Anisette.defaultClientInfo
-        public static let defaultUserAgent            = Constants.Anisette.defaultUserAgent
+        // Temporary fix (SideInstaller-style): Apple currently rejects Android/Mac/Xcode
+        // anisette identities with HTTP 503 / -80045. Sign in as a Windows PC instead.
+        // Users can still override these in Settings – Anisette Client Configuration.
+        public static let defaultClientInfo           = "<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>"
+        public static let defaultUserAgent            = "akd/1.0 CFNetwork/808.1.4"
 
         public enum URLs {
             public static let grandSlamLookup = Constants.Anisette.URLs.grandSlamLookup
@@ -87,7 +89,7 @@ public enum AppConstants {
             public static let userAgent        = Constants.Anisette.Headers.userAgent
             public static let clientTime       = Constants.Anisette.Headers.clientTime
             public static let locale           = Constants.Anisette.Headers.locale
-            public static let timeZone         = Constants.Anisette.Headers.timeZone
+            public static let timeZone        = Constants.Anisette.Headers.timeZone
         }
 
         public enum Libraries {
@@ -96,7 +98,9 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            public static let defaultServerURL     = "https://ani.sidestore.io"
+            // Default to Windows ADI server (temporary auth fix). Users can switch to any server in Settings.
+            public static let defaultServerURL     = "https://win.ani.sidestore.io"
+            public static let secondaryServerURL   = "https://ani.jkcoxson.com"
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
         }
 
@@ -109,7 +113,7 @@ public enum AppConstants {
         public static let service        = Constants.GrandSlam.service
         public static let headerVersion  = Constants.GrandSlam.headerVersion
         public static let authApp        = Constants.GrandSlam.authApp
-        public static let userAgent      = Constants.GrandSlam.userAgent
+        public let userAgent       = Constants.GrandSlam.userAgent
     }
 
     public enum AppleAuth {
