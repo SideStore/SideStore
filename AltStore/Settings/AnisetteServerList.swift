@@ -232,6 +232,38 @@ final class AnisetteViewModel: ObservableObject {
             }
         }
     }
+
+    /// Add a user-entered anisette-v3 server and select it.
+    @MainActor
+    func addCustomServer(name: String, address: String) -> String? {
+        var urlString = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        if urlString.isEmpty {
+            return "Enter a server URL."
+        }
+        if !urlString.contains("://") {
+            urlString = "https://" + urlString
+        }
+        guard let url = URL(string: urlString), url.host != nil else {
+            return "Invalid URL."
+        }
+        let final = url.absoluteString
+        if items.contains(where: { $0.address == final }) {
+            return "That server is already in the list."
+        }
+        let label = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let item = AnisetteServerItem(
+            name: label.isEmpty ? (url.host ?? "Custom") : label,
+            address: final,
+            isHidden: false
+        )
+        items.insert(item, at: 0)
+        let current = items
+        Task {
+            await AnisetteServersManager.shared.saveLocalServers(current)
+        }
+        UserDefaults.standard.menuAnisetteURL = final
+        return nil
+    }
 }
 
 struct AnisetteServersView: View {
@@ -245,6 +277,10 @@ struct AnisetteServersView: View {
     @State private var editingURLText: String = ""
     @State private var showingClearAlert = false
     @State private var showingImportAlert = false
+    @State private var showingAddServer = false
+    @State private var newServerName: String = ""
+    @State private var newServerAddress: String = ""
+    @State private var addServerError: String? = nil
     @State private var pendingImportData: Data? = nil
     @State private var pendingImportName: String? = nil
     #if os(tvOS)
@@ -573,6 +609,15 @@ struct AnisetteServersView: View {
         .navigationTitle("Anisette Servers")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
+                SwiftUI.Button {
+                    newServerName = ""
+                    newServerAddress = ""
+                    addServerError = nil
+                    showingAddServer = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+
                 if viewModel.isOfflineMode {
                     SwiftUI.Button {
                         showingClearAlert = true
@@ -737,6 +782,49 @@ struct AnisetteServersView: View {
             SwiftUI.Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will replace your current server catalog with the servers from '\(pendingImportName ?? "selected file")'. Do you want to proceed?")
+        }
+        
+        .sheet(isPresented: $showingAddServer) {
+            NavigationView {
+                Form {
+                    Section {
+                        TextField("Name (optional)", text: $newServerName)
+                        TextField("https://ani.example.com", text: $newServerAddress)
+                            #if !os(tvOS)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
+                            .keyboardType(.URL)
+                            #endif
+                    } header: {
+                        Text("Custom Anisette Server")
+                    } footer: {
+                        Text("Any anisette-v3 URL. Prefer Windows ADI hosts (e.g. https://ani.jkcoxson.com or https://win.ani.sidestore.io) for Apple ID sign-in.")
+                    }
+                    if let addServerError {
+                        Section {
+                            Text(addServerError)
+                                .foregroundColor(.red)
+                        }
+                    }
+                }
+                .navigationTitle("Add Server")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { showingAddServer = false }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Add") {
+                            if let err = viewModel.addCustomServer(name: newServerName, address: newServerAddress) {
+                                addServerError = err
+                            } else {
+                                selectedServerURL = UserDefaults.standard.menuAnisetteURL
+                                showingAddServer = false
+                            }
+                        }
+                    }
+                }
+            }
         }
         .sheet(isPresented: $showingShareSheet) {
             if let fileURL = exportFileURL {
