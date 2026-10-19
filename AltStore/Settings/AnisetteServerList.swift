@@ -277,41 +277,45 @@ private struct AddCustomAnisetteServerSheet: View {
 
     var body: some View {
         NavigationView {
-            Form {
-                Section {
-                    TextField("Name (optional)", text: $name)
-                    TextField("https://ani.example.com", text: $address)
-                        #if !os(tvOS)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                        .keyboardType(.URL)
-                        #endif
-                } header: {
-                    Text("Custom Anisette Server")
-                } footer: {
-                    Text("Any anisette-v3 URL. Prefer Windows ADI hosts (e.g. https://ani.jkcoxson.com or https://win.ani.sidestore.io) for Apple ID sign-in.")
-                }
-                if let errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .navigationTitle("Add Server")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { isPresented = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+            formContent
+                .navigationTitle("Add Server")
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .navigationBarItems(
+                    leading: Button("Cancel") {
+                        isPresented = false
+                    },
+                    trailing: Button("Add") {
                         if let err = onAdd(name, address) {
                             errorMessage = err
                         } else {
                             isPresented = false
                         }
                     }
+                )
+        }
+    }
+
+    @ViewBuilder
+    private var formContent: some View {
+        Form {
+            Section(header: Text("Custom Anisette Server"),
+                    footer: Text("Any anisette-v3 URL. Prefer Windows ADI hosts (e.g. https://ani.jkcoxson.com or https://win.ani.sidestore.io) for Apple ID sign-in.")) {
+                TextField("Name (optional)", text: $name)
+                #if !os(tvOS)
+                TextField("https://ani.example.com", text: $address)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .keyboardType(.URL)
+                #else
+                TextField("https://ani.example.com", text: $address)
+                #endif
+            }
+            if let errorMessage {
+                Section {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
                 }
             }
         }
@@ -870,3 +874,5 @@ struct AnisetteServersView: View {
                 }
     }
 }
+
+
