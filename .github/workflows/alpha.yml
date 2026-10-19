@@ -20,8 +20,8 @@ jobs:
   build:
     runs-on: macos-26
     env:
-      DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY | }
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
+      GH_TOKEN: ${{ secrets.GIXHUB_TOKEN }}
       RELEASE_NAME: Alpha
       CHANNEL: alpha
       UPSTREAM_CHANNEL: "nightly"
