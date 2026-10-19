@@ -68,12 +68,16 @@ enum AnisetteProvider {
 
     /// SideInstaller `client_info_to_use`.
     /// Temporary fix: always report Windows PC to GrandSlam (SideInstaller 1.5.2).
+    /// Stock Mac / Android advertised strings are also rewritten to Windows.
     static func clientInfoToUse(advertisedClientInfo: String?, advertisedUserAgent: String?) -> (clientInfo: String, userAgent: String) {
+        // SideInstaller temporary fix: login device = Windows PC
+        // Always use Windows identity so GSA matches Windows ADI anisette data.
         _ = advertisedClientInfo
         _ = advertisedUserAgent
         return (windowsClientInfo, akdUserAgent)
     }
 
+    /// Fetch /v3/client_info (SideInstaller RemoteV3) — used for logging; identity still forced Windows.
     private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
         guard var components = URLComponents(url: serverURL, resolvingAgainstBaseURL: false) else {
             return (nil, nil)
@@ -125,6 +129,7 @@ enum AnisetteProvider {
                 middle.append(url)
             }
         }
+        // Prefer known Windows order: jkcoxson, win.sidestore, stikstore
         let preferredOrder = ["ani.jkcoxson.com", "win.ani.sidestore.io", "ani2.stikstore.app"]
         windows.sort { a, b in
             let ia = preferredOrder.firstIndex(of: a.host ?? "") ?? 99
@@ -143,6 +148,7 @@ enum AnisetteProvider {
 
         var ordered = orderServersWindowsFirst(servers)
 
+        // Ensure at least one Windows ADI URL is tried first even if not in remote list
         let fallbackWindows = [
             "https://ani.jkcoxson.com",
             "https://win.ani.sidestore.io",
@@ -159,6 +165,7 @@ enum AnisetteProvider {
 
         let lastServer = UserDefaults.standard.menuAnisetteURL
         var startIndex = ordered.firstIndex(where: { $0.absoluteString == lastServer }) ?? 0
+        // If last server was Mac ADI, start at Windows instead
         if let host = URL(string: lastServer)?.host, macADIHosts.contains(host) {
             startIndex = 0
         }
@@ -175,6 +182,7 @@ enum AnisetteProvider {
         headers.clientInfo = resolved.clientInfo
         headers.userAgent = resolved.userAgent
 
+        // SideInstaller base_headers parity on DeveloperPortal / GrandSlam
         var gsConfig = await SideSignConfigManager.shared.loadConfig()
         gsConfig.grandSlam.userAgent = resolved.userAgent
         gsConfig.appleAuth.userAgent = resolved.userAgent
@@ -219,6 +227,7 @@ enum AnisetteProvider {
         }
 
         var data = anisetteData
+        // Force X-MMe-Client-Info identity into GSA (SideInstaller one-client rule)
         data.clientInfo = resolved.clientInfo
         return data
     }
