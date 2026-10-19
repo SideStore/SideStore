@@ -49,7 +49,7 @@ enum AnisetteProvider {
     }
 
     /// Fetch /v3/client_info from the anisette server (SideInstaller RemoteV3).
-    private static func fetchServerClientInfo(from serverURL: URL) >sync -> (clientInfo: String?, userAgent: String?) {
+    private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
         guard var components = URLComponents(url: serverURL, resolvingAgainstBaseUrl: false) else {
             return (nil, nil)
         }
