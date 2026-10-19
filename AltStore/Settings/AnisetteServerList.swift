@@ -266,6 +266,58 @@ final class AnisetteViewModel: ObservableObject {
     }
 }
 
+
+// MARK: - Add custom server sheet (extracted to help the type checker)
+private struct AddCustomAnisetteServerSheet: View {
+    @Binding var isPresented: Bool
+    @Binding var name: String
+    @Binding var address: String
+    @Binding var errorMessage: String?
+    var onAdd: (String, String) -> String?
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section {
+                    TextField("Name (optional)", text: $name)
+                    TextField("https://ani.example.com", text: $address)
+                        #if !os(tvOS)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .keyboardType(.URL)
+                        #endif
+                } header: {
+                    Text("Custom Anisette Server")
+                } footer: {
+                    Text("Any anisette-v3 URL. Prefer Windows ADI hosts (e.g. https://ani.jkcoxson.com or https://win.ani.sidestore.io) for Apple ID sign-in.")
+                }
+                if let errorMessage {
+                    Section {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .navigationTitle("Add Server")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isPresented = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        if let err = onAdd(name, address) {
+                            errorMessage = err
+                        } else {
+                            isPresented = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct AnisetteServersView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = AnisetteViewModel()
@@ -299,6 +351,216 @@ struct AnisetteServersView: View {
     }
 
     var body: some View {
+        serverList
+        .navigationTitle("Anisette Servers")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                SwiftUI.Button {
+                    newServerName = ""
+                    newServerAddress = ""
+                    addServerError = nil
+                    showingAddServer = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+
+                if viewModel.isOfflineMode {
+                    SwiftUI.Button {
+                        showingClearAlert = true
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .foregroundColor(.red)
+                    }
+                    .tint(.red)
+                } else {
+                    SwiftUI.Button {
+                        #if !os(tvOS)
+                        showingFileImporter = true
+                        #else
+                        if let topVC = UIApplication.shared.topViewController() {
+                            TVWebFileTransferManager.shared.startImport(
+                                acceptedExtensions: ["json"],
+                                title: "Import Anisette Servers JSON",
+                                presentingVC: topVC
+                            ) { fileURL in
+                                guard let fileURL = fileURL else { return }
+                                if let data = try? Data(contentsOf: fileURL) {
+                                    DispatchQueue.main.async {
+                                        pendingImportData = data
+                                        pendingImportName = fileURL.lastPathComponent
+                                        showingImportAlert = true
+                                    }
+                                }
+                            }
+                        }
+                        #endif
+                    } label: {
+                        Image(systemName: "doc.badge.plus")
+                    }
+                }
+
+                #if !os(tvOS)
+                Menu {
+                    if viewModel.hasHiddenItems {
+                        SwiftUI.Button {
+                            viewModel.showHiddenServers.toggle()
+                        } label: {
+                            Label(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden", systemImage: viewModel.showHiddenServers ? "eye.slash" : "eye")
+                        }
+                    }
+
+                    SwiftUI.Button {
+                        Task {
+                            if let url = await viewModel.exportCatalog(unmodified: false) {
+                                exportFileURL = url
+                                showingShareSheet = true
+                            }
+                        }
+                    } label: {
+                        Label("Export Current", systemImage: "square.and.arrow.up")
+                    }
+
+                    if viewModel.isOfflineMode {
+                        SwiftUI.Button {
+                            Task {
+                                if let url = await viewModel.exportCatalog(unmodified: true) {
+                                    exportFileURL = url
+                                    showingShareSheet = true
+                                }
+                            }
+                        } label: {
+                            Label("Export Original", systemImage: "doc.on.doc")
+                        }
+                    }
+
+                    SwiftUI.Button(role: .destructive) {
+                        Task {
+                            await viewModel.resetToOriginalState()
+                        }
+                    } label: {
+                        Label("Reset Catalog", systemImage: "arrow.circlepath")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                #else
+                SwiftUI.Button {
+                    showingTvOptionsMenu = true
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                #endif
+            }
+        }
+        #if os(tvOS)
+        .confirmationDialog("Options", isPresented: $showingTvOptionsMenu) {
+            if viewModel.hasHiddenItems {
+                SwiftUI.Button(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden") {
+                    viewModel.showHiddenServers.toggle()
+                }
+            }
+            SwiftUI.Button("Export Current") {
+                Task {
+                    if let url = await viewModel.exportCatalog(unmodified: false), let topVC = UIApplication.shared.topViewController() {
+                        TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export Anisette Servers JSON", presentingVC: topVC)
+                    }
+                }
+            }
+            if viewModel.isOfflineMode {
+                SwiftUI.Button("Export Original") {
+                    Task {
+                        if let url = await viewModel.exportCatalog(unmodified: true), let topVC = UIApplication.shared.topViewController() {
+                            TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export Anisette Servers JSON", presentingVC: topVC)
+                        }
+                    }
+                }
+            }
+            SwiftUI.Button("Reset Catalog", role: .destructive) {
+                Task {
+                    await viewModel.resetToOriginalState()
+                }
+            }
+        }
+        #endif
+        #if !os(tvOS)
+        .fileImporter(
+            isPresented: $showingFileImporter,
+            allowedContentTypes: [.json],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first {
+                    let isAccessing = url.startAccessingSecurityScopedResource()
+                    defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
+                    do {
+                        let data = try Data(contentsOf: url)
+                        pendingImportData = data
+                        pendingImportName = url.lastPathComponent
+                        showingImportAlert = true
+                    } catch {
+                        viewModel.errorMessage = "Failed to read file: \(error.localizedDescription)"
+                    }
+                }
+            case .failure(let error):
+                viewModel.errorMessage = "Import failed: \(error.localizedDescription)"
+            }
+        }
+        #endif
+        .alert("Clear Imported File?", isPresented: $showingClearAlert) {
+            SwiftUI.Button("Clear", role: .destructive) {
+                Task {
+                    await viewModel.clearImportedFile()
+                }
+            }
+            SwiftUI.Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to remove the imported catalog '\(viewModel.importedFileName ?? "custom.json")' and return to the default server URL?")
+        }
+        .alert("Import Server Catalog?", isPresented: $showingImportAlert) {
+            SwiftUI.Button("Import") {
+                if let data = pendingImportData, let name = pendingImportName {
+                    Task {
+                        await viewModel.importData(data, filename: name)
+                    }
+                }
+            }
+            SwiftUI.Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will replace your current server catalog with the servers from '\(pendingImportName ?? "selected file")'. Do you want to proceed?")
+        }
+        
+        .sheet(isPresented: $showingAddServer) {
+            AddCustomAnisetteServerSheet(
+                isPresented: $showingAddServer,
+                name: $newServerName,
+                address: $newServerAddress,
+                errorMessage: $addServerError,
+                onAdd: { name, address in
+                    if let err = viewModel.addCustomServer(name: name, address: address) {
+                        return err
+                    }
+                    selectedServerURL = UserDefaults.standard.menuAnisetteURL
+                    return nil
+                }
+            )
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let fileURL = exportFileURL {
+                ActivityViewController(activityItems: [fileURL])
+            }
+        }
+        .task {
+            let active = UserDefaults.standard.menuAnisetteURL
+            if !active.isEmpty {
+                selectedServerURL = active
+            }
+            await viewModel.fetchServers()
+        }
+    }
+
+    @ViewBuilder
+    private var serverList: some View {
         List {
             // Section 1: Server Selection
             Section {
@@ -606,239 +868,5 @@ struct AnisetteServersView: View {
                 .refreshable {
                     await viewModel.fetchServers(forceRemote: true)
                 }
-        .navigationTitle("Anisette Servers")
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                SwiftUI.Button {
-                    newServerName = ""
-                    newServerAddress = ""
-                    addServerError = nil
-                    showingAddServer = true
-                } label: {
-                    Image(systemName: "plus")
-                }
-
-                if viewModel.isOfflineMode {
-                    SwiftUI.Button {
-                        showingClearAlert = true
-                    } label: {
-                        Image(systemName: "xmark.circle")
-                            .foregroundColor(.red)
-                    }
-                    .tint(.red)
-                } else {
-                    SwiftUI.Button {
-                        #if !os(tvOS)
-                        showingFileImporter = true
-                        #else
-                        if let topVC = UIApplication.shared.topViewController() {
-                            TVWebFileTransferManager.shared.startImport(
-                                acceptedExtensions: ["json"],
-                                title: "Import Anisette Servers JSON",
-                                presentingVC: topVC
-                            ) { fileURL in
-                                guard let fileURL = fileURL else { return }
-                                if let data = try? Data(contentsOf: fileURL) {
-                                    DispatchQueue.main.async {
-                                        pendingImportData = data
-                                        pendingImportName = fileURL.lastPathComponent
-                                        showingImportAlert = true
-                                    }
-                                }
-                            }
-                        }
-                        #endif
-                    } label: {
-                        Image(systemName: "doc.badge.plus")
-                    }
-                }
-
-                #if !os(tvOS)
-                Menu {
-                    if viewModel.hasHiddenItems {
-                        SwiftUI.Button {
-                            viewModel.showHiddenServers.toggle()
-                        } label: {
-                            Label(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden", systemImage: viewModel.showHiddenServers ? "eye.slash" : "eye")
-                        }
-                    }
-
-                    SwiftUI.Button {
-                        Task {
-                            if let url = await viewModel.exportCatalog(unmodified: false) {
-                                exportFileURL = url
-                                showingShareSheet = true
-                            }
-                        }
-                    } label: {
-                        Label("Export Current", systemImage: "square.and.arrow.up")
-                    }
-
-                    if viewModel.isOfflineMode {
-                        SwiftUI.Button {
-                            Task {
-                                if let url = await viewModel.exportCatalog(unmodified: true) {
-                                    exportFileURL = url
-                                    showingShareSheet = true
-                                }
-                            }
-                        } label: {
-                            Label("Export Original", systemImage: "doc.on.doc")
-                        }
-                    }
-
-                    SwiftUI.Button(role: .destructive) {
-                        Task {
-                            await viewModel.resetToOriginalState()
-                        }
-                    } label: {
-                        Label("Reset Catalog", systemImage: "arrow.circlepath")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
-                #else
-                SwiftUI.Button {
-                    showingTvOptionsMenu = true
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
-                #endif
-            }
-        }
-        #if os(tvOS)
-        .confirmationDialog("Options", isPresented: $showingTvOptionsMenu) {
-            if viewModel.hasHiddenItems {
-                SwiftUI.Button(viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden") {
-                    viewModel.showHiddenServers.toggle()
-                }
-            }
-            SwiftUI.Button("Export Current") {
-                Task {
-                    if let url = await viewModel.exportCatalog(unmodified: false), let topVC = UIApplication.shared.topViewController() {
-                        TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export Anisette Servers JSON", presentingVC: topVC)
-                    }
-                }
-            }
-            if viewModel.isOfflineMode {
-                SwiftUI.Button("Export Original") {
-                    Task {
-                        if let url = await viewModel.exportCatalog(unmodified: true), let topVC = UIApplication.shared.topViewController() {
-                            TVWebFileTransferManager.shared.startExport(fileURL: url, title: "Export Anisette Servers JSON", presentingVC: topVC)
-                        }
-                    }
-                }
-            }
-            SwiftUI.Button("Reset Catalog", role: .destructive) {
-                Task {
-                    await viewModel.resetToOriginalState()
-                }
-            }
-        }
-        #endif
-        #if !os(tvOS)
-        .fileImporter(
-            isPresented: $showingFileImporter,
-            allowedContentTypes: [.json],
-            allowsMultipleSelection: false
-        ) { result in
-            switch result {
-            case .success(let urls):
-                if let url = urls.first {
-                    let isAccessing = url.startAccessingSecurityScopedResource()
-                    defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
-                    do {
-                        let data = try Data(contentsOf: url)
-                        pendingImportData = data
-                        pendingImportName = url.lastPathComponent
-                        showingImportAlert = true
-                    } catch {
-                        viewModel.errorMessage = "Failed to read file: \(error.localizedDescription)"
-                    }
-                }
-            case .failure(let error):
-                viewModel.errorMessage = "Import failed: \(error.localizedDescription)"
-            }
-        }
-        #endif
-        .alert("Clear Imported File?", isPresented: $showingClearAlert) {
-            SwiftUI.Button("Clear", role: .destructive) {
-                Task {
-                    await viewModel.clearImportedFile()
-                }
-            }
-            SwiftUI.Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Are you sure you want to remove the imported catalog '\(viewModel.importedFileName ?? "custom.json")' and return to the default server URL?")
-        }
-        .alert("Import Server Catalog?", isPresented: $showingImportAlert) {
-            SwiftUI.Button("Import") {
-                if let data = pendingImportData, let name = pendingImportName {
-                    Task {
-                        await viewModel.importData(data, filename: name)
-                    }
-                }
-            }
-            SwiftUI.Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This will replace your current server catalog with the servers from '\(pendingImportName ?? "selected file")'. Do you want to proceed?")
-        }
-        
-        .sheet(isPresented: $showingAddServer) {
-            NavigationView {
-                Form {
-                    Section {
-                        TextField("Name (optional)", text: $newServerName)
-                        TextField("https://ani.example.com", text: $newServerAddress)
-                            #if !os(tvOS)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled(true)
-                            .keyboardType(.URL)
-                            #endif
-                    } header: {
-                        Text("Custom Anisette Server")
-                    } footer: {
-                        Text("Any anisette-v3 URL. Prefer Windows ADI hosts (e.g. https://ani.jkcoxson.com or https://win.ani.sidestore.io) for Apple ID sign-in.")
-                    }
-                    if let addServerError {
-                        Section {
-                            Text(addServerError)
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
-                .navigationTitle("Add Server")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { showingAddServer = false }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Add") {
-                            if let err = viewModel.addCustomServer(name: newServerName, address: newServerAddress) {
-                                addServerError = err
-                            } else {
-                                selectedServerURL = UserDefaults.standard.menuAnisetteURL
-                                showingAddServer = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .sheet(isPresented: $showingShareSheet) {
-            if let fileURL = exportFileURL {
-                ActivityViewController(activityItems: [fileURL])
-            }
-        }
-        .task {
-            let active = selected ?? UserDefaults.standard.menuAnisetteURL
-            if !active.isEmpty {
-                selectedServerURL = active
-            }
-            await viewModel.fetchServers()
-        }
     }
 }
-
-
