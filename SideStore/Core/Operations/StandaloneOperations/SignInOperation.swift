@@ -217,7 +217,7 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 reportProgress(stepWeight * 3)
             } else {
                 self.debugLog("[SignInOperation] Device registration skipped by user.")
-               await self.signInHandler.showDeviceRegistrationSkipAcknowledgement()
+               await self.signInHandler.showDeviceRegistrationSkipAcknowledgment()
             }
         }
 
