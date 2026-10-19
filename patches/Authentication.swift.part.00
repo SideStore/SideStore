@@ -1,0 +1,89 @@
+//
+//  Authentication.swift
+//  SideSign
+//
+//  Created by Magesh K on 30/08/26.
+//  Copyright © 2026 SideSign. All rights reserved.
+//
+
+import Foundation
+import GSACryptoKit
+
+private enum PushedCodeState {
+    @TaskLocal static var handled = false
+}
+
+public extension DeveloperPortal {
+
+    func authenticate(appleID unsanitizedAppleID: String,
+                      password: String,
+                      anisetteData: AnisetteData,
+                      xcodeVersion: String,
+                      machinePassword: String? = nil,
+                      accountRepairHandler: DeveloperPortal.AccountRepairHandler = DeveloperPortal.defaultAccountRepairHandler,
+                      verificationHandler: DeveloperPortal.VerificationHandler? = nil) async throws -> AuthSession
+    {
+        let sanitizedAppleID = unsanitizedAppleID.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        debugLog("[SideSign] Starting authenticate...")
+        verboseLog("[SideSign] Authenticating Apple ID: \(sanitizedAppleID)")
+
+        let clientDictionary: [String: any Sendable] = [
+            "bootstrap": true,
+            "icscrec": true,
+            "pbe": false,
+            "prkgen": true,
+            "svct": customHeaders.grandSlam.service,
+            "loc": anisetteData.locale,
+            "X-Apple-Locale": anisetteData.locale,
+            "X-Apple-I-MD": anisetteData.oneTimePassword,
+            "X-Apple-I-MD-M": anisetteData.machineID,
+            "X-Mme-Device-Id": anisetteData.deviceID,
+            "X-Apple-I-MD-LU": anisetteData.localUserID,
+            "X-Apple-I-MD-RINFO": anisetteData.routingInfo,
+            "X-Apple-I-SRL-NO": anisetteData.serialNumber,
+            "X-Apple-I-Client-Time": anisetteData.clientTime,
+            "X-Apple-I-TimeZone": anisetteData.timeZone
+        ]
+
+        guard let srpClient = SRPClient(),
+              let publicKey = srpClient.startAuthentication()
+        else {
+            debugLog("[SideSign] Failed to start SRPClient / generate public key A")
+            throw DeveloperPortalError.authenticationHandshakeFailed(cause: "Failed to start SRPClient / generate public key A")
+        }
+
+        verboseLog("[SideSign] SRPClient started. Generated public key A: \(publicKey.hexEncodedString())")
+
+        // 1. Send authentication 'init' request
+        let initParameters: [String: any Sendable] = [
+            "A2k": publicKey,
+            "cpd": clientDictionary,
+            "ps": ["s2k", "s2k_fo"],
+            "o": "init",
+            "u": sanitizedAppleID
+        ]
+
+        debugLog("[SideSign] Sending authentication 'init' request...")
+        let initResponse = try await sendAuthenticationRequest(parameters: initParameters, anisetteData: anisetteData)
+
+        guard let c = initResponse["c"] as? String,
+              let salt = initResponse["s"] as? Data,
+              let iterations = initResponse["i"] as? Int,
+              let serverPublicKey = initResponse["B"] as? Data
+        else {
+            let payload = prettyJSONString(from: initResponse)
+            debugLog("[SideSign] Failed to parse authentication init response dictionary: missing c/s/i/B parameters")
+            throw ServerError.badServerResponse(reason: "Auth init response missing c/s/i/B parameters", jsonPayload: payload)
+        }
+
+        verboseLog("""
+        [SideSign] Received init response:
+          • c: \(c)
+          • sp: \(initResponse["sp"] as? String ?? "nil")
+          • salt: \(salt.hexEncodedString())
+          • iterations: \(iterations)
+          • B: \(serverPublicKey.hexEncodedString())
+        """)
+
+        let sp = initResponse["sp"] as? String
+        let isHexadecimal = (sp == "s2k/fo")
