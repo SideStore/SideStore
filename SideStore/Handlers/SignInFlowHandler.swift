@@ -137,7 +137,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler, Certif
             }
 
         case .trustedDevice:
-            // Custom 2FA Bypass: force manual alert input prompt
+            // Force manual override prompt for missing 2FA triggers
             return try await promptManualOverrideCode()
 
         case .sms(let phoneNumbers, let activeID, _):
@@ -231,27 +231,52 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler, Certif
         }
     }
 
-    // MARK: - Standalone / Protocol Conformance Requirements
+    // MARK: - AnisetteServerHandler Protocols
+
+    @MainActor
+    func warnOutdatedAnisetteServer() async throws -> Bool {
+        return try await withCheckedThrowingContinuation { continuation in
+            let alert = UIAlertController(
+                title: NSLocalizedString("Outdated Anisette Server", comment: ""),
+                message: NSLocalizedString("The configured Anisette server is using an outdated version. Do you want to continue anyway?", comment: ""),
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default) { _ in
+                continuation.resume(returning: true)
+            })
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                continuation.resume(returning: false)
+            })
+            self.present(alert)
+        }
+    }
+
+    // MARK: - CodeSignValidationHandler Protocols
+
+    @MainActor
+    func resolveResign(mismatchReason: CodeSignValidationReason, context: StandaloneOperationContext) async throws -> Bool {
+        return try await withCheckedThrowingContinuation { continuation in
+            let alert = UIAlertController(
+                title: NSLocalizedString("Code Sign Mismatch", comment: ""),
+                message: NSLocalizedString("The app signature does not match expected signing attributes. Would you like to resign?", comment: ""),
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Resign", comment: ""), style: .default) { _ in
+                continuation.resume(returning: true)
+            })
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                continuation.resume(returning: false)
+            })
+            self.present(alert)
+        }
+    }
+
+    // MARK: - General Flow Handlers & Dialogs
 
     @MainActor
     func complete() async {
         if self.navigationController.presentingViewController != nil {
             self.navigationController.dismiss(animated: true)
-        }
-    }
-
-    @MainActor
-    func warnOutdatedAnisetteServer() async {
-        await withCheckedContinuation { continuation in
-            let alert = UIAlertController(
-                title: NSLocalizedString("Outdated Anisette Server", comment: ""),
-                message: NSLocalizedString("The configured Anisette server is using an outdated version. You may experience sign-in issues.", comment: ""),
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
-                continuation.resume()
-            })
-            self.present(alert)
         }
     }
 
