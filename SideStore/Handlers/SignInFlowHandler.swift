@@ -9,7 +9,7 @@
 import UIKit
 import SideSign
 
-class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
+class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler, CertificateProvisioningHandler, DeviceProvisioningHandler, CodeSignValidationHandler {
     
     private weak var presentingViewController: UIViewController?
     private weak var presentedAuthVC: AuthenticationViewController?
@@ -39,6 +39,8 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
         }
         return self.presentingViewController?.presentedViewController ?? self.presentingViewController
     }
+    
+    // MARK: - Credentials Handler
     
     @MainActor
     func credentials() async throws -> (String, String) {
@@ -106,6 +108,8 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
         }
     }
     
+    // MARK: - 2FA Verification Handler
+    
     @MainActor
     func verificationCode(for request: TwoFactorRequest) async throws -> TwoFactorResponse {
         guard self.isPresenterAvailable else {
@@ -133,7 +137,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
             }
 
         case .trustedDevice:
-            // Fallback directly to our manual popup if native prompt hangs
+            // Custom 2FA Bypass: force manual alert input prompt
             return try await promptManualOverrideCode()
 
         case .sms(let phoneNumbers, let activeID, _):
@@ -195,4 +199,563 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
                     continuation.resume(returning: .cancel)
                 }
             }
-            submitAction.isEnabled
+            submitAction.isEnabled = true
+            alertController.addAction(submitAction)
+            
+            alertController.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                continuation.resume(returning: .cancel)
+            })
+            
+            self.present(alertController)
+        }
+    }
+
+    @MainActor
+    func showErrorRetryAlert(message: String) async throws -> Bool {
+        return try await withCheckedThrowingContinuation { continuation in
+            let alert = UIAlertController(
+                title: NSLocalizedString("Verification Failed", comment: ""),
+                message: message,
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
+                continuation.resume(returning: true)
+            })
+
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                continuation.resume(returning: false)
+            })
+
+            self.present(alert)
+        }
+    }
+
+    // MARK: - Standalone / Protocol Conformance Requirements
+
+    @MainActor
+    func complete() async {
+        if self.navigationController.presentingViewController != nil {
+            self.navigationController.dismiss(animated: true)
+        }
+    }
+
+    @MainActor
+    func warnOutdatedAnisetteServer() async {
+        await withCheckedContinuation { continuation in
+            let alert = UIAlertController(
+                title: NSLocalizedString("Outdated Anisette Server", comment: ""),
+                message: NSLocalizedString("The configured Anisette server is using an outdated version. You may experience sign-in issues.", comment: ""),
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                continuation.resume()
+            })
+            self.present(alert)
+        }
+    }
+
+    @MainActor
+    func accountRepair(url: URL, message: String) async -> AccountRepairDecision {
+        guard self.isPresenterAvailable else {
+            return .cancel
+        }
+
+        return await withCheckedContinuation { continuation in
+            let appleAccountURL = AppConstants.URLs.appleAccount
+            let baseMessage = message.isEmpty ? AppConstants.defaultAccountRepairMessage : message
+            let displayMessage = """
+                \(baseMessage)
+
+                \(NSLocalizedString("Warning: Repeatedly skipping this without completing required verification or terms may lead to your account being restricted by Apple over time.", comment: ""))
+                """
+
+            let alert = UIAlertController(
+                title: NSLocalizedString("Account Repair Required", comment: ""),
+                message: displayMessage,
+                preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Open Developer Account", comment: ""), style: .default) { [weak self] _ in
+                self?.activePresenter?.openWebURL(url)
+                continuation.resume(returning: .cancel)
+            })
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Open Apple Account", comment: ""), style: .default) { [weak self] _ in
+                self?.activePresenter?.openWebURL(appleAccountURL)
+                continuation.resume(returning: .cancel)
+            })
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Skip & Continue", comment: ""), style: .default) { _ in
+                continuation.resume(returning: .proceed)
+            })
+
+            alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                continuation.resume(returning: .cancel)
+            })
+
+            self.present(alert)
+        }
+    }
+
+    @MainActor
+    func promptCodeEntry(title: String,
+                         phoneNumbers: [TrustedPhoneNumber],
+                         activePhoneID: String,
+                         currentDeliveryMode: TwoFactorDeliveryMode?,
+                         isTrustedDevice: Bool) async throws -> TwoFactorResponse
+    {
+        return try await withCheckedThrowingContinuation { continuation in
+            let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+            var observer: NSObjectProtocol?
+            alertController.addTextField { (textField) in
+                textField.autocorrectionType = .no
+                textField.autocapitalizationType = .none
+                textField.keyboardType = .numberPad
+                
+                observer = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: .main) { (notification) in
+                    guard let textField = notification.object as? UITextField else { return }
+                    alertController.actions.first?.isEnabled = (textField.text ?? "").count == 6
+                }
+            }
+            
+            let submitAction = UIAlertAction(title: NSLocalizedString("Continue", comment: ""), style: .default) { _ in
+                if let observer = observer {
+                    NotificationCenter.default.removeObserver(observer)
+                }
+                let textField = alertController.textFields?.first
+                let code = textField?.text ?? ""
+                continuation.resume(returning: .verificationCode(code))
+            }
+            submitAction.isEnabled = false
+            alertController.addAction(submitAction)
+
+            if isTrustedDevice {
+                let otherMethodsAction = UIAlertAction(title: NSLocalizedString("Other Options…", comment: ""), style: .default) { [weak self] _ in
+                    if let observer = observer {
+                        NotificationCenter.default.removeObserver(observer)
+                    }
+                    guard let self = self else {
+                        continuation.resume(returning: .cancel)
+                        return
+                    }
+                    self.showDeliveryMethodDialog(preferredMode: .sms, phoneNumbers: phoneNumbers, activeID: activePhoneID, continuation: continuation)
+                }
+                alertController.addAction(otherMethodsAction)
+            } else if let mode = currentDeliveryMode {
+                let resendTitle = (mode == .sms)
+                    ? NSLocalizedString("Resend SMS", comment: "")
+                    : NSLocalizedString("Call Again", comment: "")
+                let resendAction = UIAlertAction(title: resendTitle, style: .default) { _ in
+                    if let observer = observer {
+                        NotificationCenter.default.removeObserver(observer)
+                    }
+                    if case .voice = mode {
+                        return continuation.resume(returning: .requestVoice(phoneID: activePhoneID))
+                    }
+                    if case .sms = mode {
+                        return continuation.resume(returning: .requestSMS(phoneID: activePhoneID))
+                    }
+                }
+                alertController.addAction(resendAction)
+
+                let otherMethodsAction = UIAlertAction(title: NSLocalizedString("Other Options…", comment: ""), style: .default) { [weak self] _ in
+                    if let observer = observer {
+                        NotificationCenter.default.removeObserver(observer)
+                    }
+                    guard let self = self else {
+                        continuation.resume(returning: .cancel)
+                        return
+                    }
+                    self.showDeliveryMethodDialog(preferredMode: .trustedDevice, phoneNumbers: phoneNumbers, activeID: activePhoneID, continuation: continuation)
+                }
+                alertController.addAction(otherMethodsAction)
+
+                if phoneNumbers.count > 1 {
+                    let changeNumberAction = UIAlertAction(title: NSLocalizedString("Choose Different Number", comment: ""), style: .default) { [weak self] _ in
+                        if let observer = observer {
+                            NotificationCenter.default.removeObserver(observer)
+                        }
+                        guard let self = self else {
+                            continuation.resume(returning: .cancel)
+                            return
+                        }
+                        self.showPhoneNumberSelectionDialog(phoneNumbers: phoneNumbers, activeID: activePhoneID, mode: mode, continuation: continuation)
+                    }
+                    alertController.addAction(changeNumberAction)
+                }
+            }
+            
+            alertController.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+                if let observer = observer {
+                    NotificationCenter.default.removeObserver(observer)
+                }
+                continuation.resume(returning: .cancel)
+            })
+            
+            self.present(alertController)
+        }
+    }
+
+    @MainActor
+    func showDeliveryMethodDialog(preferredMode: TwoFactorDeliveryMode,
+                                  phoneNumbers: [TrustedPhoneNumber],
+                                  activeID: String,
+                                  continuation: CheckedContinuation<TwoFactorResponse, Error>)
+    {
+        let alert = UIAlertController(
+            title: NSLocalizedString("Verification Method", comment: ""),
+            message: NSLocalizedString("How would you like to receive your verification code?", comment: ""),
+            preferredStyle: .alert
+        )
+
+        let isAppleDefault = (preferredMode == .trustedDevice)
+        let trustedDeviceTitle = isAppleDefault
+            ? NSLocalizedString("Apple Devices (Recommended)", comment: "")
+            : NSLocalizedString("Apple Devices", comment: "")
+        let trustedDeviceAction = UIAlertAction(title: trustedDeviceTitle, style: .default) { _ in
+            continuation.resume(returning: .requestTrustedDevice)
+        }
+        alert.addAction(trustedDeviceAction)
+
+        let isSMSDefault = (preferredMode == .sms)
+        let smsTitle = isSMSDefault
+            ? NSLocalizedString("Text Message (SMS) (Recommended)", comment: "")
+            : NSLocalizedString("Text Message (SMS)", comment: "")
+        let smsAction = UIAlertAction(title: smsTitle, style: .default) { [weak self] _ in
+            guard let self = self else {
+                continuation.resume(returning: .cancel)
+                return
+            }
+            if phoneNumbers.count > 1 {
+                self.showPhoneNumberSelectionDialog(phoneNumbers: phoneNumbers, activeID: activeID, mode: .sms, continuation: continuation)
+            } else {
+                let targetID = phoneNumbers.first?.id ?? activeID
+                continuation.resume(returning: .requestSMS(phoneID: targetID))
+            }
+        }
+        alert.addAction(smsAction)
+
+        let isVoiceDefault = (preferredMode == .voice)
+        let voiceTitle = isVoiceDefault
+            ? NSLocalizedString("Phone Call (Recommended)", comment: "")
+            : NSLocalizedString("Phone Call", comment: "")
+        let voiceAction = UIAlertAction(title: voiceTitle, style: .default) { [weak self] _ in
+            guard let self = self else {
+                continuation.resume(returning: .cancel)
+                return
+            }
+            if phoneNumbers.count > 1 {
+                self.showPhoneNumberSelectionDialog(phoneNumbers: phoneNumbers, activeID: activeID, mode: .voice, continuation: continuation)
+            } else {
+                let targetID = phoneNumbers.first?.id ?? activeID
+                continuation.resume(returning: .requestVoice(phoneID: targetID))
+            }
+        }
+        alert.addAction(voiceAction)
+
+        alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+            continuation.resume(returning: .cancel)
+        })
+
+        switch preferredMode {
+        case .trustedDevice:
+            alert.preferredAction = trustedDeviceAction
+        case .sms:
+            alert.preferredAction = smsAction
+        case .voice:
+            alert.preferredAction = voiceAction
+        }
+
+        self.present(alert)
+    }
+
+    @MainActor
+    func showPhoneNumberSelectionDialog(phoneNumbers: [TrustedPhoneNumber],
+                                         activeID: String,
+                                         mode: TwoFactorDeliveryMode,
+                                         continuation: CheckedContinuation<TwoFactorResponse, Error>)
+    {
+        let alert = UIAlertController(
+            title: NSLocalizedString("Select Phone Number", comment: ""),
+            message: NSLocalizedString("Choose a phone number to receive your verification code:", comment: ""),
+            preferredStyle: .alert
+        )
+
+        for phone in phoneNumbers {
+            let isCurrent = (phone.id == activeID)
+            let buttonTitle = isCurrent ? "\(phone.number) (Current)" : phone.number
+            let action = UIAlertAction(title: buttonTitle, style: .default) { _ in
+                if case .voice = mode {
+                    return continuation.resume(returning: .requestVoice(phoneID: phone.id))
+                }
+                if case .sms = mode {
+                    return continuation.resume(returning: .requestSMS(phoneID: phone.id))
+                }
+            }
+            alert.addAction(action)
+        }
+
+        alert.addAction(UIAlertAction(title: systemLocalizedString("Cancel"), style: .cancel) { _ in
+            continuation.resume(returning: .cancel)
+        })
+
+        self.present(alert)
+    }
+    
+    @MainActor
+    func resolveRevocation(certificates: [ALTX509Certificate], teamType: ALTTeamType) async throws -> RevokeDecision {
+        guard self.isPresenterAvailable else {
+            throw OperationError.invalidParameters("SignInFlowHandler: Cannot resolve certificate revocation because presenting view controller is unavailable")
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let alertController = UIAlertController(
+                title: NSLocalizedString("Revoke Certificates", comment: ""),
+                message: NSLocalizedString("Select iOS Development certificate(s) to revoke:", comment: ""),
+                preferredStyle: .alert
+            )
+            
+            let revokeVC = RevokeCertificatesAlertViewController(certificates: certificates, teamType: teamType)
+            alertController.setValue(revokeVC, forKey: "contentViewController")
+            
+            let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { _ in
+                if teamType == .free {
+                    let warningAlert = UIAlertController(
+                        title: NSLocalizedString("Warning", comment: ""),
+                        message: NSLocalizedString("SideStore cannot manage the existing certificate without owning its private key. The apps signed with the existing certificate will expire soon unless they are resigned and renewed explicitly by SideStore.", comment: ""),
+                        preferredStyle: .alert
+                    )
+                    warningAlert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                        warningAlert.dismiss(animated: true) {
+                            continuation.resume(returning: .keepExisting)
+                        }
+                    })
+                    self.present(warningAlert)
+                } else {
+                    continuation.resume(returning: .keepExisting)
+                }
+            }
+            
+            let isPaid = (teamType != .free && teamType != .unknown)
+            let initialCount = revokeVC.getSelectedCertificates().count
+            let initialTitle: String
+            if isPaid {
+                initialTitle = (initialCount == 0) ? "Continue Without Revoking" : "Revoke Selected (\(initialCount))"
+            } else {
+                initialTitle = "Revoke"
+            }
+            let actionStyle: UIAlertAction.Style = (isPaid && initialCount == 0) ? .default : .destructive
+            let revokeAction = UIAlertAction(title: initialTitle, style: actionStyle) { _ in
+                alertController.dismiss(animated: true) {
+                    let selected = revokeVC.getSelectedCertificates()
+                    continuation.resume(returning: .revokeSelected(selected))
+                }
+            }
+            
+            if isPaid {
+                revokeAction.isEnabled = true
+                revokeVC.onSelectionChanged = { selected in
+                    if selected.isEmpty {
+                        revokeAction.setValue(NSLocalizedString("Continue Without Revoking", comment: ""), forKey: "title")
+                        revokeAction.setValue(nil, forKey: "titleTextColor")
+                    } else {
+                        revokeAction.setValue("Revoke Selected (\(selected.count))", forKey: "title")
+                        revokeAction.setValue(UIColor.systemRed, forKey: "titleTextColor")
+                    }
+                }
+            }
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(revokeAction)
+            
+            self.present(alertController)
+        }
+    }
+    
+    @MainActor
+    func resolveTeam(_ teams: [ALTTeam]) async throws -> ALTTeam {
+        guard self.isPresenterAvailable else {
+            throw OperationError.invalidParameters("SignInFlowHandler: Cannot resolve team selection because presenting view controller is unavailable")
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let storyboard = UIStoryboard(name: "Authentication", bundle: nil)
+            let selectTeamViewController = storyboard.instantiateViewController(withIdentifier: "selectTeamViewController") as! SelectTeamViewController
+            selectTeamViewController.teams = teams
+            selectTeamViewController.completionHandler = { result in
+                continuation.resume(with: result)
+            }
+            self.present(selectTeamViewController)
+        }
+    }
+    
+    @MainActor
+    func resolvePostAuth() async {
+        await withCheckedContinuation { continuation in
+            var hasResumed = false
+            let storyboard = UIStoryboard(name: "Authentication", bundle: nil)
+            let instructionsViewController = storyboard.instantiateViewController(withIdentifier: "instructionsViewController") as! InstructionsViewController
+            instructionsViewController.showsBottomButton = true
+            instructionsViewController.completionHandler = {
+                guard !hasResumed else {
+                    debugLog("[SignInFlowHandler] resolvePostAuth completionHandler invoked more than once. Ignoring.")
+                    return
+                }
+                hasResumed = true
+                continuation.resume(returning: ())
+            }
+            self.present(instructionsViewController)
+        }
+    }
+    
+    @MainActor
+    func resolveDeviceRegistrationErrors(_ error: Error) async -> ProvisioningErrorDecision {
+        let title: String
+        if error is OperationError {
+            title = NSLocalizedString("Device Registration Error", comment: "")
+        } else {
+            title = NSLocalizedString("Developer Portal Error", comment: "")
+        }
+
+        return await withCheckedContinuation { continuation in
+            let alertController = UIAlertController(
+                title: title,
+                message: error.localizedDescription,
+                preferredStyle: .alert
+            )
+            
+            if self.showsDoItLater {
+                let retryAction = UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .retry)
+                    }
+                }
+                let laterAction = UIAlertAction(title: NSLocalizedString("Do It Later", comment: ""), style: .cancel) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .cancel)
+                    }
+                }
+                alertController.addAction(retryAction)
+                alertController.addAction(laterAction)
+            } else {
+                let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .cancel)
+                    }
+                }
+                
+                let skipAction = UIAlertAction(title: NSLocalizedString("Skip", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .skip)
+                    }
+                }
+                
+                let retryAction = UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .retry)
+                    }
+                }
+                
+                alertController.addAction(retryAction)
+                alertController.addAction(skipAction)
+                alertController.addAction(cancelAction)
+            }
+            
+            self.present(alertController)
+        }
+    }
+    
+    @MainActor
+    func resolveProvisioningError(_ error: Error) async -> ProvisioningErrorDecision {
+        return await withCheckedContinuation { continuation in
+            let alertController = UIAlertController(
+                title: NSLocalizedString("Developer Portal Error", comment: ""),
+                message: error.localizedDescription,
+                preferredStyle: .alert
+            )
+            
+            if self.showsDoItLater {
+                let retryAction = UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .retry)
+                    }
+                }
+                let laterAction = UIAlertAction(title: NSLocalizedString("Do It Later", comment: ""), style: .cancel) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .cancel)
+                    }
+                }
+                alertController.addAction(retryAction)
+                alertController.addAction(laterAction)
+            } else {
+                let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .cancel)
+                    }
+                }
+                
+                let skipAction = UIAlertAction(title: NSLocalizedString("Skip", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .skip)
+                    }
+                }
+                
+                let retryAction = UIAlertAction(title: NSLocalizedString("Retry", comment: ""), style: .default) { _ in
+                    alertController.dismiss(animated: true) {
+                        continuation.resume(returning: .retry)
+                    }
+                }
+                
+                alertController.addAction(cancelAction)
+                alertController.addAction(skipAction)
+                alertController.addAction(retryAction)
+            }
+            
+            self.present(alertController)
+        }
+    }
+    
+    @MainActor
+    func showCertificateSkipAcknowledgment() async {
+        await withCheckedContinuation { continuation in
+            let alertController = UIAlertController(
+                title: NSLocalizedString("Certificate Setup Skipped", comment: ""),
+                message: NSLocalizedString("Active signing certificate is not present and wasn't fetched/setup properly. You can complete the pending actions later or go into Settings -> Certificate Management and setup certificates manually.", comment: ""),
+                preferredStyle: .alert
+            )
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                alertController.dismiss(animated: true) {
+                    continuation.resume()
+                }
+            })
+            self.present(alertController)
+        }
+    }
+
+    @MainActor
+    func showDeviceRegistrationSkipAcknowledgment() async {
+        await withCheckedContinuation { continuation in
+            let alertController = UIAlertController(
+                title: NSLocalizedString("Device Registration Skipped", comment: ""),
+                message: NSLocalizedString("Your device is not yet registered.", comment: ""),
+                preferredStyle: .alert
+            )
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                alertController.dismiss(animated: true) {
+                    continuation.resume()
+                }
+            })
+            self.present(alertController)
+        }
+    }
+
+    private func present(_ viewController: UIViewController) {
+        guard let presenter = self.activePresenter else { return }
+        if let nav = presenter as? UINavigationController {
+            nav.present(viewController, animated: true)
+        } else {
+            presenter.present(viewController, animated: true)
+        }
+    }
+}
