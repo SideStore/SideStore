@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout repository
@@ -15,8 +15,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+
+      - name: Resolve Swift Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project AltStore.xcodeproj \
+            -scheme SideStore
 
       - name: Build App Payload
         run: |
@@ -32,9 +38,7 @@ jobs:
       - name: Package into IPA
         run: |
           mkdir -p Payload
-          # Copy compiled .app bundle into Payload directory
           cp -r build/Build/Products/Release-iphoneos/SideStore.app Payload/
-          # Zip into .ipa format
           zip -r SideStore-Custom.ipa Payload
 
       - name: Upload IPA Artifact
