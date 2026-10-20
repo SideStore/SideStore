@@ -31,13 +31,17 @@ jobs:
             -scheme SideStore \
             -configuration Release \
             -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS=""
 
       - name: Package into IPA
         run: |
           mkdir -p Payload
+          # Locate and copy the build bundle
           cp -r build/Build/Products/Release-iphoneos/SideStore.app Payload/
           zip -r SideStore-Custom.ipa Payload
 
