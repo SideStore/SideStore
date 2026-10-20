@@ -1,0 +1,44 @@
+name: Build SideStore IPA
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  workflow_dispatch: # Allows manual trigger from Actions tab
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Build App Payload
+        run: |
+          xcodebuild build \
+            -workspace SideStore.xcworkspace \
+            -scheme SideStore \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Package into IPA
+        run: |
+          mkdir -p Payload
+          # Copy the compiled .app bundle into Payload
+          cp -r build/Build/Products/Release-iphoneos/SideStore.app Payload/
+          # Zip into .ipa format
+          zip -r SideStore-Custom.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SideStore-Custom-IPA
+          path: SideStore-Custom.ipa
