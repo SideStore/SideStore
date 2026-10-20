@@ -3,7 +3,7 @@ name: Build SideStore IPA
 on:
   push:
     branches: [ "develop", "main" ]
-  workflow_dispatch: # Allows manual trigger from Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
       - name: Build App Payload
         run: |
           xcodebuild build \
-            -workspace SideStore.xcworkspace \
+            -project AltStore.xcodeproj \
             -scheme SideStore \
             -configuration Release \
             -sdk iphoneos \
@@ -32,7 +32,7 @@ jobs:
       - name: Package into IPA
         run: |
           mkdir -p Payload
-          # Copy the compiled .app bundle into Payload
+          # Copy compiled .app bundle into Payload directory
           cp -r build/Build/Products/Release-iphoneos/SideStore.app Payload/
           # Zip into .ipa format
           zip -r SideStore-Custom.ipa Payload
