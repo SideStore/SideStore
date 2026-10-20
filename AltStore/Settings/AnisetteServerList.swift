@@ -40,14 +40,18 @@ struct AnisetteServerData: Codable {
 
 struct Server: Codable, Identifiable, Hashable {
     var id: String { address }
+
     var name: String
     var address: String
 }
 
 // MARK: - Anisette View Model
 
+@MainActor
 final class AnisetteViewModel: ObservableObject {
     static let defaultSource = AnisetteServersManager.defaultSource
+
+    private static let customServersDefaultsKey = "customAnisetteServers"
 
     @Published var source: String = defaultSource
     @Published var items: [AnisetteServerItem] = []
@@ -58,6 +62,8 @@ final class AnisetteViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isNoInternet: Bool = false
 
+    @Published private(set) var customServerAddresses: Set<String> = []
+
     var hasHiddenItems: Bool {
         items.contains(where: \.isHidden)
     }
@@ -66,6 +72,56 @@ final class AnisetteViewModel: ObservableObject {
         showHiddenServers ? items : items.filter { !$0.isHidden }
     }
 
+    // MARK: Custom Server Persistence
+
+    private static func loadSavedCustomServers() -> [Server] {
+        guard let data = UserDefaults.standard.data(
+            forKey: customServersDefaultsKey
+        ) else {
+            return []
+        }
+
+        return (try? JSONDecoder().decode([Server].self, from: data)) ?? []
+    }
+
+    private func saveCustomServers(_ servers: [Server]) {
+        guard let data = try? JSONEncoder().encode(servers) else {
+            return
+        }
+
+        UserDefaults.standard.set(
+            data,
+            forKey: Self.customServersDefaultsKey
+        )
+
+        customServerAddresses = Set(servers.map(\.address))
+    }
+
+    /// Preserves user-added servers when the remote or imported catalog changes.
+    private func mergingCustomServers(
+        into catalog: [AnisetteServerItem]
+    ) -> [AnisetteServerItem] {
+        let savedServers = Self.loadSavedCustomServers()
+        let savedAddresses = Set(savedServers.map(\.address))
+
+        customServerAddresses = savedAddresses
+
+        let customItems = savedServers.map { server in
+            AnisetteServerItem(
+                name: server.name,
+                address: server.address,
+                isHidden: false
+            )
+        }
+
+        // Prefer the saved custom entry when its URL also appears remotely.
+        return customItems + catalog.filter {
+            !savedAddresses.contains($0.address)
+        }
+    }
+
+    // MARK: Initialization
+
     init() {
         let customSource = UserDefaults.standard.menuAnisetteList
 
@@ -73,17 +129,24 @@ final class AnisetteViewModel: ObservableObject {
             self.source = customSource
         }
 
+        let savedServers = Self.loadSavedCustomServers()
+        self.customServerAddresses = Set(savedServers.map(\.address))
+
         Task { @MainActor in
             self.isOfflineMode = await AnisetteServersManager.shared.isOfflineMode
             self.importedFileName = await AnisetteServersManager.shared.importedFileName
 
-            if self.isOfflineMode || self.source == AnisetteViewModel.defaultSource {
-                self.items = await AnisetteServersManager.shared.loadLocalServers()
+            if self.isOfflineMode || self.source == Self.defaultSource {
+                let localServers =
+                    await AnisetteServersManager.shared.loadLocalServers()
+
+                self.items = self.mergingCustomServers(into: localServers)
             }
         }
     }
 
-    @MainActor
+    // MARK: Fetch Servers
+
     @discardableResult
     func fetchServers(
         forceRemote: Bool = false
@@ -98,14 +161,20 @@ final class AnisetteViewModel: ObservableObject {
         self.importedFileName = filename
 
         if isOffline && !forceRemote {
-            let offline = await AnisetteServersManager.shared.loadLocalServers()
-            self.items = offline
+            let localServers =
+                await AnisetteServersManager.shared.loadLocalServers()
+
+            let mergedItems = mergingCustomServers(into: localServers)
+
+            self.items = mergedItems
             self.errorMessage = nil
-            return .success(offline)
+            self.isNoInternet = false
+
+            return .success(mergedItems)
         }
 
         do {
-            let merged = try await withThrowingTaskGroup(
+            let catalog = try await withThrowingTaskGroup(
                 of: [AnisetteServerItem].self
             ) { group in
                 group.addTask {
@@ -135,41 +204,53 @@ final class AnisetteViewModel: ObservableObject {
                 return result
             }
 
+            let mergedItems = mergingCustomServers(into: catalog)
+
             self.errorMessage = nil
-            self.items = merged
+            self.isNoInternet = false
+            self.items = mergedItems
 
             debugLog(
                 "AnisetteViewModel: Server list sync completed for sourceURL: \(self.source)"
             )
 
-            return .success(merged)
+            return .success(mergedItems)
         } catch {
-            let isOnline = await AnisetteServersManager.shared.isPublicInternetAvailable()
+            // Keep existing entries on transient failures so custom servers
+            // do not disappear simply because the catalog cannot be reached.
+            let isOnline =
+                await AnisetteServersManager.shared.isPublicInternetAvailable()
 
-            let msg: String
+            let message: String
 
             if !isOnline {
-                msg = "No Internet Connection. Please check your Wi-Fi or cellular network."
-            } else if let urlErr = error as? URLError,
-                      urlErr.code == .timedOut {
-                msg = "Connection timed out (5s limit) while reaching '\(self.source)'."
+                message =
+                    "No Internet Connection. Please check your Wi-Fi or cellular network."
+            } else if let urlError = error as? URLError,
+                      urlError.code == .timedOut {
+                message =
+                    "Connection timed out (5s limit) while reaching '\(self.source)'."
             } else {
-                msg = "Failed to fetch catalog from '\(self.source)': \(error.localizedDescription)"
+                message =
+                    "Failed to fetch catalog from '\(self.source)': \(error.localizedDescription)"
             }
 
             self.isNoInternet = !isOnline
-            self.errorMessage = msg
-            self.items = []
+            self.errorMessage = message
+
+            // Restore custom entries if the list was empty or stale.
+            self.items = mergingCustomServers(into: self.items)
 
             debugLog(
-                "[AnisetteViewModel] Server list sync Failed for URL '\(self.source)' | Internet Online: \(isOnline) | Error: \(error)"
+                "[AnisetteViewModel] Server list sync failed for URL '\(self.source)' | Internet Online: \(isOnline) | Error: \(error)"
             )
 
             return .failure(error)
         }
     }
 
-    @MainActor
+    // MARK: Import / Export
+
     func importData(_ data: Data, filename: String) async {
         isLoading = true
         errorMessage = nil
@@ -181,7 +262,7 @@ final class AnisetteViewModel: ObservableObject {
                 filename: filename
             )
 
-            self.items = imported
+            self.items = mergingCustomServers(into: imported)
             self.isOfflineMode = true
             self.importedFileName = filename
 
@@ -199,51 +280,56 @@ final class AnisetteViewModel: ObservableObject {
             return nil
         }
 
-        let baseName = (await AnisetteServersManager.shared.importedFileName)
+        let baseName =
+            (await AnisetteServersManager.shared.importedFileName)
             ?? "anisette-servers.json"
 
-        let nameWithoutExt = (baseName as NSString).deletingPathExtension
-        let ext = (baseName as NSString).pathExtension.isEmpty
+        let nameWithoutExtension = (baseName as NSString).deletingPathExtension
+        let extensionName = (baseName as NSString).pathExtension.isEmpty
             ? "json"
             : (baseName as NSString).pathExtension
 
         let suffix = unmodified ? "-unmodified" : "-customized"
-        let filename = "\(nameWithoutExt)\(suffix).\(ext)"
+        let filename = "\(nameWithoutExtension)\(suffix).\(extensionName)"
 
-        let tempURL = FileManager.default.temporaryDirectory
+        let temporaryURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(filename)
 
-        try? data.write(to: tempURL, options: .atomic)
-        return tempURL
+        try? data.write(to: temporaryURL, options: .atomic)
+        return temporaryURL
     }
 
-    @MainActor
     func resetToOriginalState() async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
 
         do {
-            let resetItems = try await AnisetteServersManager.shared.resetToOriginalState()
-            self.items = resetItems
+            let resetItems =
+                try await AnisetteServersManager.shared.resetToOriginalState()
 
-            debugLog("AnisetteViewModel: Reset catalog to original uncustomized state.")
+            self.items = mergingCustomServers(into: resetItems)
+
+            debugLog(
+                "AnisetteViewModel: Reset catalog to original uncustomized state."
+            )
         } catch {
             self.errorMessage = "Failed to reset: \(error.localizedDescription)"
             debugLog("AnisetteViewModel: Reset error: \(error)")
         }
     }
 
-    @MainActor
     func clearImportedFile() async {
         await AnisetteServersManager.shared.clearOfflineFileMode()
 
         self.isOfflineMode = false
         self.importedFileName = nil
-        self.source = AnisetteViewModel.defaultSource
+        self.source = Self.defaultSource
 
         await fetchServers(forceRemote: true)
     }
+
+    // MARK: Reordering
 
     func moveItems(from source: IndexSet, to destination: Int) {
         if showHiddenServers {
@@ -253,7 +339,9 @@ final class AnisetteViewModel: ObservableObject {
                 item.isHidden ? nil : index
             }
 
-            guard !visibleIndices.isEmpty else { return }
+            guard !visibleIndices.isEmpty else {
+                return
+            }
 
             let actualSourceIndices = source.compactMap {
                 $0 < visibleIndices.count ? visibleIndices[$0] : nil
@@ -292,24 +380,33 @@ final class AnisetteViewModel: ObservableObject {
         }
     }
 
+    // MARK: Hide / Unhide Built-in Servers
+
     func toggleHide(item: AnisetteServerItem) {
-        if let index = items.firstIndex(where: { $0.address == item.address }) {
-            items[index].isHidden.toggle()
+        guard let index = items.firstIndex(
+            where: { $0.address == item.address }
+        ) else {
+            return
+        }
 
-            let currentItems = items
+        items[index].isHidden.toggle()
 
-            Task {
-                await AnisetteServersManager.shared.saveLocalServers(currentItems)
-            }
+        let currentItems = items
+
+        Task {
+            await AnisetteServersManager.shared.saveLocalServers(currentItems)
         }
     }
 
-    /// Add a user-entered anisette-v3 server and select it.
-    @MainActor
-    func addCustomServer(name: String, address: String) -> String? {
-        var urlString = address.trimmingCharacters(in: .whitespacesAndNewlines)
+    // MARK: Add Custom Server
 
-        if urlString.isEmpty {
+    @discardableResult
+    func addCustomServer(name: String, address: String) -> String? {
+        var urlString = address.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        guard !urlString.isEmpty else {
             return "Enter a server URL."
         }
 
@@ -317,34 +414,98 @@ final class AnisetteViewModel: ObservableObject {
             urlString = "https://" + urlString
         }
 
-        guard let url = URL(string: urlString), url.host != nil else {
+        guard
+            let url = URL(string: urlString),
+            let host = url.host,
+            !host.isEmpty,
+            url.scheme == "https" || url.scheme == "http"
+        else {
             return "Invalid URL."
         }
 
-        let final = url.absoluteString
+        let finalAddress = url.absoluteString
 
-        if items.contains(where: { $0.address == final }) {
+        guard !items.contains(where: {
+            $0.address == finalAddress
+        }) else {
             return "That server is already in the list."
         }
 
-        let label = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = name.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        let server = Server(
+            name: trimmedName.isEmpty ? host : trimmedName,
+            address: finalAddress
+        )
+
+        var savedServers = Self.loadSavedCustomServers()
+
+        guard !savedServers.contains(where: {
+            $0.address == finalAddress
+        }) else {
+            return "That server is already in the list."
+        }
+
+        savedServers.append(server)
+        saveCustomServers(savedServers)
 
         let item = AnisetteServerItem(
-            name: label.isEmpty ? (url.host ?? "Custom") : label,
-            address: final,
+            name: server.name,
+            address: server.address,
             isHidden: false
         )
 
         items.insert(item, at: 0)
 
-        let current = items
+        let currentItems = items
 
         Task {
-            await AnisetteServersManager.shared.saveLocalServers(current)
+            await AnisetteServersManager.shared.saveLocalServers(currentItems)
         }
 
-        UserDefaults.standard.menuAnisetteURL = final
+        UserDefaults.standard.menuAnisetteURL = finalAddress
         return nil
+    }
+
+    // MARK: Remove Custom Server
+
+    /// Removes a custom server from persistent storage and the visible list.
+    /// Returns the URL that should remain selected.
+    @discardableResult
+    func removeCustomServer(item: AnisetteServerItem) -> String {
+        guard customServerAddresses.contains(item.address) else {
+            return UserDefaults.standard.menuAnisetteURL
+        }
+
+        let remainingCustomServers = Self.loadSavedCustomServers().filter {
+            $0.address != item.address
+        }
+
+        saveCustomServers(remainingCustomServers)
+
+        items.removeAll {
+            $0.address == item.address
+        }
+
+        let defaults = UserDefaults.standard
+
+        if defaults.menuAnisetteURL == item.address {
+            let replacement = items.first(where: {
+                !$0.isHidden
+            })?.address ?? ""
+
+            defaults.menuAnisetteURL = replacement
+        }
+
+        let currentItems = items
+
+        Task {
+            await AnisetteServersManager.shared.saveLocalServers(currentItems)
+        }
+
+        return defaults.menuAnisetteURL
     }
 }
 
@@ -370,8 +531,8 @@ private struct AddCustomAnisetteServerSheet: View {
                         isPresented = false
                     },
                     trailing: SUIButton("Add") {
-                        if let err = onAdd(name, address) {
-                            errorMessage = err
+                        if let error = onAdd(name, address) {
+                            errorMessage = error
                         } else {
                             isPresented = false
                         }
@@ -480,7 +641,9 @@ struct AnisetteServersView: View {
                                     title: "Import Anisette Servers JSON",
                                     presentingVC: topVC
                                 ) { fileURL in
-                                    guard let fileURL = fileURL else { return }
+                                    guard let fileURL else {
+                                        return
+                                    }
 
                                     if let data = try? Data(contentsOf: fileURL) {
                                         DispatchQueue.main.async {
@@ -504,33 +667,47 @@ struct AnisetteServersView: View {
                                 viewModel.showHiddenServers.toggle()
                             } label: {
                                 Label(
-                                    viewModel.showHiddenServers ? "Hide Hidden" : "Show Hidden",
-                                    systemImage: viewModel.showHiddenServers ? "eye.slash" : "eye"
+                                    viewModel.showHiddenServers
+                                        ? "Hide Hidden"
+                                        : "Show Hidden",
+                                    systemImage: viewModel.showHiddenServers
+                                        ? "eye.slash"
+                                        : "eye"
                                 )
                             }
                         }
 
                         SwiftUI.Button {
                             Task {
-                                if let url = await viewModel.exportCatalog(unmodified: false) {
+                                if let url = await viewModel.exportCatalog(
+                                    unmodified: false
+                                ) {
                                     exportFileURL = url
                                     showingShareSheet = true
                                 }
                             }
                         } label: {
-                            Label("Export Current", systemImage: "square.and.arrow.up")
+                            Label(
+                                "Export Current",
+                                systemImage: "square.and.arrow.up"
+                            )
                         }
 
                         if viewModel.isOfflineMode {
                             SwiftUI.Button {
                                 Task {
-                                    if let url = await viewModel.exportCatalog(unmodified: true) {
+                                    if let url = await viewModel.exportCatalog(
+                                        unmodified: true
+                                    ) {
                                         exportFileURL = url
                                         showingShareSheet = true
                                     }
                                 }
                             } label: {
-                                Label("Export Original", systemImage: "doc.on.doc")
+                                Label(
+                                    "Export Original",
+                                    systemImage: "doc.on.doc"
+                                )
                             }
                         }
 
@@ -539,7 +716,10 @@ struct AnisetteServersView: View {
                                 await viewModel.resetToOriginalState()
                             }
                         } label: {
-                            Label("Reset Catalog", systemImage: "arrow.circlepath")
+                            Label(
+                                "Reset Catalog",
+                                systemImage: "arrow.circlepath"
+                            )
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -565,8 +745,10 @@ struct AnisetteServersView: View {
 
                 SwiftUI.Button("Export Current") {
                     Task {
-                        if let url = await viewModel.exportCatalog(unmodified: false),
-                           let topVC = UIApplication.shared.topViewController() {
+                        if let url = await viewModel.exportCatalog(
+                            unmodified: false
+                        ),
+                        let topVC = UIApplication.shared.topViewController() {
                             TVWebFileTransferManager.shared.startExport(
                                 fileURL: url,
                                 title: "Export Anisette Servers JSON",
@@ -579,8 +761,10 @@ struct AnisetteServersView: View {
                 if viewModel.isOfflineMode {
                     SwiftUI.Button("Export Original") {
                         Task {
-                            if let url = await viewModel.exportCatalog(unmodified: true),
-                               let topVC = UIApplication.shared.topViewController() {
+                            if let url = await viewModel.exportCatalog(
+                                unmodified: true
+                            ),
+                            let topVC = UIApplication.shared.topViewController() {
                                 TVWebFileTransferManager.shared.startExport(
                                     fileURL: url,
                                     title: "Export Anisette Servers JSON",
@@ -607,7 +791,9 @@ struct AnisetteServersView: View {
                 switch result {
                 case .success(let urls):
                     if let url = urls.first {
-                        let isAccessing = url.startAccessingSecurityScopedResource()
+                        let isAccessing =
+                            url.startAccessingSecurityScopedResource()
+
                         defer {
                             if isAccessing {
                                 url.stopAccessingSecurityScopedResource()
@@ -667,11 +853,11 @@ struct AnisetteServersView: View {
                     address: $newServerAddress,
                     errorMessage: $addServerError,
                     onAdd: { name, address in
-                        if let err = viewModel.addCustomServer(
+                        if let error = viewModel.addCustomServer(
                             name: name,
                             address: address
                         ) {
-                            return err
+                            return error
                         }
 
                         selectedServerURL = UserDefaults.standard.menuAnisetteURL
@@ -695,6 +881,8 @@ struct AnisetteServersView: View {
             }
     }
 
+    // MARK: Server List
+
     @ViewBuilder
     private var serverList: some View {
         List {
@@ -715,11 +903,13 @@ struct AnisetteServersView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
 
-                            Text("Reaching catalog source '\(viewModel.source)'...")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 16)
+                            Text(
+                                "Reaching catalog source '\(viewModel.source)'..."
+                            )
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
 
                             Spacer()
                         }
@@ -744,11 +934,13 @@ struct AnisetteServersView: View {
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                            Text(viewModel.errorMessage ?? "No servers available.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 16)
+                            Text(
+                                viewModel.errorMessage ?? "No servers available."
+                            )
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
 
                             SwiftUI.Button {
                                 Task {
@@ -788,7 +980,9 @@ struct AnisetteServersView: View {
                         } label: {
                             HStack(spacing: 12) {
                                 Text("#\(index + 1)")
-                                    .font(.subheadline.monospacedDigit().weight(.bold))
+                                    .font(
+                                        .subheadline.monospacedDigit().weight(.bold)
+                                    )
                                     .foregroundColor(.secondary)
                                     .frame(minWidth: 26, alignment: .leading)
 
@@ -812,6 +1006,21 @@ struct AnisetteServersView: View {
                                                     )
                                                 )
                                         }
+
+                                        if viewModel.customServerAddresses.contains(
+                                            item.address
+                                        ) {
+                                            Text("Custom")
+                                                .font(.caption2)
+                                                .foregroundColor(.accentColor)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(
+                                                    Capsule().fill(
+                                                        Color.accentColor.opacity(0.12)
+                                                    )
+                                                )
+                                        }
                                     }
 
                                     Text(item.address)
@@ -832,16 +1041,35 @@ struct AnisetteServersView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         #if !os(tvOS)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            SwiftUI.Button {
-                                viewModel.toggleHide(item: item)
-                            } label: {
-                                Label(
-                                    item.isHidden ? "Unhide" : "Hide",
-                                    systemImage: item.isHidden ? "eye" : "eye.slash"
-                                )
+                        .swipeActions(
+                            edge: .trailing,
+                            allowsFullSwipe: false
+                        ) {
+                            if viewModel.customServerAddresses.contains(
+                                item.address
+                            ) {
+                                SwiftUI.Button(role: .destructive) {
+                                    selectedServerURL =
+                                        viewModel.removeCustomServer(item: item)
+                                } label: {
+                                    Label(
+                                        "Remove",
+                                        systemImage: "trash"
+                                    )
+                                }
+                            } else {
+                                SwiftUI.Button {
+                                    viewModel.toggleHide(item: item)
+                                } label: {
+                                    Label(
+                                        item.isHidden ? "Unhide" : "Hide",
+                                        systemImage: item.isHidden
+                                            ? "eye"
+                                            : "eye.slash"
+                                    )
+                                }
+                                .tint(item.isHidden ? .blue : .orange)
                             }
-                            .tint(item.isHidden ? .blue : .orange)
                         }
                         #endif
                     }
@@ -862,7 +1090,7 @@ struct AnisetteServersView: View {
             } footer: {
                 if !viewModel.items.isEmpty && viewModel.errorMessage == nil {
                     Text(
-                        "Drag to reorder server priority. Swipe left on a server to hide or unhide it."
+                        "Drag to reorder servers. Swipe left to remove custom servers or hide and unhide built-in servers."
                     )
                 }
             }
@@ -885,24 +1113,34 @@ struct AnisetteServersView: View {
                     .contextMenu {
                         SwiftUI.Button {
                             Task {
-                                if let url = await viewModel.exportCatalog(unmodified: false) {
+                                if let url = await viewModel.exportCatalog(
+                                    unmodified: false
+                                ) {
                                     exportFileURL = url
                                     showingShareSheet = true
                                 }
                             }
                         } label: {
-                            Label("Export Current", systemImage: "square.and.arrow.up")
+                            Label(
+                                "Export Current",
+                                systemImage: "square.and.arrow.up"
+                            )
                         }
 
                         SwiftUI.Button {
                             Task {
-                                if let url = await viewModel.exportCatalog(unmodified: true) {
+                                if let url = await viewModel.exportCatalog(
+                                    unmodified: true
+                                ) {
                                     exportFileURL = url
                                     showingShareSheet = true
                                 }
                             }
                         } label: {
-                            Label("Export Original", systemImage: "doc.on.doc")
+                            Label(
+                                "Export Original",
+                                systemImage: "doc.on.doc"
+                            )
                         }
 
                         SwiftUI.Button(role: .destructive) {
@@ -910,7 +1148,10 @@ struct AnisetteServersView: View {
                                 await viewModel.resetToOriginalState()
                             }
                         } label: {
-                            Label("Reset Catalog", systemImage: "arrow.circlepath")
+                            Label(
+                                "Reset Catalog",
+                                systemImage: "arrow.circlepath"
+                            )
                         }
                     }
                 } else {
@@ -936,31 +1177,41 @@ struct AnisetteServersView: View {
                     .contextMenu {
                         SwiftUI.Button {
                             Task {
-                                if let url = await viewModel.exportCatalog(unmodified: false) {
+                                if let url = await viewModel.exportCatalog(
+                                    unmodified: false
+                                ) {
                                     exportFileURL = url
                                     showingShareSheet = true
                                 }
                             }
                         } label: {
-                            Label("Export Current", systemImage: "square.and.arrow.up")
+                            Label(
+                                "Export Current",
+                                systemImage: "square.and.arrow.up"
+                            )
                         }
 
                         if viewModel.isOfflineMode {
                             SwiftUI.Button {
                                 Task {
-                                    if let url = await viewModel.exportCatalog(unmodified: true) {
+                                    if let url = await viewModel.exportCatalog(
+                                        unmodified: true
+                                    ) {
                                         exportFileURL = url
                                         showingShareSheet = true
                                     }
                                 }
                             } label: {
-                                Label("Export Original", systemImage: "doc.on.doc")
+                                Label(
+                                    "Export Original",
+                                    systemImage: "doc.on.doc"
+                                )
                             }
-                        } else if viewModel.source != AnisetteViewModel.defaultSource {
+                        } else if viewModel.source != Self.defaultSource {
                             SwiftUI.Button(role: .destructive) {
-                                viewModel.source = AnisetteViewModel.defaultSource
+                                viewModel.source = Self.defaultSource
                                 UserDefaults.standard.menuAnisetteList =
-                                    AnisetteViewModel.defaultSource
+                                    Self.defaultSource
 
                                 Task {
                                     await viewModel.fetchServers(forceRemote: true)
@@ -978,7 +1229,10 @@ struct AnisetteServersView: View {
                                 await viewModel.resetToOriginalState()
                             }
                         } label: {
-                            Label("Reset Catalog", systemImage: "arrow.circlepath")
+                            Label(
+                                "Reset Catalog",
+                                systemImage: "arrow.circlepath"
+                            )
                         }
                     }
                 }
@@ -997,12 +1251,16 @@ struct AnisetteServersView: View {
                                     in: .whitespacesAndNewlines
                                 )
 
-                                if !trimmed.isEmpty && trimmed != viewModel.source {
+                                if !trimmed.isEmpty &&
+                                    trimmed != viewModel.source {
                                     viewModel.source = trimmed
-                                    UserDefaults.standard.menuAnisetteList = trimmed
+                                    UserDefaults.standard.menuAnisetteList =
+                                        trimmed
 
                                     Task {
-                                        await viewModel.fetchServers(forceRemote: true)
+                                        await viewModel.fetchServers(
+                                            forceRemote: true
+                                        )
                                     }
                                 }
                             } else {
@@ -1030,7 +1288,9 @@ struct AnisetteServersView: View {
             Section {
                 Toggle(
                     isOn: Binding(
-                        get: { !UserDefaults.standard.disableAnisetteRotation },
+                        get: {
+                            !UserDefaults.standard.disableAnisetteRotation
+                        },
                         set: {
                             UserDefaults.standard.disableAnisetteRotation = !$0
                         }
