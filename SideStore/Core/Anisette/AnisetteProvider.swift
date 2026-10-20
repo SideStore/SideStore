@@ -227,8 +227,9 @@ enum AnisetteProvider {
         }
 
         var data = anisetteData
-        // Force X-MMe-Client-Info identity into GSA (SideInstaller one-client rule)
+        // Force Windows identity into GSA (SideInstaller one-client rule)
         data.clientInfo = resolved.clientInfo
+        data.userAgent = resolved.userAgent
         return data
     }
 }
