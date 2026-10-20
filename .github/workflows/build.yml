@@ -15,10 +15,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set up Xcode 16.2
+      - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.2'
+          xcode-version: 'latest-stable'
 
       - name: Resolve Swift Package Dependencies
         run: |
