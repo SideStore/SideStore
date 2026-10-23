@@ -42,7 +42,10 @@ final class PairingFileManager: NSObject {
 
     nonisolated func pairingFileURL(for mode: PairingProtocol) -> URL {
         let fileName = mode == .rppairing ? AppConstants.Pairing.remotePairingFileName : AppConstants.Pairing.lockdownPairingFileName
-        return FileManager.default.documentsDirectory.appendingPathComponent(fileName)
+    
+        // Ensure it uses the standard documents directory safely or falls back to container path
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return documentsURL.appendingPathComponent(fileName)
     }
 
     nonisolated func hasPairingFile(for mode: PairingProtocol) -> Bool {
