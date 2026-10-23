@@ -129,17 +129,31 @@ public final class AppBootManager {
         async let minimuxerCheck: Void = {
             debugLog("[AppBootManager] performBootSequence(): Minimuxer check starting")
             defer { debugLog("[AppBootManager] performBootSequence(): Minimuxer check completed") }
-            guard let pf = PairingFileManager.shared.fetchPairingFile() else {
-                #if !targetEnvironment(simulator)
-                self.needsPairingPrompt = true
-                #endif
-                return
-            }
+            
+            // 1. Run our PairingArbitrator to check both files and handle the coin flip
+            let chosenStack = PairingArbitrator.resolveActiveProvider()
+            
+            switch chosenStack {
+            case .localLockdown:
+                debugLog("[PairingArbitrator] Coin flip / check selected: Local Lockdown")
+                guard let pf = PairingFileManager.shared.fetchPairingFile() else {
+                    #if !targetEnvironment(simulator)
+                    self.needsPairingPrompt = true
+                    #endif
+                    return
+                }
 
-            do {
-                try await self.startMinimuxer(pairingFile: pf)
-            } catch {
-                debugLog("[AppBootManager] Failed to start minimuxer: \(error)")
+                do {
+                    try await self.startMinimuxer(pairingFile: pf)
+                } catch {
+                    debugLog("[AppBootManager] Failed to start minimuxer: \(error)")
+                }
+                
+            case .remoteAnisette:
+                debugLog("[PairingArbitrator] Coin flip / check selected: Remote Anisette Fallback")
+                // Bypass local lockdown hardware socket failure entirely on boot, 
+                // allowing clean entry straight into the app container and auth loop.
+                self.needsPairingPrompt = false
             }
         }()
         
