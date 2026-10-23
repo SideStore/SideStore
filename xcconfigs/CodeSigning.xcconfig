@@ -1,0 +1,15 @@
+// Free accounts leave DEVELOPMENT_TEAM blank or set to a placeholder that GitHub Actions overrides via secrets/scripts
+DEVELOPMENT_TEAM = 
+
+// MUST use the Free entitlements template so it avoids hardcoded paid team prefixes
+CODE_SIGN_ENTITLEMENTS = ./AltStore/AltStoreFree.entitlements
+
+// Leave bundle ID suffix blank for free builds (SideStore handles prefix mapping at runtime)
+BUNDLE_ID_SUFFIX = 
+
+// Set to NO because you are using a free account
+DEVELOPER_ACCOUNT_PAID = NO
+
+// Standard iOS development identity used by free profile signers
+CODE_SIGN_IDENTITY_IOS = Apple Development
+CODE_SIGN_IDENTITY_TVOS = Apple Development
