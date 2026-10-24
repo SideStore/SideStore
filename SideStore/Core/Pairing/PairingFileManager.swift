@@ -130,19 +130,22 @@ final class PairingFileManager: NSObject {
     }
 
     func inspectPairingFile(from url: URL) throws -> (content: String, file: any PairingFile) {
-        let isSecured = url.startAccessingSecurityScopedResource()
-        defer {
-            if isSecured {
-                url.stopAccessingSecurityScopedResource()
-            }
+    let isSecured = url.startAccessingSecurityScopedResource()
+    defer {
+        if isSecured {
+            url.stopAccessingSecurityScopedResource()
         }
-        let data = try Data(contentsOf: url)
-        guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
-            throw CocoaError(.fileReadInapplicableStringEncoding)
-        }
-        let parsed = try parse(content: content, preferred: nil)
-        return (content, parsed)
     }
+    let data = try Data(contentsOf: url)
+    guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
+        throw CocoaError(.fileReadInapplicableStringEncoding)
+    }
+    
+    // FIX: Pass preferredProtocol or default to .lockdown to prevent ambiguous format error
+    let targetMode = preferredProtocol ?? .lockdown
+    let parsed = try parse(content: content, preferred: targetMode)
+    return (content, parsed)
+}
 
     func importPairingFile(from url: URL, preferred: PairingProtocol? = nil) throws {
         let (content, _) = try inspectPairingFile(from: url)
