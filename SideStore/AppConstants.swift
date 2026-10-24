@@ -68,11 +68,15 @@ public enum AppConstants {
         public static let defaultODAMetadataURL       = URL(string: "https://zzz.haus/oda.json")!
         public static var defaultODAMetadataURLString: String { defaultODAMetadataURL.absoluteString }
 
-        // Temporary fix (SideInstaller-style): Apple currently rejects Android/Mac/Xcode
-        // anisette identities with HTTP 503 / -80045. Sign in as a Windows PC instead.
-        // Users can still override these in Settings – Anisette Client Configuration.
-        public static let defaultClientInfo           = "<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>"
-        public static let defaultUserAgent            = "akd/1.0 CFNetwork/808.1.4"
+        // Temporary fix (SideInstaller v1.6.1 style):
+        // Apple now rejects Windows/Android anisette after the verification code with -80046.
+        // Prefer Mac anisette servers and report a current Mac client-info (not the ancient
+        // macOS 10.12 string that triggers -23782). Users can still override in Settings.
+        //
+        // Note: the exact modern Mac client-info string is supplied by the chosen Mac
+        // anisette server via /v3/client_info. We no longer hard-code the old Windows one.
+        public static let defaultClientInfo           = ""   // let Mac server supply it
+        public static let defaultUserAgent            = ""   // let Mac server supply it
 
         public enum URLs {
             public static let grandSlamLookup = Constants.Anisette.URLs.grandSlamLookup
@@ -98,9 +102,9 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            // Default to Windows ADI server (temporary auth fix). Users can switch to any server in Settings.
-            public static let defaultServerURL     = "https://win.ani.sidestore.io"
-            public static let secondaryServerURL   = "https://ani.jkcoxson.com"
+            // Prefer Mac anisette servers (SideStore (New) first). Windows ADI is no longer the default.
+            public static let defaultServerURL     = "https://ani.sidestore.io"          // SideStore (New) / Mac
+            public static let secondaryServerURL   = "https://mac-ani.jkcoxson.com"     // jkcoxson Mac
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
         }
 

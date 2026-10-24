@@ -1,10 +1,15 @@
-# Temporary Windows auth fix (SideInstaller-style)
+# Temporary Mac auth fix (SideInstaller v1.6.1 style)
 
-This branch should force:
-1. On-device anisette OFF
+Apple started rejecting Windows/Android anisette data after the verification code
+with error -80046 ("This action cannot be completed at this time").
 
-2. Windows client-info: `<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>`
+This branch now forces the working SideInstaller defaults:
 
-3. User-agent: `akd/1.0 CFNetwork/808.1.4`
+1. On-device anisette OFF (users can still toggle it)
+2. Auto-rotation OFF by default
+3. Default anisette server: SideStore (New) / Mac servers first
+4. Client-info reports a current Mac (not the old macOS 10.12 string that triggers -23782)
+5. Clean adi.pb on first sign-in after the change so Apple issues a fresh identity
 
-4. Default server: `https://win.ani.sidestore.io  or  https://ani.jkcoxson.com`
+Previous Windows client-info / win.ani.sidestore.io defaults are removed because
+Apple now fails the final sign-in step with them.
