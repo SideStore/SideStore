@@ -201,7 +201,19 @@ func getDeviceConnectionMode() async -> DeviceConnectionMode {
 
 public func isMinimuxerReady() async -> Result<Bool, MinimuxerError> {
     let isEnabled = CellularRefreshManager.shared.isEnabled
-    return await minimuxer.core.isReady(withNetworkCheck: !isEnabled)
+    
+    // FORCE PATCH: Bypass the strict iOS 26.4+ IPsec interface check for LocalDevVPN / uTun
+    let realResult = await minimuxer.core.isReady(withNetworkCheck: !isEnabled)
+    if case .failure(let error) = realResult {
+        // Check if the failure is specifically due to the missing IPsec interface error
+        let errorDesc = String(describing: error)
+        if errorDesc.contains("ipsec interface") || errorDesc.contains("26.4") {
+            debugLog("[MinimuxerPatch] Bypassing IPsec interface check for iOS 26.4+ uTun environment.")
+            return .success(true)
+        }
+    }
+    
+    return realResult
 }
 
 public func ensureMinimuxerReady() async throws {
