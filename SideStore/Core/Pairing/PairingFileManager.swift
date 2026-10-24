@@ -77,14 +77,24 @@ final class PairingFileManager: NSObject {
         return PairingFileMetadata(exists: true, size: size, creationDate: creation, modificationDate: mod)
     }
 
-    nonisolated func fetchPairingFile(for mode: PairingProtocol) -> String? {
-        let fileURL = pairingFileURL(for: mode)
-        let fm = FileManager.default
-        if fm.fileExists(atPath: fileURL.path),
-           let contents = try? String(contentsOf: fileURL), !contents.isEmpty 
-        {
+    nonisolated func fetchPairingFile(preferred: PairingProtocol? = nil) -> String? {
+        guard !UserDefaults.standard.isPairingReset else { return nil }
+        let targetPreferred = preferred ?? preferredProtocol
+        if let targetPreferred, let contents = fetchPairingFile(for: targetPreferred) {
             return contents
         }
+        if let persisted = persistedActiveProtocol, let contents = fetchPairingFile(for: persisted) {
+            return contents
+        }
+    
+        // FIX: Fallback automatically to lockdown or rppairing if files exist on disk
+        if let lockdownContents = fetchPairingFile(for: .lockdown) {
+            return lockdownContents
+        }
+        if let rpContents = fetchPairingFile(for: .rppairing) {
+            return rpContents
+        }
+    
         return nil
     }
 
