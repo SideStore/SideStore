@@ -10,19 +10,20 @@ public final class PairingArbitrator {
         let hasLocalPairing = checkLocalPairingValidity()
         let hasRemoteConfig = checkRemoteConfigValidity()
         
-        // If BOTH files/sources are available, flip a coin to decide
-        if hasLocalPairing && hasRemoteConfig {
-            let coinFlip = Bool.random()
-            print("[PairingArbitrator] Both files detected. Coin flip result: \(coinFlip ? "Local Lockdown" : "Remote Anisette")")
-            return coinFlip ? .localLockdown : .remoteAnisette
+        // FIX: Always prioritize Local Lockdown if a valid pairing file exists.
+        // Never flip a coin or randomize provider selection.
+        if hasLocalPairing {
+            print("[PairingArbitrator] Valid local pairing file detected. Forcing Local Lockdown.")
+            return .localLockdown
         }
         
-        // Fallbacks if only one is present
-        if hasLocalPairing {
-            return .localLockdown
-        } else {
+        if hasRemoteConfig {
+            print("[PairingArbitrator] No local pairing file found. Falling back to Remote Anisette.")
             return .remoteAnisette
         }
+        
+        print("[PairingArbitrator] Neither local pairing nor remote config found. Defaulting to Local Lockdown.")
+        return .localLockdown
     }
     
     private static func checkLocalPairingValidity() -> Bool {
