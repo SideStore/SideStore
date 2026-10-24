@@ -42,7 +42,7 @@ final class PairingFileManager: NSObject {
 
     nonisolated func pairingFileURL(for mode: PairingProtocol) -> URL {
         let fileName = mode == .rppairing ? AppConstants.Pairing.remotePairingFileName : AppConstants.Pairing.lockdownPairingFileName
-    
+        
         // Ensure it uses the standard documents directory safely or falls back to container path
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         return documentsURL.appendingPathComponent(fileName)
@@ -60,7 +60,8 @@ final class PairingFileManager: NSObject {
         if let mode = persistedActiveProtocol, hasPairingFile(for: mode) {
             return true
         }
-        return false
+        // Fallback check directly on disk
+        return hasPairingFile(for: .lockdown) || hasPairingFile(for: .rppairing)
     }
 
     nonisolated func metadata(for mode: PairingProtocol) -> PairingFileMetadata {
@@ -77,24 +78,14 @@ final class PairingFileManager: NSObject {
         return PairingFileMetadata(exists: true, size: size, creationDate: creation, modificationDate: mod)
     }
 
-    nonisolated func fetchPairingFile(preferred: PairingProtocol? = nil) -> String? {
-        guard !UserDefaults.standard.isPairingReset else { return nil }
-        let targetPreferred = preferred ?? preferredProtocol
-        if let targetPreferred, let contents = fetchPairingFile(for: targetPreferred) {
+    nonisolated func fetchPairingFile(for mode: PairingProtocol) -> String? {
+        let fileURL = pairingFileURL(for: mode)
+        let fm = FileManager.default
+        if fm.fileExists(atPath: fileURL.path),
+           let contents = try? String(contentsOf: fileURL), !contents.isEmpty 
+        {
             return contents
         }
-        if let persisted = persistedActiveProtocol, let contents = fetchPairingFile(for: persisted) {
-            return contents
-        }
-    
-        // FIX: Fallback automatically to lockdown or rppairing if files exist on disk
-        if let lockdownContents = fetchPairingFile(for: .lockdown) {
-            return lockdownContents
-        }
-        if let rpContents = fetchPairingFile(for: .rppairing) {
-            return rpContents
-        }
-    
         return nil
     }
 
@@ -104,12 +95,21 @@ final class PairingFileManager: NSObject {
         if let targetPreferred, let contents = fetchPairingFile(for: targetPreferred) {
             return contents
         }
-        if let persisted = persistedActiveProtocol {
-            return fetchPairingFile(for: persisted)
+        if let persisted = persistedActiveProtocol, let contents = fetchPairingFile(for: persisted) {
+            return contents
         }
+        
+        // FIX: Fallback automatically to lockdown or rppairing if files exist on disk
+        if let lockdownContents = fetchPairingFile(for: .lockdown) {
+            return lockdownContents
+        }
+        if let rpContents = fetchPairingFile(for: .rppairing) {
+            return rpContents
+        }
+        
         return nil
     }
-    
+
     @discardableResult
     nonisolated func parse(content: String, preferred: PairingProtocol? = nil) throws -> any PairingFile {
         try PairingFileParser.parse(content: content, preferred: preferred)
@@ -130,27 +130,29 @@ final class PairingFileManager: NSObject {
     }
 
     func inspectPairingFile(from url: URL) throws -> (content: String, file: any PairingFile) {
-    let isSecured = url.startAccessingSecurityScopedResource()
-    defer {
-        if isSecured {
-            url.stopAccessingSecurityScopedResource()
+        let isSecured = url.startAccessingSecurityScopedResource()
+        defer {
+            if isSecured {
+                url.stopAccessingSecurityScopedResource()
+            }
         }
+        let data = try Data(contentsOf: url)
+        guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
+            throw CocoaError(.fileReadInapplicableStringEncoding)
+        }
+        
+        // FIX: Pass preferredProtocol or default to .lockdown to prevent ambiguous format error
+        let targetMode = preferredProtocol ?? .lockdown
+        let parsed = try parse(content: content, preferred: targetMode)
+        return (content, parsed)
     }
-    let data = try Data(contentsOf: url)
-    guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
-        throw CocoaError(.fileReadInapplicableStringEncoding)
-    }
-    
-    // FIX: Pass preferredProtocol or default to .lockdown to prevent ambiguous format error
-    let targetMode = preferredProtocol ?? .lockdown
-    let parsed = try parse(content: content, preferred: targetMode)
-    return (content, parsed)
-}
 
     func importPairingFile(from url: URL, preferred: PairingProtocol? = nil) throws {
+        let target = preferred ?? preferredProtocol ?? .lockdown
         let (content, _) = try inspectPairingFile(from: url)
-        let parsed = try savePairingFile(contents: content, preferred: preferred)
+        let parsed = try savePairingFile(contents: content, preferred: target)
         persistedActiveProtocol = parsed.mode
+        preferredProtocol = parsed.mode // FIX: Save preferred protocol to UserDefaults
     }
 
     func deletePairingFile(for mode: PairingProtocol) {
