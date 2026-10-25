@@ -17,11 +17,13 @@ import SideSign
 enum AnisetteProvider {
     /// SideInstaller 1.6.1 macADIHosts — try these first
     private static let macADIHosts: Set<String> = [
-        "ani.sidestore.io",
-        "new.ani.sidestore.io",
+        "new.ani.sidestore.io",      // SideStore (New) — SideInstaller 1.6.1 first
         "mac-ani.jkcoxson.com",
-        "ani.jkcoxson.com",          // now runs Mac library on some deployments
-        "ani2.stikstore.app"
+        "ani.iloader.app",
+        "ani3.stikstore.app",
+        "ani2.stikstore.app",
+        "ani.sidestore.io",
+        "ani.jkcoxson.com",
     ]
 
     /// Former Windows ADI hosts — try only after Mac servers
@@ -31,11 +33,13 @@ enum AnisetteProvider {
 
     /// Preferred Mac server order (SideInstaller starts with SideStore (New))
     private static let preferredMacOrder = [
-        "ani.sidestore.io",
-        "new.ani.sidestore.io",
+        "new.ani.sidestore.io",      // SideInstaller macADIOrder[0]
         "mac-ani.jkcoxson.com",
+        "ani.iloader.app",
+        "ani3.stikstore.app",
+        "ani2.stikstore.app",
+        "ani.sidestore.io",
         "ani.jkcoxson.com",
-        "ani2.stikstore.app"
     ]
 
     static func fetch(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
@@ -78,10 +82,12 @@ enum AnisetteProvider {
 
     /// SideInstaller 1.6.1: use the client_info the Mac server advertises (current Mac).
     /// Fall back only if the server returns nothing useful.
+    /// SideInstaller 1.6.1: ALWAYS report a current Mac for GrandSlam.
+    /// Servers still *name* macOS 10.12; Apple rejects that after the code (-80046 / -23782).
     static func clientInfoToUse(advertisedClientInfo: String?, advertisedUserAgent: String?) -> (clientInfo: String, userAgent: String) {
-        let ci = (advertisedClientInfo?.isEmpty == false) ? advertisedClientInfo! : AppConstants.Anisette.defaultClientInfo
-        let ua = (advertisedUserAgent?.isEmpty == false) ? advertisedUserAgent! : AppConstants.Anisette.defaultUserAgent
-        // If both are still empty, let the downstream layer use whatever the server already embedded
+        let ci = AppConstants.Anisette.Servers.macClientInfo
+        var ua = (advertisedUserAgent?.isEmpty == false) ? advertisedUserAgent! : AppConstants.Anisette.Servers.macUserAgent
+        if ua.isEmpty { ua = AppConstants.Anisette.Servers.macUserAgent }
         return (ci, ua)
     }
 
@@ -156,10 +162,12 @@ enum AnisetteProvider {
 
         // Ensure preferred Mac servers are tried first even if missing from remote list
         let fallbackMac = [
-            "https://ani.sidestore.io",
-            "https://new.ani.sidestore.io",
+            "https://new.ani.sidestore.io",   // SideStore (New) first
             "https://mac-ani.jkcoxson.com",
-            "https://ani.jkcoxson.com"
+            "https://ani.iloader.app",
+            "https://ani3.stikstore.app",
+            "https://ani2.stikstore.app",
+            "https://ani.sidestore.io",
         ].compactMap { URL(string: $0) }
         for fm in fallbackMac.reversed() {
             if !ordered.contains(where: { $0.host == fm.host }) {
