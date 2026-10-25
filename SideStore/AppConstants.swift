@@ -75,8 +75,8 @@ public enum AppConstants {
         //
         // Note: the exact modern Mac client-info string is supplied by the chosen Mac
         // anisette server via /v3/client_info. We no longer hard-code the old Windows one.
-        public static let defaultClientInfo           = ""   // let Mac server supply it
-        public static let defaultUserAgent            = ""   // let Mac server supply it
+        public static let defaultClientInfo           = Servers.macClientInfo  // SideInstaller current Mac
+        public static let defaultUserAgent            = Servers.macUserAgent
 
         public enum URLs {
             public static let grandSlamLookup = Constants.Anisette.URLs.grandSlamLookup
@@ -102,10 +102,28 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            // Prefer Mac anisette servers (SideStore (New) first). Windows ADI is no longer the default.
-            public static let defaultServerURL     = "https://ani.sidestore.io"          // SideStore (New) / Mac
-            public static let secondaryServerURL   = "https://mac-ani.jkcoxson.com"     // jkcoxson Mac
+            // SideInstaller 1.6.1: SideStore (New) first — Mac ADI library (fixes -80046)
+            public static let defaultServerURL     = "https://new.ani.sidestore.io"    // SideStore (New)
+            public static let secondaryServerURL   = "https://mac-ani.jkcoxson.com"    // jkcoxson Mac
+            public static let tertiaryServerURL    = "https://ani.iloader.app"         // iLoader (Mac ADI)
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
+
+            /// SideInstaller macADIOrder — Auto tries these hosts first (Mac ADI library).
+            public static let macADIOrder: [String] = [
+                "new.ani.sidestore.io",
+                "mac-ani.jkcoxson.com",
+                "ani.iloader.app",
+                "ani3.stikstore.app",
+                "ani2.stikstore.app",
+                "ani.sidestore.io",
+            ]
+            public static let macADIHosts: Set<String> = Set(macADIOrder)
+            public static let windowsADIHosts: Set<String> = [
+                "win.ani.sidestore.io",
+            ]
+            /// SideInstaller MAC_CLIENT_INFO — current Mac (servers still name 10.12)
+            public static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+            public static let macUserAgent  = "akd/1.0 CFNetwork/808.1.4"
         }
 
         public static let remoteCacheDuration     = Constants.Anisette.remoteCacheDuration
