@@ -212,7 +212,7 @@ enum AnisetteProvider {
     }
 
     private static func fetchRemote(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
-        let items = AnisetteServersManager.shared.loadLocalServers()
+        let items = await AnisetteServersManager.shared.loadLocalServers()
         var serverUrlStrings = items.filter { !$0.isHidden }.map(\.address)
         var serverNames: [String: String] = [:]
         for item in items {
@@ -281,11 +281,9 @@ enum AnisetteProvider {
             headers.userAgent = resolved.userAgent
         }
 
+        // SideSignHeaders.GrandSlam / AppleAuth only expose userAgent (not clientInfo).
+        // Client-info goes on the anisette headers + ALTAnisetteData below.
         var gsConfig = await SideSignConfigManager.shared.loadConfig()
-        if !resolved.clientInfo.isEmpty {
-            gsConfig.grandSlam.clientInfo = resolved.clientInfo
-            gsConfig.appleAuth.clientInfo = resolved.clientInfo
-        }
         if !resolved.userAgent.isEmpty {
             gsConfig.grandSlam.userAgent = resolved.userAgent
             gsConfig.appleAuth.userAgent = resolved.userAgent
