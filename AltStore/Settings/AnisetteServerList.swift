@@ -928,6 +928,39 @@ struct AnisetteServersView: View {
     @ViewBuilder
     private var serverList: some View {
         List {
+            // SideInstaller 1.6.1 Auto (Mac ADI) — toggle at the top
+            Section {
+                Toggle(isOn: Binding(
+                    get: { UserDefaults.standard.bool(forKey: "SideInstallerMacAuto.enabled") || !UserDefaults.standard.bool(forKey: "SideInstallerMacAuto.userSet") },
+                    set: { newValue in
+                        UserDefaults.standard.set(true, forKey: "SideInstallerMacAuto.userSet")
+                        UserDefaults.standard.set(newValue, forKey: "SideInstallerMacAuto.enabled")
+                        if newValue {
+                            // SideInstaller 1.6.1 parity when Auto is on
+                            UserDefaults.standard.useOnDeviceAnisette = false
+                            UserDefaults.standard.disableAnisetteRotation = true
+                            UserDefaults.standard.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+                            // Clear custom Windows/Android client overrides
+                            if let defaults = UserDefaults.standard.dictionaryRepresentation() as? [String: Any] {
+                                _ = defaults
+                            }
+                            AnisetteConfigManager.shared.anisetteAdiBlob = nil
+                        }
+                    }
+                )) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("SideInstaller Auto (Mac ADI)")
+                            .font(.body)
+                        Text("Mac servers first (SideStore New → jkcoxson → iLoader). On-Device Anisette off. Fixes -80046.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .tint(.accentColor)
+            } footer: {
+                Text("Matches SideInstaller 1.6.1: Mac anisette only, current Mac identity, SideStore (New) default. Turn off to pick servers manually.")
+            }
+
             // Section 1: Server Selection
 
             Section {
