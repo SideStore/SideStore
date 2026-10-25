@@ -2,96 +2,179 @@
 //  AnisetteProvider.swift
 //  SideStore
 //
-//  Created by Magesh K on 8/9/26.
-//  Copyright © 2026 SideStore. All rights reserved.
-//
-//  Temporary Apple ID fix (SideInstaller 1.6.1 parity):
-//  Apple rejects Windows/Android anisette after the verification code with -80046.
-//  Sign in through Mac anisette servers first, report a current Mac via the
-//  server's /v3/client_info, force On-Device Anisette off, and purge stale adi.pb.
+//  SideInstaller 1.6.1 exact Auto anisette parity.
+//  candidates() / macADIOrder / library() match
+//  FrizzleM/SideInstaller ios-app/AnisetteServers.swift
 //
 
 import Foundation
 import SideSign
 
 enum AnisetteProvider {
-    /// SideInstaller 1.6.1 macADIHosts — try these first
-    private static let macADIHosts: Set<String> = [
-        "new.ani.sidestore.io",      // SideStore (New) — SideInstaller 1.6.1 first
+
+    // MARK: - SideInstaller ADI library classification (exact)
+
+    enum ADILibrary {
+        case mac, windows, android
+    }
+
+    /// SideInstaller `macADIOrder` — Auto tries these hosts first.
+    static let macADIOrder: [String] = [
+        "new.ani.sidestore.io",
         "mac-ani.jkcoxson.com",
         "ani.iloader.app",
         "ani3.stikstore.app",
-        "ani2.stikstore.app",
-        "ani.sidestore.io",
         "ani.jkcoxson.com",
-    ]
-
-    /// Former Windows ADI hosts — try only after Mac servers
-    private static let windowsADIHosts: Set<String> = [
-        "win.ani.sidestore.io"
-    ]
-
-    /// Preferred Mac server order (SideInstaller starts with SideStore (New))
-    private static let preferredMacOrder = [
-        "new.ani.sidestore.io",      // SideInstaller macADIOrder[0]
-        "mac-ani.jkcoxson.com",
-        "ani.iloader.app",
-        "ani3.stikstore.app",
         "ani2.stikstore.app",
-        "ani.sidestore.io",
-        "ani.jkcoxson.com",
     ]
+    static let macADIHosts: Set<String> = Set(macADIOrder)
+    static let windowsADIHosts: Set<String> = ["win.ani.sidestore.io"]
+
+    /// SideInstaller `MAC_CLIENT_INFO` (grandslam.rs) — current Mac, not server's 10.12.
+    static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+    static let macUserAgent  = "akd/1.0 CFNetwork/808.1.4"
+
+    /// SideInstaller `AnisetteServer.fallback`
+    static let fallbackServerURL = "https://new.ani.sidestore.io"
+
+    /// SideInstaller Auto default (Engine.anisetteAuto defaults to true)
+    static var isAutoEnabled: Bool {
+        if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil {
+            return true
+        }
+        return UserDefaults.standard.bool(forKey: "anisetteServerAuto")
+    }
+
+    static func setAutoEnabled(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "anisetteServerAuto")
+        if enabled {
+            UserDefaults.standard.useOnDeviceAnisette = false
+            // Auto tries multiple servers — allow rotation across Mac candidates
+            UserDefaults.standard.disableAnisetteRotation = false
+            if UserDefaults.standard.menuAnisetteURL.isEmpty {
+                UserDefaults.standard.menuAnisetteURL = fallbackServerURL
+            }
+        }
+    }
+
+    static func normalized(_ address: String) -> String {
+        var a = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        while a.hasSuffix("/") { a.removeLast() }
+        return a.lowercased()
+    }
+
+    /// SideInstaller `library(of:in:)`
+    static func library(of address: String, serverNames: [String: String] = [:]) -> ADILibrary {
+        let key = normalized(address)
+        if let host = URL(string: key)?.host?.lowercased() {
+            if macADIHosts.contains(host) { return .mac }
+            if windowsADIHosts.contains(host) { return .windows }
+        }
+        let name = (serverNames[key] ?? "").lowercased()
+        if name.contains("mac adi") { return .mac }
+        if name.contains("windows") { return .windows }
+        return .android
+    }
+
+    /// SideInstaller `AnisetteServer.candidates(pick:servers:failing:)` — exact algorithm.
+    static func candidates(pick: String, servers: [String], serverNames: [String: String] = [:], failing: Set<String> = []) -> [String] {
+        var seen = Set<String>()
+        var out: [String] = []
+        func add(_ group: [String]) {
+            var failed: [String] = []
+            for address in group {
+                let a = address.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !a.isEmpty, seen.insert(normalized(a)).inserted else { continue }
+                if failing.contains(normalized(a)) {
+                    failed.append(a)
+                } else {
+                    out.append(a)
+                }
+            }
+            out += failed
+        }
+        let addresses = servers
+        let macServers = addresses.filter { library(of: $0, serverNames: serverNames) == .mac }
+        let mac = macADIOrder.compactMap { host in
+            macServers.first { URL(string: normalized($0))?.host?.lowercased() == host }
+        } + macServers
+        let windows = addresses.filter { library(of: $0, serverNames: serverNames) == .windows }
+        switch library(of: pick, serverNames: serverNames) {
+        case .mac:     add([pick] + mac)
+        case .windows: add([pick] + windows)
+        case .android: add([pick])  // alone — Android ends in -80046 for new login
+        }
+        add(mac)
+        add(windows)
+        return out
+    }
+
+    // MARK: - RecentFailures (SideInstaller, 12h window)
+
+    enum RecentFailures {
+        static let key = "anisetteServerFailures"
+        static let window: TimeInterval = 12 * 60 * 60
+
+        static func addresses(now: Date = Date()) -> Set<String> {
+            Set(stored().filter { now.timeIntervalSince1970 - $0.value < window }.keys)
+        }
+
+        static func record(_ address: String, error: String, now: Date = Date()) {
+            let e = error.lowercased()
+            // Only hold back real anisette-server faults
+            guard e.contains("anisette") || e.contains("timeout") || e.contains("502") || e.contains("503") else { return }
+            var failures = stored().filter { now.timeIntervalSince1970 - $0.value < window }
+            failures[normalized(address)] = now.timeIntervalSince1970
+            UserDefaults.standard.set(failures, forKey: key)
+        }
+
+        static func clear(_ address: String) {
+            var failures = stored()
+            guard failures.removeValue(forKey: normalized(address)) != nil else { return }
+            UserDefaults.standard.set(failures, forKey: key)
+        }
+
+        private static func stored() -> [String: Double] {
+            UserDefaults.standard.dictionary(forKey: key) as? [String: Double] ?? [:]
+        }
+    }
+
+    // MARK: - Fetch
 
     static func fetch(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
-        // SideInstaller 1.6.1: On-Device Anisette ends in -80046 → force off
+        // SideInstaller post-install parity for SideStore: ODA always off
         if UserDefaults.standard.useOnDeviceAnisette {
-            debugLog("[AnisetteProvider] On-device anisette forced off (SideInstaller 1.6.1 Mac fix)")
+            debugLog("[AnisetteProvider] On-device anisette forced off (SideInstaller 1.6.1)")
             UserDefaults.standard.useOnDeviceAnisette = false
         }
 
-        // Prefer auto-rotation off so we stay on a working Mac server
-        if !UserDefaults.standard.disableAnisetteRotation {
-            // Do not force-write every launch; only ensure a sensible default once
-            let key = "AnisetteMacADI.defaultedRotationOff.v1"
-            if !UserDefaults.standard.bool(forKey: key) {
-                UserDefaults.standard.disableAnisetteRotation = true
-                UserDefaults.standard.set(true, forKey: key)
-                debugLog("[AnisetteProvider] Defaulted auto-rotation OFF (SideInstaller 1.6.1)")
-            }
-        }
-
-        // One-time purge of Windows/Android-provisioned adi.pb so Mac ADI can create a fresh identity
+        // One-time purge so Mac ADI can create a fresh identity
         let migKey = "AnisetteMacADI.purgeAdi.v1"
         if !UserDefaults.standard.bool(forKey: migKey) {
             AnisetteConfigManager.shared.anisetteAdiBlob = nil
             UserDefaults.standard.set(true, forKey: migKey)
-            debugLog("[AnisetteProvider] Purged stored adi.pb for Mac ADI re-provision (v1)")
+            debugLog("[AnisetteProvider] Purged stored adi.pb for Mac ADI re-provision")
         }
 
-        // If the saved server is a known Windows-only host, clear it so we start on Mac
-        if let host = URL(string: UserDefaults.standard.menuAnisetteURL)?.host,
-           windowsADIHosts.contains(host) {
-            debugLog("[AnisetteProvider] Clearing Windows ADI server preference: \(host)")
-            UserDefaults.standard.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
-            AnisetteConfigManager.shared.anisetteAdiBlob = nil
+        // Default Auto ON + SideStore (New) when unset
+        if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil {
+            UserDefaults.standard.set(true, forKey: "anisetteServerAuto")
+        }
+        if UserDefaults.standard.menuAnisetteURL.isEmpty ||
+            windowsADIHosts.contains(URL(string: UserDefaults.standard.menuAnisetteURL)?.host ?? "") {
+            UserDefaults.standard.menuAnisetteURL = fallbackServerURL
         }
 
-        debugLog("[AnisetteProvider] Fetching anisette via remote server (Mac GSA path)...")
+        debugLog("[AnisetteProvider] Fetching anisette (SideInstaller Auto=\(isAutoEnabled))...")
         return try await fetchRemote(handler: handler)
     }
 
-    /// SideInstaller 1.6.1: use the client_info the Mac server advertises (current Mac).
-    /// Fall back only if the server returns nothing useful.
-    /// SideInstaller 1.6.1: ALWAYS report a current Mac for GrandSlam.
-    /// Servers still *name* macOS 10.12; Apple rejects that after the code (-80046 / -23782).
+    /// Always report SideInstaller current Mac (not server's macOS 10.12).
     static func clientInfoToUse(advertisedClientInfo: String?, advertisedUserAgent: String?) -> (clientInfo: String, userAgent: String) {
-        let ci = AppConstants.Anisette.Servers.macClientInfo
-        var ua = (advertisedUserAgent?.isEmpty == false) ? advertisedUserAgent! : AppConstants.Anisette.Servers.macUserAgent
-        if ua.isEmpty { ua = AppConstants.Anisette.Servers.macUserAgent }
-        return (ci, ua)
+        let ua = (advertisedUserAgent?.isEmpty == false) ? advertisedUserAgent! : macUserAgent
+        return (macClientInfo, ua.isEmpty ? macUserAgent : ua)
     }
 
-    /// Fetch /v3/client_info (SideInstaller RemoteV3)
     private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
         guard var components = URLComponents(url: serverURL, resolvingAgainstBaseURL: false) else {
             return (nil, nil)
@@ -128,64 +211,61 @@ enum AnisetteProvider {
         }
     }
 
-    /// SideInstaller 1.6.1 order: Mac ADI first, then others, Windows ADI last.
-    private static func orderServersMacFirst(_ servers: [URL]) -> [URL] {
-        var macs: [URL] = []
-        var middle: [URL] = []
-        var windows: [URL] = []
-        for url in servers {
-            let host = url.host ?? ""
-            if macADIHosts.contains(host) {
-                macs.append(url)
-            } else if windowsADIHosts.contains(host) {
-                windows.append(url)
-            } else {
-                middle.append(url)
+    private static func fetchRemote(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
+        let items = AnisetteServersManager.shared.loadLocalServers()
+        var serverUrlStrings = items.filter { !$0.isHidden }.map(\.address)
+        var serverNames: [String: String] = [:]
+        for item in items {
+            serverNames[normalized(item.address)] = item.name
+        }
+
+        // Ensure SideInstaller Mac extras exist even if community list omits them
+        let extras = [
+            ("SideStore (New)", "https://new.ani.sidestore.io"),
+            ("jkcoxson (Mac ADI)", "https://mac-ani.jkcoxson.com"),
+            ("iLoader (Mac ADI)", "https://ani.iloader.app"),
+            ("StikStore (Mac ADI)", "https://ani3.stikstore.app"),
+            ("StikStore 2 (Mac ADI)", "https://ani2.stikstore.app"),
+        ]
+        for (name, addr) in extras {
+            if !serverUrlStrings.contains(where: { normalized($0) == normalized(addr) }) {
+                serverUrlStrings.append(addr)
+                serverNames[normalized(addr)] = name
             }
         }
-        macs.sort { a, b in
-            let ia = preferredMacOrder.firstIndex(of: a.host ?? "") ?? 99
-            let ib = preferredMacOrder.firstIndex(of: b.host ?? "") ?? 99
-            return ia < ib
-        }
-        return macs + middle + windows
-    }
 
-    private static func fetchRemote(handler: AnisetteServerHandler? = nil) async throws -> ALTAnisetteData {
-        let serverUrlStrings = await AnisetteServersManager.shared.getActiveServerURLs()
-        let servers = serverUrlStrings.compactMap { URL(string: $0) }
-        guard !servers.isEmpty else {
+        guard !serverUrlStrings.isEmpty else {
             throw AnisetteError.noServersConfigured
         }
 
-        var ordered = orderServersMacFirst(servers)
+        let pick = UserDefaults.standard.menuAnisetteURL.isEmpty
+            ? fallbackServerURL
+            : UserDefaults.standard.menuAnisetteURL
 
-        // Ensure preferred Mac servers are tried first even if missing from remote list
-        let fallbackMac = [
-            "https://new.ani.sidestore.io",   // SideStore (New) first
-            "https://mac-ani.jkcoxson.com",
-            "https://ani.iloader.app",
-            "https://ani3.stikstore.app",
-            "https://ani2.stikstore.app",
-            "https://ani.sidestore.io",
-        ].compactMap { URL(string: $0) }
-        for fm in fallbackMac.reversed() {
-            if !ordered.contains(where: { $0.host == fm.host }) {
-                ordered.insert(fm, at: 0)
-            } else if let idx = ordered.firstIndex(where: { $0.host == fm.host }), idx > 0 {
-                ordered.remove(at: idx)
-                ordered.insert(fm, at: 0)
-            }
+        // SideInstaller Auto ON → candidates(); OFF → only the pick
+        let orderedStrings: [String]
+        if isAutoEnabled {
+            orderedStrings = candidates(
+                pick: pick,
+                servers: serverUrlStrings,
+                serverNames: serverNames,
+                failing: RecentFailures.addresses()
+            )
+            // Allow trying the full Mac candidate list
+            UserDefaults.standard.disableAnisetteRotation = false
+        } else {
+            orderedStrings = [pick]
         }
 
-        let lastServer = UserDefaults.standard.menuAnisetteURL
-        var startIndex = ordered.firstIndex(where: { $0.absoluteString == lastServer }) ?? 0
-        // If last server was Windows-only, start at Mac instead
-        if let host = URL(string: lastServer)?.host, windowsADIHosts.contains(host) {
-            startIndex = 0
+        let ordered = orderedStrings.compactMap { URL(string: $0) }
+        guard !ordered.isEmpty else {
+            throw AnisetteError.noServersConfigured
         }
 
+        let startIndex = 0
         let activeServer = ordered[startIndex]
+        debugLog("[AnisetteProvider] Auto=\(isAutoEnabled) ordered=\(ordered.map { $0.host ?? $0.absoluteString })")
+
         let advertised = await fetchServerClientInfo(from: activeServer)
         let resolved = clientInfoToUse(advertisedClientInfo: advertised.clientInfo, advertisedUserAgent: advertised.userAgent)
         debugLog("[AnisetteProvider] Using clientInfo=\(resolved.clientInfo) ua=\(resolved.userAgent) server=\(activeServer.absoluteString)")
@@ -201,8 +281,11 @@ enum AnisetteProvider {
             headers.userAgent = resolved.userAgent
         }
 
-        // Align GrandSlam UA with the Mac identity the server gave us
         var gsConfig = await SideSignConfigManager.shared.loadConfig()
+        if !resolved.clientInfo.isEmpty {
+            gsConfig.grandSlam.clientInfo = resolved.clientInfo
+            gsConfig.appleAuth.clientInfo = resolved.clientInfo
+        }
         if !resolved.userAgent.isEmpty {
             gsConfig.grandSlam.userAgent = resolved.userAgent
             gsConfig.appleAuth.userAgent = resolved.userAgent
@@ -210,15 +293,17 @@ enum AnisetteProvider {
         DeveloperPortal.shared.customHeaders = SideSignConfigManager.sanitizeForGrandSlam(gsConfig)
 
         let (anisetteData, newAdiBlob) = try await provider.fetchAnisetteDataWithFailover(
-            servers: UserDefaults.standard.disableAnisetteRotation ? [ordered[startIndex]] : ordered,
+            servers: isAutoEnabled ? ordered : [ordered[startIndex]],
             startIndex: startIndex,
             identifier: identifier,
             existingAdiBlob: existingBlob,
             headers: headers,
             onError: { error in
-                let s = "\(error)".lowercased()
-                if s.contains("-45061") || s.contains("not provisioned") || s.contains("-80045")
-                    || s.contains("-80046") || s.contains("503") || s.contains("could not connect") {
+                let s = "\(error)"
+                let lower = s.lowercased()
+                RecentFailures.record(activeServer.absoluteString, error: s)
+                if lower.contains("-45061") || lower.contains("not provisioned") || lower.contains("-80045")
+                    || lower.contains("-80046") || lower.contains("503") || lower.contains("could not connect") {
                     debugLog("[AnisetteProvider] ADI/auth error — purging adi.pb")
                     AnisetteConfigManager.shared.anisetteAdiBlob = nil
                 }
@@ -239,6 +324,7 @@ enum AnisetteProvider {
             },
             onSuccess: { successfulServer in
                 UserDefaults.standard.menuAnisetteURL = successfulServer.absoluteString
+                RecentFailures.clear(successfulServer.absoluteString)
                 debugLog("[AnisetteProvider] Successfully fetched Anisette data from \(successfulServer.absoluteString)")
             }
         )
@@ -248,13 +334,8 @@ enum AnisetteProvider {
         }
 
         var data = anisetteData
-        // Prefer the Mac identity the server advertised (SideInstaller one-client rule for Mac path)
-        if !resolved.clientInfo.isEmpty {
-            data.clientInfo = resolved.clientInfo
-        }
-        if !resolved.userAgent.isEmpty {
-            data.userAgent = resolved.userAgent
-        }
+        data.clientInfo = resolved.clientInfo
+        data.userAgent = resolved.userAgent
         return data
     }
 }
