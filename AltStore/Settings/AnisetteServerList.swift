@@ -928,37 +928,39 @@ struct AnisetteServersView: View {
     @ViewBuilder
     private var serverList: some View {
         List {
-            // SideInstaller 1.6.1 Auto (Mac ADI) — toggle at the top
+            // SideInstaller 1.6.1 Auto — exact Engine.anisetteAuto + candidates()
             Section {
                 Toggle(isOn: Binding(
-                    get: { UserDefaults.standard.bool(forKey: "SideInstallerMacAuto.enabled") || !UserDefaults.standard.bool(forKey: "SideInstallerMacAuto.userSet") },
+                    get: {
+                        // SideInstaller default: Auto ON
+                        if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil {
+                            return true
+                        }
+                        return UserDefaults.standard.bool(forKey: "anisetteServerAuto")
+                    },
                     set: { newValue in
-                        UserDefaults.standard.set(true, forKey: "SideInstallerMacAuto.userSet")
-                        UserDefaults.standard.set(newValue, forKey: "SideInstallerMacAuto.enabled")
+                        UserDefaults.standard.set(newValue, forKey: "anisetteServerAuto")
+                        AnisetteProvider.setAutoEnabled(newValue)
                         if newValue {
-                            // SideInstaller 1.6.1 parity when Auto is on
                             UserDefaults.standard.useOnDeviceAnisette = false
-                            UserDefaults.standard.disableAnisetteRotation = true
-                            UserDefaults.standard.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
-                            // Clear custom Windows/Android client overrides
-                            if let defaults = UserDefaults.standard.dictionaryRepresentation() as? [String: Any] {
-                                _ = defaults
+                            // Auto tries Mac candidates in SideInstaller order
+                            if UserDefaults.standard.menuAnisetteURL.isEmpty {
+                                UserDefaults.standard.menuAnisetteURL = AnisetteProvider.fallbackServerURL
                             }
-                            AnisetteConfigManager.shared.anisetteAdiBlob = nil
                         }
                     }
                 )) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("SideInstaller Auto (Mac ADI)")
+                        Text("Auto")
                             .font(.body)
-                        Text("Mac servers first (SideStore New → jkcoxson → iLoader). On-Device Anisette off. Fixes -80046.")
+                        Text("Starts with the server that signed in last, then tries the others — Mac ADI first (SideStore New → jkcoxson → iLoader). Same as SideInstaller.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
                 .tint(.accentColor)
             } footer: {
-                Text("Matches SideInstaller 1.6.1: Mac anisette only, current Mac identity, SideStore (New) default. Turn off to pick servers manually.")
+                Text("Auto on: tries Mac anisette servers in SideInstaller order when one fails. Auto off: only the server you pick below is tried.")
             }
 
             // Section 1: Server Selection
