@@ -46,8 +46,10 @@ public final class AppBootManager {
         // 2. Auto-rotation OFF
         ud.disableAnisetteRotation = true
 
-        // 3. Pick SideStore (New) — Mac anisette server
-        ud.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+        // 3. Default server only if none is selected (don't lock out manual picks later)
+        if ud.menuAnisetteURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            ud.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+        }
 
         // 4. Put client info saved for a Windows PC or Android phone back to defaults
         ud.customAnisetteClientInfo = nil
