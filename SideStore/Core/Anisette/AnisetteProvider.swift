@@ -20,11 +20,11 @@ enum AnisetteProvider {
 
     /// SideInstaller `macADIOrder` — Auto tries these hosts first.
     static let macADIOrder: [String] = [
-        "new.ani.sidestore.io",
+        "ani.jkcoxson.com",
         "mac-ani.jkcoxson.com",
+        "new.ani.sidestore.io",
         "ani.iloader.app",
         "ani3.stikstore.app",
-        "ani.jkcoxson.com",
         "ani2.stikstore.app",
     ]
     static let macADIHosts: Set<String> = Set(macADIOrder)
@@ -35,7 +35,7 @@ enum AnisetteProvider {
     static let macUserAgent  = "akd/1.0 CFNetwork/808.1.4"
 
     /// SideInstaller `AnisetteServer.fallback`
-    static let fallbackServerURL = "https://new.ani.sidestore.io"
+    static let fallbackServerURL = "https://ani.jkcoxson.com"
 
     /// SideInstaller Auto default (Engine.anisetteAuto defaults to true)
     static var isAutoEnabled: Bool {
