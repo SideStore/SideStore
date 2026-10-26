@@ -31,8 +31,8 @@ enum AnisetteProvider {
     static let windowsADIHosts: Set<String> = ["win.ani.sidestore.io"]
 
     /// SideInstaller `MAC_CLIENT_INFO` (grandslam.rs) — current Mac, not server's 10.12.
-    static let macClientInfo = "<MacBookPro18,3> <macOS;26.6;25F84> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
-    static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.akd/1.0)"
+    static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+    static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 27.0) (com.apple.akd/1.0)"
 
     /// SideInstaller `AnisetteServer.fallback`
     static let fallbackServerURL = "https://ani.jkcoxson.com"
