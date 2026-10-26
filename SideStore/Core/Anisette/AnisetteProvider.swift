@@ -31,8 +31,8 @@ enum AnisetteProvider {
     static let windowsADIHosts: Set<String> = ["win.ani.sidestore.io"]
 
     /// SideInstaller `MAC_CLIENT_INFO` (grandslam.rs) — current Mac, not server's 10.12.
-    static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
-    static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 27.0) (com.apple.akd/1.0)"
+    static let macClientInfo = "<MacBookPro18,3> <macOS;26.6;25F84> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+    static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.akd/1.0)"
 
     /// SideInstaller `AnisetteServer.fallback`
     static let fallbackServerURL = "https://new.ani.sidestore.io"
@@ -179,7 +179,10 @@ enum AnisetteProvider {
         let currentMac = macClientInfo
         let currentMacUA = macUserAgent
         let akdUA = "akd/1.0 CFNetwork/808.1.4"
-        if advertised.isEmpty || advertised.contains("<Android;") {
+        // Stock anisette-v3 / omnisette clients = Android ADI → Windows
+        let stock = advertised.hasPrefix("<MacBookPro13,2> <macOS;13.1;22C65>")
+            || advertised.hasPrefix("<MacBookPro15,1> <Mac OS X;10.15.2;19C57>")
+        if advertised.isEmpty || advertised.contains("<Android;") || stock {
             return (windows, akdUA)
         }
         // mac_version < (10, 13) — servers name 10.12.6
