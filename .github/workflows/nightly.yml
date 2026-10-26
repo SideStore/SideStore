@@ -20,8 +20,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: xcode-27
     env:
+      XCODE_VERSION: "27.1"
+      SIMULATOR_DEVICE: "iPhone Duo"
+      SIMULATOR_OS: "27.1"
       DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       RELEASE_NAME: Nightly
@@ -87,7 +90,7 @@ jobs:
         if: steps.build_gate.outputs.should_skip != 'true'
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "26.4"
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Restore Cache (exact)
         if: steps.build_gate.outputs.should_skip != 'true'
@@ -97,7 +100,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-${{ github.sha }}
 
       - name: Restore Cache (last)
         if: >
@@ -109,7 +112,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-
 
       # --------------------------------------------------
       # build and test
@@ -128,7 +131,7 @@ jobs:
           vars.ENABLE_TESTS_RUN == '1'
         run: |
           mkdir -p build/logs
-          python3 scripts/ci/workflow.py boot-sim-async "iPhone 17 Pro"
+          python3 scripts/ci/workflow.py boot-sim-async "$SIMULATOR_DEVICE"
 
       - name: Build
         if: steps.build_gate.outputs.should_skip != 'true'
@@ -163,7 +166,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-${{ github.sha }}
 
       - name: Tests Run
         if: >
@@ -174,7 +177,7 @@ jobs:
         env:
           BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
         run: |
-          python3 scripts/ci/workflow.py tests-run "iPhone 17 Pro"; STATUS=$?
+          python3 scripts/ci/workflow.py tests-run "$SIMULATOR_DEVICE"; STATUS=$?
           python3 scripts/ci/workflow.py encrypt-tests-run
           exit $STATUS
 

@@ -20,7 +20,9 @@ jobs:
   build:
     name: Build and upload SideStore
     if: ${{ github.event.pull_request.draft == false }}
-    runs-on: macos-26
+    runs-on: xcode-27
+    env:
+      XCODE_VERSION: "27.1"
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +44,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "26.2"
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
@@ -51,7 +53,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-${{ github.sha }}
 
       - name: Restore Cache (last)
         if: steps.xcode-cache-exact.outputs.cache-hit != 'true'
@@ -61,7 +63,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-
 
       - name: Build
         env:
@@ -79,7 +81,7 @@ jobs:
           path: |
             ~/Library/Developer/Xcode/DerivedData
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-build-cache-${{ github.ref_name }}-${{ github.sha }}
+          key: xcode-build-cache-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ github.ref_name }}-${{ github.sha }}
 
       - uses: actions/upload-artifact@v4
         with:
