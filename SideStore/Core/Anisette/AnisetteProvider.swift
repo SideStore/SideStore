@@ -156,12 +156,12 @@ enum AnisetteProvider {
             debugLog("[AnisetteProvider] Purged stored adi.pb for Mac ADI re-provision")
         }
 
-        // Default Auto ON + SideStore (New) when unset
+        // Default Auto ON only once — never rewrite the user's picked server.
         if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil {
             UserDefaults.standard.set(true, forKey: "anisetteServerAuto")
         }
-        if UserDefaults.standard.menuAnisetteURL.isEmpty ||
-            windowsADIHosts.contains(URL(string: UserDefaults.standard.menuAnisetteURL)?.host ?? "") {
+        // Only fill an empty URL; do not force jkcoxson over a manual pick.
+        if UserDefaults.standard.menuAnisetteURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             UserDefaults.standard.menuAnisetteURL = fallbackServerURL
         }
 
@@ -266,10 +266,12 @@ enum AnisetteProvider {
                 serverNames: serverNames,
                 failing: RecentFailures.addresses()
             )
-            // Allow trying the full Mac candidate list
+            // Auto mode tries the candidate list (rotation on for failover)
             UserDefaults.standard.disableAnisetteRotation = false
         } else {
+            // Manual pick only — respect the server the user selected in Settings
             orderedStrings = [pick]
+            debugLog("[AnisetteProvider] Auto OFF — using only selected server: \(pick)")
         }
 
         let ordered = orderedStrings.compactMap { URL(string: $0) }
