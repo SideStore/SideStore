@@ -1288,6 +1288,9 @@ struct AnisetteServersView: View {
         SwiftUI.Button {
             selectedServerURL = item.address
             UserDefaults.standard.menuAnisetteURL = item.address
+            // SideInstaller: picking a server turns Auto off so only that server is used
+            UserDefaults.standard.set(false, forKey: "anisetteServerAuto")
+            UserDefaults.standard.disableAnisetteRotation = true
         } label: {
             HStack(spacing: 12) {
                 Text("#\(index + 1)")
