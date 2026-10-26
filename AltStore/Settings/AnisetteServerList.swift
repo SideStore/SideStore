@@ -633,7 +633,76 @@ struct AnisetteServersView: View {
         self.onResetAdiPb = onResetAdiPb
     }
 
-    var body: some View {
+    
+    // MARK: - SideInstaller Anisette Choice (exact Engine.anisetteAuto UI)
+
+    private enum AnisetteChoice: Hashable {
+        case auto
+        case server(String)
+        case custom
+    }
+
+    private var isAnisetteAuto: Bool {
+        if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil { return true }
+        return UserDefaults.standard.bool(forKey: "anisetteServerAuto")
+    }
+
+    private var isAnisetteCustom: Bool {
+        let url = UserDefaults.standard.menuAnisetteURL
+        return !isAnisetteAuto && !viewModel.items.contains { !$0.isHidden && $0.address == url }
+    }
+
+    private var anisetteStartsWithName: String {
+        let url = UserDefaults.standard.menuAnisetteURL
+        return viewModel.items.first { $0.address == url }?.name
+            ?? (url.isEmpty ? AnisetteProvider.fallbackServerURL : url)
+    }
+
+    private var anisetteChoiceBinding: Binding<AnisetteChoice> {
+        Binding(
+            get: {
+                if isAnisetteAuto { return .auto }
+                let url = UserDefaults.standard.menuAnisetteURL
+                if viewModel.items.contains(where: { !$0.isHidden && $0.address == url }) {
+                    return .server(url)
+                }
+                return .custom
+            },
+            set: { choice in
+                switch choice {
+                case .auto:
+                    UserDefaults.standard.set(true, forKey: "anisetteServerAuto")
+                    AnisetteProvider.setAutoEnabled(true)
+                    UserDefaults.standard.useOnDeviceAnisette = false
+                    if UserDefaults.standard.menuAnisetteURL.isEmpty {
+                        UserDefaults.standard.menuAnisetteURL = AnisetteProvider.fallbackServerURL
+                    }
+                case .server(let address):
+                    UserDefaults.standard.set(false, forKey: "anisetteServerAuto")
+                    AnisetteProvider.setAutoEnabled(false)
+                    UserDefaults.standard.disableAnisetteRotation = true
+                    UserDefaults.standard.menuAnisetteURL = address
+                    selectedServerURL = address
+                case .custom:
+                    UserDefaults.standard.set(false, forKey: "anisetteServerAuto")
+                    AnisetteProvider.setAutoEnabled(false)
+                    UserDefaults.standard.disableAnisetteRotation = true
+                }
+            }
+        )
+    }
+
+    private var customAnisetteURLBinding: Binding<String> {
+        Binding(
+            get: { UserDefaults.standard.menuAnisetteURL },
+            set: { newValue in
+                UserDefaults.standard.menuAnisetteURL = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                selectedServerURL = UserDefaults.standard.menuAnisetteURL
+            }
+        )
+    }
+
+var body: some View {
         serverList
             .navigationTitle("Anisette Servers")
             .toolbar {
@@ -928,39 +997,37 @@ struct AnisetteServersView: View {
     @ViewBuilder
     private var serverList: some View {
         List {
-            // SideInstaller 1.6.1 Auto — exact Engine.anisetteAuto + candidates()
+            // SideInstaller Settings › Anisette Server — exact Auto control
+            // (Picker with Auto first, not a separate switch elsewhere)
             Section {
-                Toggle(isOn: Binding(
-                    get: {
-                        // SideInstaller default: Auto ON
-                        if UserDefaults.standard.object(forKey: "anisetteServerAuto") == nil {
-                            return true
-                        }
-                        return UserDefaults.standard.bool(forKey: "anisetteServerAuto")
-                    },
-                    set: { newValue in
-                        UserDefaults.standard.set(newValue, forKey: "anisetteServerAuto")
-                        AnisetteProvider.setAutoEnabled(newValue)
-                        if newValue {
-                            UserDefaults.standard.useOnDeviceAnisette = false
-                            // Auto tries Mac candidates in SideInstaller order
-                            if UserDefaults.standard.menuAnisetteURL.isEmpty {
-                                UserDefaults.standard.menuAnisetteURL = AnisetteProvider.fallbackServerURL
-                            }
-                        }
+                Picker("Server", selection: anisetteChoiceBinding) {
+                    Text("Auto").tag(AnisetteChoice.auto)
+                    ForEach(viewModel.items.filter { !$0.isHidden }) { item in
+                        Text(item.name).tag(AnisetteChoice.server(item.address))
                     }
-                )) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Auto")
-                            .font(.body)
-                        Text("Starts with the server that signed in last, then tries the others — Mac ADI first (SideStore New → jkcoxson → iLoader). Same as SideInstaller.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text("Custom…").tag(AnisetteChoice.custom)
                 }
-                .tint(.accentColor)
+                if isAnisetteAuto {
+                    Text("Starts with \(anisetteStartsWithName)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if isAnisetteCustom {
+                    TextField("Server URL", text: customAnisetteURLBinding)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+                        .autocorrectionDisabled()
+                } else {
+                    Text(UserDefaults.standard.menuAnisetteURL)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                }
+            } header: {
+                Text("Anisette Server")
             } footer: {
-                Text("Auto on: tries Mac anisette servers in SideInstaller order when one fails. Auto off: only the server you pick below is tried.")
+                Text(isAnisetteAuto
+                    ? "Auto starts with the server that signed in last, then tries the others, the ones most likely to work first."
+                    : "Only this server is tried. If it fails, so does sign-in: choose Auto to have SideStore try the others.")
             }
 
             // Section 1: Server Selection
@@ -1049,7 +1116,7 @@ struct AnisetteServersView: View {
                     }
                 } else {
                     ForEach(
-                        Array(viewModel.visibleItems.enumerated()),
+                        Array(viewModel.items.filter { !$0.isHidden }.enumerated()),
                         id: \.element.id
                     ) { index, item in
                         serverRow(item, index: index)
