@@ -20,7 +20,7 @@ jobs:
   build:
     name: Build and upload SideStore
     if: ${{ github.event.pull_request.draft == false }}
-    runs-on: macos-26
+    runs-on: xcode-27
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "26.2"
+          xcode-version: "27.2"
 
       - name: Restore Cache (exact)
         id: xcode-cache-exact
