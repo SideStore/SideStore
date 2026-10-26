@@ -122,8 +122,8 @@ public enum AppConstants {
                 "win.ani.sidestore.io",
             ]
             /// SideInstaller MAC_CLIENT_INFO — current Mac (servers still name 10.12)
-            public static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
-            public static let macUserAgent  = "akd/1.0 CFNetwork/808.1.4"
+            public static let macClientInfo = "<MacBookPro18,3> <macOS;26.6;25F84> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+            public static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.akd/1.0)"
         }
 
         public static let remoteCacheDuration     = Constants.Anisette.remoteCacheDuration
