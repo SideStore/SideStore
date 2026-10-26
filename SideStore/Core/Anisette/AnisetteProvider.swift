@@ -31,8 +31,8 @@ enum AnisetteProvider {
     static let windowsADIHosts: Set<String> = ["win.ani.sidestore.io"]
 
     /// SideInstaller `MAC_CLIENT_INFO` (grandslam.rs) — current Mac, not server's 10.12.
-    static let macClientInfo = "<Mac15,7> <macOS;27.0;26A5378j> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
-    static let macUserAgent  = "akd/1.0 CFNetwork/808.1.4"
+    static let macClientInfo = "<MacBookPro18,3> <macOS;26.6;25F84> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+    static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.akd/1.0)"
 
     /// SideInstaller `AnisetteServer.fallback`
     static let fallbackServerURL = "https://ani.jkcoxson.com"
@@ -149,7 +149,7 @@ enum AnisetteProvider {
         }
 
         // One-time purge so Mac ADI can create a fresh identity
-        let migKey = "AnisetteMacADI.purgeAdi.v1"
+        let migKey = "AnisetteMacADI.purgeAdi.v2"
         if !UserDefaults.standard.bool(forKey: migKey) {
             AnisetteConfigManager.shared.anisetteAdiBlob = nil
             UserDefaults.standard.set(true, forKey: migKey)
@@ -170,9 +170,24 @@ enum AnisetteProvider {
     }
 
     /// Always report SideInstaller current Mac (not server's macOS 10.12).
+    /// SideInstaller `client_info_to_use` (remote_v3/mod.rs) — exact.
+    /// empty/Android → Windows; Mac &lt; 10.13 → CURRENT_MAC; else advertised.
+    /// Fixes -80046 after the verification code.
     static func clientInfoToUse(advertisedClientInfo: String?, advertisedUserAgent: String?) -> (clientInfo: String, userAgent: String) {
-        let ua = (advertisedUserAgent?.isEmpty == false) ? advertisedUserAgent! : macUserAgent
-        return (macClientInfo, ua.isEmpty ? macUserAgent : ua)
+        let advertised = (advertisedClientInfo ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let windows = "<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>"
+        let currentMac = macClientInfo
+        let currentMacUA = macUserAgent
+        let akdUA = "akd/1.0 CFNetwork/808.1.4"
+        if advertised.isEmpty || advertised.contains("<Android;") {
+            return (windows, akdUA)
+        }
+        // mac_version < (10, 13) — servers name 10.12.6
+        if advertised.contains("10.12") || advertised.contains("Mac OS X;10.11") || advertised.contains("Mac OS X;10.10") {
+            return (currentMac, currentMacUA)
+        }
+        let ua = (advertisedUserAgent ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return (advertised, ua.isEmpty ? akdUA : ua)
     }
 
     private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
