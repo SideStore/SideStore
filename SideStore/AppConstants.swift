@@ -103,7 +103,7 @@ public enum AppConstants {
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
             // SideInstaller 1.6.1: SideStore (New) first — Mac ADI library (fixes -80046)
-            public static let defaultServerURL     = "https://new.ani.sidestore.io"    // SideStore (New)
+            public static let defaultServerURL     = "https://ani.jkcoxson.com"        // jkcoxson working Mac ADI
             public static let secondaryServerURL   = "https://mac-ani.jkcoxson.com"    // jkcoxson Mac
             public static let tertiaryServerURL    = "https://ani.iloader.app"         // iLoader (Mac ADI)
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
