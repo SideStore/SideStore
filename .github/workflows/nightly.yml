@@ -14,17 +14,13 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
-# Allow the workflow to create and upload GitHub releases.
-permissions:
-  contents: write
-
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: xcode-27
     env:
       DEPLOY_KEY: ${{ secrets.CROSS_REPO_PUSH_KEY }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +38,7 @@ jobs:
         run: |
           LAST_SUCCESSFUL_COMMIT=$(python3 scripts/ci/workflow.py last-successful-commit \
             "false" "${{ env.CHANNEL }}" || echo "")
-          echo "LAST_SUCCESSFUL_COMMIT=$LAST_SUCCESSFUL_COMMIT" | tee -a "$GITHUB_ENV"
+          echo "LAST_SUCCESSFUL_COMMIT=$LAST_SUCCESSFUL_COMMIT" | tee -a $GITHUB_ENV
 
       - name: Check for new changes (on schedule)
         id: check_changes
@@ -50,8 +46,8 @@ jobs:
         run: |
           NEW_COMMITS=$(python3 scripts/ci/workflow.py count-new-commits "$LAST_SUCCESSFUL_COMMIT")
           SHOULD_BUILD=$([ "${NEW_COMMITS:-0}" -ge 1 ] && echo true || echo false)
-          echo "should_build=$SHOULD_BUILD" >> "$GITHUB_OUTPUT"
-          echo "NEW_COMMITS=$NEW_COMMITS" | tee -a "$GITHUB_ENV"
+          echo "should_build=$SHOULD_BUILD" >> $GITHUB_OUTPUT
+          echo "NEW_COMMITS=$NEW_COMMITS" | tee -a $GITHUB_ENV
 
       - name: Should Skip Building (on schedule)
         id: build_gate
@@ -61,14 +57,13 @@ jobs:
               [ "${{ steps.check_changes.outputs.should_build }}" != "true" ]; \
             } && echo true || echo false
           )
-          echo "should_skip=$SHOULD_SKIP" >> "$GITHUB_OUTPUT"
+          echo "should_skip=$SHOULD_SKIP" >> $GITHUB_OUTPUT
 
-      - name: Install build tools
+      - run: brew install ldid xcbeautify
         if: steps.build_gate.outputs.should_skip != 'true'
-        run: brew install ldid xcbeautify
 
       # --------------------------------------------------
-      # Runtime environment setup
+      # runtime env setup
       # --------------------------------------------------
       - name: Setup Env
         if: steps.build_gate.outputs.should_skip != 'true'
@@ -78,21 +73,21 @@ jobs:
           SHORT_COMMIT=$(python3 scripts/ci/workflow.py commit-id)
 
           NORMALIZED_VERSION=$(python3 scripts/ci/workflow.py compute-normalized \
-            "$MARKETING_VERSION" \
-            "$BUILD_NUM" \
-            "$SHORT_COMMIT")
+              "$MARKETING_VERSION" \
+              "$BUILD_NUM" \
+              "$SHORT_COMMIT")
 
           python3 scripts/ci/workflow.py set-marketing-version "$NORMALIZED_VERSION"
 
-          echo "BUILD_NUM=$BUILD_NUM" | tee -a "$GITHUB_ENV"
-          echo "SHORT_COMMIT=$SHORT_COMMIT" | tee -a "$GITHUB_ENV"
-          echo "MARKETING_VERSION=$NORMALIZED_VERSION" | tee -a "$GITHUB_ENV"
+          echo "BUILD_NUM=$BUILD_NUM" | tee -a $GITHUB_ENV
+          echo "SHORT_COMMIT=$SHORT_COMMIT" | tee -a $GITHUB_ENV
+          echo "MARKETING_VERSION=$NORMALIZED_VERSION" | tee -a $GITHUB_ENV
 
       - name: Setup Xcode
         if: steps.build_gate.outputs.should_skip != 'true'
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "26.4"
+          xcode-version: "27.2"
 
       - name: Restore Cache (exact)
         if: steps.build_gate.outputs.should_skip != 'true'
@@ -117,12 +112,10 @@ jobs:
           key: xcode-build-cache-${{ github.ref_name }}-
 
       # --------------------------------------------------
-      # Build and test
+      # build and test
       # --------------------------------------------------
       - name: Clean
-        if: >
-          steps.build_gate.outputs.should_skip != 'true' &&
-          contains(github.event.head_commit.message, '[--clean-build]')
+        if: steps.build_gate.outputs.should_skip != 'true' && contains(github.event.head_commit.message, '[--clean-build]')
         run: |
           python3 scripts/ci/workflow.py clean
           python3 scripts/ci/workflow.py clean-derived-data
@@ -143,11 +136,10 @@ jobs:
         env:
           BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
         run: |
-          python3 scripts/ci/workflow.py build
-          STATUS=$?
+          python3 scripts/ci/workflow.py build; STATUS=$?
           python3 scripts/ci/workflow.py encrypt-build
-          echo "encrypted=true" >> "$GITHUB_OUTPUT"
-          exit "$STATUS"
+          echo "encrypted=true" >> $GITHUB_OUTPUT
+          exit $STATUS
 
       - name: Tests Build
         if: >
@@ -158,15 +150,13 @@ jobs:
         env:
           BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
         run: |
-          python3 scripts/ci/workflow.py tests-build
-          STATUS=$?
+          python3 scripts/ci/workflow.py tests-build; STATUS=$?
           python3 scripts/ci/workflow.py encrypt-tests-build
-          exit "$STATUS"
+          exit $STATUS
 
       - name: Save Cache
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
-          steps.xcode-cache-exact.outputs.cache-hit != 'true' &&
           steps.xcode-cache-fallback.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
@@ -184,67 +174,56 @@ jobs:
         env:
           BUILD_LOG_ZIP_PASSWORD: ${{ secrets.BUILD_LOG_ZIP_PASSWORD }}
         run: |
-          python3 scripts/ci/workflow.py tests-run "iPhone 17 Pro"
-          STATUS=$?
+          python3 scripts/ci/workflow.py tests-run "iPhone 17 Pro"; STATUS=$?
           python3 scripts/ci/workflow.py encrypt-tests-run
-          exit "$STATUS"
+          exit $STATUS
 
       # --------------------------------------------------
-      # Artifacts
+      # artifacts
       # --------------------------------------------------
-      - name: Upload build logs
+      - uses: actions/upload-artifact@v4
         if: steps.build_gate.outputs.should_skip != 'true'
-        uses: actions/upload-artifact@v4
         with:
           name: build-logs-${{ env.MARKETING_VERSION }}.zip
           path: build-logs.zip
 
-      - name: Upload test build logs
+      - uses: actions/upload-artifact@v4
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
           vars.ENABLE_TESTS == '1' &&
           vars.ENABLE_TESTS_BUILD == '1'
-        uses: actions/upload-artifact@v4
         with:
           name: tests-build-logs-${{ env.SHORT_COMMIT }}.zip
           path: tests-build-logs.zip
 
-      - name: Upload test run logs
+      - uses: actions/upload-artifact@v4
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
           vars.ENABLE_TESTS == '1' &&
           vars.ENABLE_TESTS_RUN == '1'
-        uses: actions/upload-artifact@v4
         with:
           name: tests-run-logs-${{ env.SHORT_COMMIT }}.zip
           path: tests-run-logs.zip
 
-      - name: Upload IPA
+      - uses: actions/upload-artifact@v4
         if: steps.build_gate.outputs.should_skip != 'true'
-        uses: actions/upload-artifact@v4
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}.ipa
           path: SideStore.ipa
-
-      - name: Upload dSYMs
+      - uses: actions/upload-artifact@v4
         if: steps.build_gate.outputs.should_skip != 'true'
-        uses: actions/upload-artifact@v4
         with:
           name: SideStore-${{ env.MARKETING_VERSION }}-dSYMs.zip
           path: SideStore.dSYMs.zip
 
-      - name: Checkout apps repository
+      - uses: actions/checkout@v4
         if: steps.build_gate.outputs.should_skip != 'true' && env.DEPLOY_KEY != ''
-        uses: actions/checkout@v4
         with:
           repository: "SideStore/apps-v2.json"
           ref: "main"
           token: ${{ secrets.CROSS_REPO_PUSH_KEY }}
           path: "SideStore/apps-v2.json"
 
-      # --------------------------------------------------
-      # Metadata and deployment
-      # --------------------------------------------------
       - name: Generate Metadata
         if: steps.build_gate.outputs.should_skip != 'true'
         run: |
@@ -272,14 +251,13 @@ jobs:
             "$SOURCE_JSON" \
             "$CHANNEL" \
             "$MARKETING_VERSION"
+      
 
       # --------------------------------------------------
-      # Upload release to GitHub
+      # upload release to GH
       # --------------------------------------------------
       - name: Upload Release
         if: steps.build_gate.outputs.should_skip != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/ci/workflow.py upload-release \
             "$RELEASE_NAME" \
