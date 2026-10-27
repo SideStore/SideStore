@@ -351,6 +351,11 @@ enum AnisetteProvider {
             AnisetteConfigManager.shared.anisetteAdiBlob = freshBlob.base64EncodedString()
         }
 
+        // Keep activeMode so SideSign can refresh OTP after 2FA (SideInstaller get_anisette_data)
+        if let url = URL(string: UserDefaults.standard.menuAnisetteURL), !UserDefaults.standard.menuAnisetteURL.isEmpty {
+            provider.setMode(.remote(server: url))
+        }
+
         var data = anisetteData
         data.clientInfo = resolved.clientInfo
         data.userAgent = resolved.userAgent
