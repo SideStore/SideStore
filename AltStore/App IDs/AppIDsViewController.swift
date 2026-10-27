@@ -113,15 +113,23 @@ private extension AppIDsViewController
 
                 let currentDate = Date()
 
-                let formatter = DateComponentsFormatter()
-                formatter.unitsStyle = .full
-                formatter.includesApproximationPhrase = false
-                formatter.includesTimeRemainingPhrase = false
-                formatter.allowedUnits = [.minute, .hour, .day]
-                formatter.maximumUnitCount = 1
+                // PRECISE COUNTDOWN FIX: Compute precise breakdown of days, hours, and minutes remaining
+                let calendar = Calendar.current
+                let components = calendar.dateComponents([.day, .hour, .minute], from: currentDate, to: expirationDate)
+                
+                let days = components.day ?? 0
+                let hours = components.hour ?? 0
+                let minutes = components.minute ?? 0
+                
+                let timeIntervalText: String
+                if days > 0 {
+                    timeIntervalText = "\(days)d \(hours)h \(minutes)m"
+                } else if hours > 0 {
+                    timeIntervalText = "\(hours)h \(minutes)m"
+                } else {
+                    timeIntervalText = "\(max(0, minutes))m"
+                }
 
-                let timeInterval = formatter.string(from: currentDate, to: expirationDate)
-                let timeIntervalText = timeInterval ?? NSLocalizedString("Unknown", comment: "")
                 cell.bannerView.button.setTitle(timeIntervalText.uppercased(), for: .normal)
                 
                 attributedAccessibilityLabel.mutableString.append(timeIntervalText)
