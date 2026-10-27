@@ -28,7 +28,6 @@ final class AppIDsViewController: UICollectionViewController
         }
     }
     private var doneBarButtonItem: UIBarButtonItem?
-    
     private weak var footerView: TextCollectionReusableView?
     
     @IBOutlet var activityIndicatorBarButtonItem: UIBarButtonItem!
@@ -56,7 +55,6 @@ final class AppIDsViewController: UICollectionViewController
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
         self.updateActiveTeam()
         
         if !self.didInitialFetch
@@ -99,7 +97,6 @@ private extension AppIDsViewController
                         
             cell.bannerView.iconImageView.isHidden = true
             cell.bannerView.button.isIndicatingActivity = false
-            
             cell.bannerView.buttonLabel.text = NSLocalizedString("Expires in", comment: "")
             
             let attributedAccessibilityLabel = NSMutableAttributedString(string: appID.name + ". ")
@@ -108,12 +105,9 @@ private extension AppIDsViewController
             {
                 cell.bannerView.button.isHidden = false
                 cell.bannerView.button.isUserInteractionEnabled = false
-                
                 cell.bannerView.buttonLabel.isHidden = false
 
                 let currentDate = Date()
-
-                // PRECISE COUNTDOWN FIX: Compute precise breakdown of days, hours, and minutes remaining
                 let calendar = Calendar.current
                 let components = calendar.dateComponents([.day, .hour, .minute], from: currentDate, to: expirationDate)
                 
@@ -131,21 +125,19 @@ private extension AppIDsViewController
                 }
 
                 cell.bannerView.button.setTitle(timeIntervalText.uppercased(), for: .normal)
-                
                 attributedAccessibilityLabel.mutableString.append(timeIntervalText)
             }
             else
             {
                 cell.bannerView.button.isHidden = true
                 cell.bannerView.button.isUserInteractionEnabled = true
-                
                 cell.bannerView.buttonLabel.isHidden = true
             }
                                                 
             cell.bannerView.titleLabel.text = appID.name
             cell.bannerView.subtitleLabel.text = appID.bundleIdentifier
             cell.bannerView.subtitleLabel.numberOfLines = 2
-            cell.bannerView.subtitleLabel.minimumScaleFactor = 1.0 // Disable font shrinking
+            cell.bannerView.subtitleLabel.minimumScaleFactor = 1.0
             
             let attributedBundleIdentifier = NSMutableAttributedString(string: appID.bundleIdentifier.lowercased(), attributes: [.accessibilitySpeechPunctuation: true])
             
@@ -157,7 +149,6 @@ private extension AppIDsViewController
             
             attributedAccessibilityLabel.append(attributedBundleIdentifier)
             cell.bannerView.accessibilityAttributedLabel = attributedAccessibilityLabel
-            
             cell.layoutIfNeeded()
         }
         
@@ -206,7 +197,6 @@ private extension AppIDsViewController
             self.collectionView.refreshControl?.endRefreshing()
             #endif
             self.activityIndicatorBarButtonItem.isIndicatingActivity = false
-            
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
             
@@ -271,17 +261,6 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
     {
-        // let indexPath = IndexPath(row: 0, section: section)
-        // let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-        
-        // // Use this view to calculate the optimal size based on the collection view's width
-        // let size = headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingCompressedSize.height),
-        //                                               withHorizontalFittingPriority: .required, // Width is fixed
-        //                                               verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
-        // return size
-        
-        // NOTE: double dequeue of cell has been discontinued
-        // TODO: Using harcoded value until this is fixed
         if let activeTeam = self.activeTeam, activeTeam.type == .free
         {
             return CGSize(width: collectionView.bounds.width, height: 220)
@@ -325,12 +304,11 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
                 App IDs for paid developer accounts never expire, and there is no limit to how many you can create.
                 """, comment: "")
             }
-            
             return headerView
             
         case UICollectionView.elementKindSectionFooter:
             let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: indexPath) as! TextCollectionReusableView
-            self.footerView = footerView  // keep direct reference for live updates
+            self.footerView = footerView
             footerView.textLabel.text = self.footerText()
             return footerView
             
@@ -339,8 +317,6 @@ extension AppIDsViewController: UICollectionViewDelegateFlowLayout
     }
 }
 
-
-// MARK: - NSFetchedResultsControllerDelegate (proxy)
 extension AppIDsViewController: NSFetchedResultsControllerDelegate
 {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
@@ -360,12 +336,9 @@ extension AppIDsViewController: NSFetchedResultsControllerDelegate
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
     {
-        // Forward to the data source first so it performs animated cell batch updates
         self.dataSource.controllerDidChangeContent(controller)
-        
         DispatchQueue.main.async {
             self.refreshFooter()
         }
     }
 }
-
