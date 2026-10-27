@@ -389,6 +389,8 @@ public extension InstalledApp
     
     class func fetchAppsForRefreshingAll(in context: NSManagedObjectContext) -> [InstalledApp]
     {
+        // REFUGE UPDATE: Relaxed predicate to ensure active sideloaded / iLoader apps 
+        // without an official StoreApp are correctly queued for refreshing.
         let predicate = NSPredicate(format: "(%K == YES AND %K != %@) AND (%K == nil OR %K == NO OR %K == YES)",
                                     #keyPath(InstalledApp.isActive),
                                     #keyPath(InstalledApp.bundleIdentifier), StoreApp.altstoreAppID,
@@ -427,6 +429,7 @@ public extension InstalledApp
         // Date 6 hours before now.
         let date = Date().addingTimeInterval(-1 * 6 * 60 * 60)
         
+        // REFUGE UPDATE: Relaxed predicate for background tasks to include external/iLoader apps.
         let predicate = NSPredicate(format: "(%K == YES) AND (%K < %@) AND (%K != %@) AND (%K == nil OR %K == NO OR %K == YES)",
                                     #keyPath(InstalledApp.isActive),
                                     #keyPath(InstalledApp.refreshedDate), date as NSDate,
