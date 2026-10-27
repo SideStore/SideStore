@@ -16,6 +16,7 @@ import TVServices
 #endif
 import SideSign
 import MinimuxerCommon
+import AnisetteKit
 
 private extension Color {
     static let settingsRowBackground = Color.white.opacity(0.15)
@@ -29,6 +30,7 @@ struct DeveloperOptionsView: View {
     @State private var isAltWidgetVerboseLoggingEnabled: Bool = WidgetDataManager.shared.isVerboseLoggingEnabled
     @State private var isSideSignVerboseLoggingEnabled: Bool = UserDefaults.standard.isAltSignVerboseLoggingEnabled
     @State private var isMinimuxerVerboseLoggingEnabled: Bool = UserDefaults.standard.isMinimuxerVerboseLoggingEnabled
+    @State private var isAnisetteKitVerboseLoggingEnabled: Bool = UserDefaults.standard.isAnisetteKitVerboseLoggingEnabled
     @State private var isRotateLogsOnStartupEnabled: Bool = UserDefaults.standard.isRotateLogsOnStartupEnabled
     @State private var recreateDatabaseOnNextStart: Bool = UserDefaults.standard.recreateDatabaseOnNextStart
     @State private var alwaysShowWireGuardConfig: Bool = UserDefaults.standard.alwaysShowWireGuardConfig
@@ -135,6 +137,17 @@ struct DeveloperOptionsView: View {
                             set: { newValue in
                                 isVerboseOperationsLoggingEnabled = newValue
                                 UserDefaults.standard.isVerboseOperationsLoggingEnabled = newValue
+                            }
+                        ))
+                        
+                        divider
+
+                        toggleRow(title: "AnisetteKit Verbose Logging", isOn: Binding(
+                            get: { isAnisetteKitVerboseLoggingEnabled },
+                            set: { newValue in
+                                isAnisetteKitVerboseLoggingEnabled = newValue
+                                UserDefaults.standard.isAnisetteKitVerboseLoggingEnabled = newValue
+                                AnisetteKitLogging.setLogging(newValue)
                             }
                         ))
                         
