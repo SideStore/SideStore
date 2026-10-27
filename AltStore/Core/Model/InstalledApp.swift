@@ -25,7 +25,6 @@ extension InstalledApp
         if UserDefaults.standard.isAppLimitDisabled
         {
             // MacDirtyCow exploit allows users to remove 3-app limit, so return 10 to match App ID limit per-week.
-            // Don't return nil because that implies there is no limit, which isn't quite true due to App ID limit.
             return 10
         }
         else
@@ -174,7 +173,6 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         }
     }
 
-    
     /* Transient */
     @NSManaged public var isRefreshing: Bool
     
@@ -184,14 +182,13 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
     @NSManaged public var releaseTrack: ReleaseTrack?
     @NSManaged public var appExtensions: Set<InstalledExtension>
     
-    @NSManaged public private(set) var loggedErrors: NSSet /* Set<LoggedError> */ // Use NSSet to avoid eagerly fetching values.
+    @NSManaged public private(set) var loggedErrors: NSSet
     
     public var isSideloaded: Bool {
         return self.storeApp == nil
     }
     
     @objc public var hasUpdate: Bool {
-        // Basic validation
         guard isActive,
               let storeApp = self.storeApp,
               let latestVersion = storeApp.latestSupportedVersion else
@@ -199,47 +196,35 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
             return false
         }
         
-        // Check pledge requirements
         guard !storeApp.isPledgeRequired || storeApp.isPledged else
         {
             return false
         }
         
-        // Get current semantic versions
         let currentSemVer = SemanticVersion(self.version)
         let latestSemVer = SemanticVersion(latestVersion.version)
         
-        // If semantic versions can't be parsed, fall back to string comparison
         if currentSemVer == nil || latestSemVer == nil {
             return !matches(latestVersion)
         }
         let currentVer = SemanticVersion("\(currentSemVer!.major).\(currentSemVer!.minor).\(currentSemVer!.patch)")
         let latestVer  = SemanticVersion("\(latestSemVer!.major).\(latestSemVer!.minor).\(latestSemVer!.patch)")
         
-        // Compare by major.minor.patch
         if latestVer! > currentVer! {
             return true
         }
         
-        // Check beta updates if enabled
         if UserDefaults.standard.isBetaUpdatesEnabled,
            ReleaseTrackType.betaTracks.contains(latestVersion.channel),
-           latestVer == currentVer,         // major.minor.patch are matching
-           // now compare by preRelease and build to break the tie
-           // TODO: since multiple tracks can be independent, when a different version is available on selected track than installed
-           //       we accept it, now ex: if the setup is consistent for upstream merge lets say from alpha to nightly and alpha can never fall behind nightly,
-           //       then the preRelease+build combo will always be incremental and our below not-equals check will still work.
+           latestVer == currentVer,
            (latestSemVer!.build != currentSemVer!.build) || (latestSemVer!.preRelease != currentSemVer!.preRelease)
         {
             return true
         }
         
-        // else include everything as-is when doing lexicographic comparison
-        // NOTE: stable x.y.z is always > x.y.z-abcd+1234
         return latestSemVer! > currentSemVer!
     }
 
-    
     public var appIDCount: Int {
         return 1 + self.appExtensions.count
     }
@@ -259,9 +244,6 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         super.init(entity: InstalledApp.entity(), insertInto: context)
         
         self.bundleIdentifier = originalBundleIdentifier
-        
-        debugLog("InstalledApp `self.bundleIdentifier`: \(self.bundleIdentifier)")
-        
         self.refreshedDate = Date()
         self.installedDate = Date()
         
@@ -274,9 +256,6 @@ public class InstalledApp: BaseEntity, InstalledAppProtocol
         self.expirationDate = expirationDate
         #endif
         
-        // In practice this update() is redundant because we always call update() again after init from callers,
-        // but better to have an init that is guaranteed to successfully initialize an object
-        // than one that has a hidden assumption a second method will be called.
         self.update(resignedAppBundle: resignedAppBundle, certificateSerialNumber: certificateSerialNumber, storeBuildVersion: storeBuildVersion)
     }
 }
@@ -285,7 +264,6 @@ public extension InstalledApp
 {
     var localizedVersion: String {
         guard let storeBuildVersion else { return self.version }
-        
         let localizedVersion = "\(self.version) (\(storeBuildVersion))"
         return localizedVersion
     }
@@ -293,13 +271,10 @@ public extension InstalledApp
     func update(resignedAppBundle: ALTApplication, certificateSerialNumber: String?, storeBuildVersion: String?)
     {
         self.name = resignedAppBundle.name
-        
         self.resignedBundleIdentifier = resignedAppBundle.bundleIdentifier
         self.version = resignedAppBundle.version
-        
         self.buildVersion = resignedAppBundle.buildVersion
         self.storeBuildVersion = storeBuildVersion
-        
         self.certificateSerialNumber = certificateSerialNumber
         
         if let provisioningProfile = resignedAppBundle.provisioningProfile
@@ -319,7 +294,6 @@ public extension InstalledApp
         if self.bundleIdentifier == StoreApp.altstoreAppID,
            let iconName = UIApplication.alt_shared?.value(forKey: "alternateIconName") as? String
         {
-            // Use alternate app icon for AltStore, if one was chosen.
             let imageName = iconName.replacingOccurrences(of: "Icon", with: "")
             let image = UIImage(named: imageName) ?? UIImage(named: iconName)
             return image
@@ -359,9 +333,7 @@ public extension InstalledApp
     class func supportedUpdatesFetchRequest() -> NSFetchRequest<InstalledApp> 
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
-        
         fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(InstalledApp.hasUpdate))
-        
         return fetchRequest
     }
     
@@ -369,14 +341,12 @@ public extension InstalledApp
     {
         let fetchRequest = InstalledApp.fetchRequest() as NSFetchRequest<InstalledApp>
         fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(InstalledApp.isActive))
-        debugLog("Active Apps Fetch Request: \(String(describing: fetchRequest.predicate))")
         return fetchRequest
     }
     
     class func fetchAltStore(in context: NSManagedObjectContext) -> InstalledApp?
     {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(InstalledApp.bundleIdentifier), StoreApp.altstoreAppID)
-        debugLog("Fetch 'AltStore' Predicate: \(String(describing: predicate))")
         let altStore = InstalledApp.first(satisfying: predicate, in: context)
         return altStore
     }
@@ -389,8 +359,6 @@ public extension InstalledApp
     
     class func fetchAppsForRefreshingAll(in context: NSManagedObjectContext) -> [InstalledApp]
     {
-        // REFUGE UPDATE: Relaxed predicate to ensure active sideloaded / iLoader apps 
-        // without an official StoreApp are correctly queued for refreshing.
         let predicate = NSPredicate(format: "(%K == YES AND %K != %@) AND (%K == nil OR %K == NO OR %K == YES)",
                                     #keyPath(InstalledApp.isActive),
                                     #keyPath(InstalledApp.bundleIdentifier), StoreApp.altstoreAppID,
@@ -404,19 +372,15 @@ public extension InstalledApp
         
         if let altStoreApp = InstalledApp.fetchAltStore(in: context)
         {
-            // Refresh AltStore last since it causes app to quit.
-            
             if let storeApp = altStoreApp.storeApp
             {
                 if !storeApp.isPledgeRequired || storeApp.isPledged
                 {
-                    // Only add AltStore if it's the public version OR if it's the beta and we're pledged to it.
                     installedApps.append(altStoreApp)
                 }
             }
             else
             {
-                // No associated storeApp, so add it just to be safe.
                 installedApps.append(altStoreApp)
             }
         }
@@ -426,10 +390,8 @@ public extension InstalledApp
     
     class func fetchAppsForBackgroundRefresh(in context: NSManagedObjectContext) -> [InstalledApp]
     {
-        // Date 6 hours before now.
         let date = Date().addingTimeInterval(-1 * 6 * 60 * 60)
         
-        // REFUGE UPDATE: Relaxed predicate for background tasks to include external/iLoader apps.
         let predicate = NSPredicate(format: "(%K == YES) AND (%K < %@) AND (%K != %@) AND (%K == nil OR %K == NO OR %K == YES)",
                                     #keyPath(InstalledApp.isActive),
                                     #keyPath(InstalledApp.refreshedDate), date as NSDate,
@@ -449,13 +411,11 @@ public extension InstalledApp
             {
                 if !storeApp.isPledgeRequired || storeApp.isPledged
                 {
-                    // Only add AltStore if it's the public version OR if it's the beta and we're pledged to it.
                     installedApps.append(altStoreApp)
                 }
             }
             else
             {
-                // No associated storeApp, so add it just to be safe.
                 installedApps.append(altStoreApp)
             }
         }
@@ -470,10 +430,8 @@ public extension InstalledApp
         return InstalledApp.openAppURL(targetBundleIdentifier: self.resignedBundleIdentifier)
     }
     
-    class func openAppURL(targetBundleIdentifier: String) -> URL
-    {
-        let openAppURL = URL(string: "sidestore-" + targetBundleIdentifier + "://")!
-        return openAppURL
+    class func openAppURL(targetBundleIdentifier: String) -> URL {
+        return URL(string: "sidestore-" + targetBundleIdentifier + "://")!
     }
 }
 
@@ -482,7 +440,6 @@ public extension InstalledApp
     class var appsDirectoryURL: URL {
         let baseDirectory = FileManager.default.altstoreSharedDirectory ?? FileManager.default.applicationSupportDirectory
         let appsDirectoryURL = baseDirectory.appendingPathComponent("Apps")
-        
         do { try FileManager.default.createDirectory(at: appsDirectoryURL, withIntermediateDirectories: true, attributes: nil) }
         catch { debugLog("Creating App Directory Error: \(error)") }
         return appsDirectoryURL
@@ -496,10 +453,8 @@ public extension InstalledApp
         return self.payloadDirectoryURL(forSignature: signature).appendingPathComponent("App.app")
     }
 
-    class func installedAppUTI(forBundleIdentifier bundleIdentifier: String) -> String
-    {
-        let installedAppUTI = "io.sidestore.Installed." + bundleIdentifier
-        return installedAppUTI
+    class func installedAppUTI(forBundleIdentifier bundleIdentifier: String) -> String {
+        return "io.sidestore.Installed." + bundleIdentifier
     }
     
     public var installedAppUTI: String {
@@ -509,5 +464,4 @@ public extension InstalledApp
     public var installedBackupAppUTI: String {
         return self.installedAppUTI + ".backup"
     }
-
 }
