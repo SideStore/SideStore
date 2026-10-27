@@ -50,9 +50,6 @@ final class AppManager: ObservableObject, @unchecked Sendable
     private let progressLock = NSLock()
     
     private init() {
-        /// Every time refreshProgress is changed, update all InstalledApps in memory
-        /// so that app.isRefreshing == refreshProgress.keys.contains(app.bundleID)
-        ///
         self.$refreshProgress
             .receive(on: RunLoop.main)
             .map(\.keys)
@@ -140,8 +137,6 @@ final class AppManager: ObservableObject, @unchecked Sendable
         }
         #endif
     }
-    
-
 
     func appsToDeactivate(for installedApp: InstalledApp) -> [InstalledApp]? {
         guard !UserDefaults.standard.isAppLimitDisabled,
@@ -181,7 +176,7 @@ final class AppManager: ObservableObject, @unchecked Sendable
                 try fetchSource(sourceURL: sourceURL, managedObjectContext: managedObjectContext) { result in
                     continuation.resume(with: result)
                 }
-            }catch {
+            } catch {
                 continuation.resume(throwing: error)
             }
         }
@@ -203,17 +198,13 @@ final class AppManager: ObservableObject, @unchecked Sendable
         let (sourceName, sourceURL) = await $source.perform { ($0.name, $0.sourceURL) }
         
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
-        async let fetchedSource = try await self.fetchSource(sourceURL: sourceURL, managedObjectContext: context) // Fetch source async while showing alert.
+        async let fetchedSource = try await self.fetchSource(sourceURL: sourceURL, managedObjectContext: context)
 
         let title = String(format: NSLocalizedString("Would you like to add the source “%@”?", comment: ""), sourceName)
         let action = await UIAlertAction(title: NSLocalizedString("Add Source", comment: ""), style: .default)
         try await presentingViewController.presentConfirmationAlert(title: title, message: message ?? "", primaryAction: action)
 
-        // Wait for fetch to finish before saving context to make
-        // sure there isn't already a source with this identifier.
         let sourceExists = try await fetchedSource.isAdded()
-        
-        // This is just a sanity check, so pass nil for existingSource to keep code simple.
         guard !sourceExists else { throw SourceError.duplicate(source, existingSource: nil) }
         
         try await context.performAsync {
@@ -238,7 +229,7 @@ final class AppManager: ObservableObject, @unchecked Sendable
         let context = DatabaseManager.shared.persistentContainer.newBackgroundContext()
         try await context.performAsync {
             let predicate = NSPredicate(format: "%K == %@", #keyPath(Source.identifier), sourceID)
-            guard let source = Source.first(satisfying: predicate, in: context) else { return } // Doesn't exist == success.
+            guard let source = Source.first(satisfying: predicate, in: context) else { return }
             
             context.delete(source)
             try context.save()
@@ -291,7 +282,7 @@ final class AppManager: ObservableObject, @unchecked Sendable
                             let context = StandaloneOperationContext(steps: [], dbBackgroundContext: managedObjectContext)
                             let fetchSourceOperation = try FetchSourceOperation(sourceURL: data.sourceURL, context: context)
                             let fetchedSource = try await fetchSourceOperation.execute()
-                            return (data.objectID, .success(fetchedSource.objectID)) // objectID is thread-safe
+                            return (data.objectID, .success(fetchedSource.objectID))
                         } catch {
                             return (data.objectID, .failure(error))
                         }
@@ -302,10 +293,9 @@ final class AppManager: ObservableObject, @unchecked Sendable
                 }
             }
             
-            
             await managedObjectContext.perform {
                 var fetchedSources = Set<Source>()
-                var errors = [Source: Error]()
+                var errors =()
                 
                 for (objectID, result) in taskResults {
                     let source = managedObjectContext.object(with: objectID) as! Source
@@ -384,9 +374,8 @@ final class AppManager: ObservableObject, @unchecked Sendable
         self.fetchSources() { (result) in
             do
             {
-                // Check if the result is failure and rethrow
                 if case .failure(let error) = result {
-                    throw error  // Rethrow the error
+                    throw error
                 }
                 
                 do
@@ -742,9 +731,6 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
         context ?? DatabaseManager.shared.persistentContainer.newBackgroundContext()
     }
 
-
-    
-
     func installationProgress(for app: AppProtocol) -> Progress?
     {
         return self.progressLock.withLock {
@@ -786,7 +772,6 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
     
     func progress(for operation: AppOperation) -> Progress?
     {
-        // Access outside critical section to avoid deadlock due to `bundleIdentifier` potentially calling performAndWait() on main thread.
         let bundleID = operation.bundleIdentifier
         
         return self.progressLock.withLock {
@@ -802,7 +787,6 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
     
     func set(_ progress: Progress?, for operation: AppOperation)
     {
-        // Access outside critical section to avoid deadlock due to `bundleIdentifier` potentially calling performAndWait() on main thread.
         let bundleID = operation.bundleIdentifier
         let operationName = String(describing: operation.loggedErrorOperation)
 
@@ -857,12 +841,11 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
     {
         switch error
         {
-            case is CancellationError: return // Don't log CancellationErrors
+            case is CancellationError: return
             case let nsError as NSError where nsError.domain == CancellationError()._domain: return
             default: break
         }
 
-        // Sanitize NSError on same thread before performing background task.
         let sanitizedError = (error as NSError).sanitizedForSerialization()
 
         DatabaseManager.shared.persistentContainer.performBackgroundTask { context in
@@ -891,7 +874,4 @@ extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorL
             }
         }
     }
-
 }
-
-
