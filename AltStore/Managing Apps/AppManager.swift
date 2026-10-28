@@ -1,4 +1,3 @@
-//
 //  AppManager.swift
 //  AltStore
 //
@@ -295,7 +294,7 @@ final class AppManager: ObservableObject, @unchecked Sendable
             
             await managedObjectContext.perform {
                 var fetchedSources = Set<Source>()
-                var errors =()
+                var errors: [Source: Error] = [:]
                 
                 for (objectID, result) in taskResults {
                     let source = managedObjectContext.object(with: objectID) as! Source
@@ -591,8 +590,8 @@ final class AppManager: ObservableObject, @unchecked Sendable
     
     @discardableResult
     func reinstall(_ installedApp: InstalledApp,
-                  presentingViewController: UIViewController?,
-                  completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+                   presentingViewController: UIViewController?,
+                   completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
     {
         debugLog("[AppManager] reinstall() called for app: \(installedApp.bundleIdentifier)")
         let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
