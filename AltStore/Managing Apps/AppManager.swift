@@ -43,8 +43,8 @@ final class AppManager: ObservableObject, @unchecked Sendable
     @Published
     private(set) var updateSourcesResult: Result<Void, Error>? // nil == loading
     
-    @Published private var installationProgress = [String: Progress]()
-    @Published private var refreshProgress = [String: Progress]()
+    @Published public private(set) var installationProgress = [String: Progress]()
+    @Published public private(set) var refreshProgress = [String: Progress]()
     private var cancellables: Set<AnyCancellable> = []
     
     private let progressLock = NSLock()
@@ -484,4 +484,394 @@ final class AppManager: ObservableObject, @unchecked Sendable
                 let filename = try reader.currentFilename()
                 let components = filename.components(separatedBy: "/")
                 if components.count == 3 && components[0] == "Payload" && components[1].hasSuffix(".app") && components[2] == "Info.plist" {
-                    plistData
+                    plistData = try reader.readCurrentFile()
+                    break
+                }
+            } while reader.goToNextFile()
+
+            guard let data = plistData else {
+                throw OperationError.invalidApp(reason: "Archive missing valid Payload/*.app/Info.plist")
+            }
+            let parser = try InfoPlistParser(data: data)
+            guard let bundleIdentifier = parser.bundleIdentifier, !bundleIdentifier.isEmpty else {
+                throw OperationError.invalidApp(reason: "Archive missing valid bundle identifier in Info.plist")
+            }
+            let appName = parser.displayName ?? parser.bundleName ?? url.deletingPathExtension().lastPathComponent
+            return (bundleIdentifier, appName)
+
+        case .app:
+            let parser = try InfoPlistParser(bundleURL: url)
+            guard let bundleIdentifier = parser.bundleIdentifier, !bundleIdentifier.isEmpty else {
+                throw OperationError.invalidApp(reason: "Invalid Info.plist in app directory")
+            }
+            let appName = parser.displayName ?? parser.bundleName ?? url.lastPathComponent
+            return (bundleIdentifier, appName)
+        }
+    }
+    
+    @discardableResult
+    func update(_ installedApp: InstalledApp,
+                to version: AppVersion? = nil,
+                presentingViewController: UIViewController?,
+                completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> Progress
+    {
+        debugLog("[AppManager] update() called for app: \(installedApp.bundleIdentifier)")
+        guard let appVersion = version ?? installedApp.storeApp?.latestSupportedVersion else {
+            completionHandler(.failure(OperationError.missingUpdate(appName: installedApp.name)))
+            return Progress.discreteProgress(totalUnitCount: 1)
+        }
+        guard appVersion as AnyObject !== installedApp else {
+            completionHandler(.failure(OperationError.invalidParameters("Make sure we never accidentally 'update' to already installed app.")))
+            return Progress.discreteProgress(totalUnitCount: 1)
+        }
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        let group = self.pipelineRunner.performSingleOperation(
+            .update(appVersion, customBundleIdentifier: installedApp.customBundleIdentifier), 
+            handler: pipelineHandler, 
+            dbContext: dbContext, 
+            completionHandler: completionHandler
+        )
+        return group.progress
+    }
+    
+    @discardableResult
+    func refresh(_ installedApps: [InstalledApp],
+                 presentingViewController: UIViewController?,
+                 dbContext: NSManagedObjectContext? = nil,
+                 group: RefreshGroup? = nil) -> RefreshGroup
+    {
+        debugLog("[AppManager] refresh() called for apps: \(installedApps.map { $0.bundleIdentifier })")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        
+        let actualGroup: RefreshGroup
+        if let group = group {
+            actualGroup = group
+        } else {
+            let context = self.getValidDbContext(dbContext)
+            actualGroup = RefreshGroup(dbContext: context)
+        }
+        
+        actualGroup.activeTask = Task.detached {
+            do {
+                try await self.pipelineRunner.perform(installedApps.map { .refresh($0) }, handler: pipelineHandler, group: actualGroup)
+            } catch {
+                actualGroup.error = error
+                let results = Dictionary(uniqueKeysWithValues: installedApps.map { ($0.bundleIdentifier, Result<InstalledApp, Error>.failure(error)) })
+                actualGroup.completionHandler?(results)
+            }
+        }
+        
+        return actualGroup
+    }
+    
+    func activate(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
+    {
+        debugLog("[AppManager] activate() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performSingleOperation(.activate(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func deactivate(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
+    {
+        debugLog("[AppManager] deactivate() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performSingleOperation(.deactivate(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func deleteApp(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
+    {
+        debugLog("[AppManager] deleteApp() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performSingleOperation(.deleteApp(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    @discardableResult
+    func reinstall(_ installedApp: InstalledApp,
+                  presentingViewController: UIViewController?,
+                  completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+    {
+        debugLog("[AppManager] reinstall() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        return self.pipelineRunner.performSingleOperation(.reinstall(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    @discardableResult
+    func resign(_ installedApp: InstalledApp,
+                alternateIconMode: AlternateIconMode = .preserve,
+                presentingViewController: UIViewController?,
+                completionHandler: @escaping (Result<InstalledApp, Error>) -> Void) -> RefreshGroup
+    {
+        debugLog("[AppManager] resign() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        return self.pipelineRunner.performSingleOperation(.resign(installedApp, alternateIconMode: alternateIconMode), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func backup(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
+    {
+        debugLog("[AppManager] backup() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performSingleOperation(.backup(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func restore(_ installedApp: InstalledApp, presentingViewController: UIViewController?, completionHandler: @escaping (Result<InstalledApp, Error>) -> Void)
+    {
+        debugLog("[AppManager] restore() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performSingleOperation(.restore(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func removeApp(_ installedApp: InstalledApp, presentingViewController: UIViewController? = nil, completionHandler: @escaping (Result<Void, Error>) -> Void)
+    {
+        debugLog("[AppManager] removeApp() called for app: \(installedApp.bundleIdentifier)")
+        let pipelineHandler = self.makePipelineHandler(presentingViewController: presentingViewController)
+        let dbContext = self.getValidDbContext()
+        self.pipelineRunner.performVoidOperation(.removeApp(installedApp), handler: pipelineHandler, dbContext: dbContext, completionHandler: completionHandler)
+    }
+    
+    func removeDeactivatedApp(_ installedApp: InstalledApp, completionHandler: @escaping (Result<Void, Error>) -> Void)
+    {
+        self.removeApp(installedApp, completionHandler: completionHandler)
+    }
+    
+    func enableJIT(for installedApp: InstalledApp, completionHandler: @escaping (Result<Void, Error>) -> Void)
+    {
+        Task.detached {
+            debugLog("[AppManager] enableJIT() called for app: \(installedApp.bundleIdentifier)")
+            let dbBackgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
+            let context = StandaloneOperationContext(steps: .enableJIT, dbBackgroundContext: dbBackgroundContext)
+            do {
+                let enableJITOperation = try EnableJITOperation(installedApp: installedApp, context: context)
+                do {
+                    _ = try await enableJITOperation.execute()
+                    completionHandler(.success(()))
+                } catch {
+                    var appName: String = ""
+                    installedApp.managedObjectContext?.performAndWait {
+                        appName = installedApp.name
+                    }
+                    if appName.isEmpty { appName = installedApp.name }
+                    let localizedTitle = String(format: NSLocalizedString("Failed to Enable JIT for %@", comment: ""), appName)
+                    let mappedError = (error as NSError).withLocalizedTitle(localizedTitle)
+                    self.log(error, operation: .enableJIT, app: installedApp)
+                    completionHandler(.failure(mappedError))
+                }
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+
+    @discardableResult
+    func backgroundRefresh(_ installedApps: [InstalledApp],
+                           presentsNotifications: Bool = false,
+                           completionHandler: @escaping (Result<[String: Result<InstalledApp, Error>], Error>) -> Void) throws -> BackgroundRefreshAppsOperation
+    {
+        let dbBackgroundContext = DatabaseManager.shared.persistentContainer.newBackgroundContext()
+        let context = StandaloneOperationContext(steps: .backgroundRefreshApps, dbBackgroundContext: dbBackgroundContext)
+        let backgroundRefreshAppsOperation = try BackgroundRefreshAppsOperation(installedApps: installedApps, context: context)
+        Task.detached {
+            do {
+                backgroundRefreshAppsOperation.presentsFinishedNotification = presentsNotifications
+                
+                let result = try await backgroundRefreshAppsOperation.execute()
+                completionHandler(.success(result))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+        return backgroundRefreshAppsOperation
+    }
+}
+
+enum PackageType: String, CaseIterable, Sendable {
+    case ipa
+    case app
+
+    init?(url: URL) {
+        self.init(rawValue: url.pathExtension.lowercased())
+    }
+}
+
+extension AppManager {
+    enum InstallTarget: @unchecked Sendable, CustomStringConvertible {
+        case url(URL)
+        case app(AppProtocol)
+
+        var description: String {
+            switch self {
+            case .url(let url): return "url(\(url.lastPathComponent))"
+            case .app(let app): return "app(\(app.bundleIdentifier))"
+            }
+        }
+    }
+}
+typealias InstallTarget = AppManager.InstallTarget
+
+// MARK: - PipelineRunner Protocol Conformances
+extension AppManager: PipelineProgress, PipelineExecutionContext, PipelineErrorLogger {
+    
+    private func makePipelineHandler(presentingViewController: UIViewController?) -> PipelineExecutionHandler {
+        return PipelineHandler(
+            isResignActive: presentingViewController is ResignAltStoreViewController,
+            presenterProvider: { [weak presentingViewController] in
+                presentingViewController?.presentedViewController ?? presentingViewController
+            }
+        )
+    }
+
+    private func getValidDbContext(_ context: NSManagedObjectContext? = nil) -> NSManagedObjectContext {
+        context ?? DatabaseManager.shared.persistentContainer.newBackgroundContext()
+    }
+
+    func installationProgress(for app: AppProtocol) -> Progress?
+    {
+        return self.progressLock.withLock {
+            self.installationProgress[app.bundleIdentifier]
+        }
+    }
+    
+    func refreshProgress(for app: AppProtocol) -> Progress?
+    {
+        return self.progressLock.withLock {
+            let bundleID = app.bundleIdentifier
+            
+            guard let progress = self.refreshProgress[bundleID] ?? self.installationProgress[bundleID] else {
+                return nil
+            }
+            
+            guard !progress.isCancelled else {
+                self.refreshProgress[bundleID] = nil
+                self.installationProgress[bundleID] = nil
+                return nil
+            }
+            
+            return progress
+        }
+    }
+    
+    func isActivelyManagingApp(withBundleID bundleID: String) -> Bool
+    {
+        let isActivelyManaging = self.installationProgress.keys.contains(bundleID) || self.refreshProgress.keys.contains(bundleID)
+        return isActivelyManaging
+    }
+    
+    var isActivelyManagingAnyApp: Bool
+    {
+        return self.progressLock.withLock {
+            !self.installationProgress.isEmpty || !self.refreshProgress.isEmpty
+        }
+    }
+    
+    func progress(for operation: AppOperation) -> Progress?
+    {
+        let bundleID = operation.bundleIdentifier
+        
+        return self.progressLock.withLock {
+            switch operation
+            {
+            case .install, .update, .reinstall: 
+                return self.installationProgress[bundleID]
+            case .refresh, .activate, .deactivate, .deleteApp, .backup, .restore, .resign, .removeApp, .removeDeactivatedApp: 
+                return self.refreshProgress[bundleID]
+            }
+        }
+    }
+    
+    func set(_ progress: Progress?, for operation: AppOperation)
+    {
+        let bundleID = operation.bundleIdentifier
+        let operationName = String(describing: operation.loggedErrorOperation)
+
+        self.progressLock.withLock {
+            switch operation
+            {
+            case .install, .update, .reinstall: 
+                self.installationProgress[bundleID] = progress
+            case .refresh, .activate, .deactivate, .deleteApp, .backup, .restore, .resign, .removeApp, .removeDeactivatedApp: 
+                self.refreshProgress[bundleID] = progress
+            }
+            debugLog("[AppManager] setProgress: \(progress.map { "\($0)" } ?? "nil") for operation: .\(operationName), totalUnitCount: \(progress?.totalUnitCount ?? 0)")
+        }
+    }
+    
+    func getMappedError(for operation: AppOperation, error: Error) -> Error {
+        var appName: String!
+        if let app = operation.app as? (NSManagedObject & AppProtocol) {
+            if let context = app.managedObjectContext {
+                context.performAndWait {
+                    appName = app.name
+                }
+            } else {
+                appName = NSLocalizedString("Unknown App", comment: "")
+            }
+        } else {
+            appName = operation.app.name
+        }
+
+        let localizedTitle: String
+        switch operation
+        {
+            case .install:    localizedTitle = String(format: NSLocalizedString("Failed to Install %@",        comment: ""), appName)
+            case .reinstall:  localizedTitle = String(format: NSLocalizedString("Failed to Reinstall %@",      comment: ""), appName)
+            case .refresh:    localizedTitle = String(format: NSLocalizedString("Failed to Refresh %@",        comment: ""), appName)
+            case .update:     localizedTitle = String(format: NSLocalizedString("Failed to Update %@",         comment: ""), appName)
+            case .activate:   localizedTitle = String(format: NSLocalizedString("Failed to Activate %@",       comment: ""), appName)
+            case .deactivate: localizedTitle = String(format: NSLocalizedString("Failed to Deactivate %@",     comment: ""), appName)
+            case .deleteApp:  localizedTitle = String(format: NSLocalizedString("Failed to Deactivate %@",     comment: ""), appName)
+            case .backup:     localizedTitle = String(format: NSLocalizedString("Failed to Backup %@",         comment: ""), appName)
+            case .restore:    localizedTitle = String(format: NSLocalizedString("Failed to Restore %@ Backup", comment: ""), appName)
+            case .resign:     localizedTitle = String(format: NSLocalizedString("Failed to Resign %@",         comment: ""), appName)
+            case .removeApp, .removeDeactivatedApp: localizedTitle = String(format: NSLocalizedString("Failed to Remove %@", comment: ""), appName)
+        }
+        
+        let nsError = error as NSError
+        let mappedError = nsError.withLocalizedTitle(localizedTitle)
+        return mappedError
+    }
+    
+    func log(_ error: Error, operation: LoggedError.Operation, app: AppProtocol)
+    {
+        switch error
+        {
+            case is CancellationError: return
+            case let nsError as NSError where nsError.domain == CancellationError()._domain: return
+            default: break
+        }
+
+        let sanitizedError = (error as NSError).sanitizedForSerialization()
+
+        DatabaseManager.shared.persistentContainer.performBackgroundTask { context in
+            var app = app
+            if let managedApp = app as? NSManagedObject, let tempApp = context.object(with: managedApp.objectID) as? AppProtocol
+            {
+                app = tempApp
+            }
+
+            do
+            {
+                let loggedError = LoggedError(error: sanitizedError, app: app, operation: operation, context: context)
+                debugLog("""
+                [AppManager] log() error: \(sanitizedError)
+                  • app            : \(app.bundleIdentifier)
+                  • operation      : \(operation)
+                  • loggedErrorID  : \(loggedError.objectID)
+                """)
+                if context.hasChanges {
+                    try context.save()
+                }
+            }
+            catch let saveError
+            {
+                debugLog("[SideStore] Failed to log error \(sanitizedError.domain) code \(sanitizedError.code) for \(app.bundleIdentifier): \(saveError)")
+            }
+        }
+    }
+}
