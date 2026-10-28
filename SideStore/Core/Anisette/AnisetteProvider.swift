@@ -182,15 +182,17 @@ enum AnisetteProvider {
         // Stock anisette-v3 / omnisette clients = Android ADI → Windows
         let stock = advertised.hasPrefix("<MacBookPro13,2> <macOS;13.1;22C65>")
             || advertised.hasPrefix("<MacBookPro15,1> <Mac OS X;10.15.2;19C57>")
-        if advertised.isEmpty || advertised.contains("<Android;") || stock {
-            return (windows, akdUA)
-        }
-        // mac_version < (10, 13) — servers name 10.12.6
-        if advertised.contains("10.12") || advertised.contains("Mac OS X;10.11") || advertised.contains("Mac OS X;10.10") {
+        // SideInstaller 1.6.1: Mac ADI path always CURRENT_MAC (stock/Android/10.12 included).
+        // Using Windows here after the code produces -80046.
+        if advertised.isEmpty || advertised.contains("<Android;") || stock
+            || advertised.contains("10.12") || advertised.contains("MacBook")
+            || advertised.contains("Mac OS") || advertised.contains("macOS") || advertised.contains("<Mac") {
             return (currentMac, currentMacUA)
         }
-        let ua = (advertisedUserAgent ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        return (advertised, ua.isEmpty ? akdUA : ua)
+        if advertised.contains("<PC>") || advertised.contains("Windows") {
+            return (windows, akdUA)
+        }
+        return (currentMac, currentMacUA)
     }
 
     private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
