@@ -179,3 +179,152 @@ final class InstallAppOperation: BasePipelineOperation<InstallAppOperationContex
         self.setProgress(30)
         
         // Self-reinstall background suspension
+        if isSelfReinstall {
+            self.handleSelfReinstallation(for: installedApp)
+        }
+        
+        // Phase 2: App installation
+        if UserDefaults.standard.preferResignedIPA {
+            try await installIPA(bundleID)
+        } else {
+            try await installAppBundle(bundleID, appName: resignedAppBundle.fileURL.lastPathComponent)
+        }
+        
+        self.setProgress(90)
+        
+        // Phase 3: Post-install CoreData write — update refreshedDate
+        if !isDifferentSideStore && !isSelfReinstall && !isSideBackup {
+            await backgroundContext.perform {
+                installedApp.refreshedDate = Date()
+            }
+        }
+        
+        self.setProgress(100)
+        return installedApp
+    }
+    
+    private static func isDifferentSideStoreContainer(_ installedApp: InstalledApp, _ resignedAppBundle: ALTApplication) -> Bool {
+        return ((installedApp.bundleIdentifier == StoreApp.altstoreAppID) || resignedAppBundle.isAltStoreApp) &&
+                (resignedAppBundle.bundleIdentifier != installedApp.resignedBundleIdentifier)
+    }
+
+    private func fetchOrCreateApp(in backgroundContext: NSManagedObjectContext,
+                                  certificate: ALTCertificate,
+                                  resignedAppBundle: ALTApplication,
+                                  storeBuildVersion: String?,
+                                  authTeam: ALTTeam) throws -> InstalledApp
+    {
+        guard let appBundleFingerprint = self.context.appBundleFingerprint else {
+            throw OperationError.invalidParameters("InstallAppOperation: context.appBundleFingerprint is nil. CacheAppOperation must guarantee a fingerprint reference.")
+        }
+        
+        let target = self.context.targetBundleIdentifier
+        let predicate = NSPredicate(
+            format: "(%K == %@) OR (%K == %@)",
+            #keyPath(InstalledApp.customBundleIdentifier), target,
+            #keyPath(InstalledApp.resignedBundleIdentifier), resignedAppBundle.bundleIdentifier
+        )
+        let customCertSerial = self.context.overrideSigningCertificate?.serialNumber
+        let installedApp = try InstalledApp.first(
+                                satisfying: predicate,
+                                in: backgroundContext
+                            ) ?? InstalledApp(
+                                resignedAppBundle: resignedAppBundle,
+                                originalBundleIdentifier: self.context.bundleIdentifier,
+                                certificateSerialNumber: customCertSerial,
+                                storeBuildVersion: storeBuildVersion,
+                                context: backgroundContext
+                            )
+        if !Self.isDifferentSideStoreContainer(installedApp, resignedAppBundle) {
+            installedApp.update(
+                resignedAppBundle: resignedAppBundle,
+                certificateSerialNumber: customCertSerial,
+                storeBuildVersion: storeBuildVersion
+            )
+            installedApp.certificateStatus = self.context.targetCertStatus ?? installedApp.certificateStatus
+            installedApp.customBundleIdentifier = context.customBundleIdentifier
+            installedApp.useMainProfile = context.useMainProfile
+            installedApp.appBundleFingerprint = appBundleFingerprint
+            let teamPredicate = NSPredicate(format: "%K == %@", #keyPath(Team.identifier), authTeam.identifier)
+            if let team = Team.first(satisfying: teamPredicate, in: backgroundContext) {
+                installedApp.team = team
+            }
+            if let storeApp {
+                let storeAppInContext = backgroundContext.object(with: storeApp.objectID) as? StoreApp
+                installedApp.storeApp = storeAppInContext
+                
+                if let contextTrack = self.context.releaseTrack {
+                    installedApp.releaseTrack = contextTrack
+                } else if installedApp.releaseTrack == nil {
+                    if let trackEntity = storeAppInContext?.latestSupportedVersion?.releaseTrack {
+                        installedApp.releaseTrack = trackEntity
+                    }
+                }
+            }
+            // update alternate icon
+            switch context.alternateIconMode {
+                case .set(let alternateIconURL):
+                    guard FileManager.default.fileExists(atPath: alternateIconURL.path) else { break }
+                    installedApp.hasAlternateIcon = true
+                    guard alternateIconURL != installedApp.alternateIconURL else { break }
+                    do {
+                        try FileManager.default.copyItem(
+                            at: alternateIconURL,
+                            to: installedApp.alternateIconURL,
+                            shouldReplace: true
+                        )
+                        self.debugLog("[InstallAppOperation] Copied alternate icon at: \(alternateIconURL) to: \(installedApp.alternateIconURL)")
+                    } catch {
+                        self.debugLog("[InstallAppOperation] Failed to copy alternate icon: \(error)")
+                    }
+                case .remove:
+                    try? FileManager.default.removeItem(at: installedApp.alternateIconURL)
+                    installedApp.hasAlternateIcon = false
+                case .preserve:
+                    break
+            }
+
+            if let overrideProfile = self.context.overrideProvisioningProfile {
+                ProfileManager.shared.assignProfile(uuid: overrideProfile.uuid, for: installedApp.bundleIdentifier)
+                self.debugLog("[InstallAppOperation] Assigned profile '\(overrideProfile.name)' to installed app '\(installedApp.bundleIdentifier)'")
+            }
+        }
+
+        return installedApp
+    }
+
+    private func fetchOrCreateExtensions(for resignedAppBundle: ALTApplication,
+                                         installedApp: InstalledApp,
+                                         in backgroundContext: NSManagedObjectContext) throws -> Set<InstalledExtension>
+    {
+        guard let targetAppBundle = self.context.targetAppBundle else {
+            throw OperationError.invalidParameters("InstallAppOperation: targetAppBundle is missing in context.")
+        }
+
+        let originalExtensionsByFilename = Dictionary(
+            targetAppBundle.appExtensions.map { ($0.fileURL.lastPathComponent, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        var installedExtensions = Set<InstalledExtension>()
+        
+        for resignedAppExtensionBundle in resignedAppBundle.appExtensions {
+            let filename = resignedAppExtensionBundle.fileURL.lastPathComponent
+            guard let originalExtension = originalExtensionsByFilename[filename] else {
+                throw OperationError.invalidParameters("InstallAppOperation: extension '\(filename)' not found in targetAppBundle.")
+            }
+            
+            let targetParentBundleID = context.targetBundleIdentifier
+            let resignedParentBundleID = resignedAppBundle.bundleIdentifier
+            
+            let originalAppExBundleID = originalExtension.bundleIdentifier
+            let resignedBundleID = resignedAppExtensionBundle.bundleIdentifier
+            var customAppExBundleID: String? = nil
+            if context.customBundleIdentifier != nil {
+                customAppExBundleID = resignedBundleID.replacingOccurrences(of: resignedParentBundleID, with: targetParentBundleID)
+            }
+            
+            self.debugLog("""
+            [InstallAppOperation] Extension Bundle Mapping:
+              • targetParentBundleID   : \(targetParentBundleID)
+              • resignedParentBundleID : \(resignedParentBundleID)
