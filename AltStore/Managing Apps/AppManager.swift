@@ -474,4 +474,14 @@ final class AppManager: ObservableObject, @unchecked Sendable
         }
     }
 
-    private static func readAppMetadata(from url: URL, packageType
+    private static func readAppMetadata(from url: URL, packageType: PackageType) throws -> (bundleIdentifier: String, name: String) {
+        switch packageType {
+        case .ipa:
+            let reader = try Archive.Reader.open(at: url)
+            try reader.goToFirstFile()
+            var plistData: Data?
+            repeat {
+                let filename = try reader.currentFilename()
+                let components = filename.components(separatedBy: "/")
+                if components.count == 3 && components[0] == "Payload" && components[1].hasSuffix(".app") && components[2] == "Info.plist" {
+                    plistData
