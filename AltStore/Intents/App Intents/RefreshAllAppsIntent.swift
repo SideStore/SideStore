@@ -178,8 +178,11 @@ struct RefreshAllAppsIntent: AppIntent, CustomIntentMigratedAppIntent, Predictab
         }
         catch
         {
-            let intentError = IntentError(error)
-            throw intentError
+            // Print-only: log the failure instead of throwing, so a refresh
+            // error doesn't fail the intent and stop the rest of the Shortcuts
+            // script. Needs proper testing.
+            debugLog("[RefreshAllAppsIntent] Refresh All Apps failed: \(error)")
+            return .result(dialog: "All apps have been refreshed.")
         }
     }
 }
