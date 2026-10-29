@@ -350,7 +350,10 @@ enum AnisetteProvider {
         )
 
         if let freshBlob = newAdiBlob {
-            AnisetteConfigManager.shared.anisetteAdiBlob = freshBlob.base64EncodedString()
+            let b64 = freshBlob.base64EncodedString()
+            AnisetteConfigManager.shared.anisetteAdiBlob = b64
+            // SideSign post-SMS OTP refresh needs same adi.pb (SideInstaller get_headers)
+            UserDefaults.standard.set(b64, forKey: "SideSign.anisetteAdiBlob")
         }
 
         // Keep activeMode so SideSign can refresh OTP after 2FA (SideInstaller get_anisette_data)
