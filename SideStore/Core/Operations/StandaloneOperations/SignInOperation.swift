@@ -137,6 +137,22 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 return (account, session)
             } catch {
                 self.debugLog("[SignInOperation] authenticationLoop: Attempt failed with error: \(error)")
+                // SideInstaller / PR#1660: purge Mac/desynced adi.pb on auth failures so next
+                // attempt provisions a fresh Windows identity matching client-info.
+                let errorString = "\(error)".lowercased()
+                if errorString.contains("-80045")
+                    || errorString.contains("-45061")
+                    || errorString.contains("-22421")
+                    || errorString.contains("-90010")
+                    || errorString.contains("could not connect to icloud")
+                    || errorString.contains("invalid anisette")
+                    || errorString.contains("429")
+                    || errorString.contains("too many requests")
+                    || errorString.contains("503")
+                    || errorString.contains("this action cannot be completed") {
+                    self.debugLog("[SignInOperation] Auth failure — purging adi.pb for fresh Windows provisioning")
+                    AnisetteConfigManager.shared.anisetteAdiBlob = nil
+                }
                 await handler.handleSignInResult(.failure(error))
             }
         }
@@ -144,6 +160,8 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
     
     private func signIn(appleID: String, password: String) async throws -> (ALTAccount, ALTAppleAPISession) {
         self.appleIDEmailAddress = appleID
+
+        SideSignConfigManager.shared.applyConfigToDeveloperPortal()
         
         let anisetteData = try await self.getAnisetteData()
         let handler = self.signInHandler
@@ -199,7 +217,7 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 reportProgress(stepWeight * 3)
             } else {
                 self.debugLog("[SignInOperation] Device registration skipped by user.")
-                await self.signInHandler.showDeviceRegistrationSkipAcknowledgment()
+               await self.signInHandler.showDeviceRegistrationSkipAcknowledgment()
             }
         }
 
@@ -217,7 +235,7 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
             case .failure(let error):
                 self.debugLog("[SignInOperation] finalizeAuthentication: Failure result - \(error.localizedDescription)")
                 await self.signInHandler.complete()
-                self.verboseLog("[SignInOperation] finalizeAuthentication: invoked auth complete for .failure case...")
+               self.verboseLog("[SignInOperation] finalizeAuthentication: invoked auth complete for .failure case...")
                 
             case .success(let result):
                 let team = result.team
@@ -228,7 +246,7 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 
                 var didResign = false
                 if !self.skipResign,
-                   let signingCertificate = certificate,
+                    let signingCertificate = certificate,
                    !self.skipCertificateProvisioning,
                    UserDefaults.standard.isDeviceRegistered
                 {

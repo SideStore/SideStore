@@ -27,11 +27,11 @@ public enum AppConstants {
         public static let address             = MinimuxerConstants.empServerHost
         public static let defaultPort: UInt16 = MinimuxerConstants.empServerPort
         public static let port                = String(defaultPort)
-        public static let serverURL           = "\(address):\(port)"
+        public static let serverURL          = "\(address):\(port)"
     }
     
     public enum Connection {
-        public static let defaultOverrideIP     = "10.7.0.1"
+        public static let defaultOverrideIP    = "10.7.0.1"
         public static let defaultRemoteServerIP = "10.7.0.1"
     }
     
@@ -53,7 +53,7 @@ public enum AppConstants {
         public static let bonjourServiceName    = "SideJITServer"
         public static let bonjourServiceType    = "_http._tcp"
         public static let timeout: TimeInterval = 2.0
-        public static let defaultServerURL      = "http://\(bonjourServiceName).\(bonjourServiceType).local:8080".lowercased()
+        public static let defaultServerURL       = "http://\(bonjourServiceName).\(bonjourServiceType).local:8080".lowercased()
     }
     
     public enum WebTransferServer {
@@ -68,9 +68,15 @@ public enum AppConstants {
         public static let defaultODAMetadataURL       = URL(string: "https://zzz.haus/oda.json")!
         public static var defaultODAMetadataURLString: String { defaultODAMetadataURL.absoluteString }
 
-        // Proxied from upstream SideSign
-        public static let defaultClientInfo           = Constants.Anisette.defaultClientInfo
-        public static let defaultUserAgent            = Constants.Anisette.defaultUserAgent
+        // Temporary fix (SideInstaller v1.6.1 style):
+        // Apple now rejects Windows/Android anisette after the verification code with -80046.
+        // Prefer Mac anisette servers and report a current Mac client-info (not the ancient
+        // macOS 10.12 string that triggers -23782). Users can still override in Settings.
+        //
+        // Note: the exact modern Mac client-info string is supplied by the chosen Mac
+        // anisette server via /v3/client_info. We no longer hard-code the old Windows one.
+        public static let defaultClientInfo           = Servers.macClientInfo  // SideInstaller current Mac
+        public static let defaultUserAgent            = Servers.macUserAgent
 
         public enum URLs {
             public static let grandSlamLookup = Constants.Anisette.URLs.grandSlamLookup
@@ -87,7 +93,7 @@ public enum AppConstants {
             public static let userAgent        = Constants.Anisette.Headers.userAgent
             public static let clientTime       = Constants.Anisette.Headers.clientTime
             public static let locale           = Constants.Anisette.Headers.locale
-            public static let timeZone         = Constants.Anisette.Headers.timeZone
+            public static let timeZone        = Constants.Anisette.Headers.timeZone
         }
 
         public enum Libraries {
@@ -96,8 +102,28 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            public static let defaultServerURL     = "https://ani.sidestore.io"
+            // SideInstaller 1.6.1: SideStore (New) first — Mac ADI library (fixes -80046)
+            public static let defaultServerURL     = "https://ani.jkcoxson.com"        // jkcoxson working Mac ADI
+            public static let secondaryServerURL   = "https://mac-ani.jkcoxson.com"    // jkcoxson Mac
+            public static let tertiaryServerURL    = "https://ani.iloader.app"         // iLoader (Mac ADI)
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
+
+            /// SideInstaller macADIOrder — Auto tries these hosts first (Mac ADI library).
+            public static let macADIOrder: [String] = [
+                "new.ani.sidestore.io",
+                "mac-ani.jkcoxson.com",
+                "ani.iloader.app",
+                "ani3.stikstore.app",
+                "ani2.stikstore.app",
+                "ani.sidestore.io",
+            ]
+            public static let macADIHosts: Set<String> = Set(macADIOrder)
+            public static let windowsADIHosts: Set<String> = [
+                "win.ani.sidestore.io",
+            ]
+            /// SideInstaller MAC_CLIENT_INFO — current Mac (servers still name 10.12)
+            public static let macClientInfo = "<MacBookPro18,3> <macOS;26.6;25F84> <com.apple.AuthKit/1 (com.apple.akd/1.0)>"
+            public static let macUserAgent  = "AuthKit/1 (Macintosh; OS X 26.6) (com.apple.akd/1.0)"
         }
 
         public static let remoteCacheDuration     = Constants.Anisette.remoteCacheDuration
@@ -109,7 +135,7 @@ public enum AppConstants {
         public static let service        = Constants.GrandSlam.service
         public static let headerVersion  = Constants.GrandSlam.headerVersion
         public static let authApp        = Constants.GrandSlam.authApp
-        public static let userAgent      = Constants.GrandSlam.userAgent
+        public static let userAgent       = Constants.GrandSlam.userAgent
     }
 
     public enum AppleAuth {
@@ -146,11 +172,11 @@ public enum AppConstants {
 
     public enum Minimuxer {
         public static let remotePairingPort                     = MinimuxerConstants.remotePairingPort
-        public static let lockdowndPort                         = MinimuxerConstants.lockdowndPort
-        public static let defaultTCPProbeTimeoutMs              = MinimuxerConstants.defaultTCPProbeTimeoutMs
-        public static let empServerHost                         = MinimuxerConstants.empServerHost
-        public static let empServerPort                         = MinimuxerConstants.empServerPort
-        public static let defaultHostName                       = MinimuxerConstants.defaultHostName
+        public static let lockdowndPort                          = MinimuxerConstants.lockdowndPort
+        public static let defaultTCPProbeTimeoutMs             = MinimuxerConstants.defaultTCPProbeTimeoutMs
+        public static let empServerHost                        = MinimuxerConstants.empServerHost
+        public static let empServerPort                        = MinimuxerConstants.empServerPort
+        public static let defaultHostName                      = MinimuxerConstants.defaultHostName
         public static let defaultHostModel                      = MinimuxerConstants.defaultHostModel
         public static let remotePairingDaemonServiceType        = MinimuxerConstants.remotePairingDaemonServiceType
         public static let remotePairingPairableHostServiceType  = MinimuxerConstants.remotePairingPairableHostServiceType

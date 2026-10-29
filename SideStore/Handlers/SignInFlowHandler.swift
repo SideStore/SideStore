@@ -106,13 +106,30 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
         }
     }
     
+
+    /// SideInstaller: never show Apple's "Could not connect to iCloud" on 2FA prompts.
+    private static func sanitizeTwoFactorErrorMessage(_ message: String?) -> String? {
+        guard let message, !message.isEmpty else { return message }
+        let lower = message.lowercased()
+        if lower.contains("icloud")
+            || lower.contains("could not connect")
+            || message == "PHONE_CODE_REFUSED"
+            || lower.contains("phone_code_refused") {
+            return NSLocalizedString(
+                "Apple won't send a code by text or call to this sign-in, so it was sent to your Apple devices.",
+                comment: "SideInstaller PHONE_CODE_REFUSED"
+            )
+        }
+        return message
+    }
+
     @MainActor
     func verificationCode(for request: TwoFactorRequest) async throws -> TwoFactorResponse {
         guard self.isPresenterAvailable else {
             throw OperationError.invalidParameters("SignInFlowHandler: Cannot prompt for 2FA verification code because presenting view controller is unavailable")
         }
 
-        let errorMessage: String? = request.error
+        let errorMessage: String? = Self.sanitizeTwoFactorErrorMessage(request.error)
 
         if let errorMessage, !errorMessage.isEmpty {
             let shouldRetry = try await showErrorRetryAlert(message: errorMessage)
@@ -177,6 +194,7 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
 
     @MainActor
     private func showErrorRetryAlert(message: String) async throws -> Bool {
+        let message = Self.sanitizeTwoFactorErrorMessage(message) ?? message
         return try await withCheckedThrowingContinuation { continuation in
             let alert = UIAlertController(
                 title: NSLocalizedString("Verification Failed", comment: ""),

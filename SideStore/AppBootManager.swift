@@ -29,6 +29,40 @@ public final class AppBootManager {
     
     private init() {}
     
+    /// SideInstaller 1.6.1 post-install parity.
+    /// After SideInstaller installs SideStore it turns On-Device Anisette OFF,
+    /// auto-rotation OFF, picks "SideStore (New)", and clears Windows/Android
+    /// client-info overrides. We do the same once on boot so existing installs
+    /// get the working -80046 fix without needing SideInstaller.
+    private nonisolated func applySideInstallerAnisetteMigrationIfNeeded() {
+        let key = "AnisetteMacADI.sideInstallerParity.v1"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+
+        let ud = UserDefaults.standard
+
+        // 1. On-Device Anisette OFF
+        ud.useOnDeviceAnisette = false
+
+        // 2. Auto-rotation OFF
+        ud.disableAnisetteRotation = true
+
+        // 3. Default server only if none is selected (don't lock out manual picks later)
+        if ud.menuAnisetteURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            ud.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+        }
+
+        // 4. Put client info saved for a Windows PC or Android phone back to defaults
+        ud.customAnisetteClientInfo = nil
+        ud.customAnisetteUserAgent = nil
+        // Also clear any file-based overrides
+        AnisetteConfigManager.shared.resetToDefaults()
+
+        // 5. Fresh adi.pb so Apple issues a new Mac identity (asks for code once more)
+        AnisetteConfigManager.shared.anisetteAdiBlob = nil
+
+        ud.set(true, forKey: key)
+        debugLog("[AppBootManager] Applied SideInstaller 1.6.1 anisette migration (Mac path, ODA off, rotation off, SideStore New, adi.pb purged)")
+    }
 
     public nonisolated func startMinimuxer(pairingFile: String) async throws {
         debugLog("[AppBootManager] startMinimuxer() entered")
@@ -107,6 +141,9 @@ public final class AppBootManager {
     public nonisolated func performBootSequence() async {
         debugLog("[AppBootManager] performBootSequence() entered")
         defer { debugLog("[AppBootManager] performBootSequence() exited") }
+
+        // SideInstaller 1.6.1 parity — must run before any anisette/auth work
+        applySideInstallerAnisetteMigrationIfNeeded()
         
         async let jitCheck: Void = {
             debugLog("[AppBootManager] performBootSequence(): JIT check starting")

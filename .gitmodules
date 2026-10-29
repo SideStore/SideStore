@@ -5,7 +5,6 @@
     url = https://github.com/SideStore/minimuxer
     branch = develop
 [submodule "Dependencies/SideSign"]
-	path = Dependencies/SideSign
-	url = https://github.com/SideStore/SideSign
-	branch = main
-
+    path = Dependencies/SideSign
+	url = https://github.com/Mr3242-Scripter/SideSign.git
+    branch = main
