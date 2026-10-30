@@ -22,6 +22,14 @@ public struct ShortcutsProvider: AppShortcutsProvider
                     shortTitle: "Refresh All Apps",
                     systemImageName: "arrow.triangle.2.circlepath")
 
+        AppShortcut(intent: RefreshAppIntent(),
+                    phrases: [
+                        "Refresh \(\.$app) with \(\.applicationName)",
+                        "Refresh \(\.$app) in \(\.applicationName)",
+                    ],
+                    shortTitle: "Refresh App",
+                    systemImageName: "arrow.clockwise")
+
         AppShortcut(intent: InstallIPAIntent(),
                     phrases: [
                         "Install IPA with \(.applicationName)",
