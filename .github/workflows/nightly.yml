@@ -157,6 +157,7 @@ jobs:
       - name: Save Cache
         if: >
           steps.build_gate.outputs.should_skip != 'true' &&
+          steps.xcode-cache-exact.outputs.cache-hit != 'true' &&
           steps.xcode-cache-fallback.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
