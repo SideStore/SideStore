@@ -24,8 +24,8 @@ public struct ShortcutsProvider: AppShortcutsProvider
 
         AppShortcut(intent: RefreshAppIntent(),
                     phrases: [
-                        "Refresh app with \(\.applicationName)",
-                        "Refresh app in \(\.applicationName)",
+                        "Refresh app with \(.applicationName)",
+                        "Refresh app in \(.applicationName)",
                     ],
                     shortTitle: "Refresh App",
                     systemImageName: "arrow.clockwise")
