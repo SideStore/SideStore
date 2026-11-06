@@ -459,7 +459,7 @@ struct AnisetteDataView: View {
                         VStack(spacing: 12) {
                             TextEditor(text: $viewModel.rawEditableJSON)
                                 .font(.system(size: 12, design: .monospaced))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(minHeight: 320)
                                 .padding(8)
                                 .background(Color.white.opacity(0.06))
@@ -746,7 +746,7 @@ struct AnisetteDataView: View {
                 #if !os(tvOS)
                 TextEditor(text: text)
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .frame(minHeight: 64)
                     .padding(6)
                     .background(Color.white.opacity(0.06))
