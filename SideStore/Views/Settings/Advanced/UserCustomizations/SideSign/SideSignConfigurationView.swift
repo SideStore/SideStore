@@ -328,7 +328,7 @@ struct SideSignConfigurationView: View {
                         VStack(spacing: 12) {
                             TextEditor(text: $viewModel.rawEditableJSON)
                                 .font(.system(size: 12, design: .monospaced))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(minHeight: 320)
                                 .padding(8)
                                 .background(Color.white.opacity(0.06))
@@ -521,7 +521,7 @@ struct SideSignConfigurationView: View {
                 #if !os(tvOS)
                 TextEditor(text: text)
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .frame(minHeight: 64)
                     .padding(6)
                     .background(Color.white.opacity(0.06))
@@ -529,7 +529,7 @@ struct SideSignConfigurationView: View {
                 #else
                 TextField(placeholder, text: text)
                     .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(8)
                     .background(Color.white.opacity(0.06))
                     .cornerRadius(8)
@@ -537,7 +537,7 @@ struct SideSignConfigurationView: View {
             } else {
                 TextField(placeholder, text: text)
                     .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .padding(8)
