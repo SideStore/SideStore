@@ -260,6 +260,7 @@ func minimuxerStart(_ pairingFile: String, preferred: PairingProtocol? = nil) as
     try await withRemotePairingRetry {
         try await minimuxer.core.start(pairingFile: pairingFile, mountPath: ddiMountPath, preferred: preferred)
     }
+    await bindConnectionConfig()
     #endif
 }
 
