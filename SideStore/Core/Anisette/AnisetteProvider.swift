@@ -169,30 +169,55 @@ enum AnisetteProvider {
         return try await fetchRemote(handler: handler)
     }
 
-    /// Always report SideInstaller current Mac (not server's macOS 10.12).
-    /// SideInstaller `client_info_to_use` (remote_v3/mod.rs) — exact.
-    /// empty/Android → Windows; Mac &lt; 10.13 → CURRENT_MAC; else advertised.
-    /// Fixes -80046 after the verification code.
+    /// SideInstaller `client_info_to_use` (remote_v3/mod.rs) — exact, no mistakes.
+    /// - empty / Android ADI / stock Xcode clients → WINDOWS
+    /// - Mac OS version < 10.13 (Mac ADI servers name 10.12.6) → CURRENT_MAC
+    /// - otherwise → server's advertised client (e.g. Windows ADI)
+    /// Forcing CURRENT_MAC onto Android ADI OTP is -80045 at login.
     static func clientInfoToUse(advertisedClientInfo: String?, advertisedUserAgent: String?) -> (clientInfo: String, userAgent: String) {
         let advertised = (advertisedClientInfo ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let windows = "<PC> <Windows;6.2(0,0);9200> <com.apple.AuthKit/1 (com.apple.iTunes/12.12.4.1)>"
         let currentMac = macClientInfo
         let currentMacUA = macUserAgent
         let akdUA = "akd/1.0 CFNetwork/808.1.4"
-        // Stock anisette-v3 / omnisette clients = Android ADI → Windows
+
+        // android_adi(): stock prefixes OR "<Android;"
         let stock = advertised.hasPrefix("<MacBookPro13,2> <macOS;13.1;22C65>")
             || advertised.hasPrefix("<MacBookPro15,1> <Mac OS X;10.15.2;19C57>")
-        // SideInstaller 1.6.1: Mac ADI path always CURRENT_MAC (stock/Android/10.12 included).
-        // Using Windows here after the code produces -80046.
-        if advertised.isEmpty || advertised.contains("<Android;") || stock
-            || advertised.contains("10.12") || advertised.contains("MacBook")
-            || advertised.contains("Mac OS") || advertised.contains("macOS") || advertised.contains("<Mac") {
+        if advertised.isEmpty || stock || advertised.contains("<Android;") {
+            return (windows, akdUA)
+        }
+
+        // mac_version < 10.13 → CURRENT_MAC (Mac ADI public servers)
+        if let ver = macOSVersion(fromClientInfo: advertised), ver.major < 10 || (ver.major == 10 && ver.minor < 13) {
             return (currentMac, currentMacUA)
         }
+
+        // Windows ADI servers
         if advertised.contains("<PC>") || advertised.contains("Windows") {
             return (windows, akdUA)
         }
-        return (currentMac, currentMacUA)
+
+        // Already a current Mac string or other server-chosen identity
+        var ua = (advertisedUserAgent ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if ua.isEmpty { ua = akdUA }
+        return (advertised, ua)
+    }
+
+    /// SideInstaller `mac_version` — parse (major, minor) from client_info if it names a Mac.
+    private static func macOSVersion(fromClientInfo client: String) -> (major: Int, minor: Int)? {
+        let markers = ["<macOS;", "<Mac OS X;"]
+        for marker in markers {
+            guard let r = client.range(of: marker) else { continue }
+            let rest = client[r.upperBound...]
+            let end = rest.firstIndex(where: { $0 == ";" || $0 == ">" }) ?? rest.endIndex
+            let version = rest[..<end].trimmingCharacters(in: .whitespaces)
+            let parts = version.split(separator: ".").compactMap { Int($0) }
+            guard let major = parts.first else { return nil }
+            let minor = parts.count > 1 ? parts[1] : 0
+            return (major, minor)
+        }
+        return nil
     }
 
     private static func fetchServerClientInfo(from serverURL: URL) async -> (clientInfo: String?, userAgent: String?) {
