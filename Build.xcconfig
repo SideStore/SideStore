@@ -21,7 +21,7 @@ APP_DISPLAY_NAME = UltraStore
 BASE_BUNDLE_ID                                  = com.ultrastore.xp
 MAIN_BUNDLE_IDENTIFIER[config=Debug]            = $(BASE_BUNDLE_ID).$(DEVELOPMENT_TEAM)
 MAIN_BUNDLE_IDENTIFIER[config=Release]          = $(BASE_BUNDLE_ID)
-APP_GROUP_IDENTIFIER                            = $(MAIN_BUNDLE_IDENTIFIER)
+APP_GROUP_IDENTIFIER                            = com.ultrastore.dev
 ICLOUD_CONTAINER_IDENTIFIER                     = iCloud.$(ORG_IDENTIFIER).$(PROJECT_NAME)
 
 // Suppress noise from os activity in xcode console log for release builds

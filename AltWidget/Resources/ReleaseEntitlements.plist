@@ -8,7 +8,7 @@
 	<string>XYZ0123456</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.ultrastore.xp</string>
+		<string>group.com.ultrastore.dev</string>
 	</array>
 	<key>get-task-allow</key>
 	<true/>
