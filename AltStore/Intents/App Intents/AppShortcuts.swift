@@ -23,10 +23,9 @@ public struct ShortcutsProvider: AppShortcutsProvider
                     systemImageName: "arrow.triangle.2.circlepath")
 
         AppShortcut(intent: RefreshAppIntent(),
-                @Parameter(title: "App") var app: InstalledAppEntity?,
                     phrases: [
-                        "Refresh app with SideStore \(.name)",
-                        "Refresh app in SideStore \(.name)",
+                        "Refresh app with \(.applicationName)",
+                        "Refresh app in \(.applicationName)",
                     ],
                     shortTitle: "Refresh App",
                     systemImageName: "arrow.clockwise")
