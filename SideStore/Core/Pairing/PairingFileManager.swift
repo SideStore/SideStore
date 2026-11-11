@@ -99,7 +99,20 @@ final class PairingFileManager: NSObject {
     
     @discardableResult
     nonisolated func parse(content: String, preferred: PairingProtocol? = nil) throws -> any PairingFile {
-        try PairingFileParser.parse(content: content, preferred: preferred)
+        do {
+            return try PairingFileParser.parse(content: content, preferred: preferred)
+        } catch {
+            // iloader's pairing file holds both Remote Pairing and Lockdown
+            // credentials in one plist, which the parser refuses as ambiguous
+            // when no preference is given. Pick one ourselves: Remote Pairing
+            // first, matching how fetchPairingFile reads a file of unknown
+            // kind. A file holding only one kind (or neither) keeps throwing.
+            guard preferred == nil,
+                  let remote = try? PairingFileParser.parse(content: content, preferred: .rppairing),
+                  (try? PairingFileParser.parse(content: content, preferred: .lockdown)) != nil
+            else { throw error }
+            return remote
+        }
     }
 
     @discardableResult
