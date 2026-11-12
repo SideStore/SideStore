@@ -194,6 +194,7 @@ private extension SourcesViewController
         // TODO: @mahee96: Need implementation to keep SideStore-Official source always on top
         let fetchRequest = Source.fetchRequest() as NSFetchRequest<Source>
         fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.predicate = NSPredicate(format: "%K != %@", #keyPath(Source.identifier), Source.altStoreIdentifier)
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Source.name, ascending: true),
                                         
                                         // Can't sort by URLs or else app will crash.

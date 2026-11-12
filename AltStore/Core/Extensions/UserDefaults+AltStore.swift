@@ -551,8 +551,9 @@ public extension UserDefaults
             #keyPath(UserDefaults.menuAnisetteList): AppConstants.Anisette.Servers.defaultSource,
             #keyPath(UserDefaults.menuAnisetteURL): AppConstants.Anisette.Servers.defaultServerURL,
             #keyPath(UserDefaults.isAnisetteOfflineMode): false,
-            #keyPath(UserDefaults.disableAnisetteRotation): false,
-            #keyPath(UserDefaults.useOnDeviceAnisette): true,
+            // Start with the documented remote sign-in workaround; keep saved choices.
+            #keyPath(UserDefaults.disableAnisetteRotation): true,
+            #keyPath(UserDefaults.useOnDeviceAnisette): false,
             #keyPath(UserDefaults.useLocalVPN): true,
             #keyPath(UserDefaults.acceptIPv6ConnectionConfig): false,
             #keyPath(UserDefaults.isAutoRetryRemotePairingPortEnabled): true,

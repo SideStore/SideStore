@@ -274,11 +274,12 @@ final class AppManager: ObservableObject, @unchecked Sendable
             
             managedObjectContext.performAndWait {
                 let sources = Source.all(in: managedObjectContext)
-                sourceData = sources.map { ($0.objectID, $0.sourceURL) }
+                sourceData = sources.filter { $0.identifier != Source.altStoreIdentifier }
+                    .map { ($0.objectID, $0.sourceURL) }
             }
             
             guard !sourceData.isEmpty else {
-                completionHandler(.failure(.init(OperationError.noSources)))
+                completionHandler(.success(([], managedObjectContext)))
                 return
             }
             

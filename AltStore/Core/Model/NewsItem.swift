@@ -114,6 +114,10 @@ public extension NewsItem
         {
             fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(NewsItem.source), source)
         }
+        else
+        {
+            fetchRequest.predicate = NSPredicate(format: "%K != %@", #keyPath(NewsItem.sourceIdentifier), Source.altStoreIdentifier)
+        }
         
         return fetchRequest
     }
