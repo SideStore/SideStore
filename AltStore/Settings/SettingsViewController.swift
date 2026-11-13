@@ -87,22 +87,6 @@ extension SettingsViewController
         case backupAndRestore       // row 10 - Backup & Restore
         case userCustomizations     // row 11 - User Customizations
 
-        static var allCases: [AdvancedSettingsRow] {
-            var rows: [AdvancedSettingsRow] = [.sendFeedback, .refreshAttempts, .refreshSideJITServer, .pairingFileManagement]
-            if !UserDefaults.standard.useOnDeviceAnisette {
-                rows.append(.anisetteServers)
-            }
-            rows.append(contentsOf: [
-                .connectionConfig,
-                .networkDiscovery,
-                .developerServices,
-                .profileManagement,
-                .certificateManagement,
-                .backupAndRestore,
-                .userCustomizations
-            ])
-            return rows
-        }
     }
 
     private enum BetaTestingRow: Int, CaseIterable {
