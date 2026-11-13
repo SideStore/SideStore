@@ -16,15 +16,13 @@ private func ease(_ progress: Double, x1: Double, x2: Double) -> Double {
     return cubic((low + high) / 2, 0, 1)
 }
 
-// Matches SplashView's 0.6s stretch, 0.65s flight, and 0.5s main-screen fade.
+// Match the app's half-second fade after a short preview hold.
 private struct ExportFrame: View {
     var time: Double
     private let size = CGSize(width: 390, height: 844)
 
     var body: some View {
-        let stretch = ease((time - 1.5) / 0.6, x1: 0.42, x2: 0.58)
-        let flight = ease((time - 2.1) / 0.65, x1: 0.42, x2: 1)
-        let fade = ease((time - 2.28) / 0.5, x1: 0.42, x2: 0.58)
+        let fade = ease((time - 1.5) / 0.5, x1: 0.42, x2: 0.58)
         ZStack {
             Color(red: 0.06, green: 0.06, blue: 0.08)
             VStack(spacing: 12) {
@@ -34,11 +32,7 @@ private struct ExportFrame: View {
             }
             ZStack {
                 Color.black
-                UltraStoreLaunchLogo(
-                    logoSize: size.width * 0.48, screenSize: size,
-                    stretch: CGFloat(stretch), flight: CGFloat(flight)
-                )
-                .frame(width: size.width * 0.48, height: size.width * 0.48)
+                UltraStoreLaunchLogo(logoSize: size.width * 0.48)
             }
             .opacity(1 - fade)
         }
@@ -92,10 +86,10 @@ struct ExportLaunch {
                 let renderer = ImageRenderer(content: ExportFrame(time: Double(frame) / Double(fps)))
                 renderer.scale = 2
                 guard let image = renderer.cgImage else { throw ExportError.renderFailed }
-                if frame == 63 {
+                if frame == 30 {
                     let bitmap = NSBitmapImageRep(cgImage: image)
                     try bitmap.representation(using: .png, properties: [:])?.write(
-                        to: directory.appendingPathComponent("curved-arrow.png")
+                        to: directory.appendingPathComponent("splash-logo.png")
                     )
                 }
                 var buffer: CVPixelBuffer?

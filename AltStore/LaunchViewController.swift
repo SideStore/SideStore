@@ -65,7 +65,6 @@ final class LaunchViewController: UIViewController {
         debugLog("LaunchViewController.viewDidAppear() invoked")
         super.viewDidAppear(animated)
         guard !didFinishLaunching else { return }
-        splashViewModel.updateStatus(NSLocalizedString("Starting…", comment: ""))
         
         // spin off the startup sequence concurrently
         Task.detached { [weak self] in
@@ -177,9 +176,7 @@ final class LaunchViewController: UIViewController {
 
         didFinishLaunching = true
         
-        splashViewModel.updateStatus(NSLocalizedString("Loading apps…", comment: ""))
         await AppManager.shared.reconcileInstalledApps()
-        splashViewModel.updateStatus(NSLocalizedString("Updating sources…", comment: ""))
         AppManager.shared.updateAllSources { result in
             guard case .failure(let error) = result else { return }
             debugLog("Failed to update sources on launch. \(error.localizedDescription)")
@@ -192,7 +189,6 @@ final class LaunchViewController: UIViewController {
             toastView.show(in: self.destinationViewController!.selectedViewController ?? self.destinationViewController!)
         }
         updateKnownSources()
-        splashViewModel.updateStatus(NSLocalizedString("Almost there…", comment: ""))
 
         splashViewModel.isReadyToExit = true
     }

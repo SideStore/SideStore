@@ -30,6 +30,6 @@ jobs:
           name: animation_launch
           path: |
             build/animation_launch/animation_launch.mp4
-            build/animation_launch/curved-arrow.png
+            build/animation_launch/splash-logo.png
           if-no-files-found: warn
           retention-days: 14
