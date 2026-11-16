@@ -537,7 +537,7 @@ public extension UserDefaults
             #keyPath(UserDefaults.keepAnisetteHeadersAfterLogout): true,
             #keyPath(UserDefaults.keepSideSignHeadersAfterLogout): true,
             #keyPath(UserDefaults.isBackgroundRefreshEnabled): true,
-            #keyPath(UserDefaults.isBackgroundServiceEnabled): true,
+            #keyPath(UserDefaults.isBackgroundServiceEnabled): false,
             #keyPath(UserDefaults.isBetaUpdatesEnabled): false,
             #keyPath(UserDefaults.permissionCheckingDisabled): true,
             #keyPath(UserDefaults.isBundleIDVerificationEnabled): true,
