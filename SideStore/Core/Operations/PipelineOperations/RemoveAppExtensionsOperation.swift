@@ -143,7 +143,7 @@ final class RemoveAppExtensionsOperation: BasePipelineOperation<InstallAppOperat
         
         if let manifestPlist = NSMutableDictionary(contentsOf: manifestPlistURL),
            let sinfReplicationPaths = manifestPlist["SinfReplicationPaths"] as? [String] {
-            let replacementPaths = sinfReplicationPaths.filter { !$0.starts(with: "PlugIns/") } // Filter out app extension paths.
+            let replacementPaths = sinfReplicationPaths.filter { !$0.starts(with: "PlugIns/") && !$0.starts(with: "Extensions/") } // Filter out app extension paths.
             manifestPlist["SinfReplicationPaths"] = replacementPaths
             try manifestPlist.write(to: manifestPlistURL)
         }

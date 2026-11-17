@@ -584,17 +584,19 @@ struct ExtensionInfoView: View {
     @State private var shareSheetItem: ShareableURLItem? = nil
     #endif
 
-    // Resolve the .appex bundle URL by scanning PlugIns/ and matching bundle ID
+    // Resolve the .appex bundle URL by scanning PlugIns/ and Extensions/ and matching bundle ID
     private var extensionURL: URL? {
-        let pluginsDir = parentAppURL.appendingPathComponent("PlugIns")
-        guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: pluginsDir,
-            includingPropertiesForKeys: nil,
-            options: [.skipsHiddenFiles]
-        ) else { return nil }
+        let contents = ["PlugIns", "Extensions"].flatMap { dirName -> [URL] in
+            let dir = parentAppURL.appendingPathComponent(dirName)
+            return (try? FileManager.default.contentsOfDirectory(
+                at: dir,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            )) ?? []
+        }
 
         // Match by bundle ID in Info.plist
-        for url in contents where url.pathExtension == "appex" {
+        for url in contents where url.pathExtension.lowercased() == "appex" {
             if let parser = try? InfoPlistParser(bundleURL: url),
                let bid = parser.bundleIdentifier,
                bid == appExtension.resignedBundleIdentifier || bid == appExtension.bundleIdentifier {
@@ -602,7 +604,7 @@ struct ExtensionInfoView: View {
             }
         }
         // Fallback: name-based guess
-        return contents.first { $0.pathExtension == "appex" && $0.deletingPathExtension().lastPathComponent == appExtension.name }
+        return contents.first { $0.pathExtension.lowercased() == "appex" && $0.deletingPathExtension().lastPathComponent == appExtension.name }
     }
 
     private var resignedProfileURL: URL? {
@@ -649,13 +651,15 @@ struct ExtensionInfoView: View {
 
     // Nested sub-extensions inside this .appex (rare but possible)
     private var subExtensions: [URL] {
-        guard let url = extensionURL,
-              let contents = try? FileManager.default.contentsOfDirectory(
-                at: url.appendingPathComponent("PlugIns"),
+        guard let url = extensionURL else { return [] }
+        return ["PlugIns", "Extensions"].flatMap { dirName -> [URL] in
+            let contents = (try? FileManager.default.contentsOfDirectory(
+                at: url.appendingPathComponent(dirName),
                 includingPropertiesForKeys: nil,
                 options: [.skipsHiddenFiles]
-              ) else { return [] }
-        return contents.filter { $0.pathExtension == "appex" }
+            )) ?? []
+            return contents.filter { $0.pathExtension.lowercased() == "appex" }
+        }
     }
 
     var body: some View {
@@ -890,12 +894,14 @@ struct BundleInspectorView: View {
     }
 
     private var subExtensions: [URL] {
-        guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: bundleURL.appendingPathComponent("PlugIns"),
-            includingPropertiesForKeys: nil,
-            options: [.skipsHiddenFiles]
-        ) else { return [] }
-        return contents.filter { $0.pathExtension == "appex" }
+        ["PlugIns", "Extensions"].flatMap { dirName -> [URL] in
+            let contents = (try? FileManager.default.contentsOfDirectory(
+                at: bundleURL.appendingPathComponent(dirName),
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            )) ?? []
+            return contents.filter { $0.pathExtension.lowercased() == "appex" }
+        }
     }
 
     private var displayName: String {
