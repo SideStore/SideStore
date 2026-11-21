@@ -177,10 +177,14 @@ class SignInFlowHandler: AnyObject, SignInHandler, AnisetteServerHandler {
 
     @MainActor
     private func showErrorRetryAlert(message: String) async throws -> Bool {
+        // The message comes from Apple's response; never render a raw error page.
+        let displayMessage = SignInFailure.looksLikeMarkup(message)
+            ? NSLocalizedString("Apple returned an error page instead of a verification response. Please try again.", comment: "")
+            : message
         return try await withCheckedThrowingContinuation { continuation in
             let alert = UIAlertController(
                 title: NSLocalizedString("Verification Failed", comment: ""),
-                message: message,
+                message: displayMessage,
                 preferredStyle: .alert
             )
             

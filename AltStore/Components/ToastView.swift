@@ -124,7 +124,9 @@ class ToastView: UIControl
 
     convenience init(error: Error, mode: InfoMode)
     {
-        let error = error as NSError
+        // Every alert funnels through here, so sanitising once keeps raw
+        // server payloads (HTML error pages, JSON blobs) out of all of them.
+        let error = SignInFailure.normalizedForDisplay(error)
         let mode = mode == .fullError ? ErrorProcessing.InfoMode.fullError : ErrorProcessing.InfoMode.localizedDescription
 
         let text = error.localizedTitle ?? NSLocalizedString("Operation Failed", comment: "")
