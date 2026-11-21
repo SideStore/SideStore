@@ -1,0 +1,174 @@
+name: Verify (simulator)
+
+# Verifies SuperStore with no physical iPhone, on GitHub-hosted macOS runners.
+# No local Mac required.
+#
+# job "build"  - compiles the app for the iOS Simulator. Works today.
+# job "test"   - runs XCTest/XCUITest. Gated OFF because AltStore.xcodeproj
+#                currently has NO test targets (only 2 app + 1 extension), the
+#                shared scheme references UITests blueprint A8E2DB20... which is
+#                not in the project, and SideStore/Tests/SideStoreTests.xctestplan
+#                is missing. Turn it on by setting repository variable
+#                SUPERSTORE_TESTS_ENABLED=true once the test targets exist.
+#
+# Cost: macOS runners bill $0.062/min in private repos (GitHub Free includes
+# $12/mo, ~194 min). Public repos are free. Triggered only on PRs, pushes to
+# develop, and manual dispatch.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.github/**'
+  push:
+    branches: [develop]
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  XC_PROJECT: AltStore.xcodeproj
+  XC_SCHEME: SideStore
+  DERIVED_DATA: build/derived-data
+  RESULT_BUNDLE: build/verify.xcresult
+  # Mirrors COMMON_BUILD_SETTINGS in the Makefile
+  UNSIGNED_SETTINGS: >-
+    CODE_SIGNING_ALLOWED=NO
+    CODE_SIGNING_REQUIRED=NO
+    AD_HOC_CODE_SIGNING_ALLOWED=YES
+    DEVELOPMENT_TEAM=XYZ0123456
+    ORG_IDENTIFIER=com.superstore
+
+jobs:
+  build:
+    name: Build for iOS Simulator
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+
+      - name: Cache SwiftPM + derived data
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            ${{ env.DERIVED_DATA }}
+          key: simbuild-${{ runner.os }}-${{ hashFiles('Dependencies/**/Package.resolved', 'AltStore.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            simbuild-${{ runner.os }}-
+
+      # generic/platform=iOS Simulator needs no booted device and no signing
+      # identity, so this runs on a clean runner with zero setup.
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project "$XC_PROJECT" \
+            -scheme "$XC_SCHEME" \
+            -config Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$DERIVED_DATA" \
+            $UNSIGNED_SETTINGS
+
+  test:
+    name: Run tests on iOS Simulator
+    if: ${{ vars.SUPERSTORE_TESTS_ENABLED == 'true' }}
+    runs-on: macos-latest
+    timeout-minutes: 60
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Toolchain
+        run: xcodebuild -version
+
+      # The Makefile hardcodes "iPhone 17 Pro, OS=26.0", which only exists on the
+      # Xcode version it was written against. Pick whatever iPhone runtime the
+      # runner actually ships so this does not rot on every image update.
+      - name: Pick an available iPhone simulator
+        id: sim
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, subprocess, sys
+
+          data = json.loads(
+              subprocess.check_output(["xcrun", "simctl", "list", "devices", "available", "--json"])
+          )
+          devices = [
+              device
+              for runtime, entries in data.get("devices", {}).items()
+              if "iOS" in runtime
+              for device in entries
+              if device.get("isAvailable", True) and device["name"].startswith("iPhone")
+          ]
+          if not devices:
+              sys.exit("No available iPhone simulator runtime found on this runner")
+
+          chosen = devices[0]
+          print(f"destination=platform=iOS Simulator,id={chosen['udid']}")
+          print(f"device={chosen['name']}")
+          PY
+
+      - name: Cache SwiftPM + derived data
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            ${{ env.DERIVED_DATA }}
+          key: simtest-${{ runner.os }}-${{ hashFiles('Dependencies/**/Package.resolved', 'AltStore.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            simtest-${{ runner.os }}-
+
+      - name: Build for testing
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -project "$XC_PROJECT" \
+            -scheme "$XC_SCHEME" \
+            -config Debug \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES \
+            $UNSIGNED_SETTINGS
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          rm -rf "$RESULT_BUNDLE"
+          xcodebuild test-without-building \
+            -project "$XC_PROJECT" \
+            -scheme "$XC_SCHEME" \
+            -config Debug \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES \
+            -resultBundlePath "$RESULT_BUNDLE" \
+            $UNSIGNED_SETTINGS
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-xcresult
+          path: ${{ env.RESULT_BUNDLE }}
+          if-no-files-found: warn
