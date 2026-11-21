@@ -46,7 +46,7 @@ env:
 
 jobs:
   build:
-    name: Build for iOS Simulator
+    name: Build for iOS (unsigned)
     runs-on: macos-latest
     timeout-minutes: 45
 
@@ -72,8 +72,9 @@ jobs:
           restore-keys: |
             simbuild-${{ runner.os }}-
 
-      # generic/platform=iOS Simulator needs no booted device and no signing
-      # identity, so this runs on a clean runner with zero setup.
+      # generic/platform=iOS builds the arm64 device slice and needs no signing
+      # identity and no connected device. Do not target the simulator here:
+      # minimuxer ships no x86_64 slice, so an Intel runner fails to link it.
       - name: Build
         run: |
           set -o pipefail
@@ -81,7 +82,7 @@ jobs:
             -project "$XC_PROJECT" \
             -scheme "$XC_SCHEME" \
             -config Debug \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED_DATA" \
             $UNSIGNED_SETTINGS
 
